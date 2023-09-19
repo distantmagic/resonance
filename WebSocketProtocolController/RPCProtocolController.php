@@ -31,6 +31,11 @@ use Throwable;
 
 use function Sentry\captureException;
 
+/**
+ * @todo remove after factoring
+ *
+ * @psalm-suppress UnusedClass
+ */
 #[ControlsWebSocketProtocol(WebSocketProtocol::RPC)]
 #[Singleton(collection: SingletonCollection::WebSocketProtocolController)]
 final readonly class RPCProtocolController extends WebSocketProtocolController
