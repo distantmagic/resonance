@@ -44,8 +44,6 @@ final readonly class DependencyInjectionContainerBuilder
         $container = new DependencyInjectionContainer();
 
         foreach ($this->sortedDependencies($container) as $singletonDependency) {
-            // $this->output?->writeln('container: building '.$singletonDependency->className);
-
             $singleton = $container->make($singletonDependency->resolver);
 
             $container->singletons->set(
