@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Resonance\InputValidatedData;
 
-use App\InputValidatedData;
 use Resonance\FrontMatterCollectionReference;
+use Resonance\InputValidatedData;
 use Resonance\StaticPageContentType;
 use Resonance\StaticPageLayoutHandler;
 

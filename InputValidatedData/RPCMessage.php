@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Resonance\InputValidatedData;
 
-use App\InputValidatedData;
 use App\RPCMethod;
+use Resonance\InputValidatedData;
 
 /**
  * @template TPayload

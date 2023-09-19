@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Resonance\InputValidator;
 
-use App\InputValidator;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use Resonance\InputValidatedData\RPCMessage;
+use Resonance\InputValidator;
 
 /**
  * @extends InputValidator<RPCMessage, array{

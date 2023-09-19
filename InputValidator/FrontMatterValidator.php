@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Resonance\InputValidator;
 
-use App\InputValidator;
 use Generator;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use Resonance\FrontMatterCollectionReference;
 use Resonance\InputValidatedData\FrontMatter;
+use Resonance\InputValidator;
 use Resonance\StaticPageContentType;
 use Resonance\StaticPageLayoutHandler;
 
