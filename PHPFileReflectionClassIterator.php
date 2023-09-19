@@ -19,9 +19,7 @@ readonly class PHPFileReflectionClassIterator implements IteratorAggregate
     /**
      * @param iterable<SplFileInfo> $phpFileIterator
      */
-    public function __construct(
-        private iterable $phpFileIterator,
-    ) {}
+    public function __construct(private iterable $phpFileIterator) {}
 
     /**
      * @return Generator<ReflectionClass>

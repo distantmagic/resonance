@@ -109,6 +109,15 @@ readonly class SingletonDependencyIterator implements IteratorAggregate
         foreach ($requiresCollection as $className => $collectionName) {
             $classDependencies = $dependencies->get($className);
 
+            if (!$collections->hasKey($collectionName)) {
+                throw new LogicException(sprintf(
+                    'Collection has never been used: %s',
+                    is_object($collectionName)
+                        ? $collectionName::class
+                        : (string) $collectionName
+                ));
+            }
+
             foreach ($collections->get($collectionName) as $collectedClass) {
                 $classDependencies->add($collectedClass);
             }

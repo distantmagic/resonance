@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Resonance;
 
+use Generator;
 use Resonance\Attribute\Singleton;
 use RuntimeException;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
+use Symfony\Component\Finder\SplFileInfo;
 
 use function Swoole\Coroutine\run;
 
@@ -59,10 +61,23 @@ final readonly class DependencyInjectionContainerBuilder
         return $container;
     }
 
+    /**
+     * @return Generator<SplFileInfo>
+     */
+    private function phpFiles(): Generator
+    {
+        foreach (new PHPFileIterator(DM_RESONANCE_ROOT) as $fileInfo) {
+            yield $fileInfo;
+        }
+
+        foreach (new PHPFileIterator(DM_APP_ROOT) as $fileInfo) {
+            yield $fileInfo;
+        }
+    }
+
     private function sortedDependencies(DependencyInjectionContainer $container): SingletonDependencyIterator
     {
-        $projectPhpFiles = new PHPFileIterator(DM_APP_ROOT);
-        $projectPhpReflections = new PHPFileReflectionClassIterator($projectPhpFiles);
+        $projectPhpReflections = new PHPFileReflectionClassIterator($this->phpFiles());
         $singletonAttributes = new PHPFileReflectionClassAttributeIterator($projectPhpReflections, Singleton::class);
 
         return new SingletonDependencyIterator($container->singletons, $singletonAttributes);
