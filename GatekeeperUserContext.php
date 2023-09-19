@@ -7,7 +7,6 @@ namespace Resonance;
 use App\CrudActionGate\BlogPostGate;
 use App\CrudActionGate\WorldMapGate;
 use App\DatabaseEntity\BlogPostInterface;
-use App\DatabaseEntity\User;
 use App\DatabaseEntity\WorldMapInterface;
 use App\DatabaseEntity\WorldMapTile;
 use DomainException;
@@ -16,7 +15,7 @@ readonly class GatekeeperUserContext
 {
     public function __construct(
         private SiteActionGateAggregate $siteActionGateAggregate,
-        private ?User $user,
+        private ?UserInterface $user,
     ) {}
 
     public function can(SiteActionInterface $action): bool

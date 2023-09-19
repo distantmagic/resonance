@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-use App\DatabaseEntity\User;
 use Resonance\Attribute\Singleton;
 use Swoole\Http\Request;
 
@@ -28,7 +27,7 @@ final readonly class Gatekeeper
         return $this->gatekeeperRequestContext->getUserContext($request);
     }
 
-    public function withUser(?User $user): GatekeeperUserContext
+    public function withUser(?UserInterface $user): GatekeeperUserContext
     {
         return new GatekeeperUserContext(
             $this->siteActionGateAggregate,

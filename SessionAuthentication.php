@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-use App\DatabaseEntity\User;
 use App\DatabaseQuery\SelectUserById;
 use Psr\Log\LoggerInterface;
 use Resonance\Attribute\Singleton;
@@ -17,7 +16,7 @@ use WeakMap;
 final readonly class SessionAuthentication
 {
     /**
-     * @var WeakMap<Request, ?User>
+     * @var WeakMap<Request, ?UserInterface>
      */
     private WeakMap $authenticatedUsers;
 
@@ -27,12 +26,12 @@ final readonly class SessionAuthentication
         private SessionManager $sessionManager,
     ) {
         /**
-         * @var WeakMap<Request, ?User>
+         * @var WeakMap<Request, ?UserInterface>
          */
         $this->authenticatedUsers = new WeakMap();
     }
 
-    public function authenticatedUser(Request $request): ?User
+    public function authenticatedUser(Request $request): ?UserInterface
     {
         if ($this->authenticatedUsers->offsetExists($request)) {
             return $this->authenticatedUsers->offsetGet($request);
@@ -56,15 +55,15 @@ final readonly class SessionAuthentication
         $session->data->remove('authenticated_user_id');
     }
 
-    public function setAuthenticatedUser(Request $request, Response $response, User $user): void
+    public function setAuthenticatedUser(Request $request, Response $response, UserInterface $user): void
     {
         $session = $this->sessionManager->start($request, $response);
-        $session->data->put('authenticated_user_id', $user->id);
+        $session->data->put('authenticated_user_id', $user->getId());
 
         $this->authenticatedUsers->offsetSet($request, $user);
     }
 
-    private function doGetAuthenticatedUser(Request $request): ?User
+    private function doGetAuthenticatedUser(Request $request): ?UserInterface
     {
         $session = $this->sessionManager->restoreFromRequest($request);
 
