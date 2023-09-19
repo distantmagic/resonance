@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-use App\InputValidatedData\RPCMessage;
+use Resonance\InputValidatedData\RPCMessage;
 
 interface WebSocketRPCResponderInterface
 {

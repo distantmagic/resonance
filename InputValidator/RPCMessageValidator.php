@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\InputValidator;
+namespace Resonance\InputValidator;
 
-use App\InputValidatedData\RPCMessage;
 use App\InputValidator;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
+use Resonance\InputValidatedData\RPCMessage;
 
 /**
  * @extends InputValidator<RPCMessage, array{

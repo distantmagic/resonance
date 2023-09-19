@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-use App\InputValidatedData\RPCMessage;
 use DomainException;
 use Ds\Map;
+use Resonance\InputValidatedData\RPCMessage;
 
 readonly class WebSocketRPCResponderAggregate
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\InputValidatedData;
+namespace Resonance\InputValidatedData;
 
 use App\InputValidatedData;
 use App\RPCMethod;

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Resonance\WebSocketProtocolController;
 
 use App\CSRFManager;
-use App\InputValidator\RPCMessageValidator;
 use App\SessionAuthentication;
 use App\SingletonCollection;
 use App\SiteAction;
@@ -16,6 +15,7 @@ use Psr\Log\LoggerInterface;
 use Resonance\Attribute\ControlsWebSocketProtocol;
 use Resonance\Attribute\Singleton;
 use Resonance\Gatekeeper;
+use Resonance\InputValidator\RPCMessageValidator;
 use Resonance\WebSocketAuthResolution;
 use Resonance\WebSocketConnection;
 use Resonance\WebSocketConnectionController\RPCConnectionController;

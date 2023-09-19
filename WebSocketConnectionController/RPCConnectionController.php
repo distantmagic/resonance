@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Resonance\WebSocketConnectionController;
 
-use App\InputValidatedData\RPCMessage;
+use Resonance\InputValidatedData\RPCMessage;
 use Resonance\WebSocketAuthResolution;
 use Resonance\WebSocketConnection;
 use Resonance\WebSocketConnectionController;

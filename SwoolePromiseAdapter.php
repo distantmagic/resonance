@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-use App\GraphQLDatabaseQueryAdapter;
-use App\GraphQLReusableDatabaseQueryInterface;
 use GraphQL\Executor\Promise\Promise;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use LogicException;
