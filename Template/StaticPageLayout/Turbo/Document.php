@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Resonance\Template\StaticPageLayout\Turbo;
 
-use App\Template\Component\StaticPageBreadcrumbs;
-use App\Template\Component\StaticPageDocumentsMenu;
-use App\Template\Component\StaticPageDocumentTableOfContents;
 use Ds\Map;
 use Generator;
 use Resonance\CommonMarkRenderedContentWithTableOfContentsLinks;
 use Resonance\StaticPage;
 use Resonance\StaticPageCollectionAggregate;
 use Resonance\StaticPageContentRenderer;
+use Resonance\Template\Component\StaticPageBreadcrumbs;
+use Resonance\Template\Component\StaticPageDocumentsMenu;
+use Resonance\Template\Component\StaticPageDocumentTableOfContents;
 use Resonance\Template\StaticPageLayout\Turbo;
 use Resonance\TemplateFilters;
 
