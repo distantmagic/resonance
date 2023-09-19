@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-use App\RPCMethod;
-
 /**
  * @psalm-suppress PossiblyUnusedProperty
  *
@@ -14,7 +12,7 @@ use App\RPCMethod;
 readonly class RPCNotification
 {
     public function __construct(
-        public RPCMethod $method,
+        public RPCMethodInterface $method,
         public mixed $payload,
     ) {}
 }

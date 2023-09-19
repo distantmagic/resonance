@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Resonance;
 
 use App\InputValidatedData\RPCMessage;
-use App\RPCMethod;
 use DomainException;
 use Ds\Map;
 
 readonly class WebSocketRPCResponderAggregate
 {
     /**
-     * @var Map<RPCMethod,WebSocketRPCResponderInterface> $rpcResponders
+     * @var Map<RPCMethodInterface,WebSocketRPCResponderInterface> $rpcResponders
      */
     public Map $rpcResponders;
 
@@ -35,7 +34,7 @@ readonly class WebSocketRPCResponderAggregate
     private function selectResponder(RPCMessage $rpcMessage): WebSocketRPCResponderInterface
     {
         if (!$this->rpcResponders->hasKey($rpcMessage->method)) {
-            throw new DomainException('Unsupported RPC method: '.$rpcMessage->method->value);
+            throw new DomainException('Unsupported RPC method: '.$rpcMessage->method->getName());
         }
 
         return $this->rpcResponders->get($rpcMessage->method);

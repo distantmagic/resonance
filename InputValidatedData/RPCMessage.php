@@ -12,12 +12,16 @@ use App\RPCMethod;
  */
 readonly class RPCMessage extends InputValidatedData
 {
+    public RPCMethod $method;
+
     /**
      * @param TPayload $payload
      */
     public function __construct(
-        public RPCMethod $method,
+        string $methodName,
         public mixed $payload,
         public ?string $requestId,
-    ) {}
+    ) {
+        $this->method = RPCMethod::from($methodName);
+    }
 }
