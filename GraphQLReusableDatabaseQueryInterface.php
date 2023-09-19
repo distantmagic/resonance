@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-use App\DatabaseQueryInterface;
-
 /**
  * @template TResult
  *

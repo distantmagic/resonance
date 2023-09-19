@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Resonance;
 
 use App\DatabaseEntity\User;
-use App\SessionAuthentication;
 use Resonance\Attribute\Singleton;
 use Swoole\Http\Request;
 

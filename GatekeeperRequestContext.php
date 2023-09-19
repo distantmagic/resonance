@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-use App\SessionAuthentication;
 use Swoole\Http\Request;
 
 readonly class GatekeeperRequestContext

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Resonance\WebSocketProtocolController;
 
-use App\CSRFManager;
-use App\SessionAuthentication;
 use App\SingletonCollection;
 use App\SiteAction;
 use Ds\Map;
@@ -14,8 +12,10 @@ use Nette\Schema\ValidationException;
 use Psr\Log\LoggerInterface;
 use Resonance\Attribute\ControlsWebSocketProtocol;
 use Resonance\Attribute\Singleton;
+use Resonance\CSRFManager;
 use Resonance\Gatekeeper;
 use Resonance\InputValidator\RPCMessageValidator;
+use Resonance\SessionAuthentication;
 use Resonance\WebSocketAuthResolution;
 use Resonance\WebSocketConnection;
 use Resonance\WebSocketConnectionController\RPCConnectionController;
