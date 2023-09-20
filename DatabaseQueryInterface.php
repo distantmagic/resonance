@@ -12,8 +12,6 @@ interface DatabaseQueryInterface
     /**
      * I wish PHP had generics.
      *
-     * @psalm-suppress MissingReturnType
-     *
      * @return TResult
      */
     public function execute();

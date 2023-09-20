@@ -35,7 +35,6 @@ readonly class DatabasePreparedStatement
          * There is no way to change the global const types in psalm config
          * at the moment.
          *
-         * @psalm-suppress RedundantCondition
          * @psalm-suppress TypeDoesNotContainType
          */
         if (DM_DB_LOG_QUERIES) {

@@ -36,7 +36,12 @@ readonly class HttpResponderAggregate
     public function respond(Request $request, Response $response): void
     {
         try {
-            $this->selectResponder($request)->respond($request, $response);
+            $responder = $this->selectResponder($request);
+
+            while ($responder instanceof HttpResponderInterface) {
+                $responder = $responder->respond($request, $response);
+            }
+
             $this->sessionManager->persistSession($request);
         } catch (Throwable $throwable) {
             $this->serverError->respondWithThrowable($request, $response, $throwable);

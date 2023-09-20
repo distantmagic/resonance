@@ -104,12 +104,6 @@ final class SwooleFuture
 
         $this->awaitingThenables->clear();
 
-        /**
-         * This is not a dead code, see the above comment about
-         * RedundantCondition check.
-         *
-         * @psalm-suppress NoValue
-         */
         return new SwooleFutureResult($this->state, $this->result);
     }
 

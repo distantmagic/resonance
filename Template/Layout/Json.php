@@ -6,6 +6,7 @@ namespace Resonance\Template\Layout;
 
 use JsonSerializable;
 use Resonance\ContentType;
+use Resonance\HttpResponderInterface;
 use Resonance\Template\Layout;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -19,12 +20,14 @@ abstract readonly class Json extends Layout
         return ContentType::ApplicationJson;
     }
 
-    public function write(Request $request, Response $response): void
+    public function respond(Request $request, Response $response): ?HttpResponderInterface
     {
         $this->sendContentTypeHeader($request, $response);
         $response->end(json_encode(
             value: $this->renderJson($request, $response),
             flags: JSON_THROW_ON_ERROR,
         ));
+
+        return null;
     }
 }

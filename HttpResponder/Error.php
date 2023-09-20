@@ -10,6 +10,7 @@ use Resonance\ContentTypeResponder;
 use Resonance\ErrorHttpResponderDependencies;
 use Resonance\HttpError;
 use Resonance\HttpResponder;
+use Resonance\HttpResponderInterface;
 use Resonance\SecurityPolicyHeaders;
 use Resonance\Template\Layout\Json\Error as JsonErrorTemplate;
 use Swoole\Http\Request;
@@ -37,30 +38,32 @@ abstract readonly class Error extends HttpResponder
         $this->contentTypeResponder->responders->add(ContentType::ApplicationJson);
     }
 
-    public function respond(Request $request, Response $response): void
+    public function respond(Request $request, Response $response): HttpResponderInterface
     {
-        match ($this->contentTypeResponder->best($request)) {
+        return match ($this->contentTypeResponder->best($request)) {
             ContentType::ApplicationJson => $this->respondWithJson($request, $response),
             ContentType::TextHtml => $this->respondWithHtml($request, $response),
-            default => $this->notAcceptable->respond($request, $response),
+            default => $this->notAcceptable,
         };
     }
 
-    private function respondWithHtml(Request $request, Response $response): void
+    private function respondWithHtml(Request $request, Response $response): HttpResponderInterface
     {
         $response->status($this->httpError->code());
         $this->securityPolicyHeaders->sendTemplatedPagePolicyHeaders($request, $response);
 
         $this->htmlTemplate->setError($request, $this->httpError);
-        $this->htmlTemplate->write($request, $response);
+
+        return $this->htmlTemplate;
     }
 
-    private function respondWithJson(Request $request, Response $response): void
+    private function respondWithJson(Request $request, Response $response): HttpResponderInterface
     {
         $response->status($this->httpError->code());
         $this->securityPolicyHeaders->sendJsonPagePolicyHeaders($response);
 
         $this->jsonTemplate->setError($request, $this->httpError);
-        $this->jsonTemplate->write($request, $response);
+
+        return $this->jsonTemplate;
     }
 }
