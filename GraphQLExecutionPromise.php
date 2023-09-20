@@ -30,9 +30,9 @@ class GraphQLExecutionPromise implements JsonSerializable
     }
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod
+     * This is a false positive. It's used when rendering GraphQL Json layout.
      *
-     * @todo revisit after factoring
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function jsonSerialize(): mixed
     {

@@ -14,9 +14,6 @@ use Stringable;
  * `swoole_error_log` does not return any value.
  *
  * @psalm-suppress UnusedFunctionCall
- * @psalm-suppress UnusedClass
- *
- * @todo revisit after factoring
  */
 #[Singleton(provides: LoggerInterface::class)]
 final readonly class SwooleLoggerBridge implements LoggerInterface
