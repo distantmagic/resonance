@@ -7,6 +7,7 @@ namespace Resonance\Template\Layout\Json;
 use JsonSerializable;
 use Resonance\Attribute\Singleton;
 use Resonance\GraphQLExecutionPromise;
+use Resonance\SecurityPolicyHeaders;
 use Resonance\Template\Layout\Json;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -20,8 +21,10 @@ readonly class GraphQL extends Json
      */
     public WeakMap $executionPromises;
 
-    public function __construct()
+    public function __construct(SecurityPolicyHeaders $securityPolicyHeaders)
     {
+        parent::__construct($securityPolicyHeaders);
+
         /**
          * @var WeakMap<Request,GraphQLExecutionPromise>
          */

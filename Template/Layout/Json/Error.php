@@ -6,6 +6,7 @@ namespace Resonance\Template\Layout\Json;
 
 use Resonance\Attribute\Singleton;
 use Resonance\HttpError;
+use Resonance\SecurityPolicyHeaders;
 use Resonance\Template\ErrorTemplateInterface;
 use Resonance\Template\Layout\Json;
 use Swoole\Http\Request;
@@ -20,8 +21,10 @@ readonly class Error extends Json implements ErrorTemplateInterface
      */
     private WeakMap $errors;
 
-    public function __construct()
+    public function __construct(SecurityPolicyHeaders $securityPolicyHeaders)
     {
+        parent::__construct($securityPolicyHeaders);
+
         /**
          * @var WeakMap<Request,HttpError>
          */
