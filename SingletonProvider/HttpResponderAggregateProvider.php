@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Resonance\SingletonProvider;
 
-use App\HttpResponder\Error\MethodNotAllowed;
-use App\HttpResponder\Error\PageNotFound;
-use App\HttpResponder\Error\ServerError;
 use FastRoute\Dispatcher;
 use Resonance\Attribute\RespondsToHttp;
 use Resonance\Attribute\Singleton;
+use Resonance\HttpResponder\Error\MethodNotAllowed;
+use Resonance\HttpResponder\Error\PageNotFound;
+use Resonance\HttpResponder\Error\ServerError;
 use Resonance\HttpResponderAggregate;
 use Resonance\HttpResponderInterface;
 use Resonance\HttpRouteMatchRegistry;

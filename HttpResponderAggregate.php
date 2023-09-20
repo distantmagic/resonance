@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-use App\HttpResponder\Error\MethodNotAllowed;
-use App\HttpResponder\Error\PageNotFound;
-use App\HttpResponder\Error\ServerError;
 use DomainException;
 use Ds\Map;
 use FastRoute\Dispatcher;
+use Resonance\HttpResponder\Error\MethodNotAllowed;
+use Resonance\HttpResponder\Error\PageNotFound;
+use Resonance\HttpResponder\Error\ServerError;
 use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
