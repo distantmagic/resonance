@@ -7,6 +7,8 @@ namespace Resonance\SingletonProvider;
 use FastRoute\Dispatcher;
 use Resonance\Attribute\RespondsToHttp;
 use Resonance\Attribute\Singleton;
+use Resonance\Gatekeeper;
+use Resonance\HttpResponder\Error\Forbidden;
 use Resonance\HttpResponder\Error\MethodNotAllowed;
 use Resonance\HttpResponder\Error\PageNotFound;
 use Resonance\HttpResponder\Error\ServerError;
@@ -18,6 +20,7 @@ use Resonance\SingletonAttribute;
 use Resonance\SingletonCollection;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
+use Resonance\SiteActionSubjectAggregate;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 /**
@@ -31,22 +34,28 @@ final readonly class HttpResponderAggregateProvider extends SingletonProvider
 {
     public function __construct(
         private Dispatcher $httpRouteDispatcher,
+        private Forbidden $forbidden,
+        private Gatekeeper $gatekeeper,
         private HttpRouteMatchRegistry $routeMatchRegistry,
         private MethodNotAllowed $methodNotAllowed,
         private PageNotFound $pageNotFound,
         private ServerError $serverError,
         private SessionManager $sessionManager,
+        private SiteActionSubjectAggregate $siteActionSubjectAggregate,
     ) {}
 
     public function provide(SingletonContainer $singletons, ?ConsoleOutputInterface $output = null): HttpResponderAggregate
     {
         $httpResponderAggregate = new HttpResponderAggregate(
             $this->httpRouteDispatcher,
+            $this->forbidden,
+            $this->gatekeeper,
             $this->routeMatchRegistry,
             $this->methodNotAllowed,
             $this->pageNotFound,
             $this->serverError,
             $this->sessionManager,
+            $this->siteActionSubjectAggregate,
         );
 
         foreach ($this->collectResponders($singletons) as $httpResponderAttribute) {

@@ -7,6 +7,7 @@ namespace Resonance;
 use DomainException;
 use Ds\Map;
 use FastRoute\Dispatcher;
+use Resonance\HttpResponder\Error\Forbidden;
 use Resonance\HttpResponder\Error\MethodNotAllowed;
 use Resonance\HttpResponder\Error\PageNotFound;
 use Resonance\HttpResponder\Error\ServerError;
@@ -24,11 +25,14 @@ readonly class HttpResponderAggregate
 
     public function __construct(
         private Dispatcher $httpRouteDispatcher,
+        private Forbidden $forbidden,
+        private Gatekeeper $gatekeeper,
         private HttpRouteMatchRegistry $routeMatchRegistry,
         private MethodNotAllowed $methodNotAllowed,
         private PageNotFound $pageNotFound,
         private ServerError $serverError,
         private SessionManager $sessionManager,
+        private SiteActionSubjectAggregate $siteActionSubjectAggregate,
     ) {
         $this->httpResponders = new Map();
     }
@@ -39,6 +43,14 @@ readonly class HttpResponderAggregate
             $responder = $this->selectResponder($request);
 
             while ($responder instanceof HttpResponderInterface) {
+                foreach ($this->siteActionSubjectAggregate->getSiteActions($responder) as $siteAction) {
+                    if (!$this->gatekeeper->withRequest($request)->can($siteAction)) {
+                        $responder = $this->forbidden->respond($request, $response);
+
+                        continue 2;
+                    }
+                }
+
                 $responder = $responder->respond($request, $response);
             }
 
