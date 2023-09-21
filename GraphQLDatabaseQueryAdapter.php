@@ -46,7 +46,7 @@ readonly class GraphQLDatabaseQueryAdapter
         }
 
         if (!($data instanceof CrudActionSubjectInterface)) {
-            throw new InvalidReturnType('Expected database query result to be an instance of CrudActionSubjectInterface');
+            throw new InvalidReturnType('Expected database query result to be an instance of CrudActionSubjectInterface. Got: '.$data::class);
         }
 
         if (!$this->gatekeeperUserContext->canCrud($data, CrudAction::Read)) {
