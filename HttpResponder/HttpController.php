@@ -8,9 +8,9 @@ use Closure;
 use LogicException;
 use ReflectionMethod;
 use Resonance\Attribute\RouteParameter;
-use Resonance\ControllerDependencies;
 use Resonance\CrudActionSubjectInterface;
 use Resonance\Gatekeeper;
+use Resonance\HttpControllerDependencies;
 use Resonance\HttpControllerParameterResolutionResult;
 use Resonance\HttpControllerParameterResolutionStatus;
 use Resonance\HttpControllerReflectionMethod;
@@ -39,7 +39,7 @@ abstract readonly class HttpController extends HttpResponder
      */
     private Closure $handleReflectionCallback;
 
-    public function __construct(ControllerDependencies $controllerDependencies)
+    public function __construct(HttpControllerDependencies $controllerDependencies)
     {
         $this->badRequest = $controllerDependencies->badRequest;
         $this->forbidden = $controllerDependencies->forbidden;

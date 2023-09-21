@@ -9,9 +9,8 @@ use Resonance\HttpResponder\Error\BadRequest;
 use Resonance\HttpResponder\Error\Forbidden;
 use Resonance\HttpResponder\Error\PageNotFound;
 
-
 #[Singleton]
-readonly class ControllerDependencies
+readonly class HttpControllerDependencies
 {
     public function __construct(
         public BadRequest $badRequest,
