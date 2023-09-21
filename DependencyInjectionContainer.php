@@ -52,20 +52,6 @@ readonly class DependencyInjectionContainer
         }
     }
 
-    private function enhanceErrorMessage(
-        ReflectionParameter $parameter,
-        ?ReflectionNamedType $type,
-        string $errorMessage,
-    ): string {
-        return sprintf(
-            '%s. Trying to build: %s(%s$%s)',
-            $errorMessage,
-            (string) $parameter->getDeclaringClass()?->getName(),
-            $type ? $type->getName().' ' : '',
-            $parameter->getName(),
-        );
-    }
-
     private function getParameterValue(ReflectionParameter $parameter): mixed
     {
         $type = $parameter->getType();
@@ -90,7 +76,7 @@ readonly class DependencyInjectionContainer
                 return $parameter->getDefaultValue();
             }
 
-            throw new LogicException($this->enhanceErrorMessage($parameter, $type, 'Parameter is a built-in type without a default value'));
+            $this->reportError('Parameter is a built-in type without a default value', $parameter, $type);
         }
 
         if (!$this->singletons->has($type->getName()) && $parameter->isDefaultValueAvailable()) {
@@ -98,7 +84,7 @@ readonly class DependencyInjectionContainer
         }
 
         if (!$this->singletons->has($type->getName())) {
-            throw new LogicException($this->enhanceErrorMessage($parameter, $type, 'Singleton for parameter is not set'));
+            $this->reportError('Singleton for parameter is not set', $parameter, $type);
         }
 
         return $this->singletons->get($type->getName());
@@ -107,9 +93,23 @@ readonly class DependencyInjectionContainer
     private function getUntypedParameterValue(ReflectionParameter $parameter): mixed
     {
         if (!$parameter->isDefaultValueAvailable()) {
-            throw new LogicException($this->enhanceErrorMessage($parameter, null, 'Parameter is not typed and no default value is available'));
+            $this->reportError('Parameter is not typed and no default value is available', $parameter);
         }
 
         return $parameter->getDefaultValue();
+    }
+
+    private function reportError(
+        string $errorMessage,
+        ReflectionParameter $parameter,
+        ?ReflectionNamedType $type = null,
+    ): never {
+        throw new LogicException(sprintf(
+            '%s. Trying to build: %s(%s$%s)',
+            $errorMessage,
+            (string) $parameter->getDeclaringClass()?->getName(),
+            $type ? $type->getName().' ' : '',
+            $parameter->getName(),
+        ));
     }
 }
