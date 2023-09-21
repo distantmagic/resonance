@@ -7,6 +7,7 @@ namespace Resonance;
 use DomainException;
 use Ds\Map;
 use FastRoute\Dispatcher;
+use Resonance\HttpResponder\Error\BadRequest;
 use Resonance\HttpResponder\Error\Forbidden;
 use Resonance\HttpResponder\Error\MethodNotAllowed;
 use Resonance\HttpResponder\Error\PageNotFound;
@@ -24,6 +25,9 @@ readonly class HttpResponderAggregate
     public Map $httpResponders;
 
     public function __construct(
+        private BadRequest $badRequest,
+        private CSRFManager $csrfManager,
+        private CSRFResponderAggregate $csrfResponderAggregate,
         private Dispatcher $httpRouteDispatcher,
         private Forbidden $forbidden,
         private Gatekeeper $gatekeeper,
@@ -42,17 +46,16 @@ readonly class HttpResponderAggregate
         try {
             $responder = $this->selectResponder($request);
 
-            while ($responder instanceof HttpResponderInterface) {
-                foreach ($this->siteActionSubjectAggregate->getSiteActions($responder) as $siteAction) {
-                    if (!$this->gatekeeper->withRequest($request)->can($siteAction)) {
-                        $responder = $this->forbidden->respond($request, $response);
-
-                        continue 2;
-                    }
-                }
-
-                $responder = $responder->respond($request, $response);
-            }
+            $recursiveResponder = new HttpRecursiveResponder(
+                $this->badRequest,
+                $this->csrfManager,
+                $this->csrfResponderAggregate,
+                $this->forbidden,
+                $this->gatekeeper,
+                $responder,
+                $this->siteActionSubjectAggregate,
+            );
+            $recursiveResponder->respond($request, $response);
 
             $this->sessionManager->persistSession($request);
         } catch (Throwable $throwable) {

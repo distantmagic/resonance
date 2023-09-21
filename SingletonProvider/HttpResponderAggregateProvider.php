@@ -7,7 +7,10 @@ namespace Resonance\SingletonProvider;
 use FastRoute\Dispatcher;
 use Resonance\Attribute\RespondsToHttp;
 use Resonance\Attribute\Singleton;
+use Resonance\CSRFManager;
+use Resonance\CSRFResponderAggregate;
 use Resonance\Gatekeeper;
+use Resonance\HttpResponder\Error\BadRequest;
 use Resonance\HttpResponder\Error\Forbidden;
 use Resonance\HttpResponder\Error\MethodNotAllowed;
 use Resonance\HttpResponder\Error\PageNotFound;
@@ -33,6 +36,9 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 final readonly class HttpResponderAggregateProvider extends SingletonProvider
 {
     public function __construct(
+        private BadRequest $badRequest,
+        private CSRFManager $csrfManager,
+        private CSRFResponderAggregate $csrfResponderAggregate,
         private Dispatcher $httpRouteDispatcher,
         private Forbidden $forbidden,
         private Gatekeeper $gatekeeper,
@@ -47,6 +53,9 @@ final readonly class HttpResponderAggregateProvider extends SingletonProvider
     public function provide(SingletonContainer $singletons, ?ConsoleOutputInterface $output = null): HttpResponderAggregate
     {
         $httpResponderAggregate = new HttpResponderAggregate(
+            $this->badRequest,
+            $this->csrfManager,
+            $this->csrfResponderAggregate,
             $this->httpRouteDispatcher,
             $this->forbidden,
             $this->gatekeeper,
