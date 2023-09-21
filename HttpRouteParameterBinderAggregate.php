@@ -6,9 +6,7 @@ namespace Resonance;
 
 use Ds\Map;
 use LogicException;
-use Resonance\Attribute\Singleton;
 
-#[Singleton]
 readonly class HttpRouteParameterBinderAggregate
 {
     /**

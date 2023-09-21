@@ -118,25 +118,33 @@ abstract readonly class Controller extends HttpResponder
     {
         $resolvedParameterValues = [];
 
-        foreach ($this->responderAttributes as $parameterName => $responderAttribute) {
-            $routeParameterValue = $this->routeMatchRegistry->get($request)->routeVars->get($responderAttribute->from, null);
+        foreach ($this->responderParameters as $parameterName => $parameterClass) {
+            $responderAttribute = $this->responderAttributes->get($parameterName, null);
 
-            if (is_null($routeParameterValue)) {
-                return $this->badRequest;
+            if ($responderAttribute) {
+                $routeParameterValue = $this->routeMatchRegistry->get($request)->routeVars->get($responderAttribute->from, null);
+
+                if (is_null($routeParameterValue)) {
+                    return $this->badRequest;
+                }
+
+                $parameterClass = $this->responderParameters->get($parameterName);
+                $object = $this->routeParameterBinderAggregate->provide($parameterClass, $routeParameterValue);
+
+                if (is_null($object)) {
+                    return $this->pageNotFound;
+                }
+
+                if (!$this->gatekeeper->withRequest($request)->crud($object)->can($responderAttribute->intent)) {
+                    return $this->forbidden;
+                }
+
+                $resolvedParameterValues[$parameterName] = $object;
+            } elseif ($request instanceof $parameterClass) {
+                $resolvedParameterValues[$parameterName] = $request;
+            } elseif ($response instanceof $parameterClass) {
+                $resolvedParameterValues[$parameterName] = $response;
             }
-
-            $parameterClass = $this->responderParameters->get($parameterName);
-            $object = $this->routeParameterBinderAggregate->provide($parameterClass, $routeParameterValue);
-
-            if (is_null($object)) {
-                return $this->pageNotFound;
-            }
-
-            if (!$this->gatekeeper->withRequest($request)->crud($object)->can($responderAttribute->intent)) {
-                return $this->forbidden;
-            }
-
-            $resolvedParameterValues[$parameterName] = $object;
         }
 
         return ($this->respondWithParametersClosure)(...$resolvedParameterValues);
