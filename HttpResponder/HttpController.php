@@ -23,7 +23,7 @@ use Resonance\HttpRouteParameterBinderAggregate;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
-abstract readonly class Controller extends HttpResponder
+abstract readonly class HttpController extends HttpResponder
 {
     protected BadRequest $badRequest;
     protected Forbidden $forbidden;
