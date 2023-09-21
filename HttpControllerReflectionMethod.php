@@ -6,6 +6,7 @@ namespace Resonance;
 
 use Ds\Map;
 use LogicException;
+use ReflectionAttribute;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
@@ -98,7 +99,10 @@ readonly class HttpControllerReflectionMethod
 
         $this->parameters->put($name, $className);
 
-        $routeParameterAttributes = $reflectionParameter->getAttributes(RouteParameter::class);
+        $routeParameterAttributes = $reflectionParameter->getAttributes(
+            RouteParameter::class,
+            ReflectionAttribute::IS_INSTANCEOF,
+        );
 
         if (is_a($className, Request::class, true) || is_a($className, Response::class, true)) {
             return;

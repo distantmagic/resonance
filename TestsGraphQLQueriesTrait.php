@@ -25,6 +25,7 @@ trait TestsGraphQLQueriesTrait
                     new SwoolePromiseAdapter(
                         new GraphQLDatabaseQueryAdapter(
                             new GatekeeperUserContext(
+                                self::$container->singletons->get(CrudActionGateAggregate::class),
                                 self::$container->singletons->get(SiteActionGateAggregate::class),
                                 null,
                             ),

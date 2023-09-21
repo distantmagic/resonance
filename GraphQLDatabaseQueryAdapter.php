@@ -45,7 +45,11 @@ readonly class GraphQLDatabaseQueryAdapter
             throw new InvalidReturnType('Query execution result is not an object');
         }
 
-        if (!$this->gatekeeperUserContext->crud($data)->can(CrudAction::Read)) {
+        if (!($data instanceof CrudActionSubjectInterface)) {
+            throw new InvalidReturnType('Expected database query result to be an instance of CrudActionSubjectInterface');
+        }
+
+        if (!$this->gatekeeperUserContext->canCrud($data, CrudAction::Read)) {
             throw new Forbidden('You do not have enough permissions to view this resource');
         }
 

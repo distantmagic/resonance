@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-abstract readonly class CrudActionGate
-{
-    abstract public function can(CrudAction $crudAction): bool;
-}
+/**
+ * @template TSubject of CrudActionSubjectInterface
+ *
+ * @template-implements CrudActionGateInterface<TSubject>
+ */
+abstract readonly class CrudActionGate implements CrudActionGateInterface {}

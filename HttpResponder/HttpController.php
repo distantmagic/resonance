@@ -9,6 +9,7 @@ use LogicException;
 use ReflectionMethod;
 use Resonance\Attribute\RouteParameter;
 use Resonance\ControllerDependencies;
+use Resonance\CrudActionSubjectInterface;
 use Resonance\Gatekeeper;
 use Resonance\HttpControllerParameterResolutionResult;
 use Resonance\HttpControllerParameterResolutionStatus;
@@ -112,7 +113,11 @@ abstract readonly class HttpController extends HttpResponder
             return new HttpControllerParameterResolutionResult(HttpControllerParameterResolutionStatus::NotFound);
         }
 
-        if (!$this->gatekeeper->withRequest($request)->crud($object)->can($attribute->intent)) {
+        if (!($object instanceof CrudActionSubjectInterface)) {
+            throw new LogicException('Bound parameter cannot be subjected to Gatekeeper check');
+        }
+
+        if (!$this->gatekeeper->withRequest($request)->canCrud($object, $attribute->intent)) {
             return new HttpControllerParameterResolutionResult(HttpControllerParameterResolutionStatus::Forbidden);
         }
 

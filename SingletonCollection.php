@@ -6,10 +6,11 @@ namespace Resonance;
 
 enum SingletonCollection implements SingletonCollectionInterface
 {
+    case CrudActionGate;
     case GraphQLRootQueryField;
     case HttpParameterBinder;
     case HttpResponder;
-    case SiteAction;
+    case SiteActionGate;
     case WebSocketProtocolController;
     case WebSocketRPCResponder;
 }

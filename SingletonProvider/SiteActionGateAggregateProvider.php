@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
  */
 #[Singleton(
     provides: SiteActionGateAggregate::class,
-    requiresCollection: SingletonCollection::SiteAction,
+    requiresCollection: SingletonCollection::SiteActionGate,
 )]
 final readonly class SiteActionGateAggregateProvider extends SingletonProvider
 {
