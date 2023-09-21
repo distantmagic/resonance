@@ -144,6 +144,8 @@ abstract readonly class Controller extends HttpResponder
                 $resolvedParameterValues[$parameterName] = $request;
             } elseif ($response instanceof $parameterClass) {
                 $resolvedParameterValues[$parameterName] = $response;
+            } else {
+                throw new LogicException('Cannot bind controller attribute: '.$parameterName);
             }
         }
 
