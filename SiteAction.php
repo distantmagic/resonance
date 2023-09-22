@@ -9,4 +9,5 @@ enum SiteAction implements SiteActionInterface
     use NameableEnumTrait;
 
     case StartWebSocketRPCConnection;
+    case UseGraphQL;
 }
