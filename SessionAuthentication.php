@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-use App\DatabaseQuery\SelectUserById;
-use Psr\Log\LoggerInterface;
 use Resonance\Attribute\Singleton;
-use Swoole\Database\PDOPool;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use WeakMap;
@@ -21,9 +18,8 @@ final readonly class SessionAuthentication
     private WeakMap $authenticatedUsers;
 
     public function __construct(
-        private LoggerInterface $logger,
-        private PDOPool $pdoPool,
         private SessionManager $sessionManager,
+        private UserRepositoryInterface $userRepository,
     ) {
         /**
          * @var WeakMap<Request, ?UserInterface>
@@ -81,12 +77,6 @@ final readonly class SessionAuthentication
             return null;
         }
 
-        $selectUserById = new SelectUserById(
-            $this->logger,
-            $this->pdoPool,
-            $userId,
-        );
-
-        return $selectUserById->execute();
+        return $this->userRepository->findUserById($userId);
     }
 }
