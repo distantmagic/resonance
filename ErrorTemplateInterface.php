@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Resonance\Template;
+namespace Resonance;
 
-use Resonance\HttpError;
 use Swoole\Http\Request;
 
-interface ErrorTemplateInterface
+interface ErrorTemplateInterface extends TemplateInterface, TemplateWriterInterface
 {
     public function setError(Request $request, HttpError $httpError): void;
 }

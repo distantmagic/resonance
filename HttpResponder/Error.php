@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace Resonance\HttpResponder;
 
-use App\Template\Layout\Turbo\Error as HtmlErrorTemplate;
 use Resonance\ContentType;
 use Resonance\ContentTypeResponder;
 use Resonance\ErrorHttpResponderDependencies;
+use Resonance\HtmlErrorTemplateInterface;
 use Resonance\HttpError;
 use Resonance\HttpResponder;
 use Resonance\HttpResponderInterface;
+use Resonance\JsonErrorTemplateInterface;
 use Resonance\SecurityPolicyHeaders;
-use Resonance\Template\Layout\Json\Error as JsonErrorTemplate;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
 abstract readonly class Error extends HttpResponder
 {
     private ContentTypeResponder $contentTypeResponder;
-    private HtmlErrorTemplate $htmlTemplate;
-    private JsonErrorTemplate $jsonTemplate;
+    private HtmlErrorTemplateInterface $htmlTemplate;
+    private JsonErrorTemplateInterface $jsonTemplate;
     private NotAcceptable $notAcceptable;
     private SecurityPolicyHeaders $securityPolicyHeaders;
 
