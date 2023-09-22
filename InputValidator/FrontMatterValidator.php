@@ -25,7 +25,7 @@ use Resonance\StaticPageLayoutHandler;
  */
 readonly class FrontMatterValidator extends InputValidator
 {
-    public function castValidatedData(mixed $data): FrontMatter
+    protected function castValidatedData(mixed $data): FrontMatter
     {
         $collections = iterator_to_array($this->normalizeDataCollections($data->collections));
 
@@ -39,7 +39,7 @@ readonly class FrontMatterValidator extends InputValidator
         );
     }
 
-    public function makeSchema(): Schema
+    protected function makeSchema(): Schema
     {
         $layouts = StaticPageLayoutHandler::values();
         $contentTypes = StaticPageContentType::values();

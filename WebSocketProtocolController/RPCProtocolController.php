@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Resonance\WebSocketProtocolController;
 
-use App\SiteAction;
 use Ds\Map;
 use JsonException;
 use Nette\Schema\ValidationException;
@@ -16,6 +15,7 @@ use Resonance\Gatekeeper;
 use Resonance\InputValidator\RPCMessageValidator;
 use Resonance\SessionAuthentication;
 use Resonance\SingletonCollection;
+use Resonance\SiteAction;
 use Resonance\WebSocketAuthResolution;
 use Resonance\WebSocketConnection;
 use Resonance\WebSocketConnectionController\RPCConnectionController;
@@ -40,12 +40,11 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
      */
     private Map $connectionControllers;
 
-    private RPCMessageValidator $rpcMessageValidator;
-
     public function __construct(
         private CSRFManager $csrfManager,
         private Gatekeeper $gatekeeper,
         private LoggerInterface $logger,
+        private RPCMessageValidator $rpcMessageValidator,
         private SessionAuthentication $sessionAuthentication,
         private WebSocketRPCResponderAggregate $webSocketRPCResponderAggregate,
     ) {
@@ -53,7 +52,6 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
          * @var Map<int, RPCConnectionController>
          */
         $this->connectionControllers = new Map();
-        $this->rpcMessageValidator = new RPCMessageValidator();
     }
 
     public function isAuthorizedToConnect(Request $request): WebSocketAuthResolution

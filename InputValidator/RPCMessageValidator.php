@@ -6,8 +6,10 @@ namespace Resonance\InputValidator;
 
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
+use Resonance\Attribute\Singleton;
 use Resonance\InputValidatedData\RPCMessage;
 use Resonance\InputValidator;
+use Resonance\RPCMethodValidatorInterface;
 
 /**
  * @extends InputValidator<RPCMessage, array{
@@ -16,17 +18,27 @@ use Resonance\InputValidator;
  *     2: null|string,
  * }>
  */
+#[Singleton]
 readonly class RPCMessageValidator extends InputValidator
 {
-    public function castValidatedData(mixed $data): RPCMessage
+    public function __construct(private RPCMethodValidatorInterface $rpcMethodValidator)
     {
-        return new RPCMessage($data[0], $data[1], $data[2]);
+        parent::__construct();
     }
 
-    public function makeSchema(): Schema
+    protected function castValidatedData(mixed $data): RPCMessage
+    {
+        return new RPCMessage(
+            $this->rpcMethodValidator->castToRPCMethod($data[0]),
+            $data[1],
+            $data[2],
+        );
+    }
+
+    protected function makeSchema(): Schema
     {
         return Expect::structure([
-            0 => Expect::string()->min(1)->required(),
+            0 => Expect::anyOf(...$this->rpcMethodValidator->cases())->required(),
             1 => Expect::mixed()->required(),
             2 => Expect::string()
                 ->nullable()

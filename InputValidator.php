@@ -31,9 +31,9 @@ abstract readonly class InputValidator
      *
      * @return TValidatedModel
      */
-    abstract public function castValidatedData(mixed $data): InputValidatedData;
+    abstract protected function castValidatedData(mixed $data): InputValidatedData;
 
-    abstract public function makeSchema(): Schema;
+    abstract protected function makeSchema(): Schema;
 
     /**
      * @param array<string,InputValidatorAssertion> $extraAssertions
