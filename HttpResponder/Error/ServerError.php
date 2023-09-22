@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Resonance\HttpResponder\Error;
 
+use Psr\Log\LoggerInterface;
 use Resonance\Attribute\Singleton;
 use Resonance\Environment;
 use Resonance\ErrorHttpResponderDependencies;
@@ -26,6 +27,7 @@ final readonly class ServerError extends Error
 
     public function __construct(
         ErrorHttpResponderDependencies $errorHttpResponderDependencies,
+        private LoggerInterface $logger,
         ServerErrorEntity $httpError,
     ) {
         parent::__construct($errorHttpResponderDependencies, $httpError);
@@ -55,8 +57,12 @@ final readonly class ServerError extends Error
             return;
         }
 
+        $message = $this->whoops->handleException($throwable);
+
+        $this->logger->error($message);
+
         $response->status(500);
         $response->header('content-type', $this->handler->contentType());
-        $response->end($this->whoops->handleException($throwable));
+        $response->end($message);
     }
 }
