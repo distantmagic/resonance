@@ -10,7 +10,6 @@ use League\CommonMark\Extension\FrontMatter\Exception\InvalidFrontMatterExceptio
 use League\CommonMark\Extension\FrontMatter\FrontMatterExtension;
 use League\CommonMark\Extension\FrontMatter\FrontMatterParserInterface;
 use League\CommonMark\Extension\FrontMatter\Input\MarkdownInputWithFrontMatter;
-use Nette\Schema\ValidationException;
 use Resonance\InputValidatedData\FrontMatter;
 use Resonance\InputValidator\FrontMatterValidator;
 use Resonance\StaticPageFileException\FrontMatterValidationException;
@@ -22,14 +21,14 @@ use Symfony\Component\Finder\SplFileInfo;
 readonly class StaticPageIterator implements IteratorAggregate
 {
     private FrontMatterParserInterface $frontMatterParser;
-    private FrontMatterValidator $frontMatterValidator;
 
-    public function __construct(private StaticPageFileIterator $fileIterator)
-    {
+    public function __construct(
+        private FrontMatterValidator $frontMatterValidator,
+        private StaticPageFileIterator $fileIterator,
+    ) {
         $frontMatterExtension = new FrontMatterExtension();
 
         $this->frontMatterParser = $frontMatterExtension->getFrontMatterParser();
-        $this->frontMatterValidator = new FrontMatterValidator();
     }
 
     /**
@@ -72,10 +71,12 @@ readonly class StaticPageIterator implements IteratorAggregate
             throw new StaticPageFileException($file, 'File does not have a front matter');
         }
 
-        try {
-            return $this->frontMatterValidator->validateData($frontMatter);
-        } catch (ValidationException $exception) {
-            throw new FrontMatterValidationException($file, $exception);
+        $inputValidationResult = $this->frontMatterValidator->validateData($frontMatter);
+
+        if ($inputValidationResult->inputValidatedData) {
+            return $inputValidationResult->inputValidatedData;
         }
+
+        throw new FrontMatterValidationException($file, $inputValidationResult->getErrorMessage());
     }
 }

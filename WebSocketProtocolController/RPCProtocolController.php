@@ -6,7 +6,6 @@ namespace Resonance\WebSocketProtocolController;
 
 use Ds\Map;
 use JsonException;
-use Nette\Schema\ValidationException;
 use Psr\Log\LoggerInterface;
 use Resonance\Attribute\ControlsWebSocketProtocol;
 use Resonance\Attribute\Singleton;
@@ -132,13 +131,15 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
 
     private function onJsonMessage(Server $server, Frame $frame, mixed $jsonMessage): void
     {
-        try {
+        $inputValidationResult = $this->rpcMessageValidator->validateData($jsonMessage);
+
+        if ($inputValidationResult->inputValidatedData) {
             $this
                 ->getFrameController($frame)
-                ->onRPCMessage($this->rpcMessageValidator->validateData($jsonMessage))
+                ->onRPCMessage($inputValidationResult->inputValidatedData)
             ;
-        } catch (ValidationException $exception) {
-            $this->onProtocolError($server, $frame, $exception->getMessage());
+        } else {
+            $this->onProtocolError($server, $frame, $inputValidationResult->getErrorMessage());
         }
     }
 

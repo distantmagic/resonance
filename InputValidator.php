@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-use Ds\Map;
-use Nette\Schema\Elements\Type;
 use Nette\Schema\Processor;
 use Nette\Schema\Schema;
+use Nette\Schema\ValidationException;
 use Swoole\Http\Request;
 
 /**
@@ -17,11 +16,6 @@ use Swoole\Http\Request;
 abstract readonly class InputValidator
 {
     public const REGEXP_SLUG = '^[a-z][-a-z0-9]*$';
-
-    /**
-     * @var Map<string,InputValidatorAssertion>
-     */
-    protected Map $extraAssertions;
 
     private Processor $processor;
     private Schema $schema;
@@ -35,70 +29,51 @@ abstract readonly class InputValidator
 
     abstract protected function makeSchema(): Schema;
 
-    /**
-     * @param array<string,InputValidatorAssertion> $extraAssertions
-     */
-    public function __construct(array $extraAssertions = [])
+    public function __construct()
     {
-        $this->extraAssertions = new Map($extraAssertions);
         $this->processor = new Processor();
         $this->schema = $this->makeSchema();
     }
 
     /**
-     * @return TValidatedModel
+     * @return InputValidationResult<TValidatedModel>
      */
-    public function validateData(mixed $data): InputValidatedData
+    public function validateData(mixed $data): InputValidationResult
     {
-        /**
-         * Nette schema validation library is trusted to do that (cast anything
-         * into the validated data)
-         *
-         * @var TValidatedData $validatedData
-         */
-        $validatedData = $this->processor->process($this->schema, $data);
+        try {
+            /**
+             * Nette schema validation library is trusted to do that (cast anything
+             * into the validated data)
+             *
+             * @var TValidatedData $validatedData
+             */
+            $validatedData = $this->processor->process($this->schema, $data);
+        } catch (ValidationException $validationException) {
+            /**
+             * @var InputValidationResult<TValidatedModel>
+             */
+            $validationResult = new InputValidationResult();
 
-        return $this->castValidatedData($validatedData);
-    }
+            foreach ($validationException->getMessageObjects() as $message) {
+                $validationResult->errors->put(
+                    implode('.', $message->path),
+                    $message->toString(),
+                );
+            }
 
-    /**
-     * @return TValidatedModel
-     */
-    public function validateRequest(Request $request): InputValidatedData
-    {
-        return $this->validateData($request->post);
-    }
-
-    /**
-     * @psalm-suppress UnsafeInstantiation
-     *
-     * @todo Until PHP 8.3 introduces the ability to clone readonly properties,
-     * this method needs to employ UnsafeInstantiation or some form of
-     * reflection.
-     *
-     * @param array<string,InputValidatorAssertion> $extraAssertions
-     *
-     * @return InputValidator<TValidatedModel,TValidatedData>
-     */
-    public function withExtraAssertions(array $extraAssertions): self
-    {
-        /**
-         * @var InputValidator<TValidatedModel,TValidatedData>
-         */
-        return new static($extraAssertions);
-    }
-
-    protected function optionallyUseExtraAssertion(string $name, Type $schema): Type
-    {
-        if (!$this->extraAssertions->hasKey($name)) {
-            return $schema;
+            return $validationResult;
         }
 
-        $assertion = $this->extraAssertions->get($name);
-
-        return $schema->assert(
-            $assertion->assert(...),
-            $assertion->getMessage(),
+        return new InputValidationResult(
+            inputValidatedData: $this->castValidatedData($validatedData),
         );
+    }
+
+    /**
+     * @return InputValidationResult<TValidatedModel>
+     */
+    public function validateRequest(Request $request): InputValidationResult
+    {
+        return $this->validateData($request->post);
     }
 }
