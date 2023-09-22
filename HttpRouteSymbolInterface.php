@@ -4,7 +4,4 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-interface HttpRouteSymbolInterface
-{
-    public function getName(): string;
-}
+interface HttpRouteSymbolInterface extends NameableInterface {}

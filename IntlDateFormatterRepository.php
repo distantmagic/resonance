@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-use App\SupportedPrimaryLanguageCode;
 use Ds\Map;
 use IntlDateFormatter;
 
@@ -25,7 +24,7 @@ readonly class IntlDateFormatterRepository
     }
 
     public function getFormatter(
-        SupportedPrimaryLanguageCode $language,
+        SupportedLanguageCodeInterface $language,
         int $dateTimeFormat,
         int $timeTypeFormat,
     ): IntlDateFormatter {
@@ -36,7 +35,7 @@ readonly class IntlDateFormatterRepository
         }
 
         $formatter = new IntlDateFormatter(
-            $language->value,
+            $language->getName(),
             $dateTimeFormat,
             $timeTypeFormat,
         );
@@ -47,10 +46,10 @@ readonly class IntlDateFormatterRepository
     }
 
     private function createFormatterHash(
-        SupportedPrimaryLanguageCode $language,
+        SupportedLanguageCodeInterface $language,
         int $dateTimeFormat,
         int $timeTypeFormat,
     ): string {
-        return $language->value.(string) $dateTimeFormat.(string) $timeTypeFormat;
+        return $language->getName().(string) $dateTimeFormat.(string) $timeTypeFormat;
     }
 }

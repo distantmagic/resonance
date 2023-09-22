@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-use App\SupportedPrimaryLanguageCode;
 use Ds\Map;
 use Resonance\TranslationException\LanguageNotFoundException;
 use Resonance\TranslationException\PhraseNotFoundException;
@@ -13,7 +12,7 @@ use Swoole\Http\Request;
 readonly class Translator
 {
     /**
-     * @var Map<SupportedPrimaryLanguageCode, Map<string, string>>
+     * @var Map<SupportedLanguageCodeInterface, Map<string, string>>
      */
     public Map $translations;
 

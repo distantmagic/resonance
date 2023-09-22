@@ -7,9 +7,14 @@ namespace Resonance;
 interface RPCMethodValidatorInterface
 {
     /**
-     * @return array<string>
+     * @return array<RPCMethodInterface>
      */
     public function cases(): array;
 
     public function castToRPCMethod(string $methodName): RPCMethodInterface;
+
+    /**
+     * @return array<string>
+     */
+    public function names(): array;
 }

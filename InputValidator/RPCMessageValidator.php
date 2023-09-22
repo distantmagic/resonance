@@ -38,7 +38,7 @@ readonly class RPCMessageValidator extends InputValidator
     protected function makeSchema(): Schema
     {
         return Expect::structure([
-            0 => Expect::anyOf(...$this->rpcMethodValidator->cases())->required(),
+            0 => Expect::anyOf(...$this->rpcMethodValidator->names())->required(),
             1 => Expect::mixed()->required(),
             2 => Expect::string()
                 ->nullable()
