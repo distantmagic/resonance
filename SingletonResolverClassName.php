@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-readonly class SingletonDependency
+readonly class SingletonResolverClassName
 {
     /**
      * @param class-string $className

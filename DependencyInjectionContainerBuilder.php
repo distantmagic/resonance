@@ -68,11 +68,11 @@ final readonly class DependencyInjectionContainerBuilder
         }
     }
 
-    private function sortedDependencies(DependencyInjectionContainer $container): SingletonDependencyIterator
+    private function sortedDependencies(DependencyInjectionContainer $container): SingletonResolverClassNameIterator
     {
         $projectPhpReflections = new PHPFileReflectionClassIterator($this->phpFiles());
         $singletonAttributes = new PHPFileReflectionClassAttributeIterator($projectPhpReflections, Singleton::class);
 
-        return new SingletonDependencyIterator($container->singletons, $singletonAttributes);
+        return new SingletonResolverClassNameIterator($container->singletons, $singletonAttributes);
     }
 }

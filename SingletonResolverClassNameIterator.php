@@ -15,9 +15,9 @@ use ReflectionNamedType;
 use Resonance\Attribute\Singleton;
 
 /**
- * @template-implements IteratorAggregate<SingletonDependency>
+ * @template-implements IteratorAggregate<SingletonResolverClassName>
  */
-readonly class SingletonDependencyIterator implements IteratorAggregate
+readonly class SingletonResolverClassNameIterator implements IteratorAggregate
 {
     /**
      * @param PHPFileReflectionClassAttributeIterator<object,Singleton> $fileReflectionClassAttributeIterator
@@ -28,14 +28,14 @@ readonly class SingletonDependencyIterator implements IteratorAggregate
     ) {}
 
     /**
-     * @return Generator<SingletonDependency>
+     * @return Generator<SingletonResolverClassName>
      */
     public function getIterator(): Generator
     {
         $singletonDependencyMap = $this->buildSingletonDependencyMap();
 
         foreach ($this->topologicalSort($singletonDependencyMap)->reversed() as $className) {
-            yield new SingletonDependency(
+            yield new SingletonResolverClassName(
                 $className,
                 $singletonDependencyMap->providers->get($className),
             );
