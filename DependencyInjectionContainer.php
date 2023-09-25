@@ -79,15 +79,17 @@ readonly class DependencyInjectionContainer
             $this->reportError('Parameter is a built-in type without a default value', $parameter, $type);
         }
 
-        if (!$this->singletons->has($type->getName()) && $parameter->isDefaultValueAvailable()) {
+        $singletonClassName = $type->getName();
+
+        if (!$this->singletons->has($singletonClassName) && $parameter->isDefaultValueAvailable()) {
             return $parameter->getDefaultValue();
         }
 
-        if (!$this->singletons->has($type->getName())) {
+        if (!$this->singletons->has($singletonClassName)) {
             $this->reportError('Singleton for parameter is not set', $parameter, $type);
         }
 
-        return $this->singletons->get($type->getName());
+        return $this->singletons->get($singletonClassName);
     }
 
     private function getUntypedParameterValue(ReflectionParameter $parameter): mixed
