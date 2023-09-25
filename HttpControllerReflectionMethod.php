@@ -99,14 +99,14 @@ readonly class HttpControllerReflectionMethod
 
         $this->parameters->put($name, $className);
 
+        if (is_a($className, Request::class, true) || is_a($className, Response::class, true)) {
+            return;
+        }
+
         $routeParameterAttributes = $reflectionParameter->getAttributes(
             RouteParameter::class,
             ReflectionAttribute::IS_INSTANCEOF,
         );
-
-        if (is_a($className, Request::class, true) || is_a($className, Response::class, true)) {
-            return;
-        }
 
         if (empty($routeParameterAttributes)) {
             $this->reportError('You have to provide a RouteParameter attribute', $reflectionParameter, $type);
