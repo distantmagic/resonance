@@ -14,7 +14,6 @@ use Resonance\SingletonAttribute;
 use Resonance\SingletonCollection;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 /**
  * @template-extends SingletonProvider<GraphQLSchemaQueryInterface>
@@ -25,7 +24,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 )]
 final readonly class GraphQLSchemaQueryProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons, ?ConsoleOutputInterface $output = null): GraphQLSchemaQueryInterface
+    public function provide(SingletonContainer $singletons): GraphQLSchemaQueryInterface
     {
         $fields = [];
 

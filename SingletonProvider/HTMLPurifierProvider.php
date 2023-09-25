@@ -9,7 +9,6 @@ use HTMLPurifier_Config;
 use Resonance\Attribute\Singleton;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 /**
  * @template-extends SingletonProvider<HTMLPurifier>
@@ -17,7 +16,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 #[Singleton(provides: HTMLPurifier::class)]
 final readonly class HTMLPurifierProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons, ?ConsoleOutputInterface $output = null): HTMLPurifier
+    public function provide(SingletonContainer $singletons): HTMLPurifier
     {
         $purifierConfig = HTMLPurifier_Config::createDefault();
 

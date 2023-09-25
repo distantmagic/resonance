@@ -12,7 +12,6 @@ use Resonance\SingletonAttribute;
 use Resonance\SingletonCollection;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 /**
  * @template-extends SingletonProvider<HttpRouteParameterBinderAggregate>
@@ -23,7 +22,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 )]
 final readonly class HttpRouteParameterBinderAggregateProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons, ?ConsoleOutputInterface $output = null): HttpRouteParameterBinderAggregate
+    public function provide(SingletonContainer $singletons): HttpRouteParameterBinderAggregate
     {
         $httpResponderAggregate = new HttpRouteParameterBinderAggregate();
 

@@ -10,7 +10,6 @@ use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
 use Swoole\Database\PDOConfig;
 use Swoole\Database\PDOPool;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 /**
  * @template-extends SingletonProvider<PDOPool>
@@ -18,7 +17,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 #[Singleton(provides: PDOPool::class)]
 final readonly class SwoolePDOPoolProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons, ?ConsoleOutputInterface $output = null): PDOPool
+    public function provide(SingletonContainer $singletons): PDOPool
     {
         return new PDOPool($this->configFromGlobals());
     }

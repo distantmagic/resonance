@@ -12,7 +12,6 @@ use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
 use Resonance\WebSocketProtocolControllerAggregate;
 use Resonance\WebSocketProtocolControllerInterface;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 /**
  * @template-extends SingletonProvider<WebSocketProtocolControllerAggregate>
@@ -23,7 +22,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 )]
 final readonly class WebSocketProtocolControllerAggregateProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons, ?ConsoleOutputInterface $output = null): WebSocketProtocolControllerAggregate
+    public function provide(SingletonContainer $singletons): WebSocketProtocolControllerAggregate
     {
         $controllerAggregate = new WebSocketProtocolControllerAggregate();
 

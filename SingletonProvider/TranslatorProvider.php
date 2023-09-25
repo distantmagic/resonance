@@ -11,7 +11,6 @@ use Resonance\SingletonProvider;
 use Resonance\SupportedLanguageCodeRepositoryInterface;
 use Resonance\TranslationsLoader;
 use Resonance\Translator;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 /**
  * @template-extends SingletonProvider<Translator>
@@ -24,7 +23,7 @@ final readonly class TranslatorProvider extends SingletonProvider
         private SupportedLanguageCodeRepositoryInterface $supportedLanguageCodeRepository,
     ) {}
 
-    public function provide(SingletonContainer $singletons, ?ConsoleOutputInterface $output = null): Translator
+    public function provide(SingletonContainer $singletons): Translator
     {
         $translator = new Translator($this->languageDetector);
 

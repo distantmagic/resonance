@@ -12,7 +12,6 @@ use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
 use Resonance\WebSocketRPCResponderAggregate;
 use Resonance\WebSocketRPCResponderInterface;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 /**
  * @template-extends SingletonProvider<WebSocketRPCResponderAggregate>
@@ -23,7 +22,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 )]
 final readonly class WebSocketRPCResponderAggregateProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons, ?ConsoleOutputInterface $output = null): WebSocketRPCResponderAggregate
+    public function provide(SingletonContainer $singletons): WebSocketRPCResponderAggregate
     {
         $webSocketRPCResponderAggregate = new WebSocketRPCResponderAggregate();
 

@@ -24,7 +24,6 @@ use Resonance\SingletonCollection;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
 use Resonance\SiteActionSubjectAggregate;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 /**
  * @template-extends SingletonProvider<HttpResponderAggregate>
@@ -50,7 +49,7 @@ final readonly class HttpResponderAggregateProvider extends SingletonProvider
         private SiteActionSubjectAggregate $siteActionSubjectAggregate,
     ) {}
 
-    public function provide(SingletonContainer $singletons, ?ConsoleOutputInterface $output = null): HttpResponderAggregate
+    public function provide(SingletonContainer $singletons): HttpResponderAggregate
     {
         $httpResponderAggregate = new HttpResponderAggregate(
             $this->badRequest,

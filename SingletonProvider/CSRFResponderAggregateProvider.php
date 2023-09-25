@@ -12,7 +12,6 @@ use Resonance\SingletonAttribute;
 use Resonance\SingletonCollection;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 /**
  * @template-extends SingletonProvider<CSRFResponderAggregate>
@@ -23,7 +22,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 )]
 final readonly class CSRFResponderAggregateProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons, ?ConsoleOutputInterface $output = null): CSRFResponderAggregate
+    public function provide(SingletonContainer $singletons): CSRFResponderAggregate
     {
         $siteActionGateAggregate = new CSRFResponderAggregate();
 

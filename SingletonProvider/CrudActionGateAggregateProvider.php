@@ -21,7 +21,6 @@ use Resonance\SingletonAttribute;
 use Resonance\SingletonCollection;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Finder\SplFileInfo;
 
 /**
@@ -33,7 +32,7 @@ use Symfony\Component\Finder\SplFileInfo;
 )]
 final readonly class CrudActionGateAggregateProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons, ?ConsoleOutputInterface $output = null): CrudActionGateAggregate
+    public function provide(SingletonContainer $singletons): CrudActionGateAggregate
     {
         /**
          * @var Map<class-string<CrudActionGateInterface>,CrudActionGateInterface>

@@ -11,7 +11,6 @@ use Resonance\InternalLinkBuilder;
 use Resonance\SingletonCollection;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider\HttpRouteProvider;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 use function FastRoute\simpleDispatcher;
 
@@ -26,7 +25,7 @@ final readonly class FastRouteDispatcherProvider extends HttpRouteProvider
 {
     public function __construct(private InternalLinkBuilder $internalLinkBuilder) {}
 
-    public function provide(SingletonContainer $singletons, ?ConsoleOutputInterface $output = null): Dispatcher
+    public function provide(SingletonContainer $singletons): Dispatcher
     {
         return simpleDispatcher(fn (RouteCollector $routes) => $this->collectRoutes($singletons, $routes));
     }

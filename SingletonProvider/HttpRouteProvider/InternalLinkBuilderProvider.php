@@ -9,7 +9,6 @@ use Resonance\InternalLinkBuilder;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider\HttpRouteProvider;
 use Resonance\TemplatedLink;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 /**
  * @template-extends HttpRouteProvider<InternalLinkBuilder>
@@ -17,7 +16,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 #[Singleton(provides: InternalLinkBuilder::class)]
 final readonly class InternalLinkBuilderProvider extends HttpRouteProvider
 {
-    public function provide(SingletonContainer $singletons, ?ConsoleOutputInterface $output = null): InternalLinkBuilder
+    public function provide(SingletonContainer $singletons): InternalLinkBuilder
     {
         $internalLinkBuilder = new InternalLinkBuilder();
 

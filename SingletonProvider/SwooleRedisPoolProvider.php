@@ -9,7 +9,6 @@ use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
 use Swoole\Database\RedisConfig;
 use Swoole\Database\RedisPool;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 /**
  * @template-extends SingletonProvider<RedisPool>
@@ -17,7 +16,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 #[Singleton(provides: RedisPool::class)]
 final readonly class SwooleRedisPoolProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons, ?ConsoleOutputInterface $output = null): RedisPool
+    public function provide(SingletonContainer $singletons): RedisPool
     {
         return new RedisPool($this->configFromGlobals());
     }

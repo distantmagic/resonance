@@ -12,7 +12,6 @@ use Resonance\SingletonCollection;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
 use Resonance\SiteActionSubjectAggregate;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 /**
  * @template-extends SingletonProvider<SiteActionSubjectAggregate>
@@ -23,7 +22,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 )]
 final readonly class SiteActionSubjectAggregateProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons, ?ConsoleOutputInterface $output = null): SiteActionSubjectAggregate
+    public function provide(SingletonContainer $singletons): SiteActionSubjectAggregate
     {
         $siteActionGateAggregate = new SiteActionSubjectAggregate();
 

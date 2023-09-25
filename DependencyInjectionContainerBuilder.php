@@ -7,14 +7,13 @@ namespace Resonance;
 use Generator;
 use Resonance\Attribute\Singleton;
 use RuntimeException;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Finder\SplFileInfo;
 
 use function Swoole\Coroutine\run;
 
 final readonly class DependencyInjectionContainerBuilder
 {
-    public function __construct(private ?ConsoleOutputInterface $output = null) {}
+    public function __construct() {}
 
     public function buildContainer(): DependencyInjectionContainer
     {
@@ -39,8 +38,6 @@ final readonly class DependencyInjectionContainerBuilder
 
     private function doBuildContainer(): DependencyInjectionContainer
     {
-        $this->output?->writeln('container: building services');
-
         $container = new DependencyInjectionContainer();
 
         foreach ($this->sortedDependencies($container) as $singletonDependency) {
@@ -49,12 +46,10 @@ final readonly class DependencyInjectionContainerBuilder
             $container->singletons->set(
                 $singletonDependency->className,
                 $singleton instanceof SingletonProviderInterface
-                    ? $singleton->provide($container->singletons, $this->output)
+                    ? $singleton->provide($container->singletons)
                     : $singleton
             );
         }
-
-        $this->output?->writeln('container: ready - starting application');
 
         return $container;
     }

@@ -11,7 +11,6 @@ use Resonance\EsbuildMeta;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
 use RuntimeException;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 /**
  * @template-extends SingletonProvider<EsbuildMeta>
@@ -19,7 +18,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 #[Singleton(provides: EsbuildMeta::class)]
 final readonly class EsbuildMetaProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons, ?ConsoleOutputInterface $output = null): EsbuildMeta
+    public function provide(SingletonContainer $singletons): EsbuildMeta
     {
         $esbuildMeta = new EsbuildMeta();
 
