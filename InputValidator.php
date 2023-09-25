@@ -15,7 +15,7 @@ use Swoole\Http\Request;
  */
 abstract readonly class InputValidator
 {
-    public const REGEXP_SLUG = '^[a-z][-a-z0-9]*$';
+    public const REGEXP_SLUG = '^[a-z][-a-z0-9]{3,}$';
 
     private Processor $processor;
     private Schema $schema;
