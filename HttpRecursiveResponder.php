@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Resonance;
 
+use Resonance\Attribute\Singleton;
 use Resonance\HttpResponder\Error\BadRequest;
 use Resonance\HttpResponder\Error\Forbidden;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
-readonly class HttpRecursiveResponder implements HttpResponderInterface
+#[Singleton]
+readonly class HttpRecursiveResponder
 {
     public function __construct(
         private BadRequest $badRequest,
@@ -17,34 +19,31 @@ readonly class HttpRecursiveResponder implements HttpResponderInterface
         private CSRFResponderAggregate $csrfResponderAggregate,
         private Forbidden $forbidden,
         private Gatekeeper $gatekeeper,
-        private HttpResponderInterface $responder,
         private SiteActionSubjectAggregate $siteActionSubjectAggregate,
     ) {}
 
-    /**
-     * This response is never going to be used as it's used as a final
-     * endpoint, so it's ok that this value is possibly
-     *
-     * @psalm-suppress PossiblyUnusedReturnValue
-     */
-    public function respond(Request $request, Response $response): null
+    public function respondRecursive(Request $request, Response $response, ?HttpResponderInterface $responder): void
     {
-        $responder = $this->responder;
-
         while ($responder instanceof HttpResponderInterface) {
             $responder = $this->authorizeSiteAction($request, $responder);
             $responder = $this->validateCSRFToken($request, $responder);
 
             $responder = $responder->respond($request, $response);
         }
-
-        return null;
     }
 
     private function authorizeSiteAction(Request $request, HttpResponderInterface $responder): HttpResponderInterface
     {
-        foreach ($this->siteActionSubjectAggregate->getSiteActions($responder) as $siteAction) {
-            if (!$this->gatekeeper->withRequest($request)->can($siteAction)) {
+        $siteActions = $this->siteActionSubjectAggregate->getSiteActions($responder);
+
+        if ($siteActions->isEmpty()) {
+            return $responder;
+        }
+
+        $gatekeeperUserContext = $this->gatekeeper->withRequest($request);
+
+        foreach ($siteActions as $siteAction) {
+            if (!$gatekeeperUserContext->can($siteAction)) {
                 return $this->forbidden;
             }
         }

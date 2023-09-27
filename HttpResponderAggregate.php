@@ -7,8 +7,6 @@ namespace Resonance;
 use DomainException;
 use Ds\Map;
 use FastRoute\Dispatcher;
-use Resonance\HttpResponder\Error\BadRequest;
-use Resonance\HttpResponder\Error\Forbidden;
 use Resonance\HttpResponder\Error\MethodNotAllowed;
 use Resonance\HttpResponder\Error\PageNotFound;
 use Resonance\HttpResponder\Error\ServerError;
@@ -25,41 +23,31 @@ readonly class HttpResponderAggregate
     public Map $httpResponders;
 
     public function __construct(
-        private BadRequest $badRequest,
-        private CSRFManager $csrfManager,
-        private CSRFResponderAggregate $csrfResponderAggregate,
         private Dispatcher $httpRouteDispatcher,
-        private Forbidden $forbidden,
-        private Gatekeeper $gatekeeper,
+        private HttpRecursiveResponder $recursiveResponder,
         private HttpRouteMatchRegistry $routeMatchRegistry,
         private MethodNotAllowed $methodNotAllowed,
         private PageNotFound $pageNotFound,
         private ServerError $serverError,
         private SessionManager $sessionManager,
-        private SiteActionSubjectAggregate $siteActionSubjectAggregate,
     ) {
         $this->httpResponders = new Map();
     }
 
     public function respond(Request $request, Response $response): void
     {
+        $responder = $this->selectResponder($request);
+
         try {
-            $responder = $this->selectResponder($request);
-
-            $recursiveResponder = new HttpRecursiveResponder(
-                $this->badRequest,
-                $this->csrfManager,
-                $this->csrfResponderAggregate,
-                $this->forbidden,
-                $this->gatekeeper,
-                $responder,
-                $this->siteActionSubjectAggregate,
-            );
-            $recursiveResponder->respond($request, $response);
-
-            $this->sessionManager->persistSession($request);
+            $this->recursiveResponder->respondRecursive($request, $response, $responder);
         } catch (Throwable $throwable) {
-            $this->serverError->respondWithThrowable($request, $response, $throwable);
+            $this->recursiveResponder->respondRecursive(
+                $request,
+                $response,
+                $this->serverError->respondWithThrowable($request, $response, $throwable),
+            );
+        } finally {
+            $this->sessionManager->persistSession($request);
         }
     }
 

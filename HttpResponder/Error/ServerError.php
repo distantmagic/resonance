@@ -10,6 +10,7 @@ use Resonance\Environment;
 use Resonance\ErrorHttpResponderDependencies;
 use Resonance\HttpError\ServerError as ServerErrorEntity;
 use Resonance\HttpResponder\Error;
+use Resonance\HttpResponderInterface;
 use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -44,7 +45,7 @@ final readonly class ServerError extends Error
         Request $request,
         Response $response,
         Throwable $throwable,
-    ): void {
+    ): ?HttpResponderInterface {
         captureException($throwable);
 
         if (!$response->isWritable()) {
@@ -52,9 +53,7 @@ final readonly class ServerError extends Error
         }
 
         if (Environment::Development !== DM_APP_ENV) {
-            $this->respond($request, $response);
-
-            return;
+            return $this->respond($request, $response);
         }
 
         $message = $this->whoops->handleException($throwable);
@@ -64,5 +63,7 @@ final readonly class ServerError extends Error
         $response->status(500);
         $response->header('content-type', $this->handler->contentType());
         $response->end($message);
+
+        return null;
     }
 }
