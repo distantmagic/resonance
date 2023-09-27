@@ -6,7 +6,7 @@ namespace Resonance\Event;
 
 use Resonance\Event;
 
-final readonly class HttpServerAfterStart extends Event
+final readonly class HttpServerStarted extends Event
 {
     public function __construct() {}
 }

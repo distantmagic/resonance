@@ -8,22 +8,22 @@ use Psr\Log\LoggerInterface;
 use Resonance\Attribute\ListensTo;
 use Resonance\Attribute\Singleton;
 use Resonance\Environment;
-use Resonance\Event\UserspaceThrowableNotCaptured;
+use Resonance\Event\UnhandledException;
 use Resonance\EventInterface;
 use Resonance\EventListener;
 use Resonance\SingletonCollection;
 
 /**
- * @template-extends EventListener<UserspaceThrowableNotCaptured,void>
+ * @template-extends EventListener<UnhandledException,void>
  */
-#[ListensTo(UserspaceThrowableNotCaptured::class)]
+#[ListensTo(UnhandledException::class)]
 #[Singleton(collection: SingletonCollection::EventListener)]
 final readonly class ReportThrowableToLogger extends EventListener
 {
     public function __construct(private LoggerInterface $logger) {}
 
     /**
-     * @param UserspaceThrowableNotCaptured $event
+     * @param UnhandledException $event
      */
     public function handle(EventInterface $event): void
     {

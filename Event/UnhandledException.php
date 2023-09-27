@@ -7,7 +7,7 @@ namespace Resonance\Event;
 use Resonance\Event;
 use Throwable;
 
-final readonly class UserspaceThrowableNotCaptured extends Event
+final readonly class UnhandledException extends Event
 {
     public function __construct(public Throwable $throwable) {}
 }
