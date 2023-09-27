@@ -6,7 +6,6 @@ namespace Resonance;
 
 use PDO;
 use PDOStatement;
-use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Swoole\Database\PDOPool;
 use Swoole\Database\PDOProxy;
@@ -19,7 +18,7 @@ readonly class DatabaseConnection
     private PDO|PDOProxy $pdo;
 
     public function __construct(
-        private LoggerInterface $logger,
+        private EventDispatcherInterface $eventDispatcher,
         private PDOPool $pdoPool,
     ) {
         $this->pdo = $this->pdoPool->get();
@@ -53,7 +52,7 @@ readonly class DatabaseConnection
         }
 
         return new DatabasePreparedStatement(
-            $this->logger,
+            $this->eventDispatcher,
             $this->pdo,
             $pdoPreparedStatement,
             $sql,
