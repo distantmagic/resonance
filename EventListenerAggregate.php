@@ -24,10 +24,6 @@ readonly class EventListenerAggregate
      */
     public function addListener(string $eventClass, EventListenerInterface $eventListener): void
     {
-        if (!$eventListener->shouldRegister()) {
-            return;
-        }
-
         $this->createGetListenersSet($eventClass)->add($eventListener);
     }
 

@@ -30,10 +30,12 @@ final readonly class EventListenerAggregateProvider extends SingletonProvider
         $eventListenerAggregate = new EventListenerAggregate();
 
         foreach ($this->collectResponders($singletons) as $eventListenerAttribute) {
-            $eventListenerAggregate->addListener(
-                $eventListenerAttribute->attribute->eventClass,
-                $eventListenerAttribute->singleton,
-            );
+            if ($eventListenerAttribute->singleton->shouldRegister()) {
+                $eventListenerAggregate->addListener(
+                    $eventListenerAttribute->attribute->eventClass,
+                    $eventListenerAttribute->singleton,
+                );
+            }
         }
 
         return $eventListenerAggregate;
