@@ -28,10 +28,7 @@ readonly class EventDispatcher implements EventDispatcherInterface
 
     public function dispatch(EventInterface $event): void
     {
-        $cid = go(function () use (&$event) {
-            /**
-             * @var EventInterface $event
-             */
+        $cid = go(function () use ($event) {
             $this->doDispatch($event);
         });
 
@@ -54,11 +51,7 @@ readonly class EventDispatcher implements EventDispatcherInterface
          * @var EventListenerInterface $listener
          */
         foreach ($listeners as $listener) {
-            array_push($batch, static function () use (&$event, &$listener): mixed {
-                /**
-                 * @var EventListenerInterface $listener
-                 * @var EventInterface         $event
-                 */
+            array_push($batch, static function () use ($event, $listener): mixed {
                 return $listener->handle($event);
             });
         }
