@@ -7,6 +7,7 @@ namespace Resonance;
 use DomainException;
 use Ds\Map;
 use FastRoute\Dispatcher;
+use Resonance\Event\UserspaceThrowableNotCaptured;
 use Resonance\HttpResponder\Error\MethodNotAllowed;
 use Resonance\HttpResponder\Error\PageNotFound;
 use Resonance\HttpResponder\Error\ServerError;
@@ -24,6 +25,7 @@ readonly class HttpResponderAggregate
 
     public function __construct(
         private Dispatcher $httpRouteDispatcher,
+        private EventDispatcherInterface $eventDispatcher,
         private HttpRecursiveResponder $recursiveResponder,
         private HttpRouteMatchRegistry $routeMatchRegistry,
         private MethodNotAllowed $methodNotAllowed,
@@ -41,6 +43,7 @@ readonly class HttpResponderAggregate
         try {
             $this->recursiveResponder->respondRecursive($request, $response, $responder);
         } catch (Throwable $throwable) {
+            $this->eventDispatcher->dispatch(new UserspaceThrowableNotCaptured($throwable));
             $this->recursiveResponder->respondRecursive(
                 $request,
                 $response,

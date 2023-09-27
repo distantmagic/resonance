@@ -17,8 +17,6 @@ use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Throwable;
 
-use function Sentry\captureException;
-
 #[Singleton]
 final readonly class ServerError extends Error
 {
@@ -35,8 +33,6 @@ final readonly class ServerError extends Error
         Response $response,
         Throwable $throwable,
     ): ?HttpResponderInterface {
-        captureException($throwable);
-
         $this->logger->error((string) $throwable);
 
         if (!$response->isWritable()) {

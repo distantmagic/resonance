@@ -28,11 +28,26 @@ readonly class EventDispatcher implements EventDispatcherInterface
         $cid = go(static function () use (&$event, &$listeners) {
             $batch = [];
 
+            /**
+             * @var EventListenerInterface $listener
+             */
             foreach ($listeners as $listener) {
-                $batch[] = static fn () => $listener->handle($event);
+                array_push($batch, static function () use (&$event, &$listener): void {
+                    /**
+                     * @var EventListenerInterface $listener
+                     * @var EventInterface         $event
+                     */
+                    $listener->handle($event);
+                });
             }
 
-            batch($batch);
+            /**
+             * Listeners have to return void, so there is no point to use their
+             * return values here.
+             *
+             * @psalm-suppress UnusedFunctionCall
+             */
+            batch($batch, DM_BATCH_PROMISE_TIMEOUT);
         });
 
         if (!is_int($cid)) {

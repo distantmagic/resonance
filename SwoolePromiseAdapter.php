@@ -25,7 +25,7 @@ readonly class SwoolePromiseAdapter implements PromiseAdapter
             $batch[] = $callback;
         }
 
-        $results = batch($batch);
+        $results = batch($batch, DM_BATCH_PROMISE_TIMEOUT);
 
         return $this->createFulfilled($results);
     }

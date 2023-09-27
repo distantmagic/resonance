@@ -67,7 +67,7 @@ readonly class GraphQLDatabaseQueryAdapter
              * @var mixed $dataItem explicitly mixed for typechecks
              */
             foreach ($data as $dataItem) {
-                $ret[] = $this->validateData($dataItem);
+                array_push($ret, $this->validateData($dataItem));
             }
 
             return new SwooleFutureResult(PromiseState::Fulfilled, $ret);

@@ -7,6 +7,7 @@ namespace Resonance\SingletonProvider;
 use FastRoute\Dispatcher;
 use Resonance\Attribute\RespondsToHttp;
 use Resonance\Attribute\Singleton;
+use Resonance\EventDispatcherInterface;
 use Resonance\HttpRecursiveResponder;
 use Resonance\HttpResponder\Error\MethodNotAllowed;
 use Resonance\HttpResponder\Error\PageNotFound;
@@ -31,6 +32,7 @@ final readonly class HttpResponderAggregateProvider extends SingletonProvider
 {
     public function __construct(
         private Dispatcher $httpRouteDispatcher,
+        private EventDispatcherInterface $eventDispatcher,
         private HttpRecursiveResponder $recursiveResponder,
         private HttpRouteMatchRegistry $routeMatchRegistry,
         private MethodNotAllowed $methodNotAllowed,
@@ -43,6 +45,7 @@ final readonly class HttpResponderAggregateProvider extends SingletonProvider
     {
         $httpResponderAggregate = new HttpResponderAggregate(
             $this->httpRouteDispatcher,
+            $this->eventDispatcher,
             $this->recursiveResponder,
             $this->routeMatchRegistry,
             $this->methodNotAllowed,
