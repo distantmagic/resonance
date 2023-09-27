@@ -16,7 +16,13 @@ use Swoole\WebSocket\Server;
 #[Singleton]
 final readonly class WebSocketServerController
 {
+    /**
+     * It is necessary to use this specific GUID.
+     *
+     * @see https://datatracker.ietf.org/doc/html/rfc6455
+     */
     private const HANDSHAKE_MAGIC_GUID = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
+
     private const SEC_WEBSOCKET_KEY_BASE64_DECODED_BYTES_STRLEN = 16;
     private const SEC_WEBSOCKET_KEY_BASE64_STRLEN = 24;
 

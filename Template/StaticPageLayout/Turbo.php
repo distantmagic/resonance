@@ -44,7 +44,7 @@ abstract readonly class Turbo extends StaticPageLayout
         HTML;
         yield <<<HTML
             <link rel="preload" href="{$this->versionedAsset('atkinson-hyperlegible-regular', 'ttf')}" as="font" type="font/ttf" crossorigin>
-            <link rel="preload" href="{$this->versionedAsset('oh-now', 'otf')}" as="font" crossorigin>
+            <link rel="preload" href="{$this->versionedAsset('lora', 'ttf')}" as="font" crossorigin>
             <link rel="preload" href="{$this->versionedAsset('undefined-medium', 'ttf')}" as="font" crossorigin>
             <link rel="stylesheet" href="{$this->versionedAsset('docs', 'css')}">
         </head>
