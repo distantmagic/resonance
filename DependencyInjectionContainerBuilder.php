@@ -43,12 +43,16 @@ final readonly class DependencyInjectionContainerBuilder
         foreach ($this->sortedDependencies($container) as $singletonDependency) {
             $singleton = $container->make($singletonDependency->resolver);
 
-            $container->singletons->set(
-                $singletonDependency->className,
-                $singleton instanceof SingletonProviderInterface
-                    ? $singleton->provide($container->singletons)
-                    : $singleton
-            );
+            if ($singleton instanceof SingletonProviderInterface) {
+                if ($singleton->shouldRegister()) {
+                    $container->singletons->set(
+                        $singletonDependency->className,
+                        $singleton->provide($container->singletons),
+                    );
+                }
+            } else {
+                $container->singletons->set($singletonDependency->className, $singleton);
+            }
         }
 
         return $container;

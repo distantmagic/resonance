@@ -6,5 +6,11 @@ namespace Resonance;
 
 interface EventDispatcherInterface
 {
-    public function dispatch(EventInterface $event): void;
+    /**
+     * This value is not used internally in the framework, but it still might
+     * be useful.
+     *
+     * @psalm-suppress PossiblyUnusedReturnValue
+     */
+    public function dispatch(EventInterface $event): SwooleFutureResult;
 }

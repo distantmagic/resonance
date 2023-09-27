@@ -6,8 +6,9 @@ namespace Resonance;
 
 /**
  * @template TEvent of EventInterface
+ * @template TResult
  *
- * @template-implements EventListenerInterface<TEvent>
+ * @template-implements EventListenerInterface<TEvent, TResult>
  */
 abstract readonly class EventListener implements EventListenerInterface
 {

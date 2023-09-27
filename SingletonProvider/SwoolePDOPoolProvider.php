@@ -22,6 +22,11 @@ final readonly class SwoolePDOPoolProvider extends SingletonProvider
         return new PDOPool($this->configFromGlobals());
     }
 
+    public function shouldRegister(): bool
+    {
+        return !empty(DM_DB_HOST);
+    }
+
     private function configFromGlobals(): PDOConfig
     {
         $pdoConfig = new PDOConfig();

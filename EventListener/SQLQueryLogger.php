@@ -14,7 +14,7 @@ use Resonance\EventListener;
 use Resonance\SingletonCollection;
 
 /**
- * @template-extends EventListener<SQLQueryBeforeExecute>
+ * @template-extends EventListener<SQLQueryBeforeExecute,void>
  */
 #[ListensTo(SQLQueryBeforeExecute::class)]
 #[Singleton(collection: SingletonCollection::EventListener)]

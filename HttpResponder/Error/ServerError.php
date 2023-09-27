@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Resonance\HttpResponder\Error;
 
-use Psr\Log\LoggerInterface;
 use Resonance\Attribute\Singleton;
 use Resonance\ContentType;
 use Resonance\Environment;
@@ -22,7 +21,6 @@ final readonly class ServerError extends Error
 {
     public function __construct(
         ErrorHttpResponderDependencies $errorHttpResponderDependencies,
-        private LoggerInterface $logger,
         ServerErrorEntity $httpError,
     ) {
         parent::__construct($errorHttpResponderDependencies, $httpError);
@@ -33,8 +31,6 @@ final readonly class ServerError extends Error
         Response $response,
         Throwable $throwable,
     ): ?HttpResponderInterface {
-        $this->logger->error((string) $throwable);
-
         if (!$response->isWritable()) {
             throw new RuntimeException('Server response in not writable. Unable to report error', 0, $throwable);
         }
