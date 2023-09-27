@@ -8,14 +8,12 @@ use Ds\Map;
 use Generator;
 use Resonance\Template\StaticPageLayout\Turbo\Document;
 use Resonance\Template\StaticPageLayout\Turbo\Page;
-use Resonance\Template\StaticPageLayout\Turbo\Wiki;
 use Throwable;
 
 readonly class StaticPageLayoutAggregate
 {
     private TemplateStaticPageLayoutInterface $document;
     private TemplateStaticPageLayoutInterface $page;
-    private TemplateStaticPageLayoutInterface $wiki;
 
     /**
      * @param Map<string,StaticPage> $staticPages
@@ -34,12 +32,6 @@ readonly class StaticPageLayoutAggregate
             $templateFilters,
         );
         $this->page = new Page(
-            $staticPages,
-            $staticPageCollectionAggregate,
-            $staticPageContentRenderer,
-            $templateFilters,
-        );
-        $this->wiki = new Wiki(
             $staticPages,
             $staticPageCollectionAggregate,
             $staticPageContentRenderer,
@@ -71,7 +63,6 @@ readonly class StaticPageLayoutAggregate
         return match ($layout) {
             StaticPageLayoutHandler::Document => $this->document,
             StaticPageLayoutHandler::Page => $this->page,
-            StaticPageLayoutHandler::Wiki => $this->wiki,
         };
     }
 }

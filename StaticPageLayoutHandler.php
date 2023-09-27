@@ -10,5 +10,4 @@ enum StaticPageLayoutHandler: string
 
     case Document = 'document';
     case Page = 'page';
-    case Wiki = 'wiki';
 }
