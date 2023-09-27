@@ -47,6 +47,16 @@ abstract readonly class Error extends HttpResponder
         };
     }
 
+    protected function respondWithJson(Request $request, Response $response): HttpResponderInterface
+    {
+        $response->status($this->httpError->code());
+        $this->securityPolicyHeaders->sendJsonPagePolicyHeaders($response);
+
+        $this->jsonTemplate->setError($request, $this->httpError);
+
+        return $this->jsonTemplate;
+    }
+
     private function respondWithHtml(Request $request, Response $response): HttpResponderInterface
     {
         $response->status($this->httpError->code());
@@ -55,15 +65,5 @@ abstract readonly class Error extends HttpResponder
         $this->htmlTemplate->setError($request, $this->httpError);
 
         return $this->htmlTemplate;
-    }
-
-    private function respondWithJson(Request $request, Response $response): HttpResponderInterface
-    {
-        $response->status($this->httpError->code());
-        $this->securityPolicyHeaders->sendJsonPagePolicyHeaders($response);
-
-        $this->jsonTemplate->setError($request, $this->httpError);
-
-        return $this->jsonTemplate;
     }
 }
