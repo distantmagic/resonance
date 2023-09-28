@@ -79,4 +79,13 @@ readonly class Document extends Turbo
         yield from $this->tableOfContents->render($renderedContent);
         yield '</div>';
     }
+
+    protected function renderMeta(): Generator
+    {
+        $highlighter = $this->versionedAsset('global_hljs', 'js');
+
+        yield <<<HTML
+        <script defer src="{$highlighter}"></script>
+        HTML;
+    }
 }

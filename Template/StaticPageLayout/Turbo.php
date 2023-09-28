@@ -46,6 +46,9 @@ abstract readonly class Turbo extends StaticPageLayout
             <link rel="preload" href="{$this->versionedAsset('atkinson-hyperlegible-regular', 'ttf')}" as="font" type="font/ttf" crossorigin>
             <link rel="preload" href="{$this->versionedAsset('lora', 'ttf')}" as="font" crossorigin>
             <link rel="preload" href="{$this->versionedAsset('undefined-medium', 'ttf')}" as="font" crossorigin>
+        HTML;
+        yield from $this->renderMeta();
+        yield <<<HTML
             <link rel="stylesheet" href="{$this->versionedAsset('docs', 'css')}">
         </head>
         <body>
@@ -75,6 +78,19 @@ abstract readonly class Turbo extends StaticPageLayout
         </body>
         </html>
         HTML;
+    }
+
+    /**
+     * @return Generator<string>
+     */
+    protected function renderMeta(): Generator
+    {
+        yield '';
+    }
+
+    protected function versionedAsset(string $basename, string $extension): string
+    {
+        return '/assets/'.$basename.'_'.DM_BUILD_ID.'.'.$extension;
     }
 
     private function isLinkActive(StaticPage $staticPage, StaticPage $currentPage): bool
@@ -107,10 +123,5 @@ abstract readonly class Turbo extends StaticPageLayout
                 $staticPage->frontMatter->title,
             );
         }
-    }
-
-    private function versionedAsset(string $basename, string $extension): string
-    {
-        return '/css/'.$basename.'_'.DM_BUILD_ID.'.'.$extension;
     }
 }
