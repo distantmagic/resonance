@@ -65,7 +65,9 @@ final class CommonMarkFencedCodeRenderer implements NodeRendererInterface, XmlNo
 
         return new HtmlElement(
             'pre',
-            [],
+            [
+                'class' => 'fenced-code',
+            ],
             new HtmlElement('code', $exportedAttrs, Xml::escape($node->getLiteral()))
         );
     }

@@ -4,12 +4,19 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-readonly class EsbuildMetaPreloadsRenderer
+use Stringable;
+
+readonly class EsbuildMetaPreloadsRenderer implements Stringable
 {
     public function __construct(
         private EsbuildMetaEntryPoints $esbuildMetaEntryPoints,
         private TemplateFilters $filters,
     ) {}
+
+    public function __toString(): string
+    {
+        return $this->render();
+    }
 
     public function render(): string
     {
