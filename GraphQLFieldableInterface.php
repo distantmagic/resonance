@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-interface GraphQLFieldable
+interface GraphQLFieldableInterface
 {
     public function toGraphQLField(): array;
 }

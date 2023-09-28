@@ -7,7 +7,7 @@ namespace Resonance\SingletonProvider;
 use LogicException;
 use Resonance\Attribute\GraphQLRootQueryField;
 use Resonance\Attribute\Singleton;
-use Resonance\GraphQLFieldable;
+use Resonance\GraphQLFieldableInterface;
 use Resonance\GraphQLSchemaQueryInterface;
 use Resonance\ObjectType\QueryType;
 use Resonance\SingletonAttribute;
@@ -42,13 +42,13 @@ final readonly class GraphQLSchemaQueryProvider extends SingletonProvider
     }
 
     /**
-     * @return iterable<SingletonAttribute<GraphQLFieldable,GraphQLRootQueryField>>
+     * @return iterable<SingletonAttribute<GraphQLFieldableInterface,GraphQLRootQueryField>>
      */
     private function collectQueryTypes(SingletonContainer $singletons): iterable
     {
         return $this->collectAttributes(
             $singletons,
-            GraphQLFieldable::class,
+            GraphQLFieldableInterface::class,
             GraphQLRootQueryField::class,
         );
     }

@@ -175,6 +175,9 @@ readonly class Document extends Turbo
                 <div class="documentation__related-pages__title">
                     &laquo; {$prevPage->frontMatter->title}
                 </div>
+                <div class="documentation__related-pages__description">
+                    {$prevPage->frontMatter->description}
+                </div>
             </a>
             HTML;
         }
@@ -192,6 +195,9 @@ readonly class Document extends Turbo
                 </div>
                 <div class="documentation__related-pages__title">
                     {$nextPage->frontMatter->title} &raquo;
+                </div>
+                <div class="documentation__related-pages__description">
+                    {$nextPage->frontMatter->description}
                 </div>
             </a>
             HTML;
