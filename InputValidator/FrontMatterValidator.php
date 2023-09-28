@@ -18,6 +18,7 @@ use Resonance\StaticPageLayoutHandler;
  *     collections: array<string|object{ name: string, next: string }>,
  *     content_type: string,
  *     description: string,
+ *     next: null|string,
  *     layout: string,
  *     parent: null|string,
  *     title: string,
@@ -34,6 +35,7 @@ readonly class FrontMatterValidator extends InputValidator
             contentType: StaticPageContentType::from($data->content_type),
             description: trim($data->description),
             layout: StaticPageLayoutHandler::from($data->layout),
+            next: $data->next,
             parent: $data->parent,
             title: trim($data->title),
         );
@@ -57,6 +59,7 @@ readonly class FrontMatterValidator extends InputValidator
             'description' => Expect::string()->min(1)->required(),
             'content_type' => Expect::anyOf(...$contentTypes)->default(StaticPageContentType::Markdown->value),
             'layout' => Expect::anyOf(...$layouts)->required(),
+            'next' => Expect::string()->min(1),
             'parent' => Expect::string()->min(1),
             'title' => Expect::string()->min(1)->required(),
         ]);

@@ -74,7 +74,7 @@ readonly class StaticPageCollection
     private function assertPageExists(Map $staticPages, string $basename): void
     {
         if (!$staticPages->hasKey($basename)) {
-            throw new StaticPageReferenceException('Static page used in the "next" field does not exist: '.$basename);
+            throw new StaticPageReferenceException('Static page used in the "collection.next" field does not exist: '.$basename);
         }
     }
 

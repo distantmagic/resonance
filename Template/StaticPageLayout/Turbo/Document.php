@@ -23,10 +23,14 @@ readonly class Document extends Turbo
     private StaticPageDocumentTableOfContents $tableOfContents;
 
     /**
-     * @param Map<string, StaticPage> $staticPages
+     * @param Map<string, StaticPage>    $staticPages
+     * @param Map<StaticPage,StaticPage> $staticPagesFollowers
+     * @param Map<StaticPage,StaticPage> $staticPagesPredecessors
      */
     public function __construct(
         Map $staticPages,
+        private Map $staticPagesFollowers,
+        private Map $staticPagesPredecessors,
         StaticPageCollectionAggregate $staticPageCollectionAggregate,
         private StaticPageContentRenderer $staticPageContentRenderer,
         TemplateFilters $filters,
@@ -71,6 +75,9 @@ readonly class Document extends Turbo
             </nav>
             <article class="documentation__article">
                 {$renderedContent->getContent()}
+        HTML;
+        yield from $this->renderNextPageReference($staticPage);
+        yield <<<'HTML'
             </article>
             <nav class="documentation__breadcrumbs">
         HTML;
@@ -80,12 +87,84 @@ readonly class Document extends Turbo
         yield '</div>';
     }
 
-    protected function renderMeta(): Generator
+    protected function renderMeta(StaticPage $staticPage): Generator
     {
         $highlighter = $this->versionedAsset('global_hljs', 'js');
 
         yield <<<HTML
         <script defer src="{$highlighter}"></script>
+        HTML;
+
+        $nextPage = $this->staticPagesFollowers->get($staticPage, null);
+
+        if (isset($nextPage)) {
+            yield <<<HTML
+            <link rel="next" href="{$nextPage->getHref()}">
+            HTML;
+        }
+
+        $prevPage = $this->staticPagesPredecessors->get($staticPage, null);
+
+        if (isset($prevPage)) {
+            yield <<<HTML
+            <link rel="prev" href="{$prevPage->getHref()}">
+            HTML;
+        }
+    }
+
+    /**
+     * @return Generator<string>
+     */
+    protected function renderNextPageReference(StaticPage $staticPage): Generator
+    {
+        $nextPage = $this->staticPagesFollowers->get($staticPage, null);
+        $prevPage = $this->staticPagesPredecessors->get($staticPage, null);
+
+        if (!isset($nextPage) && !isset($prevPage)) {
+            return;
+        }
+
+        yield <<<'HTML'
+        <div class="documentation__article__footer-navigation">
+        HTML;
+        if (isset($prevPage)) {
+            yield <<<HTML
+            <a
+                class="
+                    documentation__article__footer-navigation__link
+                    documentation__article__footer-navigation__link--prev
+                "
+                href="{$prevPage->getHref()}"
+            >
+                <div class="documentation__article__footer-navigation__label">
+                    Previous
+                </div>
+                <div class="documentation__article__footer-navigation__title">
+                    &laquo; {$prevPage->frontMatter->title}
+                </div>
+            </a>
+            HTML;
+        }
+        if (isset($nextPage)) {
+            yield <<<HTML
+            <a
+                class="
+                    documentation__article__footer-navigation__link
+                    documentation__article__footer-navigation__link--next
+                "
+                href="{$nextPage->getHref()}"
+            >
+                <div class="documentation__article__footer-navigation__label">
+                    Next
+                </div>
+                <div class="documentation__article__footer-navigation__title">
+                    {$nextPage->frontMatter->title} &raquo;
+                </div>
+            </a>
+            HTML;
+        }
+        yield <<<'HTML'
+        </div>
         HTML;
     }
 }

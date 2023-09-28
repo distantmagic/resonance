@@ -16,10 +16,14 @@ readonly class StaticPageLayoutAggregate
     private TemplateStaticPageLayoutInterface $page;
 
     /**
-     * @param Map<string,StaticPage> $staticPages
+     * @param Map<string,StaticPage>     $staticPages
+     * @param Map<StaticPage,StaticPage> $staticPagesFollowers
+     * @param Map<StaticPage,StaticPage> $staticPagesPredecessors
      */
     public function __construct(
         Map $staticPages,
+        Map $staticPagesFollowers,
+        Map $staticPagesPredecessors,
         StaticPageCollectionAggregate $staticPageCollectionAggregate,
         StaticPageContentRenderer $staticPageContentRenderer,
     ) {
@@ -27,6 +31,8 @@ readonly class StaticPageLayoutAggregate
 
         $this->document = new Document(
             $staticPages,
+            $staticPagesFollowers,
+            $staticPagesPredecessors,
             $staticPageCollectionAggregate,
             $staticPageContentRenderer,
             $templateFilters,

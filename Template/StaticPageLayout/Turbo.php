@@ -23,7 +23,7 @@ abstract readonly class Turbo extends StaticPageLayout
      * @param Map<string, StaticPage> $staticPages
      */
     public function __construct(
-        private Map $staticPages,
+        protected Map $staticPages,
         private StaticPageCollectionAggregate $staticPageCollectionAggregate,
         private TemplateFilters $filters,
     ) {}
@@ -47,7 +47,7 @@ abstract readonly class Turbo extends StaticPageLayout
             <link rel="preload" href="{$this->versionedAsset('lora', 'ttf')}" as="font" crossorigin>
             <link rel="preload" href="{$this->versionedAsset('undefined-medium', 'ttf')}" as="font" crossorigin>
         HTML;
-        yield from $this->renderMeta();
+        yield from $this->renderMeta($staticPage);
         yield <<<HTML
             <link rel="stylesheet" href="{$this->versionedAsset('docs', 'css')}">
         </head>
@@ -83,7 +83,7 @@ abstract readonly class Turbo extends StaticPageLayout
     /**
      * @return Generator<string>
      */
-    protected function renderMeta(): Generator
+    protected function renderMeta(StaticPage $staticPage): Generator
     {
         yield '';
     }
