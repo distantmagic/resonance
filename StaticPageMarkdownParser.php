@@ -7,6 +7,7 @@ namespace Resonance;
 use Ds\Map;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
+use League\CommonMark\Extension\CommonMark\Node\Block\FencedCode;
 use League\CommonMark\Extension\DescriptionList\DescriptionListExtension;
 use League\CommonMark\Extension\ExternalLink\ExternalLinkExtension;
 use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
@@ -48,6 +49,7 @@ readonly class StaticPageMarkdownParser
         $this->environment->addExtension(new CommonMarkTabletOfContentsExtension());
         $this->environment->addExtension(new StaticPageInternalLinkMarkdownExtension($staticPages));
 
+        $this->environment->addRenderer(FencedCode::class, new CommonMarkFencedCodeRenderer());
         $this->environment->addRenderer(CommonMarkAdmonitionBlock::class, new CommonMarkAdmonitionRenderer());
 
         $this->converter = new MarkdownConverter($this->environment);

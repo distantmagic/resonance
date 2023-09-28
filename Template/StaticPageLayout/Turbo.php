@@ -46,10 +46,12 @@ abstract readonly class Turbo extends StaticPageLayout
             <link rel="preload" href="{$this->versionedAsset('atkinson-hyperlegible-regular', 'ttf')}" as="font" type="font/ttf" crossorigin>
             <link rel="preload" href="{$this->versionedAsset('lora', 'ttf')}" as="font" crossorigin>
             <link rel="preload" href="{$this->versionedAsset('undefined-medium', 'ttf')}" as="font" crossorigin>
+            <link rel="stylesheet" href="{$this->versionedAsset('docs', 'css')}">
+            <script defer type="module" src="{$this->versionedAsset('global_turbo', 'js')}"></script>
+            <script defer type="module" src="{$this->versionedAsset('global_stimulus', 'js')}"></script>
         HTML;
         yield from $this->renderMeta($staticPage);
-        yield <<<HTML
-            <link rel="stylesheet" href="{$this->versionedAsset('docs', 'css')}">
+        yield <<<'HTML'
         </head>
         <body>
             <main class="body-content website">

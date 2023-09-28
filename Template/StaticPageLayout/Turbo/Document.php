@@ -89,10 +89,8 @@ readonly class Document extends Turbo
 
     protected function renderMeta(StaticPage $staticPage): Generator
     {
-        $highlighter = $this->versionedAsset('global_hljs', 'js');
-
         yield <<<HTML
-        <script defer src="{$highlighter}"></script>
+        <script defer type="module" src="{$this->versionedAsset('controller_hljs', 'js')}"></script>
         HTML;
 
         $nextPage = $this->staticPagesFollowers->get($staticPage, null);
