@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Resonance\Template\Component;
 
+use Ds\PriorityQueue;
 use Generator;
 use League\CommonMark\Output\RenderedContentInterface;
 use Resonance\CommonMarkRenderedContentWithTableOfContentsLinks;
@@ -12,6 +13,11 @@ use Resonance\Template\Component;
 
 readonly class StaticPageDocumentTableOfContents extends Component
 {
+    public function registerScripts(PriorityQueue $scripts): void
+    {
+        $scripts->push('controller_minimap.ts', 0);
+    }
+
     /**
      * @return Generator<string>
      */
@@ -23,8 +29,15 @@ readonly class StaticPageDocumentTableOfContents extends Component
         }
 
         yield <<<'HTML'
-        <nav class="documentation__toc">
-            <div class="documentation__toc__links">
+        <nav
+            class="documentation__toc"
+            data-controller="minimap"
+            data-minimap-article-outlet=".documentation__article"
+        >
+            <div
+                class="documentation__toc__links"
+                data-minimap-target="track"
+            >
         HTML;
         yield from $this->renderTableOfContentsLinks($renderedContent->tableOfContentsLinks);
         yield <<<'HTML'
@@ -43,7 +56,11 @@ readonly class StaticPageDocumentTableOfContents extends Component
         foreach ($tableOfContentsLinks as $tableOfContentsLink) {
             yield sprintf(
                 <<<'HTML'
-                <a class="level-%s" href="#%s">
+                <a
+                    class="level-%s"
+                    href="#%s"
+                    data-minimap-target="link"
+                >
                     <div class="heading-permalink">»</div>%s
                 </a>
                 HTML,

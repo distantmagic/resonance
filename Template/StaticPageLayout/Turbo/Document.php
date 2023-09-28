@@ -68,6 +68,9 @@ readonly class Document extends Turbo
     {
         parent::registerScripts($scripts);
 
+        $this->tableOfContents->registerScripts($scripts);
+
+        $scripts->push('controller_article.ts', 0);
         $scripts->push('controller_hljs.ts', 0);
     }
 
@@ -97,7 +100,10 @@ readonly class Document extends Turbo
         yield <<<HTML
                 </div>
             </nav>
-            <article class="documentation__article">
+            <article
+                class="documentation__article"
+                data-controller="article"
+            >
                 {$renderedContent->getContent()}
         HTML;
         yield <<<'HTML'
