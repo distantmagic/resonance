@@ -7,6 +7,7 @@ namespace Resonance\Template\StaticPageLayout\Turbo;
 use Ds\Map;
 use Ds\PriorityQueue;
 use Generator;
+use IntlDateFormatter;
 use Resonance\CommonMarkRenderedContentWithTableOfContentsLinks;
 use Resonance\EsbuildMeta;
 use Resonance\StaticPage;
@@ -22,6 +23,7 @@ readonly class Document extends Turbo
 {
     private StaticPageBreadcrumbs $breadcrumbs;
     private StaticPageDocumentsMenu $documentsMenu;
+    private IntlDateFormatter $intlDateFormatter;
     private StaticPageDocumentTableOfContents $tableOfContents;
 
     /**
@@ -51,6 +53,11 @@ readonly class Document extends Turbo
             $staticPageCollectionAggregate,
             1,
         );
+        $this->intlDateFormatter = new IntlDateFormatter(
+            'en',
+            IntlDateFormatter::LONG,
+            IntlDateFormatter::LONG,
+        );
         $this->tableOfContents = new StaticPageDocumentTableOfContents();
     }
 
@@ -78,6 +85,9 @@ readonly class Document extends Turbo
             $documentationClass = 'documentation--with-toc';
         }
 
+        $lastUpdatedMTime = $staticPage->file->getMTime();
+        $lastUpdatedDatetime = date(DATE_W3C, $lastUpdatedMTime);
+
         yield <<<HTML
         <div class="documentation {$documentationClass}">
             <nav class="documentation__aside">
@@ -90,9 +100,18 @@ readonly class Document extends Turbo
             <article class="documentation__article">
                 {$renderedContent->getContent()}
         HTML;
-        yield from $this->renderNextPageReference($staticPage);
         yield <<<'HTML'
             </article>
+        HTML;
+        yield from $this->renderRelatedPageReference($staticPage);
+        yield <<<HTML
+            <time
+                class="documentation__last-updated"
+                datetime="{$lastUpdatedDatetime}"
+            >
+                Last updated on
+                <strong>{$this->intlDateFormatter->format($lastUpdatedMTime)}</strong>
+            </time>
             <nav class="documentation__breadcrumbs">
         HTML;
         yield from $this->breadcrumbs->render($staticPage);
@@ -123,7 +142,7 @@ readonly class Document extends Turbo
     /**
      * @return Generator<string>
      */
-    protected function renderNextPageReference(StaticPage $staticPage): Generator
+    protected function renderRelatedPageReference(StaticPage $staticPage): Generator
     {
         $nextPage = $this->staticPagesFollowers->get($staticPage, null);
         $prevPage = $this->staticPagesPredecessors->get($staticPage, null);
@@ -133,21 +152,21 @@ readonly class Document extends Turbo
         }
 
         yield <<<'HTML'
-        <div class="documentation__article__footer-navigation">
+        <div class="documentation__related-pages">
         HTML;
         if (isset($prevPage)) {
             yield <<<HTML
             <a
                 class="
-                    documentation__article__footer-navigation__link
-                    documentation__article__footer-navigation__link--prev
+                    documentation__related-pages__link
+                    documentation__related-pages__link--prev
                 "
                 href="{$prevPage->getHref()}"
             >
-                <div class="documentation__article__footer-navigation__label">
+                <div class="documentation__related-pages__label">
                     Previous
                 </div>
-                <div class="documentation__article__footer-navigation__title">
+                <div class="documentation__related-pages__title">
                     &laquo; {$prevPage->frontMatter->title}
                 </div>
             </a>
@@ -157,15 +176,15 @@ readonly class Document extends Turbo
             yield <<<HTML
             <a
                 class="
-                    documentation__article__footer-navigation__link
-                    documentation__article__footer-navigation__link--next
+                    documentation__related-pages__link
+                    documentation__related-pages__link--next
                 "
                 href="{$nextPage->getHref()}"
             >
-                <div class="documentation__article__footer-navigation__label">
+                <div class="documentation__related-pages__label">
                     Next
                 </div>
-                <div class="documentation__article__footer-navigation__title">
+                <div class="documentation__related-pages__title">
                     {$nextPage->frontMatter->title} &raquo;
                 </div>
             </a>
