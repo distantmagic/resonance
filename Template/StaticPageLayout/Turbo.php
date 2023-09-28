@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Resonance\Template\StaticPageLayout;
 
 use Ds\Map;
+use Ds\PriorityQueue;
 use Generator;
+use Resonance\EsbuildMeta;
+use Resonance\EsbuildMetaEntryPoints;
+use Resonance\EsbuildMetaPreloadsRenderer;
 use Resonance\StaticPage;
 use Resonance\StaticPageCollectionAggregate;
 use Resonance\StaticPageParentIterator;
@@ -23,6 +27,7 @@ abstract readonly class Turbo extends StaticPageLayout
      * @param Map<string, StaticPage> $staticPages
      */
     public function __construct(
+        private EsbuildMeta $esbuildMeta,
         protected Map $staticPages,
         private StaticPageCollectionAggregate $staticPageCollectionAggregate,
         private TemplateFilters $filters,
@@ -33,6 +38,13 @@ abstract readonly class Turbo extends StaticPageLayout
      */
     public function renderStaticPage(StaticPage $staticPage): Generator
     {
+        $esbuildMetaEntryPoints = new EsbuildMetaEntryPoints($this->esbuildMeta);
+        $esbuildPreloadsRenderer = new EsbuildMetaPreloadsRenderer($esbuildMetaEntryPoints, $this->filters);
+
+        $renderedScripts = $this->renderScripts($esbuildMetaEntryPoints);
+        $renderedStylesheets = $this->renderStylesheets($esbuildMetaEntryPoints);
+        $renderedPreloads = $esbuildPreloadsRenderer->render();
+
         yield <<<HTML
         <!DOCTYPE html>
         <html lang="en">
@@ -42,15 +54,10 @@ abstract readonly class Turbo extends StaticPageLayout
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <title>{$staticPage->frontMatter->title}</title>
         HTML;
-        yield <<<HTML
-            <link rel="preload" href="{$this->versionedAsset('atkinson-hyperlegible-regular', 'ttf')}" as="font" type="font/ttf" crossorigin>
-            <link rel="preload" href="{$this->versionedAsset('lora', 'ttf')}" as="font" crossorigin>
-            <link rel="preload" href="{$this->versionedAsset('undefined-medium', 'ttf')}" as="font" crossorigin>
-            <link rel="stylesheet" href="{$this->versionedAsset('docs', 'css')}">
-            <script defer type="module" src="{$this->versionedAsset('global_turbo', 'js')}"></script>
-            <script defer type="module" src="{$this->versionedAsset('global_stimulus', 'js')}"></script>
-        HTML;
         yield from $this->renderMeta($staticPage);
+        yield $renderedPreloads;
+        yield $renderedStylesheets;
+        yield $renderedScripts;
         yield <<<'HTML'
         </head>
         <body>
@@ -83,16 +90,28 @@ abstract readonly class Turbo extends StaticPageLayout
     }
 
     /**
+     * @param PriorityQueue<string> $scripts
+     */
+    protected function registerScripts(PriorityQueue $scripts): void
+    {
+        $scripts->push('global_turbo.ts', 900);
+        $scripts->push('global_stimulus.ts', 800);
+    }
+
+    /**
+     * @param PriorityQueue<string> $stylesheets
+     */
+    protected function registerStylesheets(PriorityQueue $stylesheets): void
+    {
+        $stylesheets->push('docs.css', 1000);
+    }
+
+    /**
      * @return Generator<string>
      */
     protected function renderMeta(StaticPage $staticPage): Generator
     {
         yield '';
-    }
-
-    protected function versionedAsset(string $basename, string $extension): string
-    {
-        return '/assets/'.$basename.'_'.DM_BUILD_ID.'.'.$extension;
     }
 
     private function isLinkActive(StaticPage $staticPage, StaticPage $currentPage): bool
@@ -125,5 +144,47 @@ abstract readonly class Turbo extends StaticPageLayout
                 $staticPage->frontMatter->title,
             );
         }
+    }
+
+    private function renderScripts(EsbuildMetaEntryPoints $esbuildMetaEntryPoints): string
+    {
+        /**
+         * @var PriorityQueue<string> $scripts
+         */
+        $scripts = new PriorityQueue();
+
+        $this->registerScripts($scripts);
+
+        $ret = '';
+
+        foreach ($scripts as $script) {
+            $ret .= sprintf(
+                '<script defer type="module" src="%s"></script>'."\n",
+                '/'.$esbuildMetaEntryPoints->resolveEntryPointPath($script),
+            );
+        }
+
+        return $ret;
+    }
+
+    private function renderStylesheets(EsbuildMetaEntryPoints $esbuildMetaEntryPoints): string
+    {
+        /**
+         * @var PriorityQueue<string> $stylesheets
+         */
+        $stylesheets = new PriorityQueue();
+
+        $this->registerStylesheets($stylesheets);
+
+        $ret = '';
+
+        foreach ($stylesheets as $stylesheet) {
+            $ret .= sprintf(
+                '<link rel="stylesheet" href="%s">'."\n",
+                '/'.$esbuildMetaEntryPoints->resolveEntryPointPath($stylesheet),
+            );
+        }
+
+        return $ret;
     }
 }

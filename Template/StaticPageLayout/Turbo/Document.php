@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Resonance\Template\StaticPageLayout\Turbo;
 
 use Ds\Map;
+use Ds\PriorityQueue;
 use Generator;
 use Resonance\CommonMarkRenderedContentWithTableOfContentsLinks;
+use Resonance\EsbuildMeta;
 use Resonance\StaticPage;
 use Resonance\StaticPageCollectionAggregate;
 use Resonance\StaticPageContentRenderer;
@@ -28,6 +30,7 @@ readonly class Document extends Turbo
      * @param Map<StaticPage,StaticPage> $staticPagesPredecessors
      */
     public function __construct(
+        EsbuildMeta $esbuildMeta,
         Map $staticPages,
         private Map $staticPagesFollowers,
         private Map $staticPagesPredecessors,
@@ -36,6 +39,7 @@ readonly class Document extends Turbo
         TemplateFilters $filters,
     ) {
         parent::__construct(
+            $esbuildMeta,
             $staticPages,
             $staticPageCollectionAggregate,
             $filters,
@@ -48,6 +52,16 @@ readonly class Document extends Turbo
             1,
         );
         $this->tableOfContents = new StaticPageDocumentTableOfContents();
+    }
+
+    /**
+     * @param PriorityQueue<string> $scripts
+     */
+    protected function registerScripts(PriorityQueue $scripts): void
+    {
+        parent::registerScripts($scripts);
+
+        $scripts->push('controller_hljs.ts', 0);
     }
 
     protected function renderBodyContent(StaticPage $staticPage): Generator
@@ -89,10 +103,6 @@ readonly class Document extends Turbo
 
     protected function renderMeta(StaticPage $staticPage): Generator
     {
-        yield <<<HTML
-        <script defer type="module" src="{$this->versionedAsset('controller_hljs', 'js')}"></script>
-        HTML;
-
         $nextPage = $this->staticPagesFollowers->get($staticPage, null);
 
         if (isset($nextPage)) {

@@ -2,27 +2,27 @@
 
 declare(strict_types=1);
 
-namespace Resonance\SingletonProvider;
+namespace Resonance;
 
 use Generator;
 use LogicException;
-use Resonance\Attribute\Singleton;
-use Resonance\EsbuildMeta;
-use Resonance\SingletonContainer;
-use Resonance\SingletonProvider;
 use RuntimeException;
 
-/**
- * @template-extends SingletonProvider<EsbuildMeta>
- */
-#[Singleton(provides: EsbuildMeta::class)]
-final readonly class EsbuildMetaProvider extends SingletonProvider
+readonly class EsbuildMetaBuilder
 {
-    public function provide(SingletonContainer $singletons): EsbuildMeta
-    {
+    public function build(
+        string $esbuildMetaFilename,
+        string $baseDirectory = '',
+    ): EsbuildMeta {
         $esbuildMeta = new EsbuildMeta();
 
-        foreach ($this->entryPointImports($esbuildMeta) as $filename => $importPath) {
+        foreach (
+            $this->entryPointImports(
+                $esbuildMetaFilename,
+                $baseDirectory,
+                $esbuildMeta,
+            ) as $filename => $importPath
+        ) {
             $esbuildMeta->registerImport($filename, $importPath);
         }
 
@@ -32,9 +32,12 @@ final readonly class EsbuildMetaProvider extends SingletonProvider
     /**
      * @return Generator<string,string>
      */
-    private function entryPointImports(EsbuildMeta $esbuildMeta): Generator
-    {
-        foreach ($this->entryPointOutputs() as $filename => $output) {
+    private function entryPointImports(
+        string $esbuildMetaFilename,
+        string $baseDirectory,
+        EsbuildMeta $esbuildMeta,
+    ): Generator {
+        foreach ($this->entryPointOutputs($esbuildMetaFilename, $baseDirectory) as $filename => $output) {
             if (!isset($output->entryPoint) || !is_string($output->entryPoint)) {
                 throw new LogicException('Output entry point was expected to be a string.');
             }
@@ -60,7 +63,7 @@ final readonly class EsbuildMetaProvider extends SingletonProvider
                         throw new LogicException('Expected "kind" and "path" import fields to be set.');
                     }
 
-                    yield $filename => $import->path;
+                    yield $filename => $this->stripBaseDirectory($baseDirectory, $import->path);
                 }
             }
         }
@@ -69,9 +72,11 @@ final readonly class EsbuildMetaProvider extends SingletonProvider
     /**
      * @return Generator<string,object>
      */
-    private function entryPointOutputs(): Generator
-    {
-        $esbuildMeta = $this->getEsbuildMetaDecoded();
+    private function entryPointOutputs(
+        string $esbuildMetaFilename,
+        string $baseDirectory,
+    ): Generator {
+        $esbuildMeta = $this->getEsbuildMetaDecoded($esbuildMetaFilename);
 
         foreach ($esbuildMeta->outputs as $filename => $output) {
             if (!is_string($filename)) {
@@ -83,28 +88,28 @@ final readonly class EsbuildMetaProvider extends SingletonProvider
             }
 
             if (isset($output->entryPoint) && is_string($output->entryPoint)) {
-                yield $filename => $output;
+                yield $this->stripBaseDirectory($baseDirectory, $filename) => $output;
             }
         }
     }
 
-    private function getEsbuildMetaContents(): string
+    private function getEsbuildMetaContents(string $esbuildMetaFilename): string
     {
-        if (!file_exists(DM_ESBUILD_META)) {
+        if (!file_exists($esbuildMetaFilename)) {
             throw new RuntimeException('Esbuild meta manifest does not exist.');
         }
 
-        if (!is_readable(DM_ESBUILD_META)) {
+        if (!is_readable($esbuildMetaFilename)) {
             throw new RuntimeException('Esbuild meta manifest is not readable.');
         }
 
-        return file_get_contents(DM_ESBUILD_META);
+        return file_get_contents($esbuildMetaFilename);
     }
 
-    private function getEsbuildMetaDecoded(): object
+    private function getEsbuildMetaDecoded(string $esbuildMetaFilename): object
     {
         $ret = json_decode(
-            json: $this->getEsbuildMetaContents(),
+            json: $this->getEsbuildMetaContents($esbuildMetaFilename),
             flags: JSON_THROW_ON_ERROR,
         );
 
@@ -113,5 +118,14 @@ final readonly class EsbuildMetaProvider extends SingletonProvider
         }
 
         return $ret;
+    }
+
+    private function stripBaseDirectory(string $baseDirectory, string $filename): string
+    {
+        if (!str_starts_with($filename, $baseDirectory)) {
+            return $filename;
+        }
+
+        return substr($filename, strlen($baseDirectory));
     }
 }

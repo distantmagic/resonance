@@ -34,6 +34,11 @@ readonly class EsbuildMeta
             }
         } else {
             $this->basenames->put($entryPointBasename, $path);
+
+            if ($this->imports->hasKey($path)) {
+                throw new LogicException('Imports Set is already created: '.$entryPointBasename);
+            }
+
             $this->imports->put($path, new Set());
         }
     }

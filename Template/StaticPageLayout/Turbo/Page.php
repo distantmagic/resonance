@@ -6,6 +6,7 @@ namespace Resonance\Template\StaticPageLayout\Turbo;
 
 use Ds\Map;
 use Generator;
+use Resonance\EsbuildMeta;
 use Resonance\StaticPage;
 use Resonance\StaticPageCollectionAggregate;
 use Resonance\StaticPageContentRenderer;
@@ -18,12 +19,14 @@ readonly class Page extends Turbo
      * @param Map<string,StaticPage> $staticPages
      */
     public function __construct(
+        EsbuildMeta $esbuildMeta,
         Map $staticPages,
         StaticPageCollectionAggregate $staticPageCollectionAggregate,
         private StaticPageContentRenderer $staticPageContentRenderer,
         TemplateFilters $filters,
     ) {
         parent::__construct(
+            $esbuildMeta,
             $staticPages,
             $staticPageCollectionAggregate,
             $filters,

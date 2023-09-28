@@ -21,6 +21,7 @@ readonly class StaticPageLayoutAggregate
      * @param Map<StaticPage,StaticPage> $staticPagesPredecessors
      */
     public function __construct(
+        EsbuildMeta $esbuildMeta,
         Map $staticPages,
         Map $staticPagesFollowers,
         Map $staticPagesPredecessors,
@@ -30,6 +31,7 @@ readonly class StaticPageLayoutAggregate
         $templateFilters = new TemplateFilters();
 
         $this->document = new Document(
+            $esbuildMeta,
             $staticPages,
             $staticPagesFollowers,
             $staticPagesPredecessors,
@@ -38,6 +40,7 @@ readonly class StaticPageLayoutAggregate
             $templateFilters,
         );
         $this->page = new Page(
+            $esbuildMeta,
             $staticPages,
             $staticPageCollectionAggregate,
             $staticPageContentRenderer,
