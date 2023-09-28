@@ -55,6 +55,7 @@ final class CommonMarkFencedCodeRenderer implements NodeRendererInterface, XmlNo
         if (0 !== count($infoWords) && '' !== $infoWords[0]) {
             $attrs->append('class', 'language-'.$infoWords[0]);
             $attrs->append('data-controller', 'hljs');
+            $attrs->append('data-hljs-language-value', $infoWords[0]);
         }
 
         /**
