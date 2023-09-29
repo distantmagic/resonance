@@ -13,17 +13,18 @@ use Swoole\Database\PDOPool;
  */
 abstract readonly class DatabaseQuery implements DatabaseQueryInterface
 {
-    protected DatabaseConnection $dblayer;
-
     public function __construct(
-        EventDispatcherInterface $eventDispatcher,
-        PDOPool $pdoPool,
-    ) {
-        $this->dblayer = new DatabaseConnection($eventDispatcher, $pdoPool);
-    }
+        private EventDispatcherInterface $eventDispatcher,
+        private PDOPool $pdoPool,
+    ) {}
 
     public function isIterable(): bool
     {
         return false;
+    }
+
+    protected function getConnection(): DatabaseConnection
+    {
+        return new DatabaseConnection($this->eventDispatcher, $this->pdoPool);
     }
 }
