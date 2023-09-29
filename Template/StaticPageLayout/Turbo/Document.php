@@ -8,7 +8,7 @@ use Ds\Map;
 use Ds\PriorityQueue;
 use Generator;
 use IntlDateFormatter;
-use Resonance\CommonMarkTabletOfContentsBuilder;
+use Resonance\CommonMarkTableOfContentsBuilder;
 use Resonance\EsbuildMeta;
 use Resonance\StaticPage;
 use Resonance\StaticPageCollectionAggregate;
@@ -25,7 +25,7 @@ readonly class Document extends Turbo
     private StaticPageDocumentsMenu $documentsMenu;
     private IntlDateFormatter $intlDateFormatter;
     private StaticPageDocumentTableOfContents $tableOfContents;
-    private CommonMarkTabletOfContentsBuilder $tableOfContentsBuilder;
+    private CommonMarkTableOfContentsBuilder $tableOfContentsBuilder;
 
     /**
      * @param Map<string, StaticPage>    $staticPages
@@ -60,7 +60,7 @@ readonly class Document extends Turbo
             IntlDateFormatter::LONG,
         );
         $this->tableOfContents = new StaticPageDocumentTableOfContents();
-        $this->tableOfContentsBuilder = new CommonMarkTabletOfContentsBuilder();
+        $this->tableOfContentsBuilder = new CommonMarkTableOfContentsBuilder();
     }
 
     protected function registerScripts(PriorityQueue $scripts): void

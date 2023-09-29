@@ -8,6 +8,7 @@ use Ds\Map;
 use Resonance\InputValidator\FrontMatterValidator;
 use RuntimeException;
 use Swoole\Coroutine\WaitGroup;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -18,7 +19,7 @@ use function Swoole\Coroutine\go;
 readonly class StaticPageProcessor
 {
     public function __construct(
-        private Output $output,
+        private Output $output = new ConsoleOutput(),
     ) {}
 
     public function process(

@@ -39,7 +39,9 @@ readonly class StaticPageIterator implements IteratorAggregate
         foreach ($this->fileIterator as $file) {
             $staticPage = $this->fileToStaticPage($file);
 
-            yield $staticPage;
+            if (!$staticPage->frontMatter->isDraft) {
+                yield $staticPage;
+            }
         }
     }
 

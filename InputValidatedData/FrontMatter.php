@@ -19,6 +19,7 @@ readonly class FrontMatter extends InputValidatedData
         public array $collections,
         public StaticPageContentType $contentType,
         public string $description,
+        public bool $isDraft,
         public StaticPageLayoutHandler $layout,
         public ?string $next,
         public ?string $parent,

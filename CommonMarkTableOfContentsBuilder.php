@@ -12,7 +12,7 @@ use League\CommonMark\Node\NodeIterator;
 use League\CommonMark\Node\RawMarkupContainerInterface;
 use League\CommonMark\Node\StringContainerHelper;
 
-readonly class CommonMarkTabletOfContentsBuilder
+readonly class CommonMarkTableOfContentsBuilder
 {
     /**
      * @return Generator<CommonMarkTableOfContentsLink>
