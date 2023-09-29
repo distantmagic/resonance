@@ -17,7 +17,7 @@ readonly class StaticPageDocumentTableOfContents extends Component
     }
 
     /**
-     * @param Generator<CommonMarkTableOfContentsLink>
+     * @param Generator<CommonMarkTableOfContentsLink> $links
      *
      * @return Generator<string>
      */

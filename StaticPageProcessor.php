@@ -28,7 +28,7 @@ readonly class StaticPageProcessor
         string $staticPagesOutputDirectory,
         string $staticPagesSitemap,
         string $stripOutputPrefix = '',
-    ) {
+    ): void {
         $esbuildMetaBuilder = new EsbuildMetaBuilder();
         $esbuildMeta = $esbuildMetaBuilder->build($esbuildMetafile, $stripOutputPrefix);
 
