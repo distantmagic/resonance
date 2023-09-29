@@ -7,13 +7,13 @@ namespace Resonance;
 use Ds\Map;
 use Resonance\InputValidator\FrontMatterValidator;
 use RuntimeException;
+use Swoole\Coroutine\WaitGroup;
 use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
 use function Swoole\Coroutine\go;
-use function Swoole\Coroutine\run;
 
 readonly class StaticPageProcessor
 {
@@ -108,43 +108,43 @@ readonly class StaticPageProcessor
         // first pass.
         // Wrapped in coroutines because it can generate a lot of IO operations.
 
-        /**
-         * @var bool $isRunSuccessful
-         */
-        $isRunSuccessful = run(function () use ($filesystem, $staticPages, $staticPageLayoutAggregate) {
-            foreach ($staticPages as $staticPage) {
-                $cid = go(function () use ($filesystem, $staticPage, $staticPageLayoutAggregate) {
-                    $outputDirectory = $staticPage->getOutputDirectory();
-                    $outputFilename = $staticPage->getOutputPathname();
+        $waitGroup = new WaitGroup();
 
-                    $filesystem->mkdir($outputDirectory);
+        foreach ($staticPages as $staticPage) {
+            $waitGroup->add();
+            $cid = go(function () use ($filesystem, $staticPage, $staticPageLayoutAggregate, $waitGroup) {
+                $outputDirectory = $staticPage->getOutputDirectory();
+                $outputFilename = $staticPage->getOutputPathname();
 
-                    $fhandle = fopen($outputFilename, 'w');
+                $filesystem->mkdir($outputDirectory);
 
-                    try {
-                        foreach ($staticPageLayoutAggregate->render($staticPage) as $contentChunk) {
-                            fwrite($fhandle, $contentChunk);
-                        }
-                    } catch (StaticPageReferenceException $exception) {
-                        $this->reportError($staticPage->file, $exception->getMessage());
-                    } catch (StaticPageRenderingException $exception) {
-                        $this->reportError(
-                            $staticPage->file,
-                            $exception->getMessage().': '.(string) $exception->getPrevious()?->getMessage()
-                        );
-                    } finally {
-                        fclose($fhandle);
+                $fhandle = fopen($outputFilename, 'w');
+
+                try {
+                    foreach ($staticPageLayoutAggregate->render($staticPage) as $contentChunk) {
+                        fwrite($fhandle, $contentChunk);
                     }
-                });
-
-                if (!is_int($cid)) {
-                    $this->reportError($staticPage->file, 'Unable to start a session write coroutine.');
+                } catch (StaticPageReferenceException $exception) {
+                    $this->reportError($staticPage->file, $exception->getMessage());
+                } catch (StaticPageRenderingException $exception) {
+                    $this->reportError(
+                        $staticPage->file,
+                        $exception->getMessage().': '.(string) $exception->getPrevious()?->getMessage()
+                    );
+                } finally {
+                    $waitGroup->done();
+                    fclose($fhandle);
                 }
-            }
-        });
+            });
 
-        if (!$isRunSuccessful) {
-            throw new RuntimeException('There was a Swoole error while processing coroutines.');
+            if (!is_int($cid)) {
+                $this->reportError($staticPage->file, 'Unable to start a session write coroutine.');
+            }
+        }
+
+        // Wait 100 miliseconds per page
+        if (!$waitGroup->wait($staticPages->count() * 0.1)) {
+            throw new RuntimeException('Static pages wait group took too long to finish.');
         }
 
         // Unused collections check for data consistency.
