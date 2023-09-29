@@ -11,15 +11,15 @@ use RuntimeException;
 readonly class EsbuildMetaBuilder
 {
     public function build(
-        string $esbuildMetaFilename,
-        string $baseDirectory = '',
+        string $esbuildMetafile,
+        string $stripOutputPrefix = '',
     ): EsbuildMeta {
         $esbuildMeta = new EsbuildMeta();
 
         foreach (
             $this->entryPointImports(
-                $esbuildMetaFilename,
-                $baseDirectory,
+                $esbuildMetafile,
+                $stripOutputPrefix,
                 $esbuildMeta,
             ) as $filename => $importPath
         ) {
@@ -33,11 +33,11 @@ readonly class EsbuildMetaBuilder
      * @return Generator<string,string>
      */
     private function entryPointImports(
-        string $esbuildMetaFilename,
-        string $baseDirectory,
+        string $esbuildMetafile,
+        string $stripOutputPrefix,
         EsbuildMeta $esbuildMeta,
     ): Generator {
-        foreach ($this->entryPointOutputs($esbuildMetaFilename, $baseDirectory) as $filename => $output) {
+        foreach ($this->entryPointOutputs($esbuildMetafile, $stripOutputPrefix) as $filename => $output) {
             if (!isset($output->entryPoint) || !is_string($output->entryPoint)) {
                 throw new LogicException('Output entry point was expected to be a string.');
             }
@@ -63,7 +63,7 @@ readonly class EsbuildMetaBuilder
                         throw new LogicException('Expected "kind" and "path" import fields to be set.');
                     }
 
-                    yield $filename => $this->stripBaseDirectory($baseDirectory, $import->path);
+                    yield $filename => $this->stripBaseDirectory($stripOutputPrefix, $import->path);
                 }
             }
         }
@@ -73,10 +73,10 @@ readonly class EsbuildMetaBuilder
      * @return Generator<string,object>
      */
     private function entryPointOutputs(
-        string $esbuildMetaFilename,
-        string $baseDirectory,
+        string $esbuildMetafile,
+        string $stripOutputPrefix,
     ): Generator {
-        $esbuildMeta = $this->getEsbuildMetaDecoded($esbuildMetaFilename);
+        $esbuildMeta = $this->getEsbuildMetaDecoded($esbuildMetafile);
 
         foreach ($esbuildMeta->outputs as $filename => $output) {
             if (!is_string($filename)) {
@@ -88,28 +88,28 @@ readonly class EsbuildMetaBuilder
             }
 
             if (isset($output->entryPoint) && is_string($output->entryPoint)) {
-                yield $this->stripBaseDirectory($baseDirectory, $filename) => $output;
+                yield $this->stripBaseDirectory($stripOutputPrefix, $filename) => $output;
             }
         }
     }
 
-    private function getEsbuildMetaContents(string $esbuildMetaFilename): string
+    private function getEsbuildMetaContents(string $esbuildMetafile): string
     {
-        if (!file_exists($esbuildMetaFilename)) {
+        if (!file_exists($esbuildMetafile)) {
             throw new RuntimeException('Esbuild meta manifest does not exist.');
         }
 
-        if (!is_readable($esbuildMetaFilename)) {
+        if (!is_readable($esbuildMetafile)) {
             throw new RuntimeException('Esbuild meta manifest is not readable.');
         }
 
-        return file_get_contents($esbuildMetaFilename);
+        return file_get_contents($esbuildMetafile);
     }
 
-    private function getEsbuildMetaDecoded(string $esbuildMetaFilename): object
+    private function getEsbuildMetaDecoded(string $esbuildMetafile): object
     {
         $ret = json_decode(
-            json: $this->getEsbuildMetaContents($esbuildMetaFilename),
+            json: $this->getEsbuildMetaContents($esbuildMetafile),
             flags: JSON_THROW_ON_ERROR,
         );
 
@@ -120,12 +120,12 @@ readonly class EsbuildMetaBuilder
         return $ret;
     }
 
-    private function stripBaseDirectory(string $baseDirectory, string $filename): string
+    private function stripBaseDirectory(string $stripOutputPrefix, string $filename): string
     {
-        if (!str_starts_with($filename, $baseDirectory)) {
+        if (!str_starts_with($filename, $stripOutputPrefix)) {
             return $filename;
         }
 
-        return substr($filename, strlen($baseDirectory));
+        return substr($filename, strlen($stripOutputPrefix));
     }
 }

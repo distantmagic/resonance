@@ -13,6 +13,7 @@ readonly class FrontMatter extends InputValidatedData
 {
     /**
      * @param array<FrontMatterCollectionReference> $collections
+     * @param array<string>                         $registerStylesheets
      */
     public function __construct(
         public array $collections,
@@ -21,6 +22,7 @@ readonly class FrontMatter extends InputValidatedData
         public StaticPageLayoutHandler $layout,
         public ?string $next,
         public ?string $parent,
+        public array $registerStylesheets,
         public string $title,
     ) {}
 }

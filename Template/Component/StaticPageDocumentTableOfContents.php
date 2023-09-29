@@ -6,8 +6,6 @@ namespace Resonance\Template\Component;
 
 use Ds\PriorityQueue;
 use Generator;
-use League\CommonMark\Output\RenderedContentInterface;
-use Resonance\CommonMarkRenderedContentWithTableOfContentsLinks;
 use Resonance\CommonMarkTableOfContentsLink;
 use Resonance\Template\Component;
 
@@ -19,15 +17,12 @@ readonly class StaticPageDocumentTableOfContents extends Component
     }
 
     /**
+     * @param Generator<CommonMarkTableOfContentsLink>
+     *
      * @return Generator<string>
      */
-    public function render(
-        CommonMarkRenderedContentWithTableOfContentsLinks|RenderedContentInterface $renderedContent
-    ): Generator {
-        if (!($renderedContent instanceof CommonMarkRenderedContentWithTableOfContentsLinks)) {
-            return;
-        }
-
+    public function render(Generator $links): Generator
+    {
         yield <<<'HTML'
         <nav
             class="documentation__toc"
@@ -39,7 +34,7 @@ readonly class StaticPageDocumentTableOfContents extends Component
                 data-minimap-target="track"
             >
         HTML;
-        yield from $this->renderTableOfContentsLinks($renderedContent->tableOfContentsLinks);
+        yield from $this->renderTableOfContentsLinks($links);
         yield <<<'HTML'
             </div>
         </nav>
@@ -47,11 +42,11 @@ readonly class StaticPageDocumentTableOfContents extends Component
     }
 
     /**
-     * @param array<CommonMarkTableOfContentsLink> $tableOfContentsLinks
+     * @param Generator<CommonMarkTableOfContentsLink> $tableOfContentsLinks
      *
      * @return Generator<string>
      */
-    private function renderTableOfContentsLinks(array $tableOfContentsLinks): Generator
+    private function renderTableOfContentsLinks(Generator $tableOfContentsLinks): Generator
     {
         foreach ($tableOfContentsLinks as $tableOfContentsLink) {
             yield sprintf(

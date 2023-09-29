@@ -21,6 +21,7 @@ use Resonance\StaticPageLayoutHandler;
  *     next: null|string,
  *     layout: string,
  *     parent: null|string,
+ *     register_stylesheets: array<string>,
  *     title: string,
  * }>
  */
@@ -37,6 +38,7 @@ readonly class FrontMatterValidator extends InputValidator
             layout: StaticPageLayoutHandler::from($data->layout),
             next: $data->next,
             parent: $data->parent,
+            registerStylesheets: $data->register_stylesheets,
             title: trim($data->title),
         );
     }
@@ -61,6 +63,9 @@ readonly class FrontMatterValidator extends InputValidator
             'layout' => Expect::anyOf(...$layouts)->required(),
             'next' => Expect::string()->min(1),
             'parent' => Expect::string()->min(1),
+            'register_stylesheets' => Expect::listOf(
+                Expect::string()->min(1),
+            )->default([]),
             'title' => Expect::string()->min(1)->required(),
         ]);
     }

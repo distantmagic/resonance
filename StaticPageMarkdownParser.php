@@ -46,7 +46,6 @@ readonly class StaticPageMarkdownParser
         $this->environment->addExtension(new HeadingPermalinkExtension());
 
         $this->environment->addExtension(new CommonMarkAdmonitionExtension());
-        $this->environment->addExtension(new CommonMarkTabletOfContentsExtension());
         $this->environment->addExtension(new StaticPageInternalLinkMarkdownExtension($staticPages));
 
         $this->environment->addRenderer(FencedCode::class, new CommonMarkFencedCodeRenderer());

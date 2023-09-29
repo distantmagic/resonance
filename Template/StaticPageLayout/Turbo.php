@@ -42,7 +42,7 @@ abstract readonly class Turbo extends StaticPageLayout
         $esbuildPreloadsRenderer = new EsbuildMetaPreloadsRenderer($esbuildMetaEntryPoints, $this->filters);
 
         $renderedScripts = $this->renderScripts($esbuildMetaEntryPoints);
-        $renderedStylesheets = $this->renderStylesheets($esbuildMetaEntryPoints);
+        $renderedStylesheets = $this->renderStylesheets($staticPage, $esbuildMetaEntryPoints);
         $renderedPreloads = $esbuildPreloadsRenderer->render();
 
         yield <<<HTML
@@ -101,10 +101,7 @@ abstract readonly class Turbo extends StaticPageLayout
     /**
      * @param PriorityQueue<string> $stylesheets
      */
-    protected function registerStylesheets(PriorityQueue $stylesheets): void
-    {
-        $stylesheets->push('docs.css', 1000);
-    }
+    protected function registerStylesheets(PriorityQueue $stylesheets): void {}
 
     /**
      * @return Generator<string>
@@ -167,14 +164,20 @@ abstract readonly class Turbo extends StaticPageLayout
         return $ret;
     }
 
-    private function renderStylesheets(EsbuildMetaEntryPoints $esbuildMetaEntryPoints): string
-    {
+    private function renderStylesheets(
+        StaticPage $staticPage,
+        EsbuildMetaEntryPoints $esbuildMetaEntryPoints,
+    ): string {
         /**
          * @var PriorityQueue<string> $stylesheets
          */
         $stylesheets = new PriorityQueue();
 
         $this->registerStylesheets($stylesheets);
+
+        foreach ($staticPage->frontMatter->registerStylesheets as $stylesheet) {
+            $stylesheets->push($stylesheet, 0);
+        }
 
         $ret = '';
 

@@ -8,7 +8,7 @@ use Ds\Map;
 use Ds\PriorityQueue;
 use Generator;
 use IntlDateFormatter;
-use Resonance\CommonMarkRenderedContentWithTableOfContentsLinks;
+use Resonance\CommonMarkTabletOfContentsBuilder;
 use Resonance\EsbuildMeta;
 use Resonance\StaticPage;
 use Resonance\StaticPageCollectionAggregate;
@@ -25,6 +25,7 @@ readonly class Document extends Turbo
     private StaticPageDocumentsMenu $documentsMenu;
     private IntlDateFormatter $intlDateFormatter;
     private StaticPageDocumentTableOfContents $tableOfContents;
+    private CommonMarkTabletOfContentsBuilder $tableOfContentsBuilder;
 
     /**
      * @param Map<string, StaticPage>    $staticPages
@@ -59,11 +60,9 @@ readonly class Document extends Turbo
             IntlDateFormatter::LONG,
         );
         $this->tableOfContents = new StaticPageDocumentTableOfContents();
+        $this->tableOfContentsBuilder = new CommonMarkTabletOfContentsBuilder();
     }
 
-    /**
-     * @param PriorityQueue<string> $scripts
-     */
     protected function registerScripts(PriorityQueue $scripts): void
     {
         parent::registerScripts($scripts);
@@ -74,25 +73,32 @@ readonly class Document extends Turbo
         $scripts->push('controller_hljs.ts', 0);
     }
 
+    protected function registerStylesheets(PriorityQueue $stylesheets): void
+    {
+        parent::registerStylesheets($stylesheets);
+
+        $stylesheets->push('docs-page-document.css', 0);
+    }
+
     protected function renderBodyContent(StaticPage $staticPage): Generator
     {
-        $renderedContent = $this->staticPageContentRenderer
-            ->markdownParser
+        $markdownParser = $this->staticPageContentRenderer->markdownParser;
+
+        $renderedOutput = $markdownParser
             ->converter
             ->convert($staticPage->content)
         ;
 
-        $documentationClass = '';
-
-        if ($renderedContent instanceof CommonMarkRenderedContentWithTableOfContentsLinks) {
-            $documentationClass = 'documentation--with-toc';
-        }
+        $tableOfContentsLinks = $this
+            ->tableOfContentsBuilder
+            ->getTableOfContentsLinks($renderedOutput->getDocument())
+        ;
 
         $lastUpdatedMTime = $staticPage->file->getMTime();
         $lastUpdatedDatetime = date(DATE_W3C, $lastUpdatedMTime);
 
-        yield <<<HTML
-        <div class="documentation {$documentationClass}">
+        yield <<<'HTML'
+        <div class="documentation">
             <nav class="documentation__aside">
                 <div class="documentation__aside__links">
         HTML;
@@ -104,7 +110,7 @@ readonly class Document extends Turbo
                 class="documentation__article"
                 data-controller="article"
             >
-                {$renderedContent->getContent()}
+                {$renderedOutput->getContent()}
         HTML;
         yield <<<'HTML'
             </article>
@@ -122,7 +128,7 @@ readonly class Document extends Turbo
         HTML;
         yield from $this->breadcrumbs->render($staticPage);
         yield '</nav>';
-        yield from $this->tableOfContents->render($renderedContent);
+        yield from $this->tableOfContents->render($tableOfContentsLinks);
         yield '</div>';
     }
 
