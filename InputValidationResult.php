@@ -19,9 +19,8 @@ readonly class InputValidationResult
     /**
      * @param null|TValidatedModel $inputValidatedData
      */
-    public function __construct(
-        public ?InputValidatedData $inputValidatedData = null,
-    ) {
+    public function __construct(public ?InputValidatedData $inputValidatedData = null)
+    {
         $this->errors = new Map();
     }
 
