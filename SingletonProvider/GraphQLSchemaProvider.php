@@ -10,6 +10,7 @@ use LogicException;
 use Resonance\Attribute\Singleton;
 use Resonance\Environment;
 use Resonance\GraphQLSchemaQueryInterface;
+use Resonance\PHPProjectFiles;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
 
@@ -21,7 +22,7 @@ final readonly class GraphQLSchemaProvider extends SingletonProvider
 {
     public function __construct(private GraphQLSchemaQueryInterface $query) {}
 
-    public function provide(SingletonContainer $singletons): Schema
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): Schema
     {
         if (!($this->query instanceof ObjectType)) {
             throw new LogicException('Expected GraphQLSchemaQueryInterface to be an instance of '.ObjectType::class);

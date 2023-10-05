@@ -8,6 +8,7 @@ use Resonance\Attribute\ListensTo;
 use Resonance\Attribute\Singleton;
 use Resonance\EventListenerAggregate;
 use Resonance\EventListenerInterface;
+use Resonance\PHPProjectFiles;
 use Resonance\SingletonAttribute;
 use Resonance\SingletonCollection;
 use Resonance\SingletonContainer;
@@ -25,7 +26,7 @@ final readonly class EventListenerAggregateProvider extends SingletonProvider
     public function __construct(
     ) {}
 
-    public function provide(SingletonContainer $singletons): EventListenerAggregate
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): EventListenerAggregate
     {
         $eventListenerAggregate = new EventListenerAggregate();
 

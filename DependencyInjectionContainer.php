@@ -13,6 +13,8 @@ use Resonance\Attribute\Singleton;
 
 readonly class DependencyInjectionContainer
 {
+    public PHPProjectFiles $phpProjectFiles;
+
     /**
      * @var Map<class-string,Set<SingletonCollectionInterface>>
      */
@@ -35,30 +37,8 @@ readonly class DependencyInjectionContainer
         $this->collectionDependencies = new Map();
         $this->collections = new Map();
         $this->providers = new Map();
+        $this->phpProjectFiles = new PHPProjectFiles();
         $this->singletons = new SingletonContainer();
-    }
-
-    public function indexDirectory(string $dirname): void
-    {
-        $files = new PHPFileIterator($dirname);
-        $reflections = new PHPFileReflectionClassIterator($files);
-        $attributes = new PHPFileReflectionClassAttributeIterator($reflections, Singleton::class);
-
-        foreach ($attributes as $reflectionAttribute) {
-            $providedClassName = $reflectionAttribute->attribute->provides ?? $reflectionAttribute->reflectionClass->getName();
-
-            $this->providers->put($providedClassName, $reflectionAttribute->reflectionClass);
-
-            $collectionName = $reflectionAttribute->attribute->collection;
-
-            if ($collectionName) {
-                $this->addToCollection($collectionName, $providedClassName);
-            }
-
-            if ($reflectionAttribute->attribute->requiresCollection) {
-                $this->addCollectionDependency($providedClassName, $reflectionAttribute->attribute->requiresCollection);
-            }
-        }
     }
 
     /**
@@ -87,11 +67,38 @@ readonly class DependencyInjectionContainer
                     throw new LogicException('Not a named type: '.$type::class);
                 }
 
-                $parameters[$constructorParameter->getName()] = $this->makeSingleton($type->getName(), new Set());
+                $typeClassName = $type->getName();
+
+                if (!class_exists($typeClassName) && !interface_exists($typeClassName)) {
+                    throw new LogicException('Class does not exist: '.$typeClassName);
+                }
+
+                $parameters[$constructorParameter->getName()] = $this->makeSingleton($typeClassName, new Set());
             }
         }
 
-        return new $className(...$parameters);
+        return $reflectionClass->newInstance(...$parameters);
+    }
+
+    public function registerSingletons(): void
+    {
+        foreach ($this->phpProjectFiles->findByAttribute(Singleton::class) as $reflectionAttribute) {
+            $providedClassName = $reflectionAttribute->attribute->provides ?? $reflectionAttribute->reflectionClass->getName();
+
+            $this->providers->put($providedClassName, $reflectionAttribute->reflectionClass);
+
+            $collectionName = $reflectionAttribute->attribute->collection;
+
+            if ($collectionName) {
+                $this->addToCollection($collectionName, $providedClassName);
+            }
+
+            $requiredCollection = $reflectionAttribute->attribute->requiresCollection;
+
+            if ($requiredCollection instanceof SingletonCollectionInterface) {
+                $this->addCollectionDependency($providedClassName, $requiredCollection);
+            }
+        }
     }
 
     /**
@@ -151,16 +158,24 @@ readonly class DependencyInjectionContainer
                     throw new LogicException('Not a named type: '.$type::class);
                 }
 
-                $parameters[$constructorParameter->getName()] = $this->makeSingleton($type->getName(), $previous);
+                $typeClassName = $type->getName();
+
+                if (!class_exists($typeClassName) && !interface_exists($typeClassName)) {
+                    throw new LogicException('Class does not exist: '.$typeClassName);
+                }
+
+                $parameters[$constructorParameter->getName()] = $this->makeSingleton($typeClassName, $previous);
             }
         }
 
-        $collectionDependencies = $this->collectionDependencies->get($className, new Set());
+        if ($this->collectionDependencies->hasKey($className)) {
+            $collectionDependencies = $this->collectionDependencies->get($className);
 
-        foreach ($collectionDependencies as $collectionName) {
-            if ($this->collections->hasKey($collectionName)) {
-                foreach ($this->collections->get($collectionName) as $collectionClassName) {
-                    $this->makeSingleton($collectionClassName, new Set());
+            foreach ($collectionDependencies as $collectionName) {
+                if ($this->collections->hasKey($collectionName)) {
+                    foreach ($this->collections->get($collectionName) as $collectionClassName) {
+                        $this->makeSingleton($collectionClassName, new Set());
+                    }
                 }
             }
         }
@@ -168,9 +183,15 @@ readonly class DependencyInjectionContainer
         $provider = $providerReflection->newInstance(...$parameters);
 
         if ($provider instanceof SingletonProviderInterface) {
-            return $provider->provide($this->singletons);
+            /**
+             * @var TSingleton
+             */
+            return $provider->provide($this->singletons, $this->phpProjectFiles);
         }
 
+        /**
+         * @var TSingleton
+         */
         return $provider;
     }
 

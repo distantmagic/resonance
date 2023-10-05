@@ -2,39 +2,41 @@
 
 declare(strict_types=1);
 
-namespace Resonance\SingletonProvider\HttpRouteProvider;
+namespace Resonance\SingletonProvider;
 
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
+use Resonance\Attribute\RespondsToHttp;
 use Resonance\Attribute\Singleton;
 use Resonance\InternalLinkBuilder;
+use Resonance\PHPProjectFiles;
 use Resonance\SingletonCollection;
 use Resonance\SingletonContainer;
-use Resonance\SingletonProvider\HttpRouteProvider;
+use Resonance\SingletonProvider;
 
 use function FastRoute\simpleDispatcher;
 
 /**
- * @template-extends HttpRouteProvider<Dispatcher>
+ * @template-extends SingletonProvider<Dispatcher>
  */
 #[Singleton(
     provides: Dispatcher::class,
     requiresCollection: SingletonCollection::HttpResponder,
 )]
-final readonly class FastRouteDispatcherProvider extends HttpRouteProvider
+final readonly class FastRouteDispatcherProvider extends SingletonProvider
 {
     public function __construct(private InternalLinkBuilder $internalLinkBuilder) {}
 
-    public function provide(SingletonContainer $singletons): Dispatcher
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): Dispatcher
     {
-        return simpleDispatcher(fn (RouteCollector $routes) => $this->collectRoutes($singletons, $routes));
+        return simpleDispatcher(fn (RouteCollector $routes) => $this->collectRoutes($phpProjectFiles, $routes));
     }
 
     private function collectRoutes(
-        SingletonContainer $singletons,
+        PHPProjectFiles $phpProjectFiles,
         RouteCollector $routes,
     ): void {
-        foreach ($this->responderAttributes() as $httpResponderReflection) {
+        foreach ($phpProjectFiles->findByAttribute(RespondsToHttp::class) as $httpResponderReflection) {
             $routes->addRoute(
                 $httpResponderReflection->attribute->method->value,
                 $httpResponderReflection->attribute->pattern,

@@ -6,6 +6,7 @@ namespace Resonance\SingletonProvider;
 
 use Resonance\Attribute\RespondsToWebSocketRPC;
 use Resonance\Attribute\Singleton;
+use Resonance\PHPProjectFiles;
 use Resonance\SingletonAttribute;
 use Resonance\SingletonCollection;
 use Resonance\SingletonContainer;
@@ -22,7 +23,7 @@ use Resonance\WebSocketRPCResponderInterface;
 )]
 final readonly class WebSocketRPCResponderAggregateProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons): WebSocketRPCResponderAggregate
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): WebSocketRPCResponderAggregate
     {
         $webSocketRPCResponderAggregate = new WebSocketRPCResponderAggregate();
 

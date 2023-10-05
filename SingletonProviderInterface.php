@@ -12,5 +12,8 @@ interface SingletonProviderInterface extends RegisterableInterface
     /**
      * @return TObject
      */
-    public function provide(SingletonContainer $singletons): object;
+    public function provide(
+        SingletonContainer $singletons,
+        PHPProjectFiles $phpProjectFiles,
+    ): object;
 }

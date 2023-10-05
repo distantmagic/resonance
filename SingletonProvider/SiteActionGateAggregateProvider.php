@@ -6,6 +6,7 @@ namespace Resonance\SingletonProvider;
 
 use Resonance\Attribute\DecidesSiteAction;
 use Resonance\Attribute\Singleton;
+use Resonance\PHPProjectFiles;
 use Resonance\SingletonAttribute;
 use Resonance\SingletonCollection;
 use Resonance\SingletonContainer;
@@ -22,7 +23,7 @@ use Resonance\SiteActionGateAggregate;
 )]
 final readonly class SiteActionGateAggregateProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons): SiteActionGateAggregate
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): SiteActionGateAggregate
     {
         $siteActionGateAggregate = new SiteActionGateAggregate();
 

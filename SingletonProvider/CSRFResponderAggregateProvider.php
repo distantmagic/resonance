@@ -8,6 +8,7 @@ use Resonance\Attribute\Singleton;
 use Resonance\Attribute\ValidatesCSRFToken;
 use Resonance\CSRFResponderAggregate;
 use Resonance\HttpResponderInterface;
+use Resonance\PHPProjectFiles;
 use Resonance\SingletonAttribute;
 use Resonance\SingletonCollection;
 use Resonance\SingletonContainer;
@@ -22,7 +23,7 @@ use Resonance\SingletonProvider;
 )]
 final readonly class CSRFResponderAggregateProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons): CSRFResponderAggregate
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): CSRFResponderAggregate
     {
         $siteActionGateAggregate = new CSRFResponderAggregate();
 

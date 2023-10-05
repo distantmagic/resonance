@@ -7,6 +7,7 @@ namespace Resonance\SingletonProvider;
 use HTMLPurifier;
 use HTMLPurifier_Config;
 use Resonance\Attribute\Singleton;
+use Resonance\PHPProjectFiles;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
 
@@ -16,7 +17,7 @@ use Resonance\SingletonProvider;
 #[Singleton(provides: HTMLPurifier::class)]
 final readonly class HTMLPurifierProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons): HTMLPurifier
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): HTMLPurifier
     {
         $purifierConfig = HTMLPurifier_Config::createDefault();
 

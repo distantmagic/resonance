@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Resonance\SingletonProvider;
 
 use Resonance\Attribute\Singleton;
+use Resonance\PHPProjectFiles;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
 use Swoole\Database\RedisConfig;
@@ -16,7 +17,7 @@ use Swoole\Database\RedisPool;
 #[Singleton(provides: RedisPool::class)]
 final readonly class SwooleRedisPoolProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons): RedisPool
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): RedisPool
     {
         return new RedisPool($this->configFromGlobals());
     }

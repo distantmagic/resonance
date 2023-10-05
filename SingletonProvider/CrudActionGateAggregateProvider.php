@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Resonance\SingletonProvider;
 
 use Ds\Map;
-use Generator;
 use LogicException;
 use Resonance\Attribute\CrudActionSubject;
 use Resonance\Attribute\DecidesCrudAction;
@@ -14,14 +13,11 @@ use Resonance\CrudActionGate;
 use Resonance\CrudActionGateAggregate;
 use Resonance\CrudActionGateInterface;
 use Resonance\CrudActionSubjectInterface;
-use Resonance\PHPFileIterator;
-use Resonance\PHPFileReflectionClassAttributeIterator;
-use Resonance\PHPFileReflectionClassIterator;
+use Resonance\PHPProjectFiles;
 use Resonance\SingletonAttribute;
 use Resonance\SingletonCollection;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
-use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * @template-extends SingletonProvider<CrudActionGateAggregate>
@@ -32,7 +28,7 @@ use Symfony\Component\Finder\SplFileInfo;
 )]
 final readonly class CrudActionGateAggregateProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons): CrudActionGateAggregate
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): CrudActionGateAggregate
     {
         /**
          * @var Map<class-string<CrudActionGateInterface>,CrudActionGateInterface>
@@ -48,10 +44,7 @@ final readonly class CrudActionGateAggregateProvider extends SingletonProvider
             );
         }
 
-        $projectPhpReflections = new PHPFileReflectionClassIterator($this->phpFiles());
-        $subjectsAttributes = new PHPFileReflectionClassAttributeIterator($projectPhpReflections, CrudActionSubject::class);
-
-        foreach ($subjectsAttributes as $subjectAttribute) {
+        foreach ($phpProjectFiles->findByAttribute(CrudActionSubject::class) as $subjectAttribute) {
             $crudSubjectClass = $subjectAttribute->reflectionClass->getName();
 
             if (!is_a($crudSubjectClass, CrudActionSubjectInterface::class, true)) {
@@ -81,19 +74,5 @@ final readonly class CrudActionGateAggregateProvider extends SingletonProvider
             CrudActionGate::class,
             DecidesCrudAction::class,
         );
-    }
-
-    /**
-     * @return Generator<SplFileInfo>
-     */
-    private function phpFiles(): Generator
-    {
-        foreach (new PHPFileIterator(DM_RESONANCE_ROOT) as $fileInfo) {
-            yield $fileInfo;
-        }
-
-        foreach (new PHPFileIterator(DM_APP_ROOT) as $fileInfo) {
-            yield $fileInfo;
-        }
     }
 }

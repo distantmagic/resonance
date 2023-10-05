@@ -6,6 +6,7 @@ namespace Resonance\SingletonProvider;
 
 use Resonance\Attribute\Singleton;
 use Resonance\HttpRequestLanguageDetector;
+use Resonance\PHPProjectFiles;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
 use Resonance\SupportedLanguageCodeRepositoryInterface;
@@ -23,7 +24,7 @@ final readonly class TranslatorProvider extends SingletonProvider
         private SupportedLanguageCodeRepositoryInterface $supportedLanguageCodeRepository,
     ) {}
 
-    public function provide(SingletonContainer $singletons): Translator
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): Translator
     {
         $translator = new Translator($this->languageDetector);
 

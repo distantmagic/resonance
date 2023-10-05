@@ -6,6 +6,7 @@ namespace Resonance\SingletonProvider;
 
 use Resonance\Attribute\ControlsWebSocketProtocol;
 use Resonance\Attribute\Singleton;
+use Resonance\PHPProjectFiles;
 use Resonance\SingletonAttribute;
 use Resonance\SingletonCollection;
 use Resonance\SingletonContainer;
@@ -22,7 +23,7 @@ use Resonance\WebSocketProtocolControllerInterface;
 )]
 final readonly class WebSocketProtocolControllerAggregateProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons): WebSocketProtocolControllerAggregate
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): WebSocketProtocolControllerAggregate
     {
         $controllerAggregate = new WebSocketProtocolControllerAggregate();
 

@@ -10,6 +10,7 @@ use Resonance\Attribute\Singleton;
 use Resonance\GraphQLFieldableInterface;
 use Resonance\GraphQLSchemaQueryInterface;
 use Resonance\ObjectType\QueryType;
+use Resonance\PHPProjectFiles;
 use Resonance\SingletonAttribute;
 use Resonance\SingletonCollection;
 use Resonance\SingletonContainer;
@@ -24,7 +25,7 @@ use Resonance\SingletonProvider;
 )]
 final readonly class GraphQLSchemaQueryProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons): GraphQLSchemaQueryInterface
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): GraphQLSchemaQueryInterface
     {
         $fields = [];
 

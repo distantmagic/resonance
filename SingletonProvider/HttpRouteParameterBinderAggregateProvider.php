@@ -8,6 +8,7 @@ use Resonance\Attribute\ProvidesRouteParameter;
 use Resonance\Attribute\Singleton;
 use Resonance\HttpRouteParameterBinderAggregate;
 use Resonance\HttpRouteParameterBinderInterface;
+use Resonance\PHPProjectFiles;
 use Resonance\SingletonAttribute;
 use Resonance\SingletonCollection;
 use Resonance\SingletonContainer;
@@ -22,7 +23,7 @@ use Resonance\SingletonProvider;
 )]
 final readonly class HttpRouteParameterBinderAggregateProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons): HttpRouteParameterBinderAggregate
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): HttpRouteParameterBinderAggregate
     {
         $httpResponderAggregate = new HttpRouteParameterBinderAggregate();
 

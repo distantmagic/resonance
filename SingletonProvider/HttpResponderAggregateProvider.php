@@ -15,6 +15,7 @@ use Resonance\HttpResponder\Error\ServerError;
 use Resonance\HttpResponderAggregate;
 use Resonance\HttpResponderInterface;
 use Resonance\HttpRouteMatchRegistry;
+use Resonance\PHPProjectFiles;
 use Resonance\SessionManager;
 use Resonance\SingletonAttribute;
 use Resonance\SingletonCollection;
@@ -41,7 +42,7 @@ final readonly class HttpResponderAggregateProvider extends SingletonProvider
         private SessionManager $sessionManager,
     ) {}
 
-    public function provide(SingletonContainer $singletons): HttpResponderAggregate
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): HttpResponderAggregate
     {
         $httpResponderAggregate = new HttpResponderAggregate(
             $this->httpRouteDispatcher,

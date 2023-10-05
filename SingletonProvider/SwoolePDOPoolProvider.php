@@ -6,6 +6,7 @@ namespace Resonance\SingletonProvider;
 
 use PDO;
 use Resonance\Attribute\Singleton;
+use Resonance\PHPProjectFiles;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
 use Swoole\Database\PDOConfig;
@@ -17,7 +18,7 @@ use Swoole\Database\PDOPool;
 #[Singleton(provides: PDOPool::class)]
 final readonly class SwoolePDOPoolProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons): PDOPool
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): PDOPool
     {
         return new PDOPool($this->configFromGlobals());
     }
