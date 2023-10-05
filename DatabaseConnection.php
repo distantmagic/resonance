@@ -21,6 +21,9 @@ readonly class DatabaseConnection
         private EventDispatcherInterface $eventDispatcher,
         private PDOPool $pdoPool,
     ) {
+        /**
+         * @var PDO|PDOProxy
+         */
         $this->pdo = $this->pdoPool->get();
 
         // Sometimes Swoole PDO wrapper can't reconnect properly when

@@ -22,7 +22,7 @@ abstract readonly class HttpRouteProvider extends SingletonProvider
      */
     protected function responderAttributes(): PHPFileReflectionClassAttributeIterator
     {
-        $projectPhpFiles = new PHPFileIterator(DM_APP_ROOT.'/HttpResponder');
+        $projectPhpFiles = new PHPFileIterator(DM_APP_ROOT);
         $projectPhpReflections = new PHPFileReflectionClassIterator($projectPhpFiles);
 
         return new PHPFileReflectionClassAttributeIterator($projectPhpReflections, RespondsToHttp::class);

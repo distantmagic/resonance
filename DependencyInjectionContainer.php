@@ -4,114 +4,194 @@ declare(strict_types=1);
 
 namespace Resonance;
 
-use DomainException;
-use Generator;
+use Ds\Map;
+use Ds\Set;
 use LogicException;
 use ReflectionClass;
 use ReflectionNamedType;
-use ReflectionParameter;
-use ReflectionType;
+use Resonance\Attribute\Singleton;
 
 readonly class DependencyInjectionContainer
 {
-    public SingletonContainer $singletons;
+    /**
+     * @var Map<class-string,Set<SingletonCollectionInterface>>
+     */
+    private Map $collectionDependencies;
+
+    /**
+     * @var Map<SingletonCollectionInterface,Set<class-string>>
+     */
+    private Map $collections;
+
+    /**
+     * @var Map<class-string,ReflectionClass>
+     */
+    private Map $providers;
+
+    private SingletonContainer $singletons;
 
     public function __construct()
     {
+        $this->collectionDependencies = new Map();
+        $this->collections = new Map();
+        $this->providers = new Map();
         $this->singletons = new SingletonContainer();
     }
 
+    public function indexDirectory(string $dirname): void
+    {
+        $files = new PHPFileIterator($dirname);
+        $reflections = new PHPFileReflectionClassIterator($files);
+        $attributes = new PHPFileReflectionClassAttributeIterator($reflections, Singleton::class);
+
+        foreach ($attributes as $reflectionAttribute) {
+            $providedClassName = $reflectionAttribute->attribute->provides ?? $reflectionAttribute->reflectionClass->getName();
+
+            $this->providers->put($providedClassName, $reflectionAttribute->reflectionClass);
+
+            $collectionName = $reflectionAttribute->attribute->collection;
+
+            if ($collectionName) {
+                $this->addToCollection($collectionName, $providedClassName);
+            }
+
+            if ($reflectionAttribute->attribute->requiresCollection) {
+                $this->addCollectionDependency($providedClassName, $reflectionAttribute->attribute->requiresCollection);
+            }
+        }
+    }
+
     /**
-     * @template TSingleton as object
+     * @template TSingleton
      *
-     * @param class-string<TSingleton> $class
+     * @param class-string<TSingleton> $className
      *
      * @return TSingleton
      */
-    public function make(string $class): object
+    public function make(string $className): object
     {
-        $reflectionClass = new ReflectionClass($class);
-        $parameters = iterator_to_array($this->buildClassParameters($reflectionClass));
-
-        /**
-         * @var null|TSingleton $instance
-         */
-        $instance = $reflectionClass->newInstanceArgs($parameters);
-
-        if (is_null($instance)) {
-            throw new LogicException('Unable to instantiate singleton object');
+        if ($this->singletons->has($className)) {
+            return $this->singletons->get($className);
         }
 
-        return $instance;
-    }
+        $reflectionClass = new ReflectionClass($className);
+        $constructorReflection = $reflectionClass->getConstructor();
 
-    private function buildClassParameters(ReflectionClass $reflectionClass): Generator
-    {
-        foreach (new ConstructorParametersIterator($reflectionClass) as $parameter) {
-            yield $parameter->getName() => $this->getParameterValue($parameter);
-        }
-    }
+        $parameters = [];
 
-    private function getParameterValue(ReflectionParameter $parameter): mixed
-    {
-        $type = $parameter->getType();
+        if ($constructorReflection) {
+            foreach ($constructorReflection->getParameters() as $constructorParameter) {
+                $type = $constructorParameter->getType();
 
-        if (is_null($type)) {
-            return $this->getUntypedParameterValue($parameter);
-        }
+                if (!($type instanceof ReflectionNamedType)) {
+                    throw new LogicException('Not a named type: '.$type::class);
+                }
 
-        return $this->getTypedParameterValue($parameter, $type);
-    }
-
-    private function getTypedParameterValue(
-        ReflectionParameter $parameter,
-        ReflectionType $type,
-    ): mixed {
-        if (!($type instanceof ReflectionNamedType)) {
-            throw new DomainException('Unsupported parameter type: '.$type::class);
-        }
-
-        if ($type->isBuiltin()) {
-            if ($parameter->isDefaultValueAvailable()) {
-                return $parameter->getDefaultValue();
+                $parameters[$constructorParameter->getName()] = $this->makeSingleton($type->getName(), new Set());
             }
-
-            $this->reportError('Parameter is a built-in type without a default value', $parameter, $type);
         }
 
-        $singletonClassName = $type->getName();
-
-        if (!$this->singletons->has($singletonClassName) && $parameter->isDefaultValueAvailable()) {
-            return $parameter->getDefaultValue();
-        }
-
-        if (!$this->singletons->has($singletonClassName)) {
-            $this->reportError('Singleton for parameter is not set', $parameter, $type);
-        }
-
-        return $this->singletons->get($singletonClassName);
+        return new $className(...$parameters);
     }
 
-    private function getUntypedParameterValue(ReflectionParameter $parameter): mixed
+    /**
+     * @param class-string $className
+     */
+    private function addCollectionDependency(string $className, SingletonCollectionInterface $collectionName): void
     {
-        if (!$parameter->isDefaultValueAvailable()) {
-            $this->reportError('Parameter is not typed and no default value is available', $parameter);
+        if (!$this->collectionDependencies->hasKey($className)) {
+            $this->collectionDependencies->put($className, new Set());
         }
 
-        return $parameter->getDefaultValue();
+        $this->collectionDependencies->get($className)->add($collectionName);
     }
 
-    private function reportError(
-        string $errorMessage,
-        ReflectionParameter $parameter,
-        ?ReflectionNamedType $type = null,
-    ): never {
-        throw new LogicException(sprintf(
-            '%s. Trying to build: %s(%s$%s)',
-            $errorMessage,
-            (string) $parameter->getDeclaringClass()?->getName(),
-            $type ? $type->getName().' ' : '',
-            $parameter->getName(),
-        ));
+    /**
+     * @param class-string $providedClassName
+     */
+    private function addToCollection(SingletonCollectionInterface $collectionName, string $providedClassName): void
+    {
+        if (!$this->collections->hasKey($collectionName)) {
+            $this->collections->put($collectionName, new Set());
+        }
+
+        $this->collections->get($collectionName)->add($providedClassName);
+    }
+
+    /**
+     * @template TSingleton
+     *
+     * @param class-string<TSingleton> $className
+     * @param Set<class-string>        $previous
+     *
+     * @return TSingleton
+     */
+    private function doMakeSingleton(string $className, Set $previous): object
+    {
+        if (!$this->providers->hasKey($className)) {
+            throw new LogicException('There is no singleton provider registered for: '.$className);
+        }
+
+        if ($previous->contains($className)) {
+            throw new LogicException('Dependency injection cycle.');
+        }
+
+        $previous->add($className);
+
+        $providerReflection = $this->providers->get($className);
+        $constructorReflection = $providerReflection->getConstructor();
+
+        $parameters = [];
+
+        if ($constructorReflection) {
+            foreach ($constructorReflection->getParameters() as $constructorParameter) {
+                $type = $constructorParameter->getType();
+
+                if (!($type instanceof ReflectionNamedType)) {
+                    throw new LogicException('Not a named type: '.$type::class);
+                }
+
+                $parameters[$constructorParameter->getName()] = $this->makeSingleton($type->getName(), $previous);
+            }
+        }
+
+        $collectionDependencies = $this->collectionDependencies->get($className, new Set());
+
+        foreach ($collectionDependencies as $collectionName) {
+            if ($this->collections->hasKey($collectionName)) {
+                foreach ($this->collections->get($collectionName) as $collectionClassName) {
+                    $this->makeSingleton($collectionClassName, new Set());
+                }
+            }
+        }
+
+        $provider = $providerReflection->newInstance(...$parameters);
+
+        if ($provider instanceof SingletonProviderInterface) {
+            return $provider->provide($this->singletons);
+        }
+
+        return $provider;
+    }
+
+    /**
+     * @template TSingleton
+     *
+     * @param class-string<TSingleton> $className
+     * @param Set<class-string>        $previous
+     *
+     * @return TSingleton
+     */
+    private function makeSingleton(string $className, Set $previous): object
+    {
+        if ($this->singletons->has($className)) {
+            return $this->singletons->get($className);
+        }
+
+        $singleton = $this->doMakeSingleton($className, $previous);
+
+        $this->singletons->set($className, $singleton);
+
+        return $singleton;
     }
 }
