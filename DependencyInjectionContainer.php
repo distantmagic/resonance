@@ -152,12 +152,6 @@ readonly class DependencyInjectionContainer
 
         $providerReflection = $this->providers->get($className);
 
-        $parameters = [];
-
-        foreach (new SingletonConstructorParametersIterator($providerReflection) as $name => $typeClassName) {
-            $parameters[$name] = $this->makeSingleton($typeClassName, $previous);
-        }
-
         if ($this->collectionDependencies->hasKey($className)) {
             $collectionDependencies = $this->collectionDependencies->get($className);
 
@@ -168,6 +162,12 @@ readonly class DependencyInjectionContainer
                     }
                 }
             }
+        }
+
+        $parameters = [];
+
+        foreach (new SingletonConstructorParametersIterator($providerReflection) as $name => $typeClassName) {
+            $parameters[$name] = $this->makeSingleton($typeClassName, $previous);
         }
 
         $provider = $providerReflection->newInstance(...$parameters);
