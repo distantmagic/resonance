@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Resonance;
 
+use Closure;
 use Ds\Map;
 use Ds\Set;
 use LogicException;
 use ReflectionClass;
-use ReflectionNamedType;
+use ReflectionFunction;
 use Resonance\Attribute\Singleton;
 
 readonly class DependencyInjectionContainer
@@ -42,6 +43,26 @@ readonly class DependencyInjectionContainer
     }
 
     /**
+     * @template TReturnType
+     *
+     * @param Closure(...mixed):TReturnType $function
+     *
+     * @return TReturnType
+     */
+    public function call(Closure $function): mixed
+    {
+        $reflectionFunction = new ReflectionFunction($function);
+
+        $parameters = [];
+
+        foreach (new SingletonFunctionParametersIterator($reflectionFunction) as $name => $typeClassName) {
+            $parameters[$name] = $this->makeSingleton($typeClassName, new Set());
+        }
+
+        return $function(...$parameters);
+    }
+
+    /**
      * @template TSingleton
      *
      * @param class-string<TSingleton> $className
@@ -55,26 +76,11 @@ readonly class DependencyInjectionContainer
         }
 
         $reflectionClass = new ReflectionClass($className);
-        $constructorReflection = $reflectionClass->getConstructor();
 
         $parameters = [];
 
-        if ($constructorReflection) {
-            foreach ($constructorReflection->getParameters() as $constructorParameter) {
-                $type = $constructorParameter->getType();
-
-                if (!($type instanceof ReflectionNamedType)) {
-                    throw new LogicException('Not a named type: '.$type::class);
-                }
-
-                $typeClassName = $type->getName();
-
-                if (!class_exists($typeClassName) && !interface_exists($typeClassName)) {
-                    throw new LogicException('Class does not exist: '.$typeClassName);
-                }
-
-                $parameters[$constructorParameter->getName()] = $this->makeSingleton($typeClassName, new Set());
-            }
+        foreach (new SingletonConstructorParametersIterator($reflectionClass) as $name => $typeClassName) {
+            $parameters[$name] = $this->makeSingleton($typeClassName, new Set());
         }
 
         return $reflectionClass->newInstance(...$parameters);
@@ -84,9 +90,6 @@ readonly class DependencyInjectionContainer
     {
         foreach ($this->phpProjectFiles->findByAttribute(Singleton::class) as $reflectionAttribute) {
             $providedClassName = $reflectionAttribute->attribute->provides ?? $reflectionAttribute->reflectionClass->getName();
-
-            $this->providers->put($providedClassName, $reflectionAttribute->reflectionClass);
-
             $collectionName = $reflectionAttribute->attribute->collection;
 
             if ($collectionName) {
@@ -98,6 +101,8 @@ readonly class DependencyInjectionContainer
             if ($requiredCollection instanceof SingletonCollectionInterface) {
                 $this->addCollectionDependency($providedClassName, $requiredCollection);
             }
+
+            $this->providers->put($providedClassName, $reflectionAttribute->reflectionClass);
         }
     }
 
@@ -146,26 +151,11 @@ readonly class DependencyInjectionContainer
         $previous->add($className);
 
         $providerReflection = $this->providers->get($className);
-        $constructorReflection = $providerReflection->getConstructor();
 
         $parameters = [];
 
-        if ($constructorReflection) {
-            foreach ($constructorReflection->getParameters() as $constructorParameter) {
-                $type = $constructorParameter->getType();
-
-                if (!($type instanceof ReflectionNamedType)) {
-                    throw new LogicException('Not a named type: '.$type::class);
-                }
-
-                $typeClassName = $type->getName();
-
-                if (!class_exists($typeClassName) && !interface_exists($typeClassName)) {
-                    throw new LogicException('Class does not exist: '.$typeClassName);
-                }
-
-                $parameters[$constructorParameter->getName()] = $this->makeSingleton($typeClassName, $previous);
-            }
+        foreach (new SingletonConstructorParametersIterator($providerReflection) as $name => $typeClassName) {
+            $parameters[$name] = $this->makeSingleton($typeClassName, $previous);
         }
 
         if ($this->collectionDependencies->hasKey($className)) {
