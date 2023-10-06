@@ -47,8 +47,8 @@ readonly class TwigBridgeExtension implements ExtensionInterface
         return [
             new TwigFunction('can', $this->functionGatekeeperCan, $safe),
             new TwigFunction('can_crud', $this->functionGatekeeperCanCrud, $safe),
-            new TwigFunction('csrf_token', $this->functionCSRFToken, $safe),
             new TwigFunction('csp_nonce', $this->functionCspNonce, $safe),
+            new TwigFunction('csrf_token', $this->functionCSRFToken, $safe),
             new TwigFunction('esbuild', $this->functionEsbuild, $safe),
             new TwigFunction('esbuild_preload', $this->functionEsbuildPreload, $safe),
             new TwigFunction('esbuild_render_preloads', $this->functionEsbuildRenderPreloads, $safe),
