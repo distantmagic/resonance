@@ -37,12 +37,13 @@ final readonly class Twig extends Layout
         return ContentType::TextHtml;
     }
 
-    public function render(Request $request, string $templatePath, ?array $templateData = null): self
+    public function render(Request $request, Response $response, string $templatePath, ?array $templateData = null): self
     {
         $this->templates->offsetSet(
             $request,
             $this->twig->render($templatePath, $templateData ?? [
                 'request' => $request,
+                'response' => $response,
             ])
         );
 

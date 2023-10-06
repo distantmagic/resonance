@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Resonance\SingletonProvider;
 
 use Resonance\Attribute\Singleton;
-use Resonance\Environment;
 use Resonance\PHPProjectFiles;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;

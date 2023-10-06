@@ -16,9 +16,11 @@ readonly class TwigBridgeExtension implements ExtensionInterface
         private TwigFilterIntlFormatDate $filterIntlFormatDate,
         private TwigFilterTrans $filterTrans,
         private TwigFunctionCSPNonce $functionCspNonce,
+        private TwigFunctionCSRFToken $functionCSRFToken,
         private TwigFunctionEsbuild $functionEsbuild,
         private TwigFunctionEsbuildPreloads $functionEsbuildPreloads,
         private TwigFunctionGatekeeperCan $functionGatekeeperCan,
+        private TwigFunctionGatekeeperCanCrud $functionGatekeeperCanCrud,
         private TwigFunctionRoute $functionRoute,
     ) {}
 
@@ -42,6 +44,8 @@ readonly class TwigBridgeExtension implements ExtensionInterface
 
         return [
             new TwigFunction('can', $this->functionGatekeeperCan, $safe),
+            new TwigFunction('can_crud', $this->functionGatekeeperCanCrud, $safe),
+            new TwigFunction('csrf_token', $this->functionCSRFToken, $safe),
             new TwigFunction('csp_nonce', $this->functionCspNonce, $safe),
             new TwigFunction('esbuild', $this->functionEsbuild, $safe),
             new TwigFunction('esbuild_preloads', $this->functionEsbuildPreloads, $safe),
