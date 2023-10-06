@@ -8,7 +8,7 @@ use Resonance\Attribute\Singleton;
 use Swoole\Http\Request;
 
 #[Singleton]
-readonly class TwigFunctionEsbuildPreloads
+readonly class TwigFunctionEsbuildRenderPreloads
 {
     public function __construct(
         private TemplateFilters $filters,
