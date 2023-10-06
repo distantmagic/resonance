@@ -21,6 +21,7 @@ readonly class TwigBridgeExtension implements ExtensionInterface
         private TwigFunctionEsbuildPreloads $functionEsbuildPreloads,
         private TwigFunctionGatekeeperCan $functionGatekeeperCan,
         private TwigFunctionGatekeeperCanCrud $functionGatekeeperCanCrud,
+        private TwigFunctionOld $functionOld,
         private TwigFunctionRoute $functionRoute,
     ) {}
 
@@ -49,6 +50,7 @@ readonly class TwigBridgeExtension implements ExtensionInterface
             new TwigFunction('csp_nonce', $this->functionCspNonce, $safe),
             new TwigFunction('esbuild', $this->functionEsbuild, $safe),
             new TwigFunction('esbuild_preloads', $this->functionEsbuildPreloads, $safe),
+            new TwigFunction('old', $this->functionOld),
             new TwigFunction('route', $this->functionRoute, $safe),
         ];
     }
