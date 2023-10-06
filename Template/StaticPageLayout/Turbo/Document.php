@@ -70,6 +70,7 @@ readonly class Document extends Turbo
         $this->tableOfContents->registerScripts($scripts);
 
         $scripts->push('controller_article.ts', 0);
+        $scripts->push('controller_aside.ts', 0);
         $scripts->push('controller_hljs.ts', 0);
     }
 
@@ -100,7 +101,7 @@ readonly class Document extends Turbo
         yield <<<'HTML'
         <div class="documentation">
             <nav class="documentation__aside">
-                <div class="documentation__aside__links">
+                <div class="documentation__aside__links" data-controller="aside">
         HTML;
         yield from $this->documentsMenu->render($staticPage);
         yield <<<HTML

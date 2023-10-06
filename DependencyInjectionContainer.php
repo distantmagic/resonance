@@ -141,11 +141,19 @@ readonly class DependencyInjectionContainer
     private function doMakeSingleton(string $className, Set $previous): object
     {
         if (!$this->providers->hasKey($className)) {
-            throw new LogicException('There is no singleton provider registered for: '.$className);
+            throw new LogicException(sprintf(
+                "No singleton provider registered for:\n-> %s\n-> %s\n",
+                $previous->join("\n-> "),
+                $className,
+            ));
         }
 
         if ($previous->contains($className)) {
-            throw new LogicException('Dependency injection cycle.');
+            throw new LogicException(sprintf(
+                'Dependency injection cycle %s -> %s',
+                $previous->join(' -> '),
+                $className,
+            ));
         }
 
         $previous->add($className);
