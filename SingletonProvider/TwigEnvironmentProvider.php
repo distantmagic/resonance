@@ -32,10 +32,8 @@ final readonly class TwigEnvironmentProvider extends SingletonProvider
     {
         $cacheDirectory = DM_ROOT.'/cache/twig';
 
-        if (DM_APP_ENV === Environment::Development) {
-            $filesystem = new Filesystem();
-            $filesystem->remove($cacheDirectory);
-        }
+        $filesystem = new Filesystem();
+        $filesystem->remove($cacheDirectory);
 
         $loader = new FilesystemLoader(DM_APP_ROOT.'/views');
         $cache = new FilesystemCache($cacheDirectory, FilesystemCache::FORCE_BYTECODE_INVALIDATION);
