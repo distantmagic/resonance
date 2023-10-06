@@ -13,10 +13,12 @@ use Twig\TwigFunction;
 readonly class TwigBridgeExtension implements ExtensionInterface
 {
     public function __construct(
+        private TwigFilterIntlFormatDate $filterIntlFormatDate,
         private TwigFilterTrans $filterTrans,
         private TwigFunctionCSPNonce $functionCspNonce,
         private TwigFunctionEsbuild $functionEsbuild,
         private TwigFunctionEsbuildPreloads $functionEsbuildPreloads,
+        private TwigFunctionGatekeeperCan $functionGatekeeperCan,
         private TwigFunctionRoute $functionRoute,
     ) {}
 
@@ -27,6 +29,7 @@ readonly class TwigBridgeExtension implements ExtensionInterface
         ];
 
         return [
+            new TwigFilter('intl_format_date', $this->filterIntlFormatDate, $safe),
             new TwigFilter('trans', $this->filterTrans, $safe),
         ];
     }
@@ -38,6 +41,7 @@ readonly class TwigBridgeExtension implements ExtensionInterface
         ];
 
         return [
+            new TwigFunction('can', $this->functionGatekeeperCan, $safe),
             new TwigFunction('csp_nonce', $this->functionCspNonce, $safe),
             new TwigFunction('esbuild', $this->functionEsbuild, $safe),
             new TwigFunction('esbuild_preloads', $this->functionEsbuildPreloads, $safe),
