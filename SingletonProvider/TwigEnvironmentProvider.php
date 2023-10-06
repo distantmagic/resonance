@@ -9,6 +9,7 @@ use Resonance\Environment;
 use Resonance\PHPProjectFiles;
 use Resonance\SingletonContainer;
 use Resonance\SingletonProvider;
+use Resonance\TwigBridgeExtension;
 use Symfony\Component\Filesystem\Filesystem;
 use Twig\Cache\FilesystemCache;
 use Twig\Environment as TwigEnvironment;
@@ -20,6 +21,8 @@ use Twig\Loader\FilesystemLoader;
 #[Singleton(provides: TwigEnvironment::class)]
 final readonly class TwigEnvironmentProvider extends SingletonProvider
 {
+    public function __construct(private TwigBridgeExtension $twigBridgeExtension) {}
+
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): TwigEnvironment
     {
         $cacheDirectory = DM_ROOT.'/cache/twig';
@@ -32,8 +35,12 @@ final readonly class TwigEnvironmentProvider extends SingletonProvider
         $loader = new FilesystemLoader(DM_APP_ROOT.'/views');
         $cache = new FilesystemCache($cacheDirectory, FilesystemCache::FORCE_BYTECODE_INVALIDATION);
 
-        return new TwigEnvironment($loader, [
+        $environment = new TwigEnvironment($loader, [
             'cache' => $cache,
+            'strict_variables' => true,
         ]);
+        $environment->addExtension($this->twigBridgeExtension);
+
+        return $environment;
     }
 }
