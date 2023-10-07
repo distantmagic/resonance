@@ -46,6 +46,9 @@ final readonly class TwigEnvironmentProvider extends SingletonProvider
 
         $environment->addExtension($this->twigBridgeExtension);
 
+        /**
+         * @var bool $coroutineResult
+         */
         $coroutineResult = run(function () use ($environment) {
             $this->warmupCache($environment);
         });
