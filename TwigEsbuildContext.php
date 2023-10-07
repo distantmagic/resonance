@@ -16,14 +16,8 @@ readonly class TwigEsbuildContext
      */
     private WeakMap $entryPoints;
 
-    private EsbuildMeta $esbuildMeta;
-
-    public function __construct()
+    public function __construct(private EsbuildMeta $esbuildMeta)
     {
-        $builder = new EsbuildMetaBuilder();
-
-        $this->esbuildMeta = $builder->build(DM_ROOT.'/esbuild-meta-app.json');
-
         /**
          * @var WeakMap<Request,EsbuildMetaEntryPoints>
          */
