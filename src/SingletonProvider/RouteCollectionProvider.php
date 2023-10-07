@@ -25,11 +25,12 @@ final readonly class RouteCollectionProvider extends SingletonProvider
         foreach ($phpProjectFiles->findByAttribute(RespondsToHttp::class) as $httpResponderReflection) {
             $route = new Route($httpResponderReflection->attribute->pattern);
             $route->setMethods($httpResponderReflection->attribute->method->value);
-            $route->compile();
 
             if ($httpResponderReflection->attribute->requirements) {
                 $route->setRequirements($httpResponderReflection->attribute->requirements);
             }
+
+            $route->compile();
 
             $routeSymbol = $httpResponderReflection->attribute->routeSymbol;
             $routeName = $routeSymbol->toConstant();

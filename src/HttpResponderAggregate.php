@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Event\UnhandledException;
 use Distantmagic\Resonance\HttpResponder\Error\MethodNotAllowed;
 use Distantmagic\Resonance\HttpResponder\Error\PageNotFound;
 use Distantmagic\Resonance\HttpResponder\Error\ServerError;
 use DomainException;
-use Ds\Map;
 use LogicException;
 use RuntimeException;
 use Swoole\Http\Request;
@@ -17,27 +17,24 @@ use Swoole\Http\Response;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\RequestContext;
 use Throwable;
 
+#[Singleton]
 readonly class HttpResponderAggregate
 {
-    /**
-     * @var Map<HttpRouteSymbolInterface,HttpResponderInterface> $httpResponders
-     */
-    public Map $httpResponders;
-
     public function __construct(
         private EventDispatcherInterface $eventDispatcher,
         private HttpRecursiveResponder $recursiveResponder,
+        private HttpResponderCollection $httpResponderCollection,
         private HttpRouteMatchRegistry $routeMatchRegistry,
         private MethodNotAllowed $methodNotAllowed,
         private PageNotFound $pageNotFound,
+        private RequestContext $requestContext,
         private ServerError $serverError,
         private SessionManager $sessionManager,
         private UrlMatcher $urlMatcher,
-    ) {
-        $this->httpResponders = new Map();
-    }
+    ) {}
 
     public function respond(Request $request, Response $response): void
     {
@@ -85,8 +82,7 @@ readonly class HttpResponderAggregate
         }
 
         $this
-            ->urlMatcher
-            ->getContext()
+            ->requestContext
             ->setMethod($request->server['request_method'])
             ->setPathInfo((string) $request->server['path_info'])
             ->setHost((string) $request->server['remote_addr'])
@@ -121,11 +117,11 @@ readonly class HttpResponderAggregate
 
     private function resolveFoundResponder(?HttpRouteSymbolInterface $routeSymbol): HttpResponderInterface
     {
-        if (!$routeSymbol || !$this->httpResponders->hasKey($routeSymbol)) {
+        if (!$routeSymbol || !$this->httpResponderCollection->httpResponders->hasKey($routeSymbol)) {
             $this->unimplementedHttpRouteResponder($routeSymbol);
         }
 
-        return $this->httpResponders->get($routeSymbol);
+        return $this->httpResponderCollection->httpResponders->get($routeSymbol);
     }
 
     private function selectResponder(Request $request): HttpResponderInterface
