@@ -39,7 +39,7 @@ abstract readonly class Turbo extends StaticPageLayout
     public function renderStaticPage(StaticPage $staticPage): Generator
     {
         $esbuildMetaEntryPoints = new EsbuildMetaEntryPoints($this->esbuildMeta);
-        $esbuildPreloadsRenderer = new EsbuildMetaPreloadsRenderer($esbuildMetaEntryPoints, $this->filters);
+        $esbuildPreloadsRenderer = new EsbuildMetaPreloadsRenderer($esbuildMetaEntryPoints);
 
         $renderedScripts = $this->renderScripts($esbuildMetaEntryPoints);
         $renderedStylesheets = $this->renderStylesheets($staticPage, $esbuildMetaEntryPoints);

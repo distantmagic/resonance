@@ -32,8 +32,11 @@ final readonly class RouteCollectionProvider extends SingletonProvider
 
             $route->compile();
 
-            $routeSymbol = $httpResponderReflection->attribute->routeSymbol;
-            $routeName = $routeSymbol->toConstant();
+            $routeName = $httpResponderReflection
+                ->attribute
+                ->routeSymbol
+                ->toConstant()
+            ;
 
             $routeCollection->add($routeName, $route);
         }

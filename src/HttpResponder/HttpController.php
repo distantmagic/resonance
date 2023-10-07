@@ -9,7 +9,6 @@ use Distantmagic\Resonance\Attribute\RouteParameter;
 use Distantmagic\Resonance\CrudActionSubjectInterface;
 use Distantmagic\Resonance\Gatekeeper;
 use Distantmagic\Resonance\HttpControllerDependencies;
-use Distantmagic\Resonance\HttpControllerParameterResolutionResult;
 use Distantmagic\Resonance\HttpControllerParameterResolutionStatus;
 use Distantmagic\Resonance\HttpControllerReflectionMethod;
 use Distantmagic\Resonance\HttpResponder;
@@ -66,6 +65,9 @@ abstract readonly class HttpController extends HttpResponder
         $resolvedParameterValues = [];
 
         foreach ($this->handleReflection->parameters as $parameterName => $parameterClass) {
+            /**
+             * @var mixed explicitly mixed for typechecks
+             */
             $bindingResult = $this->bindRouteParameter(
                 $request,
                 $response,
@@ -73,18 +75,18 @@ abstract readonly class HttpController extends HttpResponder
                 $parameterName,
             );
 
-            switch ($bindingResult->status) {
+            switch ($bindingResult) {
                 case HttpControllerParameterResolutionStatus::Forbidden:
                     return $this->forbidden;
                 case HttpControllerParameterResolutionStatus::NotFound:
                     return $this->pageNotFound;
                 case HttpControllerParameterResolutionStatus::NotProvided:
                     return $this->badRequest;
-                case HttpControllerParameterResolutionStatus::Ok:
+                default:
                     /**
                      * @var mixed explicitly mixed for typechecks
                      */
-                    $resolvedParameterValues[$parameterName] = $bindingResult->value;
+                    $resolvedParameterValues[$parameterName] = $bindingResult;
 
                     break;
             }
@@ -100,17 +102,17 @@ abstract readonly class HttpController extends HttpResponder
         Request $request,
         RouteParameter $attribute,
         string $parameterClass,
-    ): HttpControllerParameterResolutionResult {
+    ): mixed {
         $routeParameterValue = $this->routeMatchRegistry->get($request)->routeVars->get($attribute->from, null);
 
         if (is_null($routeParameterValue)) {
-            return new HttpControllerParameterResolutionResult(HttpControllerParameterResolutionStatus::NotProvided);
+            return HttpControllerParameterResolutionStatus::NotProvided;
         }
 
         $object = $this->routeParameterBinderAggregate->provide($parameterClass, $routeParameterValue);
 
         if (is_null($object)) {
-            return new HttpControllerParameterResolutionResult(HttpControllerParameterResolutionStatus::NotFound);
+            return HttpControllerParameterResolutionStatus::NotFound;
         }
 
         if (!($object instanceof CrudActionSubjectInterface)) {
@@ -118,13 +120,10 @@ abstract readonly class HttpController extends HttpResponder
         }
 
         if (!$this->gatekeeper->withRequest($request)->canCrud($object, $attribute->intent)) {
-            return new HttpControllerParameterResolutionResult(HttpControllerParameterResolutionStatus::Forbidden);
+            return HttpControllerParameterResolutionStatus::Forbidden;
         }
 
-        return new HttpControllerParameterResolutionResult(
-            HttpControllerParameterResolutionStatus::Ok,
-            $object,
-        );
+        return $object;
     }
 
     /**
@@ -135,19 +134,13 @@ abstract readonly class HttpController extends HttpResponder
         Response $response,
         string $parameterClass,
         string $parameterName,
-    ): HttpControllerParameterResolutionResult {
+    ): mixed {
         if ($request instanceof $parameterClass) {
-            return new HttpControllerParameterResolutionResult(
-                HttpControllerParameterResolutionStatus::Ok,
-                $request,
-            );
+            return $request;
         }
 
         if ($response instanceof $parameterClass) {
-            return new HttpControllerParameterResolutionResult(
-                HttpControllerParameterResolutionStatus::Ok,
-                $response,
-            );
+            return $response;
         }
 
         $responderAttribute = $this->handleReflection->attributes->get($parameterName, null);

@@ -8,10 +8,7 @@ use Stringable;
 
 readonly class EsbuildMetaPreloadsRenderer implements Stringable
 {
-    public function __construct(
-        private EsbuildMetaEntryPoints $esbuildMetaEntryPoints,
-        private TemplateFilters $filters,
-    ) {}
+    public function __construct(private EsbuildMetaEntryPoints $esbuildMetaEntryPoints) {}
 
     public function __toString(): string
     {
@@ -24,17 +21,15 @@ readonly class EsbuildMetaPreloadsRenderer implements Stringable
 
         $ret = '';
 
-        foreach (new EsbuildPreloadablesPriorityIterator($preloadables) as $preloadable) {
-            $href = $this->filters->escape($preloadable->pathname);
-
+        foreach ($preloadables as $type => $pathname) {
             $ret .= sprintf(
-                match ($preloadable->type) {
+                match ($type) {
                     EsbuildPreloadableType::Font => '<link rel="preload" as="font" href="%s" crossorigin>'."\n",
                     EsbuildPreloadableType::Image => '<link rel="preload" as="image" href="%s">'."\n",
                     EsbuildPreloadableType::JavaScriptModule => '<link rel="modulepreload" href="%s">'."\n",
                     EsbuildPreloadableType::Stylesheet => '<link rel="preload" as="style" href="%s">'."\n",
                 },
-                '/'.$href,
+                '/'.$pathname,
             );
         }
 
