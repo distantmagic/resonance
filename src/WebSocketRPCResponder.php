@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
-use Resonance\InputValidatedData\RPCMessage;
-use Resonance\WebSocketProtocolException\UnexpectedNotification;
-use Resonance\WebSocketProtocolException\UnexpectedRequest;
+use Distantmagic\Resonance\InputValidatedData\RPCMessage;
+use Distantmagic\Resonance\WebSocketProtocolException\UnexpectedNotification;
+use Distantmagic\Resonance\WebSocketProtocolException\UnexpectedRequest;
 
 abstract readonly class WebSocketRPCResponder implements WebSocketRPCResponderInterface
 {

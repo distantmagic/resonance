@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 use Ds\Map;
-use Resonance\InputValidator\FrontMatterValidator;
+use Distantmagic\Resonance\InputValidator\FrontMatterValidator;
 use RuntimeException;
 use Swoole\Coroutine\WaitGroup;
 use Symfony\Component\Console\Output\ConsoleOutput;

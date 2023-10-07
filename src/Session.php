@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 use Ds\Map;
 use Redis;

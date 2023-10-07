@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 use League\CommonMark\Node\Node;
 use League\CommonMark\Renderer\ChildNodeRendererInterface;

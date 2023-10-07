@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 use Ds\Map;
 use Psr\Log\LoggerInterface;
-use Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\Singleton;
 use Swoole\Event;
 use Swoole\Http\Request;
 use Swoole\Http\Response;

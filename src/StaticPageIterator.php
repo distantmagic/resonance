@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 use Generator;
 use IteratorAggregate;
@@ -10,9 +10,9 @@ use League\CommonMark\Extension\FrontMatter\Exception\InvalidFrontMatterExceptio
 use League\CommonMark\Extension\FrontMatter\FrontMatterExtension;
 use League\CommonMark\Extension\FrontMatter\FrontMatterParserInterface;
 use League\CommonMark\Extension\FrontMatter\Input\MarkdownInputWithFrontMatter;
-use Resonance\InputValidatedData\FrontMatter;
-use Resonance\InputValidator\FrontMatterValidator;
-use Resonance\StaticPageFileException\FrontMatterValidationException;
+use Distantmagic\Resonance\InputValidatedData\FrontMatter;
+use Distantmagic\Resonance\InputValidator\FrontMatterValidator;
+use Distantmagic\Resonance\StaticPageFileException\FrontMatterValidationException;
 use Symfony\Component\Finder\SplFileInfo;
 
 /**

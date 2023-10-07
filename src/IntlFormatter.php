@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 use DateTimeImmutable;
 use DateTimeInterface;
 use IntlDateFormatter;
-use Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\Singleton;
 use Swoole\Http\Request;
 
 #[Singleton]

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 use Ds\Map;
-use Resonance\TranslationException\LanguageNotFoundException;
-use Resonance\TranslationException\PhraseNotFoundException;
+use Distantmagic\Resonance\TranslationException\LanguageNotFoundException;
+use Distantmagic\Resonance\TranslationException\PhraseNotFoundException;
 use Swoole\Http\Request;
 
 readonly class Translator

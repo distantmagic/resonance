@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 use LogicException;
-use Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\Singleton;
 
 use function Swoole\Coroutine\batch;
 use function Swoole\Coroutine\go;

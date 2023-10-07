@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
-use Resonance\InputValidatedData\RPCMessage;
+use Distantmagic\Resonance\InputValidatedData\RPCMessage;
 
 interface WebSocketRPCResponderInterface
 {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Resonance\Attribute;
+namespace Distantmagic\Resonance\Attribute;
 
 use Attribute;
-use Resonance\Attribute as BaseAttribute;
-use Resonance\RPCMethodInterface;
+use Distantmagic\Resonance\Attribute as BaseAttribute;
+use Distantmagic\Resonance\RPCMethodInterface;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class RespondsToWebSocketRPC extends BaseAttribute

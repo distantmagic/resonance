@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Resonance\EventListener;
+namespace Distantmagic\Resonance\EventListener;
 
 use Psr\Log\LoggerInterface;
-use Resonance\Attribute\ListensTo;
-use Resonance\Attribute\Singleton;
-use Resonance\Environment;
-use Resonance\Event\UnhandledException;
-use Resonance\EventInterface;
-use Resonance\EventListener;
-use Resonance\SingletonCollection;
+use Distantmagic\Resonance\Attribute\ListensTo;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Environment;
+use Distantmagic\Resonance\Event\UnhandledException;
+use Distantmagic\Resonance\EventInterface;
+use Distantmagic\Resonance\EventListener;
+use Distantmagic\Resonance\SingletonCollection;
 
 /**
  * @template-extends EventListener<UnhandledException,void>

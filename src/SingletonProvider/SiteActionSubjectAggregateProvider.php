@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Resonance\SingletonProvider;
+namespace Distantmagic\Resonance\SingletonProvider;
 
-use Resonance\Attribute\Can;
-use Resonance\Attribute\Singleton;
-use Resonance\HttpResponderInterface;
-use Resonance\PHPProjectFiles;
-use Resonance\SingletonAttribute;
-use Resonance\SingletonCollection;
-use Resonance\SingletonContainer;
-use Resonance\SingletonProvider;
-use Resonance\SiteActionSubjectAggregate;
+use Distantmagic\Resonance\Attribute\Can;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\HttpResponderInterface;
+use Distantmagic\Resonance\PHPProjectFiles;
+use Distantmagic\Resonance\SingletonAttribute;
+use Distantmagic\Resonance\SingletonCollection;
+use Distantmagic\Resonance\SingletonContainer;
+use Distantmagic\Resonance\SingletonProvider;
+use Distantmagic\Resonance\SiteActionSubjectAggregate;
 
 /**
  * @template-extends SingletonProvider<SiteActionSubjectAggregate>

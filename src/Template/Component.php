@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Resonance\Template;
+namespace Distantmagic\Resonance\Template;
 
-use Resonance\Template;
-use Resonance\TemplateComponentInterface;
+use Distantmagic\Resonance\Template;
+use Distantmagic\Resonance\TemplateComponentInterface;
 
 abstract readonly class Component extends Template implements TemplateComponentInterface {}

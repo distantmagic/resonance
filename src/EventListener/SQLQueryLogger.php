@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Resonance\EventListener;
+namespace Distantmagic\Resonance\EventListener;
 
 use Doctrine\SqlFormatter\SqlFormatter;
 use Psr\Log\LoggerInterface;
-use Resonance\Attribute\ListensTo;
-use Resonance\Attribute\Singleton;
-use Resonance\Event\SQLQueryBeforeExecute;
-use Resonance\EventInterface;
-use Resonance\EventListener;
-use Resonance\SingletonCollection;
+use Distantmagic\Resonance\Attribute\ListensTo;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Event\SQLQueryBeforeExecute;
+use Distantmagic\Resonance\EventInterface;
+use Distantmagic\Resonance\EventListener;
+use Distantmagic\Resonance\SingletonCollection;
 
 /**
  * @template-extends EventListener<SQLQueryBeforeExecute,void>

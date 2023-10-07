@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Resonance\WebSocketProtocolException;
+namespace Distantmagic\Resonance\WebSocketProtocolException;
 
-use Resonance\RPCMethodInterface;
-use Resonance\WebSocketProtocolException;
+use Distantmagic\Resonance\RPCMethodInterface;
+use Distantmagic\Resonance\WebSocketProtocolException;
 
 class UnexpectedNotification extends WebSocketProtocolException
 {

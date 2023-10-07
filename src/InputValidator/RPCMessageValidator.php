@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Resonance\InputValidator;
+namespace Distantmagic\Resonance\InputValidator;
 
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
-use Resonance\Attribute\Singleton;
-use Resonance\InputValidatedData\RPCMessage;
-use Resonance\InputValidator;
-use Resonance\RPCMethodValidatorInterface;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\InputValidatedData\RPCMessage;
+use Distantmagic\Resonance\InputValidator;
+use Distantmagic\Resonance\RPCMethodValidatorInterface;
 
 /**
  * @extends InputValidator<RPCMessage, array{

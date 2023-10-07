@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Resonance\StaticPageFileException;
+namespace Distantmagic\Resonance\StaticPageFileException;
 
-use Resonance\StaticPageFileException;
+use Distantmagic\Resonance\StaticPageFileException;
 use Symfony\Component\Finder\SplFileInfo;
 
 class FrontMatterValidationException extends StaticPageFileException

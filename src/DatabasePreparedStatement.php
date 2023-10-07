@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 use PDO;
 use PDOStatement;
-use Resonance\Event\SQLQueryBeforeExecute;
+use Distantmagic\Resonance\Event\SQLQueryBeforeExecute;
 use Swoole\Database\PDOProxy;
 use Swoole\Database\PDOStatementProxy;
 

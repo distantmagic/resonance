@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Resonance\Template;
+namespace Distantmagic\Resonance\Template;
 
-use Resonance\ContentType;
-use Resonance\Template;
-use Resonance\TemplateLayoutInterface;
+use Distantmagic\Resonance\ContentType;
+use Distantmagic\Resonance\Template;
+use Distantmagic\Resonance\TemplateLayoutInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 

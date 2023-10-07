@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 use Closure;
 use Ds\Map;
@@ -10,7 +10,7 @@ use Ds\Set;
 use LogicException;
 use ReflectionClass;
 use ReflectionFunction;
-use Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\Singleton;
 
 readonly class DependencyInjectionContainer
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Resonance\TranslationException;
+namespace Distantmagic\Resonance\TranslationException;
 
-use Resonance\SupportedLanguageCodeInterface;
-use Resonance\TranslationException;
+use Distantmagic\Resonance\SupportedLanguageCodeInterface;
+use Distantmagic\Resonance\TranslationException;
 
 class LanguageNotFoundException extends TranslationException
 {

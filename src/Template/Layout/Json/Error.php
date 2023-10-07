@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Resonance\Template\Layout\Json;
+namespace Distantmagic\Resonance\Template\Layout\Json;
 
-use Resonance\Attribute\Singleton;
-use Resonance\HttpError;
-use Resonance\JsonErrorTemplateInterface;
-use Resonance\SecurityPolicyHeaders;
-use Resonance\Template\Layout\Json;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\HttpError;
+use Distantmagic\Resonance\JsonErrorTemplateInterface;
+use Distantmagic\Resonance\SecurityPolicyHeaders;
+use Distantmagic\Resonance\Template\Layout\Json;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use WeakMap;

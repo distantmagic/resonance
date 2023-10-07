@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Resonance\Event;
+namespace Distantmagic\Resonance\Event;
 
-use Resonance\Event;
+use Distantmagic\Resonance\Event;
 
 final readonly class SQLQueryBeforeExecute extends Event
 {

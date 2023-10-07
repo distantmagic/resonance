@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 use League\CommonMark\Node\Block\Document;
 use League\CommonMark\Output\RenderedContent;

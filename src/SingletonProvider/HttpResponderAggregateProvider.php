@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Resonance\SingletonProvider;
+namespace Distantmagic\Resonance\SingletonProvider;
 
 use FastRoute\Dispatcher;
-use Resonance\Attribute\RespondsToHttp;
-use Resonance\Attribute\Singleton;
-use Resonance\EventDispatcherInterface;
-use Resonance\HttpRecursiveResponder;
-use Resonance\HttpResponder\Error\MethodNotAllowed;
-use Resonance\HttpResponder\Error\PageNotFound;
-use Resonance\HttpResponder\Error\ServerError;
-use Resonance\HttpResponderAggregate;
-use Resonance\HttpResponderInterface;
-use Resonance\HttpRouteMatchRegistry;
-use Resonance\PHPProjectFiles;
-use Resonance\SessionManager;
-use Resonance\SingletonAttribute;
-use Resonance\SingletonCollection;
-use Resonance\SingletonContainer;
-use Resonance\SingletonProvider;
+use Distantmagic\Resonance\Attribute\RespondsToHttp;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\EventDispatcherInterface;
+use Distantmagic\Resonance\HttpRecursiveResponder;
+use Distantmagic\Resonance\HttpResponder\Error\MethodNotAllowed;
+use Distantmagic\Resonance\HttpResponder\Error\PageNotFound;
+use Distantmagic\Resonance\HttpResponder\Error\ServerError;
+use Distantmagic\Resonance\HttpResponderAggregate;
+use Distantmagic\Resonance\HttpResponderInterface;
+use Distantmagic\Resonance\HttpRouteMatchRegistry;
+use Distantmagic\Resonance\PHPProjectFiles;
+use Distantmagic\Resonance\SessionManager;
+use Distantmagic\Resonance\SingletonAttribute;
+use Distantmagic\Resonance\SingletonCollection;
+use Distantmagic\Resonance\SingletonContainer;
+use Distantmagic\Resonance\SingletonProvider;
 
 /**
  * @template-extends SingletonProvider<HttpResponderAggregate>

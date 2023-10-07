@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Resonance\SingletonProvider;
+namespace Distantmagic\Resonance\SingletonProvider;
 
 use Ds\Map;
 use LogicException;
-use Resonance\Attribute\CrudActionSubject;
-use Resonance\Attribute\DecidesCrudAction;
-use Resonance\Attribute\Singleton;
-use Resonance\CrudActionGate;
-use Resonance\CrudActionGateAggregate;
-use Resonance\CrudActionGateInterface;
-use Resonance\CrudActionSubjectInterface;
-use Resonance\PHPProjectFiles;
-use Resonance\SingletonAttribute;
-use Resonance\SingletonCollection;
-use Resonance\SingletonContainer;
-use Resonance\SingletonProvider;
+use Distantmagic\Resonance\Attribute\CrudActionSubject;
+use Distantmagic\Resonance\Attribute\DecidesCrudAction;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\CrudActionGate;
+use Distantmagic\Resonance\CrudActionGateAggregate;
+use Distantmagic\Resonance\CrudActionGateInterface;
+use Distantmagic\Resonance\CrudActionSubjectInterface;
+use Distantmagic\Resonance\PHPProjectFiles;
+use Distantmagic\Resonance\SingletonAttribute;
+use Distantmagic\Resonance\SingletonCollection;
+use Distantmagic\Resonance\SingletonContainer;
+use Distantmagic\Resonance\SingletonProvider;
 
 /**
  * @template-extends SingletonProvider<CrudActionGateAggregate>

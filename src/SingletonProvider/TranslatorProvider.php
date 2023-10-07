@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Resonance\SingletonProvider;
+namespace Distantmagic\Resonance\SingletonProvider;
 
-use Resonance\Attribute\Singleton;
-use Resonance\HttpRequestLanguageDetector;
-use Resonance\PHPProjectFiles;
-use Resonance\SingletonContainer;
-use Resonance\SingletonProvider;
-use Resonance\SupportedLanguageCodeRepositoryInterface;
-use Resonance\TranslationsLoader;
-use Resonance\Translator;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\HttpRequestLanguageDetector;
+use Distantmagic\Resonance\PHPProjectFiles;
+use Distantmagic\Resonance\SingletonContainer;
+use Distantmagic\Resonance\SingletonProvider;
+use Distantmagic\Resonance\SupportedLanguageCodeRepositoryInterface;
+use Distantmagic\Resonance\TranslationsLoader;
+use Distantmagic\Resonance\Translator;
 
 /**
  * @template-extends SingletonProvider<Translator>

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
-use Resonance\Attribute\Singleton;
-use Resonance\HttpResponder\NotAcceptable;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\HttpResponder\NotAcceptable;
 
 #[Singleton]
 readonly class ErrorHttpResponderDependencies

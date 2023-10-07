@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 use Ds\Map;
 use LogicException;
@@ -10,7 +10,7 @@ use ReflectionAttribute;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
-use Resonance\Attribute\RouteParameter;
+use Distantmagic\Resonance\Attribute\RouteParameter;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 

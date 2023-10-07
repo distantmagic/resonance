@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Resonance\StaticPageFileException;
+namespace Distantmagic\Resonance\StaticPageFileException;
 
-use Resonance\FrontMatterCollectionReference;
-use Resonance\StaticPage;
-use Resonance\StaticPageFileException;
+use Distantmagic\Resonance\FrontMatterCollectionReference;
+use Distantmagic\Resonance\StaticPage;
+use Distantmagic\Resonance\StaticPageFileException;
 
 class DuplicateCollectionReferenceException extends StaticPageFileException
 {

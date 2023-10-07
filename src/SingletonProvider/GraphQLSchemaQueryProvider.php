@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Resonance\SingletonProvider;
+namespace Distantmagic\Resonance\SingletonProvider;
 
 use LogicException;
-use Resonance\Attribute\GraphQLRootQueryField;
-use Resonance\Attribute\Singleton;
-use Resonance\GraphQLFieldableInterface;
-use Resonance\GraphQLSchemaQueryInterface;
-use Resonance\ObjectType\QueryType;
-use Resonance\PHPProjectFiles;
-use Resonance\SingletonAttribute;
-use Resonance\SingletonCollection;
-use Resonance\SingletonContainer;
-use Resonance\SingletonProvider;
+use Distantmagic\Resonance\Attribute\GraphQLRootQueryField;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\GraphQLFieldableInterface;
+use Distantmagic\Resonance\GraphQLSchemaQueryInterface;
+use Distantmagic\Resonance\ObjectType\QueryType;
+use Distantmagic\Resonance\PHPProjectFiles;
+use Distantmagic\Resonance\SingletonAttribute;
+use Distantmagic\Resonance\SingletonCollection;
+use Distantmagic\Resonance\SingletonContainer;
+use Distantmagic\Resonance\SingletonProvider;
 
 /**
  * @template-extends SingletonProvider<GraphQLSchemaQueryInterface>

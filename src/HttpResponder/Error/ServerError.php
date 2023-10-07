@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Resonance\HttpResponder\Error;
+namespace Distantmagic\Resonance\HttpResponder\Error;
 
-use Resonance\Attribute\Singleton;
-use Resonance\ContentType;
-use Resonance\Environment;
-use Resonance\ErrorHttpResponderDependencies;
-use Resonance\HttpError\ServerError as ServerErrorEntity;
-use Resonance\HttpResponder\Error;
-use Resonance\HttpResponderInterface;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\ContentType;
+use Distantmagic\Resonance\Environment;
+use Distantmagic\Resonance\ErrorHttpResponderDependencies;
+use Distantmagic\Resonance\HttpError\ServerError as ServerErrorEntity;
+use Distantmagic\Resonance\HttpResponder\Error;
+use Distantmagic\Resonance\HttpResponderInterface;
 use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;

@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Resonance\Template\StaticPageLayout\Turbo;
+namespace Distantmagic\Resonance\Template\StaticPageLayout\Turbo;
 
 use Ds\Map;
 use Ds\PriorityQueue;
 use Generator;
 use IntlDateFormatter;
-use Resonance\CommonMarkTableOfContentsBuilder;
-use Resonance\EsbuildMeta;
-use Resonance\StaticPage;
-use Resonance\StaticPageCollectionAggregate;
-use Resonance\StaticPageContentRenderer;
-use Resonance\Template\Component\StaticPageBreadcrumbs;
-use Resonance\Template\Component\StaticPageDocumentsMenu;
-use Resonance\Template\Component\StaticPageDocumentTableOfContents;
-use Resonance\Template\StaticPageLayout\Turbo;
-use Resonance\TemplateFilters;
+use Distantmagic\Resonance\CommonMarkTableOfContentsBuilder;
+use Distantmagic\Resonance\EsbuildMeta;
+use Distantmagic\Resonance\StaticPage;
+use Distantmagic\Resonance\StaticPageCollectionAggregate;
+use Distantmagic\Resonance\StaticPageContentRenderer;
+use Distantmagic\Resonance\Template\Component\StaticPageBreadcrumbs;
+use Distantmagic\Resonance\Template\Component\StaticPageDocumentsMenu;
+use Distantmagic\Resonance\Template\Component\StaticPageDocumentTableOfContents;
+use Distantmagic\Resonance\Template\StaticPageLayout\Turbo;
+use Distantmagic\Resonance\TemplateFilters;
 
 readonly class Document extends Turbo
 {

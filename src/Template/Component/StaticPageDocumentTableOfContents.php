@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Resonance\Template\Component;
+namespace Distantmagic\Resonance\Template\Component;
 
 use Ds\PriorityQueue;
 use Generator;
-use Resonance\CommonMarkTableOfContentsLink;
-use Resonance\Template\Component;
+use Distantmagic\Resonance\CommonMarkTableOfContentsLink;
+use Distantmagic\Resonance\Template\Component;
 
 readonly class StaticPageDocumentTableOfContents extends Component
 {

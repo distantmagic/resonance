@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 use DomainException;
 use Ds\Map;
-use Resonance\InputValidatedData\RPCMessage;
+use Distantmagic\Resonance\InputValidatedData\RPCMessage;
 
 readonly class WebSocketRPCResponderAggregate
 {

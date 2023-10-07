@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Resonance\HttpResponder;
+namespace Distantmagic\Resonance\HttpResponder;
 
-use Resonance\Gatekeeper;
-use Resonance\GraphQLAdapter;
-use Resonance\GraphQLDatabaseQueryAdapter;
-use Resonance\HttpResponder;
-use Resonance\HttpResponder\Error\BadRequest;
-use Resonance\HttpResponderInterface;
-use Resonance\SwoolePromiseAdapter;
-use Resonance\Template\Layout\Json\GraphQL as GraphQLTemplate;
+use Distantmagic\Resonance\Gatekeeper;
+use Distantmagic\Resonance\GraphQLAdapter;
+use Distantmagic\Resonance\GraphQLDatabaseQueryAdapter;
+use Distantmagic\Resonance\HttpResponder;
+use Distantmagic\Resonance\HttpResponder\Error\BadRequest;
+use Distantmagic\Resonance\HttpResponderInterface;
+use Distantmagic\Resonance\SwoolePromiseAdapter;
+use Distantmagic\Resonance\Template\Layout\Json\GraphQL as GraphQLTemplate;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 

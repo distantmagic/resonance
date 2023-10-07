@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Resonance\HttpResponder;
+namespace Distantmagic\Resonance\HttpResponder;
 
-use Resonance\Attribute\Singleton;
-use Resonance\ContentType;
-use Resonance\HttpResponder;
-use Resonance\HttpResponderInterface;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\ContentType;
+use Distantmagic\Resonance\HttpResponder;
+use Distantmagic\Resonance\HttpResponderInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Resonance\Template\Component;
+namespace Distantmagic\Resonance\Template\Component;
 
 use Ds\Map;
 use Generator;
-use Resonance\StaticPage;
-use Resonance\StaticPageCollectionAggregate;
-use Resonance\StaticPageForestGenerator;
-use Resonance\Template\Component;
+use Distantmagic\Resonance\StaticPage;
+use Distantmagic\Resonance\StaticPageCollectionAggregate;
+use Distantmagic\Resonance\StaticPageForestGenerator;
+use Distantmagic\Resonance\Template\Component;
 use Tree\Node\Node;
 
 readonly class StaticPageDocumentsMenu extends Component

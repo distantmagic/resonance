@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
-use Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\Singleton;
 use Swoole\Database\RedisPool;
 use Swoole\Http\Request;
 use Swoole\Http\Response;

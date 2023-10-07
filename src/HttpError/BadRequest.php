@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Resonance\HttpError;
+namespace Distantmagic\Resonance\HttpError;
 
-use Resonance\Attribute\Singleton;
-use Resonance\HttpError;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\HttpError;
 use Swoole\Http\Request;
 
 #[Singleton]

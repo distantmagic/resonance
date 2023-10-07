@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Resonance\InputValidatedData;
+namespace Distantmagic\Resonance\InputValidatedData;
 
-use Resonance\FrontMatterCollectionReference;
-use Resonance\InputValidatedData;
-use Resonance\StaticPageContentType;
-use Resonance\StaticPageLayoutHandler;
+use Distantmagic\Resonance\FrontMatterCollectionReference;
+use Distantmagic\Resonance\InputValidatedData;
+use Distantmagic\Resonance\StaticPageContentType;
+use Distantmagic\Resonance\StaticPageLayoutHandler;
 
 readonly class FrontMatter extends InputValidatedData
 {

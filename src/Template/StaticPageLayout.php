@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Resonance\Template;
+namespace Distantmagic\Resonance\Template;
 
-use Resonance\Template;
-use Resonance\TemplateStaticPageLayoutInterface;
+use Distantmagic\Resonance\Template;
+use Distantmagic\Resonance\TemplateStaticPageLayoutInterface;
 
 abstract readonly class StaticPageLayout extends Template implements TemplateStaticPageLayoutInterface {}

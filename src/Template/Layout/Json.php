@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Resonance\Template\Layout;
+namespace Distantmagic\Resonance\Template\Layout;
 
 use JsonSerializable;
-use Resonance\ContentType;
-use Resonance\HttpResponderInterface;
-use Resonance\SecurityPolicyHeaders;
-use Resonance\Template\Layout;
+use Distantmagic\Resonance\ContentType;
+use Distantmagic\Resonance\HttpResponderInterface;
+use Distantmagic\Resonance\SecurityPolicyHeaders;
+use Distantmagic\Resonance\Template\Layout;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Resonance\InputValidatedData;
+namespace Distantmagic\Resonance\InputValidatedData;
 
-use Resonance\InputValidatedData;
-use Resonance\RPCMethodInterface;
+use Distantmagic\Resonance\InputValidatedData;
+use Distantmagic\Resonance\RPCMethodInterface;
 
 /**
  * @template TPayload

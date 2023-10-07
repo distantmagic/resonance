@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Resonance\HttpResponder;
+namespace Distantmagic\Resonance\HttpResponder;
 
 use Closure;
 use LogicException;
 use ReflectionMethod;
-use Resonance\Attribute\RouteParameter;
-use Resonance\CrudActionSubjectInterface;
-use Resonance\Gatekeeper;
-use Resonance\HttpControllerDependencies;
-use Resonance\HttpControllerParameterResolutionResult;
-use Resonance\HttpControllerParameterResolutionStatus;
-use Resonance\HttpControllerReflectionMethod;
-use Resonance\HttpResponder;
-use Resonance\HttpResponder\Error\BadRequest;
-use Resonance\HttpResponder\Error\Forbidden;
-use Resonance\HttpResponder\Error\PageNotFound;
-use Resonance\HttpResponderInterface;
-use Resonance\HttpRouteMatchRegistry;
-use Resonance\HttpRouteParameterBinderAggregate;
+use Distantmagic\Resonance\Attribute\RouteParameter;
+use Distantmagic\Resonance\CrudActionSubjectInterface;
+use Distantmagic\Resonance\Gatekeeper;
+use Distantmagic\Resonance\HttpControllerDependencies;
+use Distantmagic\Resonance\HttpControllerParameterResolutionResult;
+use Distantmagic\Resonance\HttpControllerParameterResolutionStatus;
+use Distantmagic\Resonance\HttpControllerReflectionMethod;
+use Distantmagic\Resonance\HttpResponder;
+use Distantmagic\Resonance\HttpResponder\Error\BadRequest;
+use Distantmagic\Resonance\HttpResponder\Error\Forbidden;
+use Distantmagic\Resonance\HttpResponder\Error\PageNotFound;
+use Distantmagic\Resonance\HttpResponderInterface;
+use Distantmagic\Resonance\HttpRouteMatchRegistry;
+use Distantmagic\Resonance\HttpRouteParameterBinderAggregate;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 

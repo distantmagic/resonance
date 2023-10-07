@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Resonance\WebSocketProtocolController;
+namespace Distantmagic\Resonance\WebSocketProtocolController;
 
 use Ds\Map;
 use JsonException;
 use Psr\Log\LoggerInterface;
-use Resonance\Attribute\ControlsWebSocketProtocol;
-use Resonance\Attribute\Singleton;
-use Resonance\CSRFManager;
-use Resonance\Gatekeeper;
-use Resonance\InputValidator\RPCMessageValidator;
-use Resonance\SessionAuthentication;
-use Resonance\SingletonCollection;
-use Resonance\SiteAction;
-use Resonance\WebSocketAuthResolution;
-use Resonance\WebSocketConnection;
-use Resonance\WebSocketConnectionController\RPCConnectionController;
-use Resonance\WebSocketProtocol;
-use Resonance\WebSocketProtocolController;
-use Resonance\WebSocketProtocolException;
-use Resonance\WebSocketRPCResponderAggregate;
+use Distantmagic\Resonance\Attribute\ControlsWebSocketProtocol;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\CSRFManager;
+use Distantmagic\Resonance\Gatekeeper;
+use Distantmagic\Resonance\InputValidator\RPCMessageValidator;
+use Distantmagic\Resonance\SessionAuthentication;
+use Distantmagic\Resonance\SingletonCollection;
+use Distantmagic\Resonance\SiteAction;
+use Distantmagic\Resonance\WebSocketAuthResolution;
+use Distantmagic\Resonance\WebSocketConnection;
+use Distantmagic\Resonance\WebSocketConnectionController\RPCConnectionController;
+use Distantmagic\Resonance\WebSocketProtocol;
+use Distantmagic\Resonance\WebSocketProtocolController;
+use Distantmagic\Resonance\WebSocketProtocolException;
+use Distantmagic\Resonance\WebSocketRPCResponderAggregate;
 use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\WebSocket\Frame;

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 use Ds\Map;
 use Generator;
-use Resonance\Template\StaticPageLayout\Turbo\Document;
-use Resonance\Template\StaticPageLayout\Turbo\Page;
+use Distantmagic\Resonance\Template\StaticPageLayout\Turbo\Document;
+use Distantmagic\Resonance\Template\StaticPageLayout\Turbo\Page;
 use Throwable;
 
 readonly class StaticPageLayoutAggregate

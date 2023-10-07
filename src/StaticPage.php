@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
-use Resonance\InputValidatedData\FrontMatter;
+use Distantmagic\Resonance\InputValidatedData\FrontMatter;
 use Symfony\Component\Finder\SplFileInfo;
 
 readonly class StaticPage

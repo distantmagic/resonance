@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 /**
  * Remove this suppresion after User is used somewhere (and it cetainly is

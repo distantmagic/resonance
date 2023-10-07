@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Resonance\InputValidator;
+namespace Distantmagic\Resonance\InputValidator;
 
 use Generator;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
-use Resonance\FrontMatterCollectionReference;
-use Resonance\InputValidatedData\FrontMatter;
-use Resonance\InputValidator;
-use Resonance\StaticPageContentType;
-use Resonance\StaticPageLayoutHandler;
+use Distantmagic\Resonance\FrontMatterCollectionReference;
+use Distantmagic\Resonance\InputValidatedData\FrontMatter;
+use Distantmagic\Resonance\InputValidator;
+use Distantmagic\Resonance\StaticPageContentType;
+use Distantmagic\Resonance\StaticPageLayoutHandler;
 
 /**
  * @extends InputValidator<FrontMatter, object{

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Resonance\SingletonProvider;
+namespace Distantmagic\Resonance\SingletonProvider;
 
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
-use Resonance\Attribute\RespondsToHttp;
-use Resonance\Attribute\Singleton;
-use Resonance\InternalLinkBuilder;
-use Resonance\PHPProjectFiles;
-use Resonance\SingletonCollection;
-use Resonance\SingletonContainer;
-use Resonance\SingletonProvider;
+use Distantmagic\Resonance\Attribute\RespondsToHttp;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\InternalLinkBuilder;
+use Distantmagic\Resonance\PHPProjectFiles;
+use Distantmagic\Resonance\SingletonCollection;
+use Distantmagic\Resonance\SingletonContainer;
+use Distantmagic\Resonance\SingletonProvider;
 
 use function FastRoute\simpleDispatcher;
 

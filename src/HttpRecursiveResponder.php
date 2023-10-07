@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
-use Resonance\Attribute\Singleton;
-use Resonance\HttpResponder\Error\BadRequest;
-use Resonance\HttpResponder\Error\Forbidden;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\HttpResponder\Error\BadRequest;
+use Distantmagic\Resonance\HttpResponder\Error\Forbidden;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 

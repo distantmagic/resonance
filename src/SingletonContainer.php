@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 use Ds\Map;
 use Ds\Sequence;
-use Resonance\SingletonContainerException\NotFoundException;
+use Distantmagic\Resonance\SingletonContainerException\NotFoundException;
 
 /**
  * ParamType suppression is a compromise to implement Psr container

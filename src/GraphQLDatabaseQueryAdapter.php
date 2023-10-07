@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 use Ds\Map;
-use Resonance\GraphQLResolverException\Forbidden;
-use Resonance\GraphQLResolverException\InvalidReturnType;
+use Distantmagic\Resonance\GraphQLResolverException\Forbidden;
+use Distantmagic\Resonance\GraphQLResolverException\InvalidReturnType;
 
 readonly class GraphQLDatabaseQueryAdapter
 {

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Resonance\Template\StaticPageLayout\Turbo;
+namespace Distantmagic\Resonance\Template\StaticPageLayout\Turbo;
 
 use Ds\Map;
 use Generator;
-use Resonance\EsbuildMeta;
-use Resonance\StaticPage;
-use Resonance\StaticPageCollectionAggregate;
-use Resonance\StaticPageContentRenderer;
-use Resonance\Template\StaticPageLayout\Turbo;
-use Resonance\TemplateFilters;
+use Distantmagic\Resonance\EsbuildMeta;
+use Distantmagic\Resonance\StaticPage;
+use Distantmagic\Resonance\StaticPageCollectionAggregate;
+use Distantmagic\Resonance\StaticPageContentRenderer;
+use Distantmagic\Resonance\Template\StaticPageLayout\Turbo;
+use Distantmagic\Resonance\TemplateFilters;
 
 readonly class Page extends Turbo
 {

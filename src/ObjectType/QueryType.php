@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Resonance\ObjectType;
+namespace Distantmagic\Resonance\ObjectType;
 
 use GraphQL\Type\Definition\ObjectType;
-use Resonance\GraphQLSchemaQueryInterface;
+use Distantmagic\Resonance\GraphQLSchemaQueryInterface;
 
 final class QueryType extends ObjectType implements GraphQLSchemaQueryInterface
 {

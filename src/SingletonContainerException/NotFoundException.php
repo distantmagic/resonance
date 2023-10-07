@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Resonance\SingletonContainerException;
+namespace Distantmagic\Resonance\SingletonContainerException;
 
 use Psr\Container\NotFoundExceptionInterface;
-use Resonance\SingletonContainerException;
+use Distantmagic\Resonance\SingletonContainerException;
 
 class NotFoundException extends SingletonContainerException implements NotFoundExceptionInterface {}

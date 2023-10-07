@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 use GraphQL\Type\Definition\CompositeType;
 use GraphQL\Type\Definition\HasFieldsType;

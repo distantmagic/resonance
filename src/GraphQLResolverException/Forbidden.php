@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Resonance\GraphQLResolverException;
+namespace Distantmagic\Resonance\GraphQLResolverException;
 
-use Resonance\GraphQLResolverException;
+use Distantmagic\Resonance\GraphQLResolverException;
 
 class Forbidden extends GraphQLResolverException {}

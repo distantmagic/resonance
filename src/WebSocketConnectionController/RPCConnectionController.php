@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Resonance\WebSocketConnectionController;
+namespace Distantmagic\Resonance\WebSocketConnectionController;
 
-use Resonance\InputValidatedData\RPCMessage;
-use Resonance\WebSocketAuthResolution;
-use Resonance\WebSocketConnection;
-use Resonance\WebSocketConnectionController;
-use Resonance\WebSocketRPCResponderAggregate;
+use Distantmagic\Resonance\InputValidatedData\RPCMessage;
+use Distantmagic\Resonance\WebSocketAuthResolution;
+use Distantmagic\Resonance\WebSocketConnection;
+use Distantmagic\Resonance\WebSocketConnectionController;
+use Distantmagic\Resonance\WebSocketRPCResponderAggregate;
 
 readonly class RPCConnectionController extends WebSocketConnectionController
 {

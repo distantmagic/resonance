@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Resonance\SingletonProvider;
+namespace Distantmagic\Resonance\SingletonProvider;
 
-use Resonance\Attribute\Singleton;
-use Resonance\PHPProjectFiles;
-use Resonance\SingletonContainer;
-use Resonance\SingletonProvider;
-use Resonance\TwigBridgeExtension;
-use Resonance\TwigCacheRuntimeLoader;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\PHPProjectFiles;
+use Distantmagic\Resonance\SingletonContainer;
+use Distantmagic\Resonance\SingletonProvider;
+use Distantmagic\Resonance\TwigBridgeExtension;
+use Distantmagic\Resonance\TwigCacheRuntimeLoader;
 use Symfony\Component\Filesystem\Filesystem;
 use Twig\Cache\FilesystemCache;
 use Twig\Environment as TwigEnvironment;

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Resonance\Attribute;
+namespace Distantmagic\Resonance\Attribute;
 
 use Attribute;
-use Resonance\Attribute as BaseAttribute;
-use Resonance\CrudAction;
+use Distantmagic\Resonance\Attribute as BaseAttribute;
+use Distantmagic\Resonance\CrudAction;
 
 #[Attribute(Attribute::TARGET_PARAMETER)]
 final readonly class RouteParameter extends BaseAttribute

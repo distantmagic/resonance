@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Resonance;
+namespace Distantmagic\Resonance;
 
 use ReflectionClass;
-use Resonance\Attribute as BaseAttribute;
+use Distantmagic\Resonance\Attribute as BaseAttribute;
 
 /**
  * @template TClass of object

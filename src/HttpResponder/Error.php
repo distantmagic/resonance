@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Resonance\HttpResponder;
+namespace Distantmagic\Resonance\HttpResponder;
 
-use Resonance\ContentType;
-use Resonance\ContentTypeResponder;
-use Resonance\ErrorHttpResponderDependencies;
-use Resonance\HtmlErrorTemplateInterface;
-use Resonance\HttpError;
-use Resonance\HttpResponder;
-use Resonance\HttpResponderInterface;
-use Resonance\JsonErrorTemplateInterface;
-use Resonance\SecurityPolicyHeaders;
+use Distantmagic\Resonance\ContentType;
+use Distantmagic\Resonance\ContentTypeResponder;
+use Distantmagic\Resonance\ErrorHttpResponderDependencies;
+use Distantmagic\Resonance\HtmlErrorTemplateInterface;
+use Distantmagic\Resonance\HttpError;
+use Distantmagic\Resonance\HttpResponder;
+use Distantmagic\Resonance\HttpResponderInterface;
+use Distantmagic\Resonance\JsonErrorTemplateInterface;
+use Distantmagic\Resonance\SecurityPolicyHeaders;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 

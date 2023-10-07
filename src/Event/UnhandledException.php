@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Resonance\Event;
+namespace Distantmagic\Resonance\Event;
 
-use Resonance\Event;
+use Distantmagic\Resonance\Event;
 use Throwable;
 
 final readonly class UnhandledException extends Event
