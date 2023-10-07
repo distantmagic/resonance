@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\Template\Component;
 
-use Ds\PriorityQueue;
-use Generator;
 use Distantmagic\Resonance\CommonMarkTableOfContentsLink;
 use Distantmagic\Resonance\Template\Component;
+use Ds\PriorityQueue;
+use Generator;
 
 readonly class StaticPageDocumentTableOfContents extends Component
 {

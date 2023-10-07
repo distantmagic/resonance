@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
-use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Schema;
-use LogicException;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Environment;
 use Distantmagic\Resonance\GraphQLSchemaQueryInterface;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
+use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Schema;
+use LogicException;
 
 /**
  * @template-extends SingletonProvider<Schema>

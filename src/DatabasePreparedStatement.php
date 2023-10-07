@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Event\SQLQueryBeforeExecute;
 use PDO;
 use PDOStatement;
-use Distantmagic\Resonance\Event\SQLQueryBeforeExecute;
 use Swoole\Database\PDOProxy;
 use Swoole\Database\PDOStatementProxy;
 

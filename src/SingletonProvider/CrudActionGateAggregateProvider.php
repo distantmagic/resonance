@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
-use Ds\Map;
-use LogicException;
 use Distantmagic\Resonance\Attribute\CrudActionSubject;
 use Distantmagic\Resonance\Attribute\DecidesCrudAction;
 use Distantmagic\Resonance\Attribute\Singleton;
@@ -18,6 +16,8 @@ use Distantmagic\Resonance\SingletonAttribute;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
+use Ds\Map;
+use LogicException;
 
 /**
  * @template-extends SingletonProvider<CrudActionGateAggregate>

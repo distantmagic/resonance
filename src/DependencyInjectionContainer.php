@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Closure;
+use Distantmagic\Resonance\Attribute\Singleton;
 use Ds\Map;
 use Ds\Set;
 use LogicException;
 use ReflectionClass;
 use ReflectionFunction;
-use Distantmagic\Resonance\Attribute\Singleton;
 
 readonly class DependencyInjectionContainer
 {

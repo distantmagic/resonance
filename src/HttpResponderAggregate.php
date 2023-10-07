@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use DomainException;
-use Ds\Map;
-use FastRoute\Dispatcher;
 use Distantmagic\Resonance\Event\UnhandledException;
 use Distantmagic\Resonance\HttpResponder\Error\MethodNotAllowed;
 use Distantmagic\Resonance\HttpResponder\Error\PageNotFound;
 use Distantmagic\Resonance\HttpResponder\Error\ServerError;
+use DomainException;
+use Ds\Map;
+use FastRoute\Dispatcher;
 use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;

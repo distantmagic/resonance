@@ -6,8 +6,8 @@ namespace Distantmagic\Resonance;
 
 use DateTimeImmutable;
 use DateTimeInterface;
-use IntlDateFormatter;
 use Distantmagic\Resonance\Attribute\Singleton;
+use IntlDateFormatter;
 use Swoole\Http\Request;
 
 #[Singleton]

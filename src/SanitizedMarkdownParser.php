@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use HTMLPurifier;
 use Distantmagic\Resonance\Attribute\Singleton;
+use HTMLPurifier;
 
 #[Singleton]
 final readonly class SanitizedMarkdownParser

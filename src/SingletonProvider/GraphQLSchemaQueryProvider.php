@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
-use LogicException;
 use Distantmagic\Resonance\Attribute\GraphQLRootQueryField;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\GraphQLFieldableInterface;
@@ -15,6 +14,7 @@ use Distantmagic\Resonance\SingletonAttribute;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
+use LogicException;
 
 /**
  * @template-extends SingletonProvider<GraphQLSchemaQueryInterface>

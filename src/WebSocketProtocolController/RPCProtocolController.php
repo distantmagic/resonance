@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\WebSocketProtocolController;
 
-use Ds\Map;
-use JsonException;
-use Psr\Log\LoggerInterface;
 use Distantmagic\Resonance\Attribute\ControlsWebSocketProtocol;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\CSRFManager;
@@ -22,6 +19,9 @@ use Distantmagic\Resonance\WebSocketProtocol;
 use Distantmagic\Resonance\WebSocketProtocolController;
 use Distantmagic\Resonance\WebSocketProtocolException;
 use Distantmagic\Resonance\WebSocketRPCResponderAggregate;
+use Ds\Map;
+use JsonException;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\WebSocket\Frame;

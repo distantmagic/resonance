@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
-use FastRoute\Dispatcher;
 use Distantmagic\Resonance\Attribute\RespondsToHttp;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\EventDispatcherInterface;
@@ -21,6 +20,7 @@ use Distantmagic\Resonance\SingletonAttribute;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
+use FastRoute\Dispatcher;
 
 /**
  * @template-extends SingletonProvider<HttpResponderAggregate>

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\Singleton;
 use GraphQL\GraphQL as GraphQLFacade;
 use GraphQL\Type\Schema;
-use Distantmagic\Resonance\Attribute\Singleton;
 
 #[Singleton]
 readonly class GraphQLAdapter

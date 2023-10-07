@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute as BaseAttribute;
 use Generator;
 use IteratorAggregate;
 use ReflectionAttribute;
 use ReflectionClass;
-use Distantmagic\Resonance\Attribute as BaseAttribute;
 
 /**
  * @template TClass of object

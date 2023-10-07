@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
-use FastRoute\Dispatcher;
-use FastRoute\RouteCollector;
 use Distantmagic\Resonance\Attribute\RespondsToHttp;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\InternalLinkBuilder;
@@ -13,6 +11,8 @@ use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
+use FastRoute\Dispatcher;
+use FastRoute\RouteCollector;
 
 use function FastRoute\simpleDispatcher;
 

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\StaticPageFileException\DuplicateCollectionReferenceException;
 use Ds\Map;
 use Ds\Set;
-use Distantmagic\Resonance\StaticPageFileException\DuplicateCollectionReferenceException;
 
 readonly class StaticPageCollection
 {

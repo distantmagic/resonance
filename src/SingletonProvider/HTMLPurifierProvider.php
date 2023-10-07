@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
-use HTMLPurifier;
-use HTMLPurifier_Config;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
+use HTMLPurifier;
+use HTMLPurifier_Config;
 
 /**
  * @template-extends SingletonProvider<HTMLPurifier>

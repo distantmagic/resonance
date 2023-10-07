@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\EventListener;
 
-use Psr\Log\LoggerInterface;
 use Distantmagic\Resonance\Attribute\ListensTo;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Environment;
@@ -12,6 +11,7 @@ use Distantmagic\Resonance\Event\UnhandledException;
 use Distantmagic\Resonance\EventInterface;
 use Distantmagic\Resonance\EventListener;
 use Distantmagic\Resonance\SingletonCollection;
+use Psr\Log\LoggerInterface;
 
 /**
  * @template-extends EventListener<UnhandledException,void>

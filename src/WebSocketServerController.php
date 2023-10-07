@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\Singleton;
 use Ds\Map;
 use Psr\Log\LoggerInterface;
-use Distantmagic\Resonance\Attribute\Singleton;
 use Swoole\Event;
 use Swoole\Http\Request;
 use Swoole\Http\Response;

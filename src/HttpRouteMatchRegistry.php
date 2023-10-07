@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use OutOfBoundsException;
 use Distantmagic\Resonance\Attribute\Singleton;
+use OutOfBoundsException;
 use Swoole\Http\Request;
 use WeakMap;
 

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Ds\Map;
-use Generator;
 use Distantmagic\Resonance\Template\StaticPageLayout\Turbo\Document;
 use Distantmagic\Resonance\Template\StaticPageLayout\Turbo\Page;
+use Ds\Map;
+use Generator;
 use Throwable;
 
 readonly class StaticPageLayoutAggregate

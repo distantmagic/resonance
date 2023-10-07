@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use LogicException;
 use Distantmagic\Resonance\Attribute\Singleton;
+use LogicException;
 
 use function Swoole\Coroutine\batch;
 use function Swoole\Coroutine\go;

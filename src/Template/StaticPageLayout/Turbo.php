@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\Template\StaticPageLayout;
 
-use Ds\Map;
-use Ds\PriorityQueue;
-use Generator;
 use Distantmagic\Resonance\EsbuildMeta;
 use Distantmagic\Resonance\EsbuildMetaEntryPoints;
 use Distantmagic\Resonance\EsbuildMetaPreloadsRenderer;
@@ -15,6 +12,9 @@ use Distantmagic\Resonance\StaticPageCollectionAggregate;
 use Distantmagic\Resonance\StaticPageParentIterator;
 use Distantmagic\Resonance\Template\StaticPageLayout;
 use Distantmagic\Resonance\TemplateFilters;
+use Ds\Map;
+use Ds\PriorityQueue;
+use Generator;
 
 abstract readonly class Turbo extends StaticPageLayout
 {

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Ds\Map;
 use Distantmagic\Resonance\InputValidator\FrontMatterValidator;
+use Ds\Map;
 use RuntimeException;
 use Swoole\Coroutine\WaitGroup;
 use Symfony\Component\Console\Output\ConsoleOutput;

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\Template\Layout;
 
-use JsonSerializable;
 use Distantmagic\Resonance\ContentType;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\SecurityPolicyHeaders;
 use Distantmagic\Resonance\Template\Layout;
+use JsonSerializable;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 

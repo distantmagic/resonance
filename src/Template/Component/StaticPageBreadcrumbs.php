@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\Template\Component;
 
-use Ds\Map;
-use Generator;
 use Distantmagic\Resonance\StaticPage;
 use Distantmagic\Resonance\StaticPageParentIterator;
 use Distantmagic\Resonance\Template\Component;
+use Ds\Map;
+use Generator;
 
 readonly class StaticPageBreadcrumbs extends Component
 {

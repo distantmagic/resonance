@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\Template\StaticPageLayout\Turbo;
 
-use Ds\Map;
-use Ds\PriorityQueue;
-use Generator;
-use IntlDateFormatter;
 use Distantmagic\Resonance\CommonMarkTableOfContentsBuilder;
 use Distantmagic\Resonance\EsbuildMeta;
 use Distantmagic\Resonance\StaticPage;
@@ -18,6 +14,10 @@ use Distantmagic\Resonance\Template\Component\StaticPageDocumentsMenu;
 use Distantmagic\Resonance\Template\Component\StaticPageDocumentTableOfContents;
 use Distantmagic\Resonance\Template\StaticPageLayout\Turbo;
 use Distantmagic\Resonance\TemplateFilters;
+use Ds\Map;
+use Ds\PriorityQueue;
+use Generator;
+use IntlDateFormatter;
 
 readonly class Document extends Turbo
 {

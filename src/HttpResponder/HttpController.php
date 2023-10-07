@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\HttpResponder;
 
 use Closure;
-use LogicException;
-use ReflectionMethod;
 use Distantmagic\Resonance\Attribute\RouteParameter;
 use Distantmagic\Resonance\CrudActionSubjectInterface;
 use Distantmagic\Resonance\Gatekeeper;
@@ -21,6 +19,8 @@ use Distantmagic\Resonance\HttpResponder\Error\PageNotFound;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\HttpRouteMatchRegistry;
 use Distantmagic\Resonance\HttpRouteParameterBinderAggregate;
+use LogicException;
+use ReflectionMethod;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
