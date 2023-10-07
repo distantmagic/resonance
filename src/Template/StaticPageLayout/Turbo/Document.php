@@ -71,6 +71,7 @@ readonly class Document extends Turbo
 
         $scripts->push('controller_article.ts', 0);
         $scripts->push('controller_aside.ts', 0);
+        $scripts->push('controller_graphviz.ts', 0);
         $scripts->push('controller_hljs.ts', 0);
     }
 

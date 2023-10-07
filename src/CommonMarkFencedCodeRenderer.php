@@ -54,9 +54,27 @@ final class CommonMarkFencedCodeRenderer implements NodeRendererInterface, XmlNo
         $infoWords = $node->getInfoWords();
 
         if (0 !== count($infoWords) && '' !== $infoWords[0]) {
+            if ('graphviz' === $infoWords[0] && isset($infoWords[1]) && 'render' === $infoWords[1]) {
+                return new HtmlElement(
+                    'div',
+                    [
+                        'class' => 'fenced-graphviz',
+                        'data-controller' => 'graphviz',
+                    ],
+                    new HtmlElement(
+                        'div',
+                        [
+                            'class' => 'fenced-graphviz__scene',
+                            'data-graphviz-target' => 'scene',
+                        ],
+                        Xml::escape($node->getLiteral()),
+                    ),
+                );
+            }
             $attrs->append('class', 'language-'.$infoWords[0]);
             $attrs->append('data-controller', 'hljs');
             $attrs->append('data-hljs-language-value', $infoWords[0]);
+
         } else {
             $attrs->append('class', 'language-unknown');
         }
