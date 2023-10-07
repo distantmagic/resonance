@@ -42,7 +42,6 @@ final readonly class TwigEnvironmentProvider extends SingletonProvider
             'strict_variables' => false,
         ]);
 
-        $environment->addExtension(new CacheExtension());
         $environment->addExtension($this->twigBridgeExtension);
 
         $environment->addRuntimeLoader($this->twigCacheRuntimeLoader);
