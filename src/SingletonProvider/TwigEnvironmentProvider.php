@@ -10,6 +10,7 @@ use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
 use Distantmagic\Resonance\TwigBridgeExtension;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 use Twig\Cache\FilesystemCache;
 use Twig\Environment as TwigEnvironment;
 use Twig\Loader\FilesystemLoader;
@@ -39,6 +40,25 @@ final readonly class TwigEnvironmentProvider extends SingletonProvider
 
         $environment->addExtension($this->twigBridgeExtension);
 
+        $this->warmupCache($environment);
+
         return $environment;
+    }
+
+    private function warmupCache(TwigEnvironment $environment): void
+    {
+        $finder = new Finder();
+        $found = $finder
+            ->files()
+            ->ignoreDotFiles(true)
+            ->ignoreUnreadableDirs()
+            ->ignoreVCS(true)
+            ->name('*.twig')
+            ->in(DM_APP_ROOT.'/views')
+        ;
+
+        foreach ($found as $template) {
+            $environment->load($template->getRelativePathname());
+        }
     }
 }
