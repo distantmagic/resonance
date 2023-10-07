@@ -150,8 +150,8 @@ readonly class DependencyInjectionContainer
 
         if ($previous->contains($className)) {
             throw new LogicException(sprintf(
-                'Dependency injection cycle %s -> %s',
-                $previous->join(' -> '),
+                "Dependency injection cycle:\n-> %s\n-> %s\n",
+                $previous->join("\n-> "),
                 $className,
             ));
         }
@@ -166,7 +166,7 @@ readonly class DependencyInjectionContainer
             foreach ($collectionDependencies as $collectionName) {
                 if ($this->collections->hasKey($collectionName)) {
                     foreach ($this->collections->get($collectionName) as $collectionClassName) {
-                        $this->makeSingleton($collectionClassName, new Set());
+                        $this->makeSingleton($collectionClassName, $previous->copy());
                     }
                 }
             }

@@ -20,7 +20,7 @@ use Distantmagic\Resonance\SingletonAttribute;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
-use FastRoute\Dispatcher;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
 
 /**
  * @template-extends SingletonProvider<HttpResponderAggregate>
@@ -32,7 +32,6 @@ use FastRoute\Dispatcher;
 final readonly class HttpResponderAggregateProvider extends SingletonProvider
 {
     public function __construct(
-        private Dispatcher $httpRouteDispatcher,
         private EventDispatcherInterface $eventDispatcher,
         private HttpRecursiveResponder $recursiveResponder,
         private HttpRouteMatchRegistry $routeMatchRegistry,
@@ -40,12 +39,12 @@ final readonly class HttpResponderAggregateProvider extends SingletonProvider
         private PageNotFound $pageNotFound,
         private ServerError $serverError,
         private SessionManager $sessionManager,
+        private UrlMatcher $urlMatcher,
     ) {}
 
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): HttpResponderAggregate
     {
         $httpResponderAggregate = new HttpResponderAggregate(
-            $this->httpRouteDispatcher,
             $this->eventDispatcher,
             $this->recursiveResponder,
             $this->routeMatchRegistry,
@@ -53,6 +52,7 @@ final readonly class HttpResponderAggregateProvider extends SingletonProvider
             $this->pageNotFound,
             $this->serverError,
             $this->sessionManager,
+            $this->urlMatcher,
         );
 
         foreach ($this->collectResponders($singletons) as $httpResponderAttribute) {

@@ -4,4 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-interface HttpRouteSymbolInterface extends NameableInterface {}
+interface HttpRouteSymbolInterface extends NameableInterface
+{
+    public function toConstant(): string;
+}

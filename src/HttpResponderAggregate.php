@@ -10,10 +10,13 @@ use Distantmagic\Resonance\HttpResponder\Error\PageNotFound;
 use Distantmagic\Resonance\HttpResponder\Error\ServerError;
 use DomainException;
 use Ds\Map;
-use FastRoute\Dispatcher;
+use LogicException;
 use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Throwable;
 
 readonly class HttpResponderAggregate
@@ -24,7 +27,6 @@ readonly class HttpResponderAggregate
     public Map $httpResponders;
 
     public function __construct(
-        private Dispatcher $httpRouteDispatcher,
         private EventDispatcherInterface $eventDispatcher,
         private HttpRecursiveResponder $recursiveResponder,
         private HttpRouteMatchRegistry $routeMatchRegistry,
@@ -32,6 +34,7 @@ readonly class HttpResponderAggregate
         private PageNotFound $pageNotFound,
         private ServerError $serverError,
         private SessionManager $sessionManager,
+        private UrlMatcher $urlMatcher,
     ) {
         $this->httpResponders = new Map();
     }
@@ -55,13 +58,13 @@ readonly class HttpResponderAggregate
     }
 
     private function matchResponder(
-        int $routeStatus,
+        HttpRouteMatchStatus $routeStatus,
         ?HttpRouteSymbolInterface $routeSymbol,
     ): HttpResponderInterface {
         return match ($routeStatus) {
-            Dispatcher::METHOD_NOT_ALLOWED => $this->methodNotAllowed,
-            Dispatcher::NOT_FOUND => $this->pageNotFound,
-            Dispatcher::FOUND => $this->resolveFoundResponder($routeSymbol),
+            HttpRouteMatchStatus::MethodNotAllowed => $this->methodNotAllowed,
+            HttpRouteMatchStatus::NotFound => $this->pageNotFound,
+            HttpRouteMatchStatus::Found => $this->resolveFoundResponder($routeSymbol),
 
             default => throw new DomainException('Unexpected route status'),
         };
@@ -81,25 +84,39 @@ readonly class HttpResponderAggregate
             throw new RuntimeException('Unable to determine the request uri');
         }
 
-        $dispatcherStatus = $this
-            ->httpRouteDispatcher
-            ->dispatch(
-                $request->server['request_method'],
-                $request->server['request_uri'],
-            )
+        $this
+            ->urlMatcher
+            ->getContext()
+            ->setMethod($request->server['request_method'])
+            ->setPathInfo((string) $request->server['path_info'])
+            ->setHost((string) $request->server['remote_addr'])
+            ->setHttpsPort((int) $request->server['server_port'])
+            ->setScheme('https')
         ;
 
-        return match (count($dispatcherStatus)) {
-            1, 2 => new HttpRouteMatch($dispatcherStatus[0]),
-            3 => match (true) {
-                $dispatcherStatus[1] instanceof HttpRouteSymbolInterface => new HttpRouteMatch(
-                    status: $dispatcherStatus[0],
-                    handler: $dispatcherStatus[1],
-                    routeVars: $dispatcherStatus[2],
-                ),
-                default => throw new DomainException('Unsupported route responder type'),
-            },
-        };
+        try {
+            /**
+             * @var array<string,string>
+             */
+            $routeMatch = $this->urlMatcher->match((string) $request->server['path_info']);
+            $routeSymbol = constant($routeMatch['_route']);
+
+            if (!($routeSymbol instanceof HttpRouteSymbolInterface)) {
+                throw new LogicException('Route symbol is not an instance of HttpRouteSymbolInterface');
+            }
+
+            unset($routeMatch['_route']);
+
+            return new HttpRouteMatch(
+                status: HttpRouteMatchStatus::Found,
+                handler: $routeSymbol,
+                routeVars: $routeMatch,
+            );
+        } catch (MethodNotAllowedException $methodNotAllowed) {
+            return new HttpRouteMatch(HttpRouteMatchStatus::MethodNotAllowed);
+        } catch (ResourceNotFoundException $resourceNotFound) {
+            return new HttpRouteMatch(HttpRouteMatchStatus::NotFound);
+        }
     }
 
     private function resolveFoundResponder(?HttpRouteSymbolInterface $routeSymbol): HttpResponderInterface
