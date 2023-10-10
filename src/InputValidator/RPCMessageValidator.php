@@ -8,6 +8,7 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\InputValidatedData\RPCMessage;
 use Distantmagic\Resonance\InputValidator;
 use Distantmagic\Resonance\RPCMethodValidatorInterface;
+use Distantmagic\Resonance\SingletonCollection;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 
@@ -18,7 +19,7 @@ use Nette\Schema\Schema;
  *     2: null|string,
  * }>
  */
-#[Singleton]
+#[Singleton(collection: SingletonCollection::InputValidator)]
 readonly class RPCMessageValidator extends InputValidator
 {
     public function __construct(private RPCMethodValidatorInterface $rpcMethodValidator)

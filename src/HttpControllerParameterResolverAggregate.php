@@ -25,7 +25,7 @@ readonly class HttpControllerParameterResolverAggregate
         Request $request,
         Response $response,
         HttpControllerParameter $parameter,
-    ): mixed {
+    ): HttpControllerParameterResolution {
         if ($this->resolvers->hasKey($parameter->attribute::class)) {
             return $this->resolvers->get($parameter->attribute::class)->resolve(
                 $request,

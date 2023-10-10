@@ -10,6 +10,7 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\CrudActionSubjectInterface;
 use Distantmagic\Resonance\Gatekeeper;
 use Distantmagic\Resonance\HttpControllerParameter;
+use Distantmagic\Resonance\HttpControllerParameterResolution;
 use Distantmagic\Resonance\HttpControllerParameterResolutionStatus;
 use Distantmagic\Resonance\HttpControllerParameterResolver;
 use Distantmagic\Resonance\HttpRouteMatchRegistry;
@@ -36,17 +37,17 @@ readonly class RouteParameterResolver extends HttpControllerParameterResolver
         Request $request,
         Response $response,
         HttpControllerParameter $parameter,
-    ): mixed {
+    ): HttpControllerParameterResolution {
         $routeParameterValue = $this->routeMatchRegistry->get($request)->routeVars->get($parameter->attribute->from, null);
 
         if (is_null($routeParameterValue)) {
-            return HttpControllerParameterResolutionStatus::NotProvided;
+            return new HttpControllerParameterResolution(HttpControllerParameterResolutionStatus::NotProvided);
         }
 
         $object = $this->routeParameterBinderAggregate->provide($parameter->className, $routeParameterValue);
 
         if (is_null($object)) {
-            return HttpControllerParameterResolutionStatus::NotFound;
+            return new HttpControllerParameterResolution(HttpControllerParameterResolutionStatus::NotFound);
         }
 
         if (!($object instanceof CrudActionSubjectInterface)) {
@@ -54,9 +55,12 @@ readonly class RouteParameterResolver extends HttpControllerParameterResolver
         }
 
         if (!$this->gatekeeper->withRequest($request)->canCrud($object, $parameter->attribute->intent)) {
-            return HttpControllerParameterResolutionStatus::Forbidden;
+            return new HttpControllerParameterResolution(HttpControllerParameterResolutionStatus::Forbidden);
         }
 
-        return $object;
+        return new HttpControllerParameterResolution(
+            HttpControllerParameterResolutionStatus::Success,
+            $object,
+        );
     }
 }

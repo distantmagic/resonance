@@ -8,6 +8,8 @@ use Distantmagic\Resonance\Attribute\CurrentRequest;
 use Distantmagic\Resonance\Attribute\ResolvesHttpControllerParameter;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpControllerParameter;
+use Distantmagic\Resonance\HttpControllerParameterResolution;
+use Distantmagic\Resonance\HttpControllerParameterResolutionStatus;
 use Distantmagic\Resonance\HttpControllerParameterResolver;
 use Distantmagic\Resonance\SingletonCollection;
 use Swoole\Http\Request;
@@ -24,7 +26,10 @@ readonly class CurrentRequestResolver extends HttpControllerParameterResolver
         Request $request,
         Response $response,
         HttpControllerParameter $parameter,
-    ): mixed {
-        return $request;
+    ): HttpControllerParameterResolution {
+        return new HttpControllerParameterResolution(
+            HttpControllerParameterResolutionStatus::Success,
+            $request
+        );
     }
 }

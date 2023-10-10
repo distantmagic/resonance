@@ -9,4 +9,6 @@ enum HttpControllerParameterResolutionStatus
     case Forbidden;
     case NotFound;
     case NotProvided;
+    case Success;
+    case ValidationErrors;
 }

@@ -8,6 +8,7 @@ use Distantmagic\Resonance\Attribute\ResolvesHttpControllerParameter;
 use Distantmagic\Resonance\Attribute\SessionAuthenticated;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpControllerParameter;
+use Distantmagic\Resonance\HttpControllerParameterResolution;
 use Distantmagic\Resonance\HttpControllerParameterResolutionStatus;
 use Distantmagic\Resonance\HttpControllerParameterResolver;
 use Distantmagic\Resonance\SessionAuthentication;
@@ -29,21 +30,24 @@ readonly class SessionAuthenticatedResolver extends HttpControllerParameterResol
         Request $request,
         Response $response,
         HttpControllerParameter $parameter,
-    ): mixed {
+    ): HttpControllerParameterResolution {
         $user = $this->sessionAuthentication->authenticatedUser($request);
 
         if (!is_null($user)) {
             if ($user instanceof $parameter->className) {
-                return $user;
+                return new HttpControllerParameterResolution(
+                    HttpControllerParameterResolutionStatus::Success,
+                    $user,
+                );
             }
 
             throw new LogicException('Expected user to be an instance of: '.$parameter->className);
         }
 
         if ($parameter->reflectionParameter->isOptional()) {
-            return null;
+            return new HttpControllerParameterResolution(HttpControllerParameterResolutionStatus::Success);
         }
 
-        return HttpControllerParameterResolutionStatus::Forbidden;
+        return new HttpControllerParameterResolution(HttpControllerParameterResolutionStatus::Forbidden);
     }
 }

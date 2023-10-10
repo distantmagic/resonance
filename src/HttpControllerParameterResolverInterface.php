@@ -19,5 +19,5 @@ interface HttpControllerParameterResolverInterface
         Request $request,
         Response $response,
         HttpControllerParameter $parameter,
-    ): mixed;
+    ): HttpControllerParameterResolution;
 }

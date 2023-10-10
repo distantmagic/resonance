@@ -12,6 +12,7 @@ enum SingletonCollection implements SingletonCollectionInterface
     case HttpControllerParameterResolver;
     case HttpParameterBinder;
     case HttpResponder;
+    case InputValidator;
     case SiteActionGate;
     case WebSocketProtocolController;
     case WebSocketRPCResponder;
