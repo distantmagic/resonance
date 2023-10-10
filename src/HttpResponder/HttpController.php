@@ -107,7 +107,11 @@ abstract readonly class HttpController extends HttpResponder
             }
         }
 
-        if (!$validationErrors->isEmpty() && $this->validationErrorsHandlerName) {
+        if (!$validationErrors->isEmpty()) {
+            if (!$this->validationErrorsHandlerName) {
+                return $this->badRequest;
+            }
+
             /**
              * @var mixed explicitly mixed for typechecks
              */
