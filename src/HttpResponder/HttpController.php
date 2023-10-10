@@ -5,19 +5,15 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\HttpResponder;
 
 use Closure;
-use Distantmagic\Resonance\Attribute\RouteParameter;
-use Distantmagic\Resonance\CrudActionSubjectInterface;
-use Distantmagic\Resonance\Gatekeeper;
 use Distantmagic\Resonance\HttpControllerDependencies;
 use Distantmagic\Resonance\HttpControllerParameterResolutionStatus;
+use Distantmagic\Resonance\HttpControllerParameterResolverAggregate;
 use Distantmagic\Resonance\HttpControllerReflectionMethod;
 use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\HttpResponder\Error\BadRequest;
 use Distantmagic\Resonance\HttpResponder\Error\Forbidden;
 use Distantmagic\Resonance\HttpResponder\Error\PageNotFound;
 use Distantmagic\Resonance\HttpResponderInterface;
-use Distantmagic\Resonance\HttpRouteMatchRegistry;
-use Distantmagic\Resonance\HttpRouteParameterBinderAggregate;
 use LogicException;
 use ReflectionMethod;
 use Swoole\Http\Request;
@@ -27,10 +23,8 @@ abstract readonly class HttpController extends HttpResponder
 {
     protected BadRequest $badRequest;
     protected Forbidden $forbidden;
-    protected Gatekeeper $gatekeeper;
+    protected HttpControllerParameterResolverAggregate $httpControllerParameterResolverAggregate;
     protected PageNotFound $pageNotFound;
-    protected HttpRouteMatchRegistry $routeMatchRegistry;
-    protected HttpRouteParameterBinderAggregate $routeParameterBinderAggregate;
     private HttpControllerReflectionMethod $handleReflection;
 
     /**
@@ -42,9 +36,7 @@ abstract readonly class HttpController extends HttpResponder
     {
         $this->badRequest = $controllerDependencies->badRequest;
         $this->forbidden = $controllerDependencies->forbidden;
-        $this->gatekeeper = $controllerDependencies->gatekeeper;
-        $this->routeMatchRegistry = $controllerDependencies->routeMatchRegistry;
-        $this->routeParameterBinderAggregate = $controllerDependencies->routeParameterBinderAggregate;
+        $this->httpControllerParameterResolverAggregate = $controllerDependencies->httpControllerParameterResolverAggregate;
         $this->pageNotFound = $controllerDependencies->pageNotFound;
 
         $reflectionMethod = new ReflectionMethod($this, 'handle');
@@ -68,14 +60,14 @@ abstract readonly class HttpController extends HttpResponder
             /**
              * @var mixed explicitly mixed for typechecks
              */
-            $bindingResult = $this->bindRouteParameter(
+            $parameterValue = $this->bindRouteParameter(
                 $request,
                 $response,
                 $parameterClass,
                 $parameterName,
             );
 
-            switch ($bindingResult) {
+            switch ($parameterValue) {
                 case HttpControllerParameterResolutionStatus::Forbidden:
                     return $this->forbidden;
                 case HttpControllerParameterResolutionStatus::NotFound:
@@ -86,44 +78,13 @@ abstract readonly class HttpController extends HttpResponder
                     /**
                      * @var mixed explicitly mixed for typechecks
                      */
-                    $resolvedParameterValues[$parameterName] = $bindingResult;
+                    $resolvedParameterValues[$parameterName] = $parameterValue;
 
                     break;
             }
         }
 
         return ($this->handleReflectionCallback)(...$resolvedParameterValues);
-    }
-
-    /**
-     * @param class-string $parameterClass
-     */
-    protected function bindProvidableRouteParameter(
-        Request $request,
-        RouteParameter $attribute,
-        string $parameterClass,
-    ): mixed {
-        $routeParameterValue = $this->routeMatchRegistry->get($request)->routeVars->get($attribute->from, null);
-
-        if (is_null($routeParameterValue)) {
-            return HttpControllerParameterResolutionStatus::NotProvided;
-        }
-
-        $object = $this->routeParameterBinderAggregate->provide($parameterClass, $routeParameterValue);
-
-        if (is_null($object)) {
-            return HttpControllerParameterResolutionStatus::NotFound;
-        }
-
-        if (!($object instanceof CrudActionSubjectInterface)) {
-            throw new LogicException('Bound parameter cannot be subjected to Gatekeeper check');
-        }
-
-        if (!$this->gatekeeper->withRequest($request)->canCrud($object, $attribute->intent)) {
-            return HttpControllerParameterResolutionStatus::Forbidden;
-        }
-
-        return $object;
     }
 
     /**
@@ -145,10 +106,18 @@ abstract readonly class HttpController extends HttpResponder
 
         $responderAttribute = $this->handleReflection->attributes->get($parameterName, null);
 
-        if ($responderAttribute) {
-            return $this->bindProvidableRouteParameter($request, $responderAttribute, $parameterClass);
+        if (!$responderAttribute) {
+            throw new LogicException('Controller attribute requires annotation: '.$parameterName);
         }
 
-        throw new LogicException('Cannot bind controller attribute: '.$parameterName);
+        /**
+         * @var mixed explicitly mixed for typechecks
+         */
+        return $this->httpControllerParameterResolverAggregate->resolve(
+            $request,
+            $response,
+            $responderAttribute,
+            $parameterClass,
+        );
     }
 }

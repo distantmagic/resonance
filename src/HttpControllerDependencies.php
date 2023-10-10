@@ -15,9 +15,7 @@ readonly class HttpControllerDependencies
     public function __construct(
         public BadRequest $badRequest,
         public Forbidden $forbidden,
-        public Gatekeeper $gatekeeper,
-        public HttpRouteMatchRegistry $routeMatchRegistry,
-        public HttpRouteParameterBinderAggregate $routeParameterBinderAggregate,
+        public HttpControllerParameterResolverAggregate $httpControllerParameterResolverAggregate,
         public PageNotFound $pageNotFound,
     ) {}
 }

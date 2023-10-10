@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Distantmagic\Resonance\Attribute\RouteParameter;
 use Ds\Map;
 use LogicException;
 use ReflectionAttribute;
@@ -17,7 +16,7 @@ use Swoole\Http\Response;
 readonly class HttpControllerReflectionMethod
 {
     /**
-     * @var Map<string, RouteParameter>
+     * @var Map<string, Attribute>
      */
     public Map $attributes;
 
@@ -104,17 +103,17 @@ readonly class HttpControllerReflectionMethod
         }
 
         $routeParameterAttributes = $reflectionParameter->getAttributes(
-            RouteParameter::class,
+            Attribute::class,
             ReflectionAttribute::IS_INSTANCEOF,
         );
 
         if (empty($routeParameterAttributes)) {
-            $this->reportError('You have to provide a RouteParameter attribute', $reflectionParameter, $type);
+            $this->reportError('You have to provide an attribute', $reflectionParameter, $type);
         }
 
         foreach ($routeParameterAttributes as $routeParameterAttribute) {
             if ($this->attributes->hasKey($name)) {
-                $this->reportError('RouteParameter attribute is not repeatable', $reflectionParameter, $type);
+                $this->reportError('Attribute attribute is not repeatable', $reflectionParameter, $type);
             }
 
             $this->attributes->put($name, $routeParameterAttribute->newInstance());
