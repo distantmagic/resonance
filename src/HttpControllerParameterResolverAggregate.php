@@ -21,27 +21,22 @@ readonly class HttpControllerParameterResolverAggregate
         $this->resolvers = new Map();
     }
 
-    /**
-     * @param class-string $parameterClass
-     */
     public function resolve(
         Request $request,
         Response $response,
-        Attribute $responderAttribute,
-        string $parameterClass,
+        HttpControllerParameter $parameter,
     ): mixed {
-        if ($this->resolvers->hasKey($responderAttribute::class)) {
-            return $this->resolvers->get($responderAttribute::class)->resolve(
+        if ($this->resolvers->hasKey($parameter->attribute::class)) {
+            return $this->resolvers->get($parameter->attribute::class)->resolve(
                 $request,
                 $response,
-                $responderAttribute,
-                $parameterClass,
+                $parameter,
             );
         }
 
         throw new LogicException(sprintf(
             'There is no resolver registered for attribute: %s',
-            $responderAttribute::class,
+            $parameter->attribute::class,
         ));
     }
 }

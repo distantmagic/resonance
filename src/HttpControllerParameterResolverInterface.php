@@ -13,13 +13,11 @@ use Swoole\Http\Response;
 interface HttpControllerParameterResolverInterface
 {
     /**
-     * @param TAttribute   $responderAttribute
-     * @param class-string $parameterClass
+     * @param HttpControllerParameter<TAttribute> $parameter
      */
     public function resolve(
         Request $request,
         Response $response,
-        Attribute $responderAttribute,
-        string $parameterClass,
+        HttpControllerParameter $parameter,
     ): mixed;
 }

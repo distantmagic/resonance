@@ -7,5 +7,5 @@ namespace Distantmagic\Resonance\Attribute;
 use Attribute;
 use Distantmagic\Resonance\Attribute as BaseAttribute;
 
-#[Attribute(Attribute::TARGET_METHOD)]
-final readonly class RequestValidationErrorHandler extends BaseAttribute {}
+#[Attribute(Attribute::TARGET_PARAMETER)]
+final readonly class CurrentRequest extends BaseAttribute {}

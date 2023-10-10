@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\CurrentRequest;
+use Distantmagic\Resonance\Attribute\CurrentResponse;
 use Ds\Map;
 use LogicException;
 use ReflectionAttribute;
@@ -16,18 +18,12 @@ use Swoole\Http\Response;
 readonly class HttpControllerReflectionMethod
 {
     /**
-     * @var Map<string, Attribute>
-     */
-    public Map $attributes;
-
-    /**
-     * @var Map<string, class-string>
+     * @var Map<string, HttpControllerParameter>
      */
     public Map $parameters;
 
     public function __construct(private ReflectionMethod $reflectionMethod)
     {
-        $this->attributes = new Map();
         $this->parameters = new Map();
 
         $this->assertReturnType();
@@ -92,32 +88,55 @@ readonly class HttpControllerReflectionMethod
 
         $className = $type->getName();
 
-        if (!class_exists($className)) {
+        /**
+         * This psalm error is a false positive.
+         *
+         * @psalm-suppress NoValue
+         */
+        if (!class_exists($className) && !interface_exists($className)) {
             $this->reportError('Class does not exist: '.$className, $reflectionParameter, $type);
         }
 
-        $this->parameters->put($name, $className);
+        $this->parameters->put($name, new HttpControllerParameter(
+            $reflectionParameter,
+            $this->getParameterAttribute($reflectionParameter, $className, $name),
+            $className,
+            $name,
+        ));
+    }
 
-        if (is_a($className, Request::class, true) || is_a($className, Response::class, true)) {
-            return;
-        }
-
+    /**
+     * @param class-string $className
+     */
+    private function getParameterAttribute(
+        ReflectionParameter $reflectionParameter,
+        string $className,
+        string $name,
+    ): Attribute {
         $routeParameterAttributes = $reflectionParameter->getAttributes(
             Attribute::class,
             ReflectionAttribute::IS_INSTANCEOF,
         );
 
-        if (empty($routeParameterAttributes)) {
-            $this->reportError('You have to provide an attribute', $reflectionParameter, $type);
+        switch (count($routeParameterAttributes)) {
+            case 0:
+                if (is_a($className, Request::class, true)) {
+                    return new CurrentRequest();
+                }
+                if (is_a($className, Response::class, true)) {
+                    return new CurrentResponse();
+                }
+
+                break;
+            case 1:
+                foreach ($routeParameterAttributes as $routeParameterAttribute) {
+                    return $routeParameterAttribute->newInstance();
+                }
+
+                break;
         }
 
-        foreach ($routeParameterAttributes as $routeParameterAttribute) {
-            if ($this->attributes->hasKey($name)) {
-                $this->reportError('Attribute attribute is not repeatable', $reflectionParameter, $type);
-            }
-
-            $this->attributes->put($name, $routeParameterAttribute->newInstance());
-        }
+        throw new LogicException('Controller parameter must have exactly one attribute: '.$name);
     }
 
     private function reportError(

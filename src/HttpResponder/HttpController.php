@@ -14,23 +14,23 @@ use Distantmagic\Resonance\HttpResponder\Error\BadRequest;
 use Distantmagic\Resonance\HttpResponder\Error\Forbidden;
 use Distantmagic\Resonance\HttpResponder\Error\PageNotFound;
 use Distantmagic\Resonance\HttpResponderInterface;
-use LogicException;
 use ReflectionMethod;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
 abstract readonly class HttpController extends HttpResponder
 {
-    protected BadRequest $badRequest;
-    protected Forbidden $forbidden;
-    protected HttpControllerParameterResolverAggregate $httpControllerParameterResolverAggregate;
-    protected PageNotFound $pageNotFound;
+    private BadRequest $badRequest;
+    private Forbidden $forbidden;
     private HttpControllerReflectionMethod $handleReflection;
 
     /**
      * @var Closure(mixed): ?HttpResponderInterface
      */
     private Closure $handleReflectionCallback;
+
+    private HttpControllerParameterResolverAggregate $httpControllerParameterResolverAggregate;
+    private PageNotFound $pageNotFound;
 
     public function __construct(HttpControllerDependencies $controllerDependencies)
     {
@@ -56,15 +56,14 @@ abstract readonly class HttpController extends HttpResponder
          */
         $resolvedParameterValues = [];
 
-        foreach ($this->handleReflection->parameters as $parameterName => $parameterClass) {
+        foreach ($this->handleReflection->parameters as $parameter) {
             /**
              * @var mixed explicitly mixed for typechecks
              */
-            $parameterValue = $this->bindRouteParameter(
+            $parameterValue = $this->httpControllerParameterResolverAggregate->resolve(
                 $request,
                 $response,
-                $parameterClass,
-                $parameterName,
+                $parameter,
             );
 
             switch ($parameterValue) {
@@ -78,46 +77,12 @@ abstract readonly class HttpController extends HttpResponder
                     /**
                      * @var mixed explicitly mixed for typechecks
                      */
-                    $resolvedParameterValues[$parameterName] = $parameterValue;
+                    $resolvedParameterValues[$parameter->name] = $parameterValue;
 
                     break;
             }
         }
 
         return ($this->handleReflectionCallback)(...$resolvedParameterValues);
-    }
-
-    /**
-     * @param class-string $parameterClass
-     */
-    protected function bindRouteParameter(
-        Request $request,
-        Response $response,
-        string $parameterClass,
-        string $parameterName,
-    ): mixed {
-        if ($request instanceof $parameterClass) {
-            return $request;
-        }
-
-        if ($response instanceof $parameterClass) {
-            return $response;
-        }
-
-        $responderAttribute = $this->handleReflection->attributes->get($parameterName, null);
-
-        if (!$responderAttribute) {
-            throw new LogicException('Controller attribute requires annotation: '.$parameterName);
-        }
-
-        /**
-         * @var mixed explicitly mixed for typechecks
-         */
-        return $this->httpControllerParameterResolverAggregate->resolve(
-            $request,
-            $response,
-            $responderAttribute,
-            $parameterClass,
-        );
     }
 }

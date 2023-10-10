@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\HttpControllerParameterResolver;
 
-use Distantmagic\Resonance\Attribute;
 use Distantmagic\Resonance\Attribute\ResolvesHttpControllerParameter;
 use Distantmagic\Resonance\Attribute\RouteParameter;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\CrudActionSubjectInterface;
 use Distantmagic\Resonance\Gatekeeper;
+use Distantmagic\Resonance\HttpControllerParameter;
 use Distantmagic\Resonance\HttpControllerParameterResolutionStatus;
 use Distantmagic\Resonance\HttpControllerParameterResolver;
 use Distantmagic\Resonance\HttpRouteMatchRegistry;
@@ -32,23 +32,18 @@ readonly class RouteParameterResolver extends HttpControllerParameterResolver
         private HttpRouteParameterBinderAggregate $routeParameterBinderAggregate,
     ) {}
 
-    /**
-     * @param RouteParameter $responderAttribute
-     * @param class-string   $parameterClass
-     */
     public function resolve(
         Request $request,
         Response $response,
-        Attribute $responderAttribute,
-        string $parameterClass,
+        HttpControllerParameter $parameter,
     ): mixed {
-        $routeParameterValue = $this->routeMatchRegistry->get($request)->routeVars->get($responderAttribute->from, null);
+        $routeParameterValue = $this->routeMatchRegistry->get($request)->routeVars->get($parameter->attribute->from, null);
 
         if (is_null($routeParameterValue)) {
             return HttpControllerParameterResolutionStatus::NotProvided;
         }
 
-        $object = $this->routeParameterBinderAggregate->provide($parameterClass, $routeParameterValue);
+        $object = $this->routeParameterBinderAggregate->provide($parameter->className, $routeParameterValue);
 
         if (is_null($object)) {
             return HttpControllerParameterResolutionStatus::NotFound;
@@ -58,7 +53,7 @@ readonly class RouteParameterResolver extends HttpControllerParameterResolver
             throw new LogicException('Bound parameter cannot be subjected to Gatekeeper check');
         }
 
-        if (!$this->gatekeeper->withRequest($request)->canCrud($object, $responderAttribute->intent)) {
+        if (!$this->gatekeeper->withRequest($request)->canCrud($object, $parameter->attribute->intent)) {
             return HttpControllerParameterResolutionStatus::Forbidden;
         }
 
