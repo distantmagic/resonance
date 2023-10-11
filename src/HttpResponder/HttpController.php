@@ -112,15 +112,6 @@ abstract readonly class HttpController extends HttpResponder
 
                     break;
                 case HttpControllerParameterResolutionStatus::ValidationErrors:
-                    /**
-                     * Let's assume that types are correct. Otherwise it
-                     * would be necessary to iterate over the entire map
-                     * during each request.
-                     *
-                     * @var Map<string,string> $errors
-                     */
-                    $errors = $parameterResolution->value;
-
                     if (!$validationErrors) {
                         /**
                          * @var Map<string,string>
@@ -128,7 +119,14 @@ abstract readonly class HttpController extends HttpResponder
                         $validationErrors = new Map();
                     }
 
-                    $validationErrors->putAll($errors);
+                    /**
+                     * Let's assume that types are correct. Otherwise it
+                     * would be necessary to iterate over the entire map
+                     * during each request.
+                     *
+                     * @var Map<string,string> $parameterResolution->value
+                     */
+                    $validationErrors->putAll($parameterResolution->value);
 
                     break;
                 default:
@@ -183,20 +181,16 @@ abstract readonly class HttpController extends HttpResponder
         foreach ($handleValidationErrorsReflection->parameters as $parameter) {
             $attribute = $parameter->attribute;
 
-            if (is_a($attribute, ValidationErrors::class, true)) {
-                $resolvedValidationHandlerParameters[$parameter->name] = $validationErrors;
-            } elseif (is_a($attribute, CurrentRequest::class, true)) {
-                $resolvedValidationHandlerParameters[$parameter->name] = $request;
-            } elseif (is_a($attribute, CurrentResponse::class, true)) {
-                $resolvedValidationHandlerParameters[$parameter->name] = $response;
-            } elseif (array_key_exists($parameter->name, $resolvedParameterValues)) {
-                /**
-                 * @var mixed explicitly mixed for typechecks
-                 */
-                $resolvedValidationHandlerParameters[$parameter->name] = $resolvedParameterValues[$parameter->name];
-            } else {
-                throw new LogicException('ValidationErrorsHandler can only use parameters that are resolved in the handler: '.$parameter->name);
-            }
+            /**
+             * @var mixed explicitly mixed for typechecks
+             */
+            $resolvedValidationHandlerParameters[$parameter->name] = match (true) {
+                array_key_exists($parameter->name, $resolvedParameterValues) => $resolvedParameterValues[$parameter->name],
+                is_a($attribute, ValidationErrors::class, true) => $validationErrors,
+                is_a($attribute, CurrentRequest::class, true) => $request,
+                is_a($attribute, CurrentResponse::class, true) => $response,
+                default => throw new LogicException('ValidationErrorsHandler can only use parameters that are already resolved in the handler: '.$parameter->name),
+            };
         }
 
         return $handleValidationErrorsCallback(...$resolvedValidationHandlerParameters);
