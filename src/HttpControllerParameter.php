@@ -17,7 +17,7 @@ readonly class HttpControllerParameter
      */
     public function __construct(
         public ReflectionParameter $reflectionParameter,
-        public Attribute $attribute,
+        public ?Attribute $attribute,
         public string $className,
         public string $name,
     ) {}

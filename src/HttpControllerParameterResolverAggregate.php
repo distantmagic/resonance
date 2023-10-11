@@ -26,11 +26,18 @@ readonly class HttpControllerParameterResolverAggregate
         Response $response,
         HttpControllerParameter $parameter,
     ): HttpControllerParameterResolution {
+        $attribute = $parameter->attribute;
+
+        if (!$attribute) {
+            throw new LogicException('To use the attribute resolver, attribute must be provided.');
+        }
+
         if ($this->resolvers->hasKey($parameter->attribute::class)) {
             return $this->resolvers->get($parameter->attribute::class)->resolve(
                 $request,
                 $response,
                 $parameter,
+                $attribute,
             );
         }
 

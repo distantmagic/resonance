@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\HttpControllerParameterResolver;
 
+use Distantmagic\Resonance\Attribute;
 use Distantmagic\Resonance\Attribute\ResolvesHttpControllerParameter;
 use Distantmagic\Resonance\Attribute\SessionAuthenticated;
 use Distantmagic\Resonance\Attribute\Singleton;
@@ -30,6 +31,7 @@ readonly class SessionAuthenticatedResolver extends HttpControllerParameterResol
         Request $request,
         Response $response,
         HttpControllerParameter $parameter,
+        Attribute $attribute,
     ): HttpControllerParameterResolution {
         $user = $this->sessionAuthentication->authenticatedUser($request);
 

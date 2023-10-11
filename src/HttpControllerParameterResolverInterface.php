@@ -14,10 +14,12 @@ interface HttpControllerParameterResolverInterface
 {
     /**
      * @param HttpControllerParameter<TAttribute> $parameter
+     * @param TAttribute                          $attribute
      */
     public function resolve(
         Request $request,
         Response $response,
         HttpControllerParameter $parameter,
+        Attribute $attribute,
     ): HttpControllerParameterResolution;
 }

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\HttpResponder;
 
+use Closure;
+use Distantmagic\Resonance\Attribute\CurrentRequest;
+use Distantmagic\Resonance\Attribute\CurrentResponse;
+use Distantmagic\Resonance\Attribute\ValidationErrors;
 use Distantmagic\Resonance\Attribute\ValidationErrorsHandler;
 use Distantmagic\Resonance\HttpControllerDependencies;
 use Distantmagic\Resonance\HttpControllerParameterResolutionStatus;
@@ -26,9 +30,15 @@ abstract readonly class HttpController extends HttpResponder
     private BadRequest $badRequest;
     private Forbidden $forbidden;
     private HttpControllerReflectionMethod $handleReflection;
+
+    /**
+     * @var null|Closure(mixed):?HttpResponderInterface
+     */
+    private ?Closure $handleValidationErrorsCallback;
+
+    private ?HttpControllerReflectionMethod $handleValidationErrorsReflection;
     private HttpControllerParameterResolverAggregate $httpControllerParameterResolverAggregate;
     private PageNotFound $pageNotFound;
-    private ?string $validationErrorsHandlerName;
 
     public function __construct(HttpControllerDependencies $controllerDependencies)
     {
@@ -40,17 +50,29 @@ abstract readonly class HttpController extends HttpResponder
         $reflectionClass = new ReflectionClass($this);
 
         /**
-         * @var null|string
+         * @var null|Closure(mixed):?HttpResponderInterface
          */
-        $validationErrorsHandlerName = null;
+        $handleValidationErrorsCallback = null;
+        /**
+         * @var null|HttpControllerReflectionMethod
+         */
+        $handleValidationErrorsReflection = null;
 
-        foreach ($reflectionClass->getMethods() as $reflectionMethod) {
-            if (!empty($reflectionMethod->getAttributes(ValidationErrorsHandler::class))) {
-                $validationErrorsHandlerName = $reflectionMethod->getName();
+        foreach ($reflectionClass->getMethods() as $validationErrorsReflectionMethod) {
+            if (!empty($validationErrorsReflectionMethod->getAttributes(ValidationErrorsHandler::class))) {
+                $handleValidationErrorsReflection = new HttpControllerReflectionMethod($validationErrorsReflectionMethod);
+                /**
+                 * This function is validated in the
+                 * HttpControllerReflectionMethod
+                 *
+                 * @var Closure(mixed):?HttpResponderInterface
+                 */
+                $handleValidationErrorsCallback = $validationErrorsReflectionMethod->getClosure($this);
             }
         }
 
-        $this->validationErrorsHandlerName = $validationErrorsHandlerName;
+        $this->handleValidationErrorsCallback = $handleValidationErrorsCallback;
+        $this->handleValidationErrorsReflection = $handleValidationErrorsReflection;
 
         $reflectionMethod = new ReflectionMethod($this, 'handle');
         $this->handleReflection = new HttpControllerReflectionMethod($reflectionMethod);
@@ -64,9 +86,9 @@ abstract readonly class HttpController extends HttpResponder
         $resolvedParameterValues = [];
 
         /**
-         * @var Map<string,string>
+         * @var null|Map<string,string>
          */
-        $validationErrors = new Map();
+        $validationErrors = null;
 
         foreach ($this->handleReflection->parameters as $parameter) {
             $parameterResolution = $this->httpControllerParameterResolverAggregate->resolve(
@@ -80,7 +102,7 @@ abstract readonly class HttpController extends HttpResponder
                     return $this->forbidden;
                 case HttpControllerParameterResolutionStatus::NotFound:
                     return $this->pageNotFound;
-                case HttpControllerParameterResolutionStatus::NotProvided:
+                case HttpControllerParameterResolutionStatus::MissingUrlParameterValue:
                     return $this->badRequest;
                 case HttpControllerParameterResolutionStatus::Success:
                     /**
@@ -99,6 +121,13 @@ abstract readonly class HttpController extends HttpResponder
                      */
                     $errors = $parameterResolution->value;
 
+                    if (!$validationErrors) {
+                        /**
+                         * @var Map<string,string>
+                         */
+                        $validationErrors = new Map();
+                    }
+
                     $validationErrors->putAll($errors);
 
                     break;
@@ -107,21 +136,19 @@ abstract readonly class HttpController extends HttpResponder
             }
         }
 
-        if (!$validationErrors->isEmpty()) {
-            if (!$this->validationErrorsHandlerName) {
+        if ($validationErrors) {
+            if (!$this->handleValidationErrorsReflection || !$this->handleValidationErrorsCallback) {
                 return $this->badRequest;
             }
 
-            /**
-             * @var mixed explicitly mixed for typechecks
-             */
-            $ret = $this->{$this->validationErrorsHandlerName}($request, $response, $validationErrors);
-
-            if (is_null($ret) || ($ret instanceof HttpResponderInterface)) {
-                return $ret;
-            }
-
-            throw new LogicException('Error handler must return null or '.HttpResponderInterface::class);
+            return $this->handleValidationErrors(
+                $request,
+                $response,
+                $this->handleValidationErrorsReflection,
+                $this->handleValidationErrorsCallback,
+                $resolvedParameterValues,
+                $validationErrors,
+            );
         }
 
         /**
@@ -133,5 +160,45 @@ abstract readonly class HttpController extends HttpResponder
          * @var ?HttpResponderInterface
          */
         return $this->handle(...$resolvedParameterValues);
+    }
+
+    /**
+     * @param Closure(mixed):?HttpResponderInterface $handleValidationErrorsCallback
+     * @param array <string,mixed>                   $resolvedParameterValues
+     * @param Map<string,string>                     $validationErrors
+     */
+    private function handleValidationErrors(
+        Request $request,
+        Response $response,
+        HttpControllerReflectionMethod $handleValidationErrorsReflection,
+        Closure $handleValidationErrorsCallback,
+        array $resolvedParameterValues,
+        Map $validationErrors,
+    ): ?HttpResponderInterface {
+        /**
+         * @var array <string,mixed>
+         */
+        $resolvedValidationHandlerParameters = [];
+
+        foreach ($handleValidationErrorsReflection->parameters as $parameter) {
+            $attribute = $parameter->attribute;
+
+            if (is_a($attribute, ValidationErrors::class, true)) {
+                $resolvedValidationHandlerParameters[$parameter->name] = $validationErrors;
+            } elseif (is_a($attribute, CurrentRequest::class, true)) {
+                $resolvedValidationHandlerParameters[$parameter->name] = $request;
+            } elseif (is_a($attribute, CurrentResponse::class, true)) {
+                $resolvedValidationHandlerParameters[$parameter->name] = $response;
+            } elseif (array_key_exists($parameter->name, $resolvedParameterValues)) {
+                /**
+                 * @var mixed explicitly mixed for typechecks
+                 */
+                $resolvedValidationHandlerParameters[$parameter->name] = $resolvedParameterValues[$parameter->name];
+            } else {
+                throw new LogicException('ValidationErrorsHandler can only use parameters that are resolved in the handler: '.$parameter->name);
+            }
+        }
+
+        return $handleValidationErrorsCallback(...$resolvedValidationHandlerParameters);
     }
 }

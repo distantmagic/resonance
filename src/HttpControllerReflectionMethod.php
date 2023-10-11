@@ -99,7 +99,7 @@ readonly class HttpControllerReflectionMethod
 
         $this->parameters->put($name, new HttpControllerParameter(
             $reflectionParameter,
-            $this->getParameterAttribute($reflectionParameter, $className, $name),
+            $this->getParameterAttribute($reflectionParameter, $className),
             $className,
             $name,
         ));
@@ -111,8 +111,7 @@ readonly class HttpControllerReflectionMethod
     private function getParameterAttribute(
         ReflectionParameter $reflectionParameter,
         string $className,
-        string $name,
-    ): Attribute {
+    ): ?Attribute {
         $routeParameterAttributes = $reflectionParameter->getAttributes(
             Attribute::class,
             ReflectionAttribute::IS_INSTANCEOF,
@@ -136,7 +135,7 @@ readonly class HttpControllerReflectionMethod
                 break;
         }
 
-        throw new LogicException('Controller parameter must have exactly one attribute: '.$name);
+        return null;
     }
 
     private function reportError(

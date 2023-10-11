@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\HttpControllerParameterResolver;
 
+use Distantmagic\Resonance\Attribute;
 use Distantmagic\Resonance\Attribute\ResolvesHttpControllerParameter;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Attribute\ValidatedRequest;
@@ -32,8 +33,9 @@ readonly class ValidatedRequestResolver extends HttpControllerParameterResolver
         Request $request,
         Response $response,
         HttpControllerParameter $parameter,
+        Attribute $attribute,
     ): HttpControllerParameterResolution {
-        $validatorClassName = $parameter->attribute->validator;
+        $validatorClassName = $attribute->validator;
 
         if (!$this->inputValidatorCollection->inputValidators->hasKey($validatorClassName)) {
             throw new LogicException('Validator is not registered: '.$validatorClassName);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\HttpControllerParameterResolver;
 
+use Distantmagic\Resonance\Attribute;
 use Distantmagic\Resonance\Attribute\ResolvesHttpControllerParameter;
 use Distantmagic\Resonance\Attribute\RouteParameter;
 use Distantmagic\Resonance\Attribute\Singleton;
@@ -37,11 +38,12 @@ readonly class RouteParameterResolver extends HttpControllerParameterResolver
         Request $request,
         Response $response,
         HttpControllerParameter $parameter,
+        Attribute $attribute,
     ): HttpControllerParameterResolution {
-        $routeParameterValue = $this->routeMatchRegistry->get($request)->routeVars->get($parameter->attribute->from, null);
+        $routeParameterValue = $this->routeMatchRegistry->get($request)->routeVars->get($attribute->from, null);
 
         if (is_null($routeParameterValue)) {
-            return new HttpControllerParameterResolution(HttpControllerParameterResolutionStatus::NotProvided);
+            return new HttpControllerParameterResolution(HttpControllerParameterResolutionStatus::MissingUrlParameterValue);
         }
 
         $object = $this->routeParameterBinderAggregate->provide($parameter->className, $routeParameterValue);
@@ -54,7 +56,7 @@ readonly class RouteParameterResolver extends HttpControllerParameterResolver
             throw new LogicException('Bound parameter cannot be subjected to Gatekeeper check');
         }
 
-        if (!$this->gatekeeper->withRequest($request)->canCrud($object, $parameter->attribute->intent)) {
+        if (!$this->gatekeeper->withRequest($request)->canCrud($object, $attribute->intent)) {
             return new HttpControllerParameterResolution(HttpControllerParameterResolutionStatus::Forbidden);
         }
 

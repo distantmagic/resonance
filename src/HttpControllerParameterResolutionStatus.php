@@ -7,8 +7,8 @@ namespace Distantmagic\Resonance;
 enum HttpControllerParameterResolutionStatus
 {
     case Forbidden;
+    case MissingUrlParameterValue;
     case NotFound;
-    case NotProvided;
     case Success;
     case ValidationErrors;
 }
