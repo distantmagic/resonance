@@ -14,11 +14,20 @@ abstract readonly class Layout extends Template implements TemplateLayoutInterfa
 {
     abstract public function getContentType(Request $request, Response $response): ContentType;
 
+    public function getCharset(): string
+    {
+        return 'utf-8';
+    }
+
     protected function sendContentTypeHeader(Request $request, Response $response): void
     {
         $response->header(
             'content-type',
-            $this->getContentType($request, $response)->value,
+            sprintf(
+                '%s;charset=%s',
+                $this->getContentType($request, $response)->value,
+                $this->getCharset(),
+            )
         );
     }
 }

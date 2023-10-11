@@ -14,8 +14,8 @@ use Swoole\Database\PDOPool;
 abstract readonly class DatabaseQuery implements DatabaseQueryInterface
 {
     public function __construct(
-        private EventDispatcherInterface $eventDispatcher,
-        private PDOPool $pdoPool,
+        protected EventDispatcherInterface $eventDispatcher,
+        protected PDOPool $pdoPool,
     ) {}
 
     public function isIterable(): bool
