@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
+use Distantmagic\Resonance\ApplicationContext;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Environment;
 use Distantmagic\Resonance\GraphQLSchemaQueryInterface;
@@ -20,7 +21,10 @@ use LogicException;
 #[Singleton(provides: Schema::class)]
 final readonly class GraphQLSchemaProvider extends SingletonProvider
 {
-    public function __construct(private GraphQLSchemaQueryInterface $query) {}
+    public function __construct(
+        private ApplicationContext $applicationContext,
+        private GraphQLSchemaQueryInterface $query,
+    ) {}
 
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): Schema
     {
@@ -34,7 +38,7 @@ final readonly class GraphQLSchemaProvider extends SingletonProvider
             'query' => $this->query,
         ]);
 
-        if (DM_APP_ENV === Environment::Development) {
+        if (Environment::Development === $this->applicationContext->environment) {
             $schema->assertValid();
         }
 

@@ -17,11 +17,12 @@ readonly class Session
     private Redis $redis;
 
     public function __construct(
+        RedisConfiguration $redisConfiguration,
         private RedisPool $redisPool,
         public string $id,
     ) {
         $this->redis = $this->redisPool->get();
-        $this->redis->setOption(Redis::OPT_PREFIX, DM_REDIS_PREFIX.'session:');
+        $this->redis->setOption(Redis::OPT_PREFIX, $redisConfiguration->prefix.'session:');
         $this->redis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_IGBINARY);
 
         $this->data = new Map($this->restoreSessionData());

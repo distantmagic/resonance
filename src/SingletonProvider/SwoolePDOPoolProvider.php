@@ -8,7 +8,6 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
-use PDO;
 use Swoole\Database\PDOConfig;
 use Swoole\Database\PDOPool;
 
@@ -18,24 +17,10 @@ use Swoole\Database\PDOPool;
 #[Singleton(provides: PDOPool::class)]
 final readonly class SwoolePDOPoolProvider extends SingletonProvider
 {
+    public function __construct(private PDOConfig $pdoConfig) {}
+
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): PDOPool
     {
-        return new PDOPool($this->configFromGlobals());
-    }
-
-    private function configFromGlobals(): PDOConfig
-    {
-        $pdoConfig = new PDOConfig();
-
-        return $pdoConfig
-            ->withHost(DM_DB_HOST)
-            ->withPort(DM_DB_PORT)
-            ->withDbName(DM_DB_DATABASE)
-            ->withUsername(DM_DB_USERNAME)
-            ->withPassword(DM_DB_PASSWORD)
-            ->withOptions([
-                PDO::ERRMODE_EXCEPTION,
-            ])
-        ;
+        return new PDOPool($this->pdoConfig);
     }
 }

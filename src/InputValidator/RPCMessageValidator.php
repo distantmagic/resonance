@@ -9,6 +9,7 @@ use Distantmagic\Resonance\InputValidatedData\RPCMessage;
 use Distantmagic\Resonance\InputValidator;
 use Distantmagic\Resonance\RPCMethodValidatorInterface;
 use Nette\Schema\Expect;
+use Nette\Schema\Processor;
 use Nette\Schema\Schema;
 
 /**
@@ -21,9 +22,11 @@ use Nette\Schema\Schema;
 #[Singleton]
 readonly class RPCMessageValidator extends InputValidator
 {
-    public function __construct(private RPCMethodValidatorInterface $rpcMethodValidator)
-    {
-        parent::__construct();
+    public function __construct(
+        Processor $processor,
+        private RPCMethodValidatorInterface $rpcMethodValidator,
+    ) {
+        parent::__construct($processor);
     }
 
     protected function castValidatedData(mixed $data): RPCMessage

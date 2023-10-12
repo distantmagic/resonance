@@ -11,7 +11,10 @@ use GraphQL\Type\Schema;
 #[Singleton]
 readonly class GraphQLAdapter
 {
-    public function __construct(private Schema $schema) {}
+    public function __construct(
+        private ApplicationContext $applicationContext,
+        private Schema $schema,
+    ) {}
 
     /**
      * @param null|array<string,mixed> $variableValues
@@ -32,6 +35,9 @@ readonly class GraphQLAdapter
             $variableValues,
         );
 
-        return new GraphQLExecutionPromise($promise);
+        return new GraphQLExecutionPromise(
+            $this->applicationContext,
+            $promise,
+        );
     }
 }

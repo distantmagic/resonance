@@ -12,6 +12,7 @@ readonly class StaticPage
     public function __construct(
         public SplFileInfo $file,
         public FrontMatter $frontMatter,
+        private string $staticPagesOutputDirectory,
         public string $content,
     ) {}
 
@@ -49,7 +50,7 @@ readonly class StaticPage
     {
         return sprintf(
             '%s/%s',
-            DM_STATIC_OUTPUT,
+            $this->staticPagesOutputDirectory,
             $this->file->getRelativePath(),
         );
     }

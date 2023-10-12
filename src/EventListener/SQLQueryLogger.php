@@ -6,6 +6,7 @@ namespace Distantmagic\Resonance\EventListener;
 
 use Distantmagic\Resonance\Attribute\ListensTo;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\DatabaseConfiguration;
 use Distantmagic\Resonance\Event\SQLQueryBeforeExecute;
 use Distantmagic\Resonance\EventInterface;
 use Distantmagic\Resonance\EventListener;
@@ -22,8 +23,10 @@ final readonly class SQLQueryLogger extends EventListener
 {
     private SqlFormatter $sqlFormatter;
 
-    public function __construct(private LoggerInterface $logger)
-    {
+    public function __construct(
+        private DatabaseConfiguration $databaseConfiguration,
+        private LoggerInterface $logger,
+    ) {
         $this->sqlFormatter = new SqlFormatter();
     }
 
@@ -37,6 +40,6 @@ final readonly class SQLQueryLogger extends EventListener
 
     public function shouldRegister(): bool
     {
-        return DM_DB_LOG_QUERIES;
+        return $this->databaseConfiguration->logQueries;
     }
 }

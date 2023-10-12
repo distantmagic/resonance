@@ -25,6 +25,7 @@ readonly class StaticPageIterator implements IteratorAggregate
     public function __construct(
         private FrontMatterValidator $frontMatterValidator,
         private StaticPageFileIterator $fileIterator,
+        private string $staticPagesOutputDirectory,
     ) {
         $frontMatterExtension = new FrontMatterExtension();
 
@@ -53,6 +54,7 @@ readonly class StaticPageIterator implements IteratorAggregate
             return new StaticPage(
                 $file,
                 $this->resultToFrontMatter($file, $result),
+                $this->staticPagesOutputDirectory,
                 $result->getContent(),
             );
         } catch (InvalidFrontMatterException $exception) {

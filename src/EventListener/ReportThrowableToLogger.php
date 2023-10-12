@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\EventListener;
 
+use Distantmagic\Resonance\ApplicationContext;
 use Distantmagic\Resonance\Attribute\ListensTo;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Environment;
@@ -20,7 +21,10 @@ use Psr\Log\LoggerInterface;
 #[Singleton(collection: SingletonCollection::EventListener)]
 final readonly class ReportThrowableToLogger extends EventListener
 {
-    public function __construct(private LoggerInterface $logger) {}
+    public function __construct(
+        private ApplicationContext $app,
+        private LoggerInterface $logger,
+    ) {}
 
     /**
      * @param UnhandledException $event
@@ -32,6 +36,6 @@ final readonly class ReportThrowableToLogger extends EventListener
 
     public function shouldRegister(): bool
     {
-        return DM_APP_ENV === Environment::Development;
+        return Environment::Development === $this->app->environment;
     }
 }

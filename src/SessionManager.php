@@ -18,8 +18,10 @@ final readonly class SessionManager
      */
     private WeakMap $sessions;
 
-    public function __construct(private RedisPool $redisPool)
-    {
+    public function __construct(
+        private RedisConfiguration $redisConfiguration,
+        private RedisPool $redisPool,
+    ) {
         /**
          * @var WeakMap<Request, Session>
          */
@@ -81,7 +83,11 @@ final readonly class SessionManager
 
     private function freshSession(Request $request, string $sessionId): Session
     {
-        $session = new Session($this->redisPool, $sessionId);
+        $session = new Session(
+            $this->redisConfiguration,
+            $this->redisPool,
+            $sessionId,
+        );
 
         $this->sessions->offsetSet($request, $session);
 

@@ -22,13 +22,15 @@ readonly class StaticPageMarkdownParser
     /**
      * @param Map<string, StaticPage> $staticPages
      */
-    public function __construct(Map $staticPages)
-    {
+    public function __construct(
+        Map $staticPages,
+        StaticPageConfiguration $staticPageConfiguration,
+    ) {
         $this->environment = new Environment([
             'external_link' => [
                 'html_class' => 'external-link',
                 'internal_hosts' => [
-                    DM_STATIC_BASE_URL,
+                    $staticPageConfiguration->baseUrl,
                 ],
                 'open_in_new_window' => true,
             ],

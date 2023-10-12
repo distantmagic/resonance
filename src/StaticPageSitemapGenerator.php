@@ -11,11 +11,14 @@ readonly class StaticPageSitemapGenerator
     /**
      * @param Map<string, StaticPage> $staticPages
      */
-    public function __construct(private Map $staticPages) {}
+    public function __construct(
+        private Map $staticPages,
+        private StaticPageConfiguration $staticPageConfiguration,
+    ) {}
 
     public function writeTo(string $filename): void
     {
-        $baseUrl = DM_STATIC_BASE_URL;
+        $baseUrl = $this->staticPageConfiguration->baseUrl;
         $fhandle = fopen($filename, 'w');
 
         try {

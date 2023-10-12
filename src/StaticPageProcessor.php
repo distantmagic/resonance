@@ -6,10 +6,10 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\InputValidator\FrontMatterValidator;
 use Ds\Map;
+use Nette\Schema\Processor;
 use RuntimeException;
 use Swoole\Coroutine\WaitGroup;
 use Symfony\Component\Console\Output\ConsoleOutput;
-use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -19,7 +19,9 @@ use function Swoole\Coroutine\go;
 readonly class StaticPageProcessor
 {
     public function __construct(
-        private Output $output = new ConsoleOutput(),
+        private ConsoleOutput $output,
+        private Processor $processor,
+        private StaticPageConfiguration $staticPageConfiguration,
     ) {}
 
     public function process(
@@ -49,10 +51,14 @@ readonly class StaticPageProcessor
 
         $fileIterator = new StaticPageFileIterator($staticPagesInputDirectory);
         $staticPageCollectionAggregate = new StaticPageCollectionAggregate();
-        $staticPageContentRenderer = new StaticPageContentRenderer($staticPages);
+        $staticPageContentRenderer = new StaticPageContentRenderer(
+            $staticPages,
+            $this->staticPageConfiguration,
+        );
         $staticPageIterator = new StaticPageIterator(
-            new FrontMatterValidator(),
+            new FrontMatterValidator($this->processor),
             $fileIterator,
+            $staticPagesOutputDirectory,
         );
         $staticPageLayoutAggregate = new StaticPageLayoutAggregate(
             $esbuildMeta,
@@ -169,7 +175,10 @@ readonly class StaticPageProcessor
         }
 
         // Fourth pass - generate a sitemap
-        $sitemapGenerator = new StaticPageSitemapGenerator($staticPages);
+        $sitemapGenerator = new StaticPageSitemapGenerator(
+            $staticPages,
+            $this->staticPageConfiguration,
+        );
         $sitemapGenerator->writeTo($staticPagesSitemap);
     }
 

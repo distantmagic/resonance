@@ -13,9 +13,14 @@ readonly class StaticPageContentRenderer
     /**
      * @param Map<string, StaticPage> $staticPages
      */
-    public function __construct(Map $staticPages)
-    {
-        $this->markdownParser = new StaticPageMarkdownParser($staticPages);
+    public function __construct(
+        Map $staticPages,
+        StaticPageConfiguration $staticPageConfiguration,
+    ) {
+        $this->markdownParser = new StaticPageMarkdownParser(
+            $staticPages,
+            $staticPageConfiguration,
+        );
     }
 
     public function renderContent(StaticPage $staticPage): string

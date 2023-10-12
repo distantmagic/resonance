@@ -17,7 +17,6 @@ abstract readonly class InputValidator
 {
     public const REGEXP_SLUG = '^[a-z][-a-z0-9]{3,}$';
 
-    private Processor $processor;
     private Schema $schema;
 
     /**
@@ -29,9 +28,8 @@ abstract readonly class InputValidator
 
     abstract protected function makeSchema(): Schema;
 
-    public function __construct()
+    public function __construct(private Processor $processor)
     {
-        $this->processor = new Processor();
         $this->schema = $this->makeSchema();
     }
 
