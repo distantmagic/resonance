@@ -22,11 +22,6 @@ final readonly class SwooleRedisPoolProvider extends SingletonProvider
         return new RedisPool($this->configFromGlobals());
     }
 
-    public function shouldRegister(): bool
-    {
-        return !empty(DM_REDIS_HOST);
-    }
-
     private function configFromGlobals(): RedisConfig
     {
         $redisConfig = new RedisConfig();

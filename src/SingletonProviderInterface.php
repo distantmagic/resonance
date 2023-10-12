@@ -7,7 +7,7 @@ namespace Distantmagic\Resonance;
 /**
  * @template TObject of object
  */
-interface SingletonProviderInterface extends RegisterableInterface
+interface SingletonProviderInterface
 {
     /**
      * @return TObject
