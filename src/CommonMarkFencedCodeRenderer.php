@@ -14,7 +14,7 @@ use League\CommonMark\Util\Xml;
 use League\CommonMark\Xml\XmlNodeRendererInterface;
 use Stringable;
 
-final class CommonMarkFencedCodeRenderer implements NodeRendererInterface, XmlNodeRendererInterface
+final readonly class CommonMarkFencedCodeRenderer implements NodeRendererInterface, XmlNodeRendererInterface
 {
     private const FILE_MODIFIER_PREFIX = 'file:';
 
