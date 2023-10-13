@@ -47,10 +47,11 @@ readonly class CommandLoader implements CommandLoaderInterface
         $attribute = $phpProjectFileAttribute->attribute;
 
         return new LazyCommand(
-            name: $attribute->name,
-            aliases: [],
+            aliases: $attribute->aliases,
             description: (string) $attribute->description,
-            isHidden: false,
+            isEnabled: $attribute->isEnabled,
+            isHidden: $attribute->isHidden,
+            name: $attribute->name,
             commandFactory: function () use ($phpProjectFileAttribute): Command {
                 return $this->container->make($phpProjectFileAttribute->reflectionClass->getName());
             },
