@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\InputValidator\FrontMatterValidator;
 use Ds\Map;
 use Nette\Schema\Processor;
@@ -16,6 +17,7 @@ use Symfony\Component\Finder\SplFileInfo;
 
 use function Swoole\Coroutine\go;
 
+#[Singleton]
 readonly class StaticPageProcessor
 {
     public function __construct(

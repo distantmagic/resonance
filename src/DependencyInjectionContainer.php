@@ -12,7 +12,9 @@ use LogicException;
 use ReflectionClass;
 use ReflectionFunction;
 use RuntimeException;
+use Swoole\Coroutine\WaitGroup;
 
+use function Swoole\Coroutine\go;
 use function Swoole\Coroutine\run;
 
 readonly class DependencyInjectionContainer
@@ -78,6 +80,21 @@ readonly class DependencyInjectionContainer
             return $this->singletons->get($className);
         }
 
+        if ($this->providers->hasKey($className)) {
+            /**
+             * @var bool $coroutineResult
+             */
+            $coroutineResult = run(function () use ($className) {
+                $this->makeSingleton($className, new Set());
+            });
+
+            if (!$coroutineResult) {
+                throw new RuntimeException('Container event loop failed');
+            }
+
+            return $this->singletons->get($className);
+        }
+
         $reflectionClass = new ReflectionClass($className);
 
         /**
@@ -86,19 +103,28 @@ readonly class DependencyInjectionContainer
         $parameters = new Map();
 
         /**
+         * WaitGroup is not necesary here since `run` is going to wait for all
+         * coroutines to finish.
+         *
          * @var bool $coroutineResult
          */
         $coroutineResult = run(function () use ($parameters, $reflectionClass) {
             foreach (new SingletonConstructorParametersIterator($reflectionClass) as $name => $typeClassName) {
-                $parameters->put(
-                    $name,
-                    $this->makeSingleton($typeClassName, new Set()),
-                );
+                $cid = go(function () use ($name, $parameters, $typeClassName) {
+                    $parameters->put(
+                        $name,
+                        $this->makeSingleton($typeClassName, new Set()),
+                    );
+                });
+
+                if (!is_int($cid)) {
+                    throw new RuntimeException('Unable to start Container coroutine');
+                }
             }
         });
 
         if (!$coroutineResult) {
-            throw new RuntimeException('Container\'s event loop failed');
+            throw new RuntimeException('Container event loop failed');
         }
 
         return $reflectionClass->newInstance(...$parameters->toArray());
