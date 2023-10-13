@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Ds\Set;
 use League\CommonMark\Extension\CommonMark\Node\Block\FencedCode;
 use League\CommonMark\Node\Node;
 use League\CommonMark\Renderer\ChildNodeRendererInterface;
@@ -15,6 +16,8 @@ use Stringable;
 
 final class CommonMarkFencedCodeRenderer implements NodeRendererInterface, XmlNodeRendererInterface
 {
+    private const FILE_MODIFIER_PREFIX = 'file:';
+
     /**
      * @param FencedCode $node
      *
@@ -30,7 +33,9 @@ final class CommonMarkFencedCodeRenderer implements NodeRendererInterface, XmlNo
             return [];
         }
 
-        return ['info' => $info];
+        return [
+            'info' => $info,
+        ];
     }
 
     public function getXmlTagName(Node $node): string
@@ -49,47 +54,76 @@ final class CommonMarkFencedCodeRenderer implements NodeRendererInterface, XmlNo
     {
         FencedCode::assertInstanceOf($node);
 
-        $attrs = $node->data->getData('attributes');
+        $infoWords = new Set(array_filter($node->getInfoWords()));
 
-        $infoWords = $node->getInfoWords();
+        $languageName = $infoWords->isEmpty() ? 'unknown' : $infoWords->first();
 
-        if (0 !== count($infoWords) && '' !== $infoWords[0]) {
-            if ('graphviz' === $infoWords[0] && isset($infoWords[1]) && 'render' === $infoWords[1]) {
-                return new HtmlElement(
+        if ('graphviz' === $languageName && $infoWords->contains('render')) {
+            return new HtmlElement(
+                'div',
+                [
+                    'class' => 'fenced-graphviz',
+                    'data-controller' => 'graphviz',
+                ],
+                new HtmlElement(
                     'div',
                     [
-                        'class' => 'fenced-graphviz',
-                        'data-controller' => 'graphviz',
+                        'class' => 'fenced-graphviz__scene',
+                        'data-graphviz-target' => 'scene',
                     ],
-                    new HtmlElement(
-                        'div',
-                        [
-                            'class' => 'fenced-graphviz__scene',
-                            'data-graphviz-target' => 'scene',
-                        ],
-                        Xml::escape($node->getLiteral()),
-                    ),
-                );
-            }
-            $attrs->append('class', 'language-'.$infoWords[0]);
-            $attrs->append('data-controller', 'hljs');
-            $attrs->append('data-hljs-language-value', $infoWords[0]);
-
-        } else {
-            $attrs->append('class', 'language-unknown');
+                    Xml::escape($node->getLiteral()),
+                ),
+            );
         }
 
+        $tags = [];
+
+        if ($infoWords->count() > 1) {
+            foreach ($infoWords as $modifier) {
+                if (str_starts_with($modifier, self::FILE_MODIFIER_PREFIX)) {
+                    $filename = substr($modifier, strlen(self::FILE_MODIFIER_PREFIX));
+
+                    array_push($tags, new HtmlElement(
+                        'div',
+                        [
+                            'class' => 'fenced-code__filename',
+                        ],
+                        $filename,
+                    ));
+                }
+            }
+        }
+
+        if (!$infoWords->isEmpty()) {
+            array_push($tags, new HtmlElement(
+                'div',
+                [
+                    'class' => 'fenced-code__language-name',
+                ],
+                $languageName,
+            ));
+        }
+
+        $codeAttrs = $node->data->getData('attributes');
+        $codeAttrs->append('class', 'language-'.$languageName);
+        $codeAttrs->append('data-controller', 'hljs');
+        $codeAttrs->append('data-hljs-language-value', $languageName);
+
         /**
-         * @var array<string, array<string>> $exportedAttrs
+         * @var array<string, array<string>> $codeAttrs->export()
          */
-        $exportedAttrs = $attrs->export();
+        array_push($tags, new HtmlElement(
+            'code',
+            $codeAttrs->export(),
+            Xml::escape($node->getLiteral()),
+        ));
 
         return new HtmlElement(
             'pre',
             [
                 'class' => 'fenced-code',
             ],
-            new HtmlElement('code', $exportedAttrs, Xml::escape($node->getLiteral()))
+            $tags,
         );
     }
 }

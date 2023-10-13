@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\InputValidator\FrontMatterValidator;
 use Ds\Map;
+use Ds\Set;
 use Nette\Schema\Processor;
 use RuntimeException;
 use Swoole\Coroutine\WaitGroup;
@@ -26,13 +27,23 @@ readonly class StaticPageProcessor
         private StaticPageConfiguration $staticPageConfiguration,
     ) {}
 
+    /**
+     * Produces a list of errors. If it's empty then all is fine.
+     *
+     * @return Map<SplFileInfo, Set<string>>
+     */
     public function process(
         string $esbuildMetafile,
         string $staticPagesInputDirectory,
         string $staticPagesOutputDirectory,
         string $staticPagesSitemap,
         string $stripOutputPrefix = '',
-    ): void {
+    ): Map {
+        /**
+         * @var Map<SplFileInfo,Set<string>> $errors
+         */
+        $errors = new Map();
+
         $esbuildMetaBuilder = new EsbuildMetaBuilder();
         $esbuildMeta = $esbuildMetaBuilder->build($esbuildMetafile, $stripOutputPrefix);
 
@@ -86,7 +97,9 @@ readonly class StaticPageProcessor
                 $staticPageCollectionAggregate->addToCollections($staticPage);
             }
         } catch (StaticPageFileException $exception) {
-            $this->reportError($exception->splFileInfo, $exception->getMessage());
+            $this->reportError($errors, $exception->splFileInfo, $exception->getMessage());
+
+            return $errors;
         }
 
         // Second pass - organize the collections
@@ -107,7 +120,9 @@ readonly class StaticPageProcessor
                 $staticPagesFollowers->put($staticPage, $nextStaticPage);
                 $staticPagesPredecessors->put($nextStaticPage, $staticPage);
             } catch (StaticPageReferenceException $exception) {
-                $this->reportError($staticPage->file, $exception->getMessage());
+                $this->reportError($errors, $staticPage->file, $exception->getMessage());
+
+                return $errors;
             }
         }
 
@@ -121,7 +136,10 @@ readonly class StaticPageProcessor
         $waitGroup = new WaitGroup($staticPagesCount);
 
         foreach ($staticPages as $staticPage) {
-            $cid = go(function () use ($filesystem, $staticPage, $staticPageLayoutAggregate, $waitGroup) {
+            /**
+             * @var false|int $cid
+             */
+            $cid = go(function () use ($errors, $filesystem, $staticPage, $staticPageLayoutAggregate, $waitGroup) {
                 $outputDirectory = $staticPage->getOutputDirectory();
                 $outputFilename = $staticPage->getOutputPathname();
 
@@ -134,9 +152,10 @@ readonly class StaticPageProcessor
                         fwrite($fhandle, $contentChunk);
                     }
                 } catch (StaticPageReferenceException $exception) {
-                    $this->reportError($staticPage->file, $exception->getMessage());
+                    $this->reportError($errors, $staticPage->file, $exception->getMessage());
                 } catch (StaticPageRenderingException $exception) {
                     $this->reportError(
+                        $errors,
                         $staticPage->file,
                         $exception->getMessage().': '.(string) $exception->getPrevious()?->getMessage()
                     );
@@ -147,7 +166,7 @@ readonly class StaticPageProcessor
             });
 
             if (!is_int($cid)) {
-                $this->reportError($staticPage->file, 'Unable to start a session write coroutine.');
+                $this->reportError($errors, $staticPage->file, 'Unable to start a session write coroutine.');
             }
         }
 
@@ -173,7 +192,7 @@ readonly class StaticPageProcessor
                 }
             }
 
-            exit(1);
+            return $errors;
         }
 
         // Fourth pass - generate a sitemap
@@ -182,16 +201,22 @@ readonly class StaticPageProcessor
             $this->staticPageConfiguration,
         );
         $sitemapGenerator->writeTo($staticPagesSitemap);
+
+        return $errors;
     }
 
-    private function reportError(SplFileInfo $file, string $message): never
-    {
-        $this->output->writeln(sprintf(
-            '%s: %s',
-            'Error while processing '.$file->getRelativePathname(),
-            $message,
-        ));
+    /**
+     * @param Map<SplFileInfo,Set<string>> $errors
+     */
+    private function reportError(
+        Map $errors,
+        SplFileInfo $file,
+        string $message,
+    ): void {
+        if (!$errors->hasKey($file)) {
+            $errors->put($file, new Set());
+        }
 
-        exit(1);
+        $errors->get($file)->add($message);
     }
 }
