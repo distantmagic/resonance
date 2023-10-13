@@ -19,7 +19,6 @@ use Twig\Environment as TwigEnvironment;
 use Twig\Loader\FilesystemLoader;
 
 use function Swoole\Coroutine\go;
-use function Swoole\Coroutine\run;
 
 /**
  * @template-extends SingletonProvider<TwigEnvironment>
@@ -46,16 +45,7 @@ final readonly class TwigEnvironmentProvider extends SingletonProvider
 
         $environment->addExtension($this->twigBridgeExtension);
 
-        /**
-         * @var bool $coroutineResult
-         */
-        $coroutineResult = run(function () use ($environment) {
-            $this->warmupCache($environment);
-        });
-
-        if (!$coroutineResult) {
-            throw new RuntimeException('Coroutine event loop failed while warming up templates.');
-        }
+        $this->warmupCache($environment);
 
         return $environment;
     }

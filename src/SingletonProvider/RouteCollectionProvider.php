@@ -9,6 +9,7 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
+use LogicException;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -23,22 +24,24 @@ final readonly class RouteCollectionProvider extends SingletonProvider
         $routeCollection = new RouteCollection();
 
         foreach ($phpProjectFiles->findByAttribute(RespondsToHttp::class) as $httpResponderReflection) {
-            $route = new Route($httpResponderReflection->attribute->pattern);
-            $route->setMethods($httpResponderReflection->attribute->method->value);
+            $attribute = $httpResponderReflection->attribute;
 
-            if ($httpResponderReflection->attribute->requirements) {
-                $route->setRequirements($httpResponderReflection->attribute->requirements);
+            $routeName = $attribute->routeSymbol->toConstant();
+
+            if ($routeCollection->get($routeName)) {
+                throw new LogicException('Duplicate route name: '.$routeName);
+            }
+
+            $route = new Route($attribute->pattern);
+            $route->setMethods($attribute->method->value);
+
+            if ($attribute->requirements) {
+                $route->setRequirements($attribute->requirements);
             }
 
             $route->compile();
 
-            $routeName = $httpResponderReflection
-                ->attribute
-                ->routeSymbol
-                ->toConstant()
-            ;
-
-            $routeCollection->add($routeName, $route);
+            $routeCollection->add($routeName, $route, $attribute->priority);
         }
 
         return $routeCollection;

@@ -6,12 +6,10 @@ namespace Distantmagic\Resonance;
 
 use PDO;
 use PDOStatement;
-use RuntimeException;
 use Swoole\Database\PDOPool;
 use Swoole\Database\PDOProxy;
 use Swoole\Database\PDOStatementProxy;
-
-use function Swoole\Coroutine\go;
+use Swoole\Event;
 
 readonly class DatabaseConnection
 {
@@ -34,13 +32,9 @@ readonly class DatabaseConnection
 
     public function __destruct()
     {
-        $cid = go(function () {
+        Event::defer(function () {
             $this->pdoPool->put($this->pdo);
         });
-
-        if (!is_int($cid)) {
-            throw new RuntimeException('Unable to return connection back to the PDO pool.');
-        }
     }
 
     public function prepare(string $sql): DatabasePreparedStatement

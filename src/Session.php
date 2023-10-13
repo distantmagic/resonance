@@ -6,10 +6,8 @@ namespace Distantmagic\Resonance;
 
 use Ds\Map;
 use Redis;
-use RuntimeException;
 use Swoole\Database\RedisPool;
-
-use function Swoole\Coroutine\go;
+use Swoole\Event;
 
 readonly class Session
 {
@@ -30,13 +28,9 @@ readonly class Session
 
     public function __destruct()
     {
-        $cid = go(function () {
+        Event::defer(function () {
             $this->redisPool->put($this->redis);
         });
-
-        if (!is_int($cid)) {
-            throw new RuntimeException('Unable to return connection back to the redis pool.');
-        }
     }
 
     public function persist(): void

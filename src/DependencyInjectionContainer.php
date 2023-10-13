@@ -11,6 +11,9 @@ use Ds\Set;
 use LogicException;
 use ReflectionClass;
 use ReflectionFunction;
+use RuntimeException;
+
+use function Swoole\Coroutine\run;
 
 readonly class DependencyInjectionContainer
 {
@@ -77,13 +80,28 @@ readonly class DependencyInjectionContainer
 
         $reflectionClass = new ReflectionClass($className);
 
-        $parameters = [];
+        /**
+         * @var Map<string,object> $parameters
+         */
+        $parameters = new Map();
 
-        foreach (new SingletonConstructorParametersIterator($reflectionClass) as $name => $typeClassName) {
-            $parameters[$name] = $this->makeSingleton($typeClassName, new Set());
+        /**
+         * @var bool $coroutineResult
+         */
+        $coroutineResult = run(function () use ($parameters, $reflectionClass) {
+            foreach (new SingletonConstructorParametersIterator($reflectionClass) as $name => $typeClassName) {
+                $parameters->put(
+                    $name,
+                    $this->makeSingleton($typeClassName, new Set()),
+                );
+            }
+        });
+
+        if (!$coroutineResult) {
+            throw new RuntimeException('Container\'s event loop failed');
         }
 
-        return $reflectionClass->newInstance(...$parameters);
+        return $reflectionClass->newInstance(...$parameters->toArray());
     }
 
     public function registerSingletons(): void

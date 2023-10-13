@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
-use LogicException;
+use Swoole\Event;
 
 use function Swoole\Coroutine\batch;
-use function Swoole\Coroutine\go;
 
 #[Singleton(provides: EventDispatcherInterface::class)]
 readonly class EventDispatcher implements EventDispatcherInterface
@@ -28,13 +27,9 @@ readonly class EventDispatcher implements EventDispatcherInterface
 
     public function dispatch(EventInterface $event): void
     {
-        $cid = go(function () use ($event) {
+        Event::defer(function () use ($event) {
             $this->doDispatch($event);
         });
-
-        if (!is_int($cid)) {
-            throw new LogicException('Unable to start dispatcher coroutine');
-        }
     }
 
     private function doDispatch(EventInterface $event): array

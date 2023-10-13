@@ -26,24 +26,30 @@ final class SwooleFuture
     private mixed $result = null;
     private PromiseState $state = PromiseState::Pending;
 
-    // public static function create(callable $executor): self
-    // {
-    //     return new self($executor);
-    // }
+    /**
+     * To be used by the framework users.
+     *
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public static function create(callable $executor): self
+    {
+        return new self($executor);
+    }
 
-    // /**
-    //  * @param callable(mixed,mixed,mixed,ResolveInfo):mixed $callback
-    //  *
-    //  * @psalm-suppress MixedFunctionCall callback can return anything
-    //  */
-    // public static function resolver(callable $callback): callable
-    // {
-    //     return static function (mixed $rootValue, array $args, mixed $context, ResolveInfo $resolveInfo) use (&$callback): self {
-    //         return new self(static function () use (&$args, &$callback, &$context, &$resolveInfo, &$rootValue): mixed {
-    //             return $callback($rootValue, $args, $context, $resolveInfo);
-    //         });
-    //     };
-    // }
+    /**
+     * @param callable(mixed,mixed,mixed,ResolveInfo):mixed $callback
+     *
+     * @psalm-suppress MixedFunctionCall callback can return anything
+     * @psalm-suppress PossiblyUnusedMethod to be used by the framework users
+     */
+    public static function resolver(callable $callback): callable
+    {
+        return static function (mixed $rootValue, array $args, mixed $context, ResolveInfo $resolveInfo) use (&$callback): self {
+            return new self(static function () use (&$args, &$callback, &$context, &$resolveInfo, &$rootValue): mixed {
+                return $callback($rootValue, $args, $context, $resolveInfo);
+            });
+        };
+    }
 
     public function __construct(callable $executor)
     {
@@ -65,11 +71,9 @@ final class SwooleFuture
 
         $this->state = PromiseState::Resolving;
 
-        $waitGroup = new WaitGroup();
+        $waitGroup = new WaitGroup(1);
 
         $cid = go(function () use (&$value, $waitGroup) {
-            $waitGroup->add();
-
             try {
                 $this->result = ($this->executor)($value);
                 $this->state = PromiseState::Fulfilled;

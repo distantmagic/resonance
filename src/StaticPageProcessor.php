@@ -115,10 +115,10 @@ readonly class StaticPageProcessor
         // first pass.
         // Wrapped in coroutines because it can generate a lot of IO operations.
 
-        $waitGroup = new WaitGroup();
+        $staticPagesCount = $staticPages->count();
+        $waitGroup = new WaitGroup($staticPagesCount);
 
         foreach ($staticPages as $staticPage) {
-            $waitGroup->add();
             $cid = go(function () use ($filesystem, $staticPage, $staticPageLayoutAggregate, $waitGroup) {
                 $outputDirectory = $staticPage->getOutputDirectory();
                 $outputFilename = $staticPage->getOutputPathname();
@@ -150,7 +150,7 @@ readonly class StaticPageProcessor
         }
 
         // Wait 100 miliseconds per page
-        if (!$waitGroup->wait($staticPages->count() * 0.1)) {
+        if (!$waitGroup->wait($staticPagesCount * 0.1)) {
             throw new RuntimeException('Static pages wait group took too long to finish.');
         }
 
