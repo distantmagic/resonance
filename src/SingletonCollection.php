@@ -6,7 +6,6 @@ namespace Distantmagic\Resonance;
 
 enum SingletonCollection implements SingletonCollectionInterface
 {
-    case ConsoleCommand;
     case CrudActionGate;
     case EventListener;
     case GraphQLRootQueryField;

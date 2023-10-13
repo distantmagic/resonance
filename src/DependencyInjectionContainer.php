@@ -44,7 +44,9 @@ readonly class DependencyInjectionContainer
         $this->collections = new Map();
         $this->providers = new Map();
         $this->phpProjectFiles = new PHPProjectFiles();
+
         $this->singletons = new SingletonContainer();
+        $this->singletons->set(self::class, $this);
     }
 
     /**
