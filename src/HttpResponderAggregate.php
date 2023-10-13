@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Event\HttpResponseReady;
 use Distantmagic\Resonance\Event\UnhandledException;
 use Distantmagic\Resonance\HttpResponder\Error\MethodNotAllowed;
 use Distantmagic\Resonance\HttpResponder\Error\PageNotFound;
@@ -32,7 +33,6 @@ readonly class HttpResponderAggregate
         private PageNotFound $pageNotFound,
         private RequestContext $requestContext,
         private ServerError $serverError,
-        private SessionManager $sessionManager,
         private UrlMatcher $urlMatcher,
     ) {}
 
@@ -50,7 +50,7 @@ readonly class HttpResponderAggregate
                 $this->serverError->respondWithThrowable($request, $response, $throwable),
             );
         } finally {
-            $this->sessionManager->persistSession($request);
+            $this->eventDispatcher->dispatch(new HttpResponseReady($request));
         }
     }
 

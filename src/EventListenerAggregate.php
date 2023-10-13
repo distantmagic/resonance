@@ -37,6 +37,14 @@ readonly class EventListenerAggregate
 
     /**
      * @param class-string<EventInterface> $eventClass
+     */
+    public function removeListener(string $eventClass, EventListenerInterface $eventListener): void
+    {
+        $this->createGetListenersSet($eventClass)->remove($eventListener);
+    }
+
+    /**
+     * @param class-string<EventInterface> $eventClass
      *
      * @return Set<EventListenerInterface>
      */

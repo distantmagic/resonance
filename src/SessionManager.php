@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Event\HttpResponseReady;
 use Swoole\Database\RedisPool;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use WeakMap;
 
+/**
+ * @template-extends EventListener<HttpResponseReady,void>
+ */
 #[Singleton]
-final readonly class SessionManager
+final readonly class SessionManager extends EventListener
 {
     /**
      * @var WeakMap<Request, Session>
@@ -19,13 +23,39 @@ final readonly class SessionManager
     private WeakMap $sessions;
 
     public function __construct(
+        private EventListenerAggregate $eventListenerAggregate,
         private RedisConfiguration $redisConfiguration,
         private RedisPool $redisPool,
     ) {
         /**
+         * False positive, $this IS an EventListenerInterface
+         *
+         * @psalm-suppress InvalidArgument
+         */
+        $this->eventListenerAggregate->addListener(HttpResponseReady::class, $this);
+
+        /**
          * @var WeakMap<Request, Session>
          */
         $this->sessions = new WeakMap();
+    }
+
+    public function __destruct()
+    {
+        /**
+         * False positive, $this IS an EventListenerInterface
+         *
+         * @psalm-suppress InvalidArgument
+         */
+        $this->eventListenerAggregate->removeListener(HttpResponseReady::class, $this);
+    }
+
+    /**
+     * @param HttpResponseReady $event
+     */
+    public function handle(EventInterface $event): void
+    {
+        $this->persistSession($event->request);
     }
 
     public function persistSession(Request $request): void
