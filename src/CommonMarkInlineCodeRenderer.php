@@ -41,9 +41,6 @@ final readonly class CommonMarkInlineCodeRenderer implements NodeRendererInterfa
 
     private function addWordBreaks(string $namespace): string
     {
-        return implode(
-            '\\<wbr>',
-            explode('\\', $namespace),
-        );
+        return str_replace('\\', '\\<wbr>', $namespace);
     }
 }
