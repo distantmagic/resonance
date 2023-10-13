@@ -96,11 +96,11 @@ readonly class EsbuildMetaBuilder
     private function getEsbuildMetaContents(string $esbuildMetafile): string
     {
         if (!file_exists($esbuildMetafile)) {
-            throw new RuntimeException('Esbuild meta manifest does not exist.');
+            throw new RuntimeException('Esbuild meta manifest does not exist: '.$esbuildMetafile);
         }
 
         if (!is_readable($esbuildMetafile)) {
-            throw new RuntimeException('Esbuild meta manifest is not readable.');
+            throw new RuntimeException('Esbuild meta manifest is not readable: '.$esbuildMetafile);
         }
 
         return file_get_contents($esbuildMetafile);
