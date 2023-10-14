@@ -8,6 +8,9 @@ readonly class SwooleConfiguration
 {
     public function __construct(
         public string $host,
+        public int $logLevel,
         public int $port,
+        public string $sslCertFile,
+        public string $sslKeyFile,
     ) {}
 }
