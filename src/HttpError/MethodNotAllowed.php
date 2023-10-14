@@ -18,6 +18,6 @@ final readonly class MethodNotAllowed extends HttpError
 
     public function message(Request $request): string
     {
-        return $this->translator->trans($request, 'error.method_not_allowed');
+        return $this->translatorBridge->trans($request, 'error.method_not_allowed');
     }
 }

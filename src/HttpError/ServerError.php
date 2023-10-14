@@ -18,6 +18,6 @@ final readonly class ServerError extends HttpError
 
     public function message(Request $request): string
     {
-        return $this->translator->trans($request, 'error.server_error');
+        return $this->translatorBridge->trans($request, 'error.server_error');
     }
 }

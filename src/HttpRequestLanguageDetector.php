@@ -12,20 +12,19 @@ use WeakMap;
 final class HttpRequestLanguageDetector
 {
     /**
-     * @var WeakMap<Request, SupportedLanguageCodeInterface>
+     * @var WeakMap<Request, string>
      */
     private WeakMap $languages;
 
-    public function __construct(
-        private SupportedLanguageCodeRepositoryInterface $supportedLanguageCodeRepository,
-    ) {
+    public function __construct(private TranslatorConfiguration $translatorConfiguration)
+    {
         /**
-         * @var WeakMap<Request, SupportedLanguageCodeInterface>
+         * @var WeakMap<Request, string>
          */
         $this->languages = new WeakMap();
     }
 
-    public function detectPrimaryLanguage(Request $request): SupportedLanguageCodeInterface
+    public function detectPrimaryLanguage(Request $request): string
     {
         if ($this->languages->offsetExists($request)) {
             return $this->languages->offsetGet($request);
@@ -38,13 +37,13 @@ final class HttpRequestLanguageDetector
         return $language;
     }
 
-    private function doDetectPrimaryLanguage(Request $request): SupportedLanguageCodeInterface
+    private function doDetectPrimaryLanguage(Request $request): string
     {
         if (!is_array($request->header)
             || !isset($request->header['accept-language'])
             || !is_string($request->header['accept-language'])
         ) {
-            return $this->supportedLanguageCodeRepository->getDefault();
+            return $this->translatorConfiguration->defaultPrimaryLanguage;
         }
 
         $acceptHeader = new AcceptHeader($request->header['accept-language']);
@@ -52,15 +51,15 @@ final class HttpRequestLanguageDetector
         foreach ($acceptHeader->sorted as $language) {
             $primaryLanguage = $this->extractPrimaryLanguageFromString($language);
 
-            if ($primaryLanguage instanceof SupportedLanguageCodeInterface) {
+            if ($primaryLanguage) {
                 return $primaryLanguage;
             }
         }
 
-        return $this->supportedLanguageCodeRepository->getDefault();
+        return $this->translatorConfiguration->defaultPrimaryLanguage;
     }
 
-    private function extractPrimaryLanguageFromString(string $language): ?SupportedLanguageCodeInterface
+    private function extractPrimaryLanguageFromString(string $language): ?string
     {
         $chunks = explode('-', $language);
 
@@ -68,6 +67,6 @@ final class HttpRequestLanguageDetector
             return null;
         }
 
-        return $this->supportedLanguageCodeRepository->tryFrom($chunks[0]);
+        return $chunks[0];
     }
 }

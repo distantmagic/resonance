@@ -24,7 +24,7 @@ readonly class IntlDateFormatterRepository
     }
 
     public function getFormatter(
-        SupportedLanguageCodeInterface $language,
+        string $language,
         int $dateTimeFormat,
         int $timeTypeFormat,
     ): IntlDateFormatter {
@@ -35,7 +35,7 @@ readonly class IntlDateFormatterRepository
         }
 
         $formatter = new IntlDateFormatter(
-            $language->getName(),
+            $language,
             $dateTimeFormat,
             $timeTypeFormat,
         );
@@ -46,10 +46,10 @@ readonly class IntlDateFormatterRepository
     }
 
     private function createFormatterHash(
-        SupportedLanguageCodeInterface $language,
+        string $language,
         int $dateTimeFormat,
         int $timeTypeFormat,
     ): string {
-        return $language->getName().(string) $dateTimeFormat.(string) $timeTypeFormat;
+        return $language.(string) $dateTimeFormat.(string) $timeTypeFormat;
     }
 }

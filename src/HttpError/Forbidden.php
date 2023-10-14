@@ -18,6 +18,6 @@ final readonly class Forbidden extends HttpError
 
     public function message(Request $request): string
     {
-        return $this->translator->trans($request, 'error.forbidden');
+        return $this->translatorBridge->trans($request, 'error.forbidden');
     }
 }

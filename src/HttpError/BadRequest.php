@@ -18,6 +18,6 @@ final readonly class BadRequest extends HttpError
 
     public function message(Request $request): string
     {
-        return $this->translator->trans($request, 'error.bad_request');
+        return $this->translatorBridge->trans($request, 'error.bad_request');
     }
 }

@@ -10,10 +10,10 @@ use Swoole\Http\Request;
 #[Singleton]
 readonly class TwigFilterTrans
 {
-    public function __construct(private Translator $translator) {}
+    public function __construct(private TranslatorBridge $translatorBridge) {}
 
     public function __invoke(string $message, Request $request): string
     {
-        return $this->translator->trans($request, $message);
+        return $this->translatorBridge->trans($request, $message);
     }
 }

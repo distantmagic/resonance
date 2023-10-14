@@ -9,10 +9,10 @@ use Distantmagic\Resonance\TranslationException\PhraseNotFoundException;
 use Ds\Map;
 use Swoole\Http\Request;
 
-readonly class Translator
+readonly class TranslatorBridge
 {
     /**
-     * @var Map<SupportedLanguageCodeInterface, Map<string, string>>
+     * @var Map<string, Map<string, string>>
      */
     public Map $translations;
 

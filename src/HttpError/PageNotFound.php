@@ -18,6 +18,6 @@ final readonly class PageNotFound extends HttpError
 
     public function message(Request $request): string
     {
-        return $this->translator->trans($request, 'error.page_not_found');
+        return $this->translatorBridge->trans($request, 'error.page_not_found');
     }
 }

@@ -12,5 +12,5 @@ abstract readonly class HttpError
 
     abstract public function message(Request $request): string;
 
-    public function __construct(protected Translator $translator) {}
+    public function __construct(protected TranslatorBridge $translatorBridge) {}
 }
