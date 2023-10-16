@@ -36,7 +36,7 @@ final readonly class RedisConfigurationProvider extends ConfigurationProvider
         ]);
     }
 
-    protected function provideConfiguration(object $validatedData): RedisConfiguration
+    protected function provideConfiguration($validatedData): RedisConfiguration
     {
         return new RedisConfiguration(
             host: $validatedData->host,

@@ -6,7 +6,6 @@ namespace Distantmagic\Resonance;
 
 use PDO;
 use PDOStatement;
-use Swoole\Database\PDOPool;
 use Swoole\Database\PDOProxy;
 use Swoole\Database\PDOStatementProxy;
 use Swoole\Event;
@@ -16,24 +15,16 @@ readonly class DatabaseConnection
     private PDO|PDOProxy $pdo;
 
     public function __construct(
-        private EventDispatcherInterface $eventDispatcher,
-        private PDOPool $pdoPool,
+        private DatabaseConnectionPoolRepository $databaseConnectionPoolRepository,
+        private string $connectionPoolName = 'default',
     ) {
-        /**
-         * @var PDO|PDOProxy
-         */
-        $this->pdo = $this->pdoPool->get();
-
-        // Sometimes Swoole PDO wrapper can't reconnect properly when
-        // interrupted with an exception. Silent mode should be used instead.
-        // All errors should be handled outside of the PDO wrapper.
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
+        $this->pdo = $this->databaseConnectionPoolRepository->getConnection($this->connectionPoolName);
     }
 
     public function __destruct()
     {
         Event::defer(function () {
-            $this->pdoPool->put($this->pdo);
+            $this->databaseConnectionPoolRepository->putConnection($this->connectionPoolName, $this->pdo);
         });
     }
 
@@ -49,7 +40,7 @@ readonly class DatabaseConnection
         }
 
         return new DatabasePreparedStatement(
-            $this->eventDispatcher,
+            $this->databaseConnectionPoolRepository->eventDispatcher,
             $this->pdo,
             $pdoPreparedStatement,
             $sql,

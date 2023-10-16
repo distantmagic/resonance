@@ -6,19 +6,24 @@ namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\DatabaseConfiguration;
+use Distantmagic\Resonance\DatabaseConnectionPoolConfiguration;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 
 /**
- * @template-extends ConfigurationProvider<DatabaseConfiguration, object{
- *     database: string,
- *     host: string,
- *     log_queries: bool,
- *     password: string,
- *     port: int,
- *     username: string,
- * }>
+ * @template-extends ConfigurationProvider<
+ *     DatabaseConfiguration,
+ *     array<string, object{
+ *         database: string,
+ *         driver: string,
+ *         host: string,
+ *         log_queries: bool,
+ *         password: string,
+ *         port: int,
+ *         username: string,
+ *     }>
+ * >
  */
 #[Singleton(provides: DatabaseConfiguration::class)]
 final readonly class DatabaseConfigurationProvider extends ConfigurationProvider
@@ -30,25 +35,40 @@ final readonly class DatabaseConfigurationProvider extends ConfigurationProvider
 
     protected function getSchema(): Schema
     {
-        return Expect::structure([
+        $keySchema = Expect::string()->min(1)->required();
+
+        $valueSchema = Expect::structure([
             'database' => Expect::string()->min(1)->required(),
+            'driver' => Expect::string()->min(1)->required(),
             'host' => Expect::string()->min(1)->required(),
             'log_queries' => Expect::bool()->required(),
             'password' => Expect::string()->required(),
             'port' => Expect::int()->min(1)->max(65535)->required(),
             'username' => Expect::string()->min(1)->required(),
         ]);
+
+        return Expect::arrayOf($valueSchema, $keySchema);
     }
 
-    protected function provideConfiguration(object $validatedData): DatabaseConfiguration
+    protected function provideConfiguration($validatedData): DatabaseConfiguration
     {
-        return new DatabaseConfiguration(
-            database: $validatedData->database,
-            host: $validatedData->host,
-            logQueries: $validatedData->log_queries,
-            password: $validatedData->password,
-            port: $validatedData->port,
-            username: $validatedData->username,
-        );
+        $databaseconfiguration = new DatabaseConfiguration();
+
+        foreach ($validatedData as $name => $connectionPoolConfiguration) {
+            $databaseconfiguration->connectionPoolConfiguration->put(
+                $name,
+                new DatabaseConnectionPoolConfiguration(
+                    database: $connectionPoolConfiguration->database,
+                    driver: $connectionPoolConfiguration->driver,
+                    host: $connectionPoolConfiguration->host,
+                    logQueries: $connectionPoolConfiguration->log_queries,
+                    password: $connectionPoolConfiguration->password,
+                    port: $connectionPoolConfiguration->port,
+                    username: $connectionPoolConfiguration->username,
+                ),
+            );
+        }
+
+        return $databaseconfiguration;
     }
 }

@@ -38,7 +38,7 @@ final readonly class SwooleConfigurationProvider extends ConfigurationProvider
         ]);
     }
 
-    protected function provideConfiguration(object $validatedData): SwooleConfiguration
+    protected function provideConfiguration($validatedData): SwooleConfiguration
     {
         return new SwooleConfiguration(
             host: $validatedData->host,

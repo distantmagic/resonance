@@ -13,7 +13,7 @@ use Nette\Schema\Schema;
 
 /**
  * @template TObject of object
- * @template TSchema of object
+ * @template TSchema
  *
  * @template-extends SingletonProvider<TObject>
  */
@@ -28,7 +28,7 @@ abstract readonly class ConfigurationProvider extends SingletonProvider
      *
      * @return TObject
      */
-    abstract protected function provideConfiguration(object $validatedData): object;
+    abstract protected function provideConfiguration($validatedData): object;
 
     public function __construct(
         private ConfigurationFile $configurationFile,

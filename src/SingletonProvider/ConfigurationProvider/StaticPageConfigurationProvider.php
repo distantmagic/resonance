@@ -30,7 +30,7 @@ final readonly class StaticPageConfigurationProvider extends ConfigurationProvid
         ]);
     }
 
-    protected function provideConfiguration(object $validatedData): StaticPageConfiguration
+    protected function provideConfiguration($validatedData): StaticPageConfiguration
     {
         return new StaticPageConfiguration(
             baseUrl: $validatedData->base_url,

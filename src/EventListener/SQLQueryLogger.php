@@ -40,6 +40,12 @@ final readonly class SQLQueryLogger extends EventListener
 
     public function shouldRegister(): bool
     {
-        return $this->databaseConfiguration->logQueries;
+        foreach ($this->databaseConfiguration->connectionPoolConfiguration as $connectionPoolConfiguration) {
+            if ($connectionPoolConfiguration->logQueries) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

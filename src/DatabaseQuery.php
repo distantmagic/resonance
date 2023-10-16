@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Swoole\Database\PDOPool;
-
 /**
  * @template TResult
  *
@@ -14,8 +12,7 @@ use Swoole\Database\PDOPool;
 abstract readonly class DatabaseQuery implements DatabaseQueryInterface
 {
     public function __construct(
-        protected EventDispatcherInterface $eventDispatcher,
-        protected PDOPool $pdoPool,
+        private DatabaseConnectionPoolRepository $databaseConnectionPoolRepository,
     ) {}
 
     public function isIterable(): bool
@@ -23,8 +20,8 @@ abstract readonly class DatabaseQuery implements DatabaseQueryInterface
         return false;
     }
 
-    protected function getConnection(): DatabaseConnection
+    protected function getConnection(string $name = 'default'): DatabaseConnection
     {
-        return new DatabaseConnection($this->eventDispatcher, $this->pdoPool);
+        return new DatabaseConnection($this->databaseConnectionPoolRepository, $name);
     }
 }

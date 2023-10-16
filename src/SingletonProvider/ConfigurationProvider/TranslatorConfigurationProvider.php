@@ -32,7 +32,7 @@ final readonly class TranslatorConfigurationProvider extends ConfigurationProvid
         ]);
     }
 
-    protected function provideConfiguration(object $validatedData): TranslatorConfiguration
+    protected function provideConfiguration($validatedData): TranslatorConfiguration
     {
         return new TranslatorConfiguration(
             baseDirectory: $validatedData->base_directory,
