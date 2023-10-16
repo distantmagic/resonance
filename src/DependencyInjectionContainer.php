@@ -14,7 +14,6 @@ use ReflectionFunction;
 use RuntimeException;
 use Swoole\Coroutine\WaitGroup;
 
-use function Swoole\Coroutine\go;
 use function Swoole\Coroutine\run;
 
 readonly class DependencyInjectionContainer
@@ -78,31 +77,10 @@ readonly class DependencyInjectionContainer
      */
     public function make(string $className): object
     {
-        if ($this->singletons->has($className)) {
-            return $this->singletons->get($className);
-        }
-
-        if ($this->providers->hasKey($className)) {
-            /**
-             * @var bool $coroutineResult
-             */
-            $coroutineResult = run(function () use ($className) {
-                $this->makeSingleton($className, new Set());
-            });
-
-            if (!$coroutineResult) {
-                throw new RuntimeException('Container event loop failed');
-            }
-
-            return $this->singletons->get($className);
-        }
-
-        $reflectionClass = new ReflectionClass($className);
-
         /**
-         * @var Map<string,object> $parameters
+         * @var null|TSingleton
          */
-        $parameters = new Map();
+        $ret = null;
 
         /**
          * WaitGroup is not necesary here since `run` is going to wait for all
@@ -110,26 +88,19 @@ readonly class DependencyInjectionContainer
          *
          * @var bool $coroutineResult
          */
-        $coroutineResult = run(function () use ($parameters, $reflectionClass) {
-            foreach (new SingletonConstructorParametersIterator($reflectionClass) as $name => $typeClassName) {
-                $cid = go(function () use ($name, $parameters, $typeClassName) {
-                    $parameters->put(
-                        $name,
-                        $this->makeSingleton($typeClassName, new Set()),
-                    );
-                });
-
-                if (!is_int($cid)) {
-                    throw new RuntimeException('Unable to start Container coroutine');
-                }
-            }
+        $coroutineResult = run(function () use ($className, &$ret) {
+            $ret = $this->doMake($className);
         });
 
         if (!$coroutineResult) {
             throw new RuntimeException('Container event loop failed');
         }
 
-        return $reflectionClass->newInstance(...$parameters->toArray());
+        if (!($ret instanceof $className)) {
+            throw new LogicException('Unable to make an instance of '.$className);
+        }
+
+        return $ret;
     }
 
     public function registerSingletons(): void
@@ -174,6 +145,42 @@ readonly class DependencyInjectionContainer
         }
 
         $this->collections->get($collectionName)->add($providedClassName);
+    }
+
+    /**
+     * @template TSingleton
+     *
+     * @param class-string<TSingleton> $className
+     *
+     * @return TSingleton
+     */
+    private function doMake(string $className): object
+    {
+        if ($this->singletons->has($className)) {
+            return $this->singletons->get($className);
+        }
+
+        if ($this->providers->hasKey($className)) {
+            $this->makeSingleton($className, new Set());
+
+            return $this->singletons->get($className);
+        }
+
+        $reflectionClass = new ReflectionClass($className);
+
+        /**
+         * @var Map<string,object> $parameters
+         */
+        $parameters = new Map();
+
+        foreach (new SingletonConstructorParametersIterator($reflectionClass) as $name => $typeClassName) {
+            $parameters->put(
+                $name,
+                $this->makeSingleton($typeClassName, new Set()),
+            );
+        }
+
+        return $reflectionClass->newInstance(...$parameters->toArray());
     }
 
     /**

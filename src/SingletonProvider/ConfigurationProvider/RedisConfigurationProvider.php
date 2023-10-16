@@ -18,6 +18,7 @@ use Nette\Schema\Schema;
  *         db_index: int,
  *         host: string,
  *         password: string,
+ *         pool_size: int,
  *         port: int,
  *         prefix: string,
  *         timeout: int,
