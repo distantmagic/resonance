@@ -13,6 +13,7 @@ use ReflectionClass;
 use ReflectionFunction;
 use RuntimeException;
 use Swoole\Coroutine\WaitGroup;
+use Throwable;
 
 use function Swoole\Coroutine\run;
 
@@ -260,10 +261,17 @@ readonly class DependencyInjectionContainer
             return $this->singletons->get($className);
         }
 
-        $singleton = $this->doMakeSingleton($className, $previous);
+        try {
+            $singleton = $this->doMakeSingleton($className, $previous);
 
-        $this->singletons->set($className, $singleton);
+            $this->singletons->set($className, $singleton);
 
-        return $singleton;
+            return $singleton;
+        } catch (Throwable $throwable) {
+            throw new LogicException(
+                message: 'Error while building: '.$className,
+                previous: $throwable,
+            );
+        }
     }
 }
