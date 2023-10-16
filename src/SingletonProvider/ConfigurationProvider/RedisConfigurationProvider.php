@@ -6,17 +6,23 @@ namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\RedisConfiguration;
+use Distantmagic\Resonance\RedisConnectionPoolConfiguration;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 
 /**
- * @template-extends ConfigurationProvider<RedisConfiguration, object{
- *     host: string,
- *     password: string,
- *     port: int,
- *     prefix: string,
- * }>
+ * @template-extends ConfigurationProvider<
+ *     RedisConfiguration,
+ *     array<string, object{
+ *         db_index: int,
+ *         host: string,
+ *         password: string,
+ *         port: int,
+ *         prefix: string,
+ *         timeout: int,
+ *     }>
+ * >
  */
 #[Singleton(provides: RedisConfiguration::class)]
 final readonly class RedisConfigurationProvider extends ConfigurationProvider
@@ -28,21 +34,38 @@ final readonly class RedisConfigurationProvider extends ConfigurationProvider
 
     protected function getSchema(): Schema
     {
-        return Expect::structure([
+        $keySchema = Expect::string()->min(1)->required();
+
+        $valueSchema = Expect::structure([
+            'db_index' => Expect::int()->min(0)->required(),
             'host' => Expect::string()->min(1)->required(),
             'password' => Expect::string()->required(),
             'port' => Expect::int()->min(1)->max(65535)->required(),
             'prefix' => Expect::string()->min(1)->required(),
+            'timeout' => Expect::int()->min(0)->required(),
         ]);
+
+        return Expect::arrayOf($valueSchema, $keySchema);
     }
 
     protected function provideConfiguration($validatedData): RedisConfiguration
     {
-        return new RedisConfiguration(
-            host: $validatedData->host,
-            password: $validatedData->password,
-            port: $validatedData->port,
-            prefix: $validatedData->prefix,
-        );
+        $databaseconfiguration = new RedisConfiguration();
+
+        foreach ($validatedData as $name => $connectionPoolConfiguration) {
+            $databaseconfiguration->connectionPoolConfiguration->put(
+                $name,
+                new RedisConnectionPoolConfiguration(
+                    dbIndex: $connectionPoolConfiguration->db_index,
+                    host: $connectionPoolConfiguration->host,
+                    password: $connectionPoolConfiguration->password,
+                    port: $connectionPoolConfiguration->port,
+                    prefix: $connectionPoolConfiguration->prefix,
+                    timeout: $connectionPoolConfiguration->timeout,
+                ),
+            );
+        }
+
+        return $databaseconfiguration;
     }
 }

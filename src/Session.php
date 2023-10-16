@@ -6,7 +6,6 @@ namespace Distantmagic\Resonance;
 
 use Ds\Map;
 use Redis;
-use Swoole\Database\RedisPool;
 use Swoole\Event;
 
 readonly class Session
@@ -16,11 +15,21 @@ readonly class Session
 
     public function __construct(
         RedisConfiguration $redisConfiguration,
-        private RedisPool $redisPool,
+        private RedisConnectionPoolRepository $redisConnectionPoolRepository,
+        private SessionConfiguration $sessionConfiguration,
         public string $id,
     ) {
-        $this->redis = $this->redisPool->get();
-        $this->redis->setOption(Redis::OPT_PREFIX, $redisConfiguration->prefix.'session:');
+        $redisPrefix = $redisConfiguration
+            ->connectionPoolConfiguration
+            ->get($this->sessionConfiguration->redisConnectionPool)
+            ->prefix
+        ;
+
+        $this->redis = $this
+            ->redisConnectionPoolRepository
+            ->getConnection($this->sessionConfiguration->redisConnectionPool)
+        ;
+        $this->redis->setOption(Redis::OPT_PREFIX, $redisPrefix.'session:');
         $this->redis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_IGBINARY);
 
         $this->data = new Map($this->restoreSessionData());
@@ -29,7 +38,10 @@ readonly class Session
     public function __destruct()
     {
         Event::defer(function () {
-            $this->redisPool->put($this->redis);
+            $this->redisConnectionPoolRepository->putConnection(
+                $this->sessionConfiguration->redisConnectionPool,
+                $this->redis,
+            );
         });
     }
 

@@ -6,7 +6,6 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Event\HttpResponseReady;
-use Swoole\Database\RedisPool;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use WeakMap;
@@ -25,7 +24,8 @@ final readonly class SessionManager extends EventListener
     public function __construct(
         private EventListenerAggregate $eventListenerAggregate,
         private RedisConfiguration $redisConfiguration,
-        private RedisPool $redisPool,
+        private RedisConnectionPoolRepository $redisConnectionPoolRepository,
+        private SessionConfiguration $sessionConfiguration,
     ) {
         /**
          * False positive, $this IS an EventListenerInterface
@@ -69,14 +69,17 @@ final readonly class SessionManager extends EventListener
             return $this->sessions->offsetGet($request);
         }
 
-        if (!is_array($request->cookie) || !isset($request->cookie[DM_SESSSION_COOKIE_NAME])) {
+        if (
+            !is_array($request->cookie)
+            || !isset($request->cookie[$this->sessionConfiguration->cookieName])
+        ) {
             return null;
         }
 
         /**
          * @var string
          */
-        $sessionId = $request->cookie[DM_SESSSION_COOKIE_NAME];
+        $sessionId = $request->cookie[$this->sessionConfiguration->cookieName];
 
         if (!uuid_is_valid($sessionId)) {
             return null;
@@ -88,9 +91,9 @@ final readonly class SessionManager extends EventListener
     public function setSessionCookie(Response $response, Session $session): void
     {
         $response->cookie(
-            expires: time() + 60 * 60 * 24,
+            expires: time() + $this->sessionConfiguration->cookieLifespan,
             httponly: true,
-            name: DM_SESSSION_COOKIE_NAME,
+            name: $this->sessionConfiguration->cookieName,
             samesite: 'strict',
             secure: true,
             value: $session->id,
@@ -115,7 +118,8 @@ final readonly class SessionManager extends EventListener
     {
         $session = new Session(
             $this->redisConfiguration,
-            $this->redisPool,
+            $this->redisConnectionPoolRepository,
+            $this->sessionConfiguration,
             $sessionId,
         );
 

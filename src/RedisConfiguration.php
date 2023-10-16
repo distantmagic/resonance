@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use SensitiveParameter;
+use Ds\Map;
 
 readonly class RedisConfiguration
 {
-    public function __construct(
-        #[SensitiveParameter]
-        public string $host,
-        #[SensitiveParameter]
-        public string $password,
-        #[SensitiveParameter]
-        public int $port,
-        #[SensitiveParameter]
-        public string $prefix,
-    ) {}
+    /**
+     * @var Map<string,RedisConnectionPoolConfiguration>
+     */
+    public Map $connectionPoolConfiguration;
+
+    public function __construct()
+    {
+        $this->connectionPoolConfiguration = new Map();
+    }
 }
