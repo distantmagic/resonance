@@ -46,10 +46,11 @@ final readonly class DatabaseConnectionPoolRepositoryProvider extends SingletonP
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT,
                 ])
             ;
-            $databaseConnectionPoolRepository->databaseConnectionPool->put(
-                $name,
-                new PDOPool($pdoConfig),
-            );
+
+            $pdoPool = new PDOPool($pdoConfig, $connectionPoolConfiguration->poolSize);
+            $pdoPool->fill();
+
+            $databaseConnectionPoolRepository->databaseConnectionPool->put($name, $pdoPool);
         }
 
         return $databaseConnectionPoolRepository;

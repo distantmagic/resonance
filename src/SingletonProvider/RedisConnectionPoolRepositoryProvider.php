@@ -37,10 +37,11 @@ final readonly class RedisConnectionPoolRepositoryProvider extends SingletonProv
                 ->withDbIndex($connectionPoolConfiguration->dbIndex)
                 ->withTimeout($connectionPoolConfiguration->timeout)
             ;
-            $redisConnectionPoolRepository->redisConnectionPool->put(
-                $name,
-                new RedisPool($redisConfig),
-            );
+
+            $redisPool = new RedisPool($redisConfig, $connectionPoolConfiguration->poolSize);
+            $redisPool->fill();
+
+            $redisConnectionPoolRepository->redisConnectionPool->put($name, $redisPool);
         }
 
         return $redisConnectionPoolRepository;

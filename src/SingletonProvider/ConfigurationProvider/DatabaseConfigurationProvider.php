@@ -20,6 +20,7 @@ use Nette\Schema\Schema;
  *         host: string,
  *         log_queries: bool,
  *         password: string,
+ *         pool_size: int,
  *         port: int,
  *         username: string,
  *     }>
@@ -43,6 +44,7 @@ final readonly class DatabaseConfigurationProvider extends ConfigurationProvider
             'host' => Expect::string()->min(1)->required(),
             'log_queries' => Expect::bool()->required(),
             'password' => Expect::string()->required(),
+            'pool_size' => Expect::int()->min(1)->required(),
             'port' => Expect::int()->min(1)->max(65535)->required(),
             'username' => Expect::string()->min(1)->required(),
         ]);
@@ -63,6 +65,7 @@ final readonly class DatabaseConfigurationProvider extends ConfigurationProvider
                     host: $connectionPoolConfiguration->host,
                     logQueries: $connectionPoolConfiguration->log_queries,
                     password: $connectionPoolConfiguration->password,
+                    poolSize: $connectionPoolConfiguration->pool_size,
                     port: $connectionPoolConfiguration->port,
                     username: $connectionPoolConfiguration->username,
                 ),
