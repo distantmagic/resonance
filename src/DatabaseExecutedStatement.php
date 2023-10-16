@@ -56,19 +56,6 @@ readonly class DatabaseExecutedStatement
         }
     }
 
-    public function iterate(): Generator
-    {
-        while (true) {
-            $data = $this->fetchAssoc();
-
-            if (false === $data) {
-                break;
-            }
-
-            yield $data;
-        }
-    }
-
     public function lastInsertId(): false|string
     {
         $lastInsertId = $this->pdo->lastInsertId();
@@ -82,5 +69,18 @@ readonly class DatabaseExecutedStatement
         }
 
         return $lastInsertId;
+    }
+
+    public function yieldAssoc(): Generator
+    {
+        while (true) {
+            $data = $this->fetchAssoc();
+
+            if (false === $data) {
+                break;
+            }
+
+            yield $data;
+        }
     }
 }
