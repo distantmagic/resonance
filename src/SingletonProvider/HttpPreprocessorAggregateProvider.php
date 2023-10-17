@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
-use Distantmagic\Resonance\Attribute;
 use Distantmagic\Resonance\Attribute\PreprocessesHttpResponder;
 use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
@@ -16,12 +15,12 @@ use Distantmagic\Resonance\SingletonAttribute;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
+use LogicException;
 
 /**
  * @template-extends SingletonProvider<HttpPreprocessorAggregate>
  */
 #[RequiresSingletonCollection(SingletonCollection::HttpPreprocessor)]
-#[RequiresSingletonCollection(SingletonCollection::HttpResponder)]
 #[Singleton(provides: HttpPreprocessorAggregate::class)]
 final readonly class HttpPreprocessorAggregateProvider extends SingletonProvider
 {
@@ -32,14 +31,26 @@ final readonly class HttpPreprocessorAggregateProvider extends SingletonProvider
         foreach ($this->collectPreprocessors($singletons) as $preprocessorAttribute) {
             $attributeClassName = $preprocessorAttribute->attribute->attribute;
 
-            foreach ($this->collectResponders($singletons, $attributeClassName) as $responderAttribute) {
+            foreach ($phpProjectFiles->findByAttribute($attributeClassName) as $subjectAttribute) {
+                $responderClassName = $subjectAttribute->reflectionClass->getName();
+
+                if (!is_a($responderClassName, HttpResponderInterface::class, true)) {
+                    throw new LogicException(sprintf(
+                        '%s is not a HttpResponderInterface',
+                        $subjectAttribute->reflectionClass->getName(),
+                    ));
+                }
+
                 $httpPreprocessorAggregate->registerPreprocessor(
                     $preprocessorAttribute->singleton,
-                    $responderAttribute->singleton,
-                    $responderAttribute->attribute,
+                    $responderClassName,
+                    $subjectAttribute->attribute,
+                    $preprocessorAttribute->attribute->priority,
                 );
             }
         }
+
+        $httpPreprocessorAggregate->sortPreprocessors();
 
         return $httpPreprocessorAggregate;
     }
@@ -53,22 +64,6 @@ final readonly class HttpPreprocessorAggregateProvider extends SingletonProvider
             $singletons,
             HttpPreprocessorInterface::class,
             PreprocessesHttpResponder::class,
-        );
-    }
-
-    /**
-     * @template TAttribute of Attribute
-     *
-     * @param class-string<TAttribute> $attribute
-     *
-     * @return iterable<SingletonAttribute<HttpResponderInterface,TAttribute>>
-     */
-    private function collectResponders(SingletonContainer $singletons, string $attribute): iterable
-    {
-        return $this->collectAttributes(
-            $singletons,
-            HttpResponderInterface::class,
-            $attribute,
         );
     }
 }

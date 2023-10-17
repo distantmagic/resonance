@@ -18,7 +18,10 @@ readonly class HttpRecursiveResponder
     public function respondRecursive(Request $request, Response $response, ?HttpResponderInterface $responder): void
     {
         while ($responder instanceof HttpResponderInterface) {
-            $preprocessorAttributes = $this->httpPreprocessorAggregate->preprocessors->get($responder, null);
+            $preprocessorAttributes = $this->httpPreprocessorAggregate
+                ->preprocessors
+                ->get($responder::class, null)
+            ;
 
             if ($preprocessorAttributes) {
                 foreach ($preprocessorAttributes as $preprocessorAttribute) {

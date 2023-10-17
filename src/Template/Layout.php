@@ -19,7 +19,7 @@ abstract readonly class Layout extends Template implements TemplateLayoutInterfa
         return 'utf-8';
     }
 
-    protected function sendContentTypeHeader(Request $request, Response $response): void
+    public function sendContentTypeHeader(Request $request, Response $response): void
     {
         $response->header(
             'content-type',

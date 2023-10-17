@@ -4,59 +4,48 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\Template\Layout;
 
-use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\ContentSecurityPolicy;
+use Distantmagic\Resonance\Attribute\RenderableTwigTemplate;
+use Distantmagic\Resonance\ContentSecurityPolicyType;
 use Distantmagic\Resonance\ContentType;
-use Distantmagic\Resonance\HttpResponderInterface;
-use Distantmagic\Resonance\SecurityPolicyHeaders;
+use Distantmagic\Resonance\HttpPreprocessor\TwigTemplateRendererPreprocessor;
 use Distantmagic\Resonance\Template\Layout;
+use LogicException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
-use Twig\Environment;
-use WeakMap;
 
-#[Singleton]
+#[ContentSecurityPolicy(ContentSecurityPolicyType::Html)]
+#[RenderableTwigTemplate]
 final readonly class Twig extends Layout
 {
-    /**
-     * @var WeakMap<Request,string>
-     */
-    private WeakMap $templates;
-
     public function __construct(
-        private Environment $twig,
-        private SecurityPolicyHeaders $securityPolicyHeaders,
-    ) {
-        /**
-         * @var WeakMap<Request,string>
-         */
-        $this->templates = new WeakMap();
-    }
+        private string $templatePath,
+        private array $templateData = [],
+    ) {}
 
     public function getContentType(Request $request, Response $response): ContentType
     {
         return ContentType::TextHtml;
     }
 
-    public function render(Request $request, Response $response, string $templatePath, ?array $templateData = null): self
+    public function getTemplateData(Request $request, Response $response): array
     {
-        $this->templates->offsetSet(
-            $request,
-            $this->twig->render($templatePath, ($templateData ?? []) + [
-                'request' => $request,
-                'response' => $response,
-            ])
-        );
-
-        return $this;
+        return $this->templateData + [
+            'request' => $request,
+            'response' => $response,
+        ];
     }
 
-    public function respond(Request $request, Response $response): ?HttpResponderInterface
+    public function getTemplatePath(): string
     {
-        $this->sendContentTypeHeader($request, $response);
-        $this->securityPolicyHeaders->sendTemplatedPagePolicyHeaders($request, $response);
+        return $this->templatePath;
+    }
 
-        $response->end($this->templates->offsetGet($request));
-
-        return null;
+    public function respond(Request $request, Response $response): never
+    {
+        throw new LogicException(sprintf(
+            'Twig layout should be intercepted by the %s',
+            TwigTemplateRendererPreprocessor::class,
+        ));
     }
 }

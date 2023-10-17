@@ -13,5 +13,8 @@ final readonly class PreprocessesHttpResponder extends BaseAttribute
     /**
      * @param class-string<BaseAttribute> $attribute
      */
-    public function __construct(public string $attribute) {}
+    public function __construct(
+        public string $attribute,
+        public int $priority,
+    ) {}
 }

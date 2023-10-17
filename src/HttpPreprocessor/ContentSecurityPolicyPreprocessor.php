@@ -5,30 +5,29 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\HttpPreprocessor;
 
 use Distantmagic\Resonance\Attribute;
+use Distantmagic\Resonance\Attribute\ContentSecurityPolicy;
 use Distantmagic\Resonance\Attribute\PreprocessesHttpResponder;
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\Attribute\ValidatesCSRFToken;
-use Distantmagic\Resonance\CSRFManager;
+use Distantmagic\Resonance\ContentSecurityPolicyType;
 use Distantmagic\Resonance\HttpPreprocessor;
-use Distantmagic\Resonance\HttpResponder\Error\BadRequest;
 use Distantmagic\Resonance\HttpResponderInterface;
+use Distantmagic\Resonance\SecurityPolicyHeaders;
 use Distantmagic\Resonance\SingletonCollection;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
 /**
- * @template-extends HttpPreprocessor<ValidatesCSRFToken>
+ * @template-extends HttpPreprocessor<ContentSecurityPolicy>
  */
 #[PreprocessesHttpResponder(
-    attribute: ValidatesCSRFToken::class,
-    priority: 1100,
+    attribute: ContentSecurityPolicy::class,
+    priority: 900,
 )]
 #[Singleton(collection: SingletonCollection::HttpPreprocessor)]
-readonly class ValidatesCSRFTokenPreprocessor extends HttpPreprocessor
+readonly class ContentSecurityPolicyPreprocessor extends HttpPreprocessor
 {
     public function __construct(
-        private BadRequest $badRequest,
-        private CSRFManager $csrfManager,
+        private SecurityPolicyHeaders $securityPolicyHeaders,
     ) {}
 
     public function preprocess(
@@ -37,11 +36,10 @@ readonly class ValidatesCSRFTokenPreprocessor extends HttpPreprocessor
         Attribute $attribute,
         HttpResponderInterface $next,
     ): HttpResponderInterface {
-        $requestData = $request->{$attribute->requestDataSource->value};
-
-        if (!is_array($requestData) || !$this->csrfManager->checkToken($request, $requestData)) {
-            return $this->badRequest;
-        }
+        match ($attribute->contentSecurityPolicyType) {
+            ContentSecurityPolicyType::Html => $this->securityPolicyHeaders->sendTemplatedPagePolicyHeaders($request, $response),
+            ContentSecurityPolicyType::Json => $this->securityPolicyHeaders->sendJsonPagePolicyHeaders($response),
+        };
 
         return $next;
     }

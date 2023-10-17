@@ -19,7 +19,10 @@ use Swoole\Http\Response;
 /**
  * @template-extends HttpPreprocessor<Can>
  */
-#[PreprocessesHttpResponder(Can::class)]
+#[PreprocessesHttpResponder(
+    attribute: Can::class,
+    priority: 1000,
+)]
 #[Singleton(collection: SingletonCollection::HttpPreprocessor)]
 readonly class CanPreprocessor extends HttpPreprocessor
 {
