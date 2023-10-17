@@ -7,11 +7,12 @@ namespace Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\Gatekeeper;
 use Distantmagic\Resonance\GraphQLAdapter;
 use Distantmagic\Resonance\GraphQLDatabaseQueryAdapter;
+use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\HttpResponder\Error\BadRequest;
 use Distantmagic\Resonance\HttpResponderInterface;
+use Distantmagic\Resonance\JsonTemplate;
 use Distantmagic\Resonance\SwoolePromiseAdapter;
-use Distantmagic\Resonance\Template\Layout\Json\GraphQL as GraphQLTemplate;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
@@ -21,10 +22,9 @@ readonly class GraphQL extends HttpResponder
         private BadRequest $badRequest,
         private Gatekeeper $gatekeeper,
         private GraphQLAdapter $graphQLAdapter,
-        private GraphQLTemplate $graphQLTemplate,
     ) {}
 
-    public function respond(Request $request, Response $response): HttpResponderInterface
+    public function respond(Request $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
     {
         $requestContent = $request->getContent();
 
@@ -32,32 +32,6 @@ readonly class GraphQL extends HttpResponder
             return $this->badRequest;
         }
 
-        return $this->handleRequestContent($request, $response, $requestContent);
-    }
-
-    /**
-     * @param null|array<string,mixed> $variables
-     */
-    private function handleQuery(Request $request, Response $response, string $query, ?array $variables): HttpResponderInterface
-    {
-        $graphQLDatabaseQueryAdapter = new GraphQLDatabaseQueryAdapter($this->gatekeeper->withRequest($request));
-        $swoolePromiseAdapter = new SwoolePromiseAdapter($graphQLDatabaseQueryAdapter);
-
-        $result = $this->graphQLAdapter->query(
-            $swoolePromiseAdapter,
-            $query,
-            null,
-            null,
-            $variables,
-        );
-
-        $this->graphQLTemplate->executionPromises->offsetSet($request, $result);
-
-        return $this->graphQLTemplate;
-    }
-
-    private function handleRequestContent(Request $request, Response $response, string $requestContent): HttpResponderInterface
-    {
         $requestInput = json_decode(
             json: $requestContent,
             associative: true,
@@ -84,6 +58,17 @@ readonly class GraphQL extends HttpResponder
          */
         $variables = $requestInput['variables'] ?? null;
 
-        return $this->handleQuery($request, $response, $query, $variables);
+        $graphQLDatabaseQueryAdapter = new GraphQLDatabaseQueryAdapter($this->gatekeeper->withRequest($request));
+        $swoolePromiseAdapter = new SwoolePromiseAdapter($graphQLDatabaseQueryAdapter);
+
+        $result = $this->graphQLAdapter->query(
+            $swoolePromiseAdapter,
+            $query,
+            null,
+            null,
+            $variables,
+        );
+
+        return new JsonTemplate($result);
     }
 }

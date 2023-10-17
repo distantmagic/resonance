@@ -9,5 +9,5 @@ use Swoole\Http\Response;
 
 interface HttpResponderInterface
 {
-    public function respond(Request $request, Response $response): ?self;
+    public function respond(Request $request, Response $response): null|HttpInterceptableInterface|self;
 }

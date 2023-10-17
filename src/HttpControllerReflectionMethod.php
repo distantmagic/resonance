@@ -7,11 +7,15 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Attribute\CurrentRequest;
 use Distantmagic\Resonance\Attribute\CurrentResponse;
 use Ds\Map;
+use Generator;
 use LogicException;
 use ReflectionAttribute;
+use ReflectionIntersectionType;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
+use ReflectionType;
+use ReflectionUnionType;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
@@ -26,27 +30,36 @@ readonly class HttpControllerReflectionMethod
     {
         $this->parameters = new Map();
 
-        $this->assertReturnType();
+        $this->assertReturnTypes();
 
         foreach ($reflectionMethod->getParameters() as $reflectionParameter) {
             $this->extractParameterData($reflectionParameter);
         }
     }
 
-    private function assertReturnType(): void
+    private function assertReturnTypes(): void
     {
-        $returnType = $this->reflectionMethod->getReturnType();
+        foreach ($this->extractReturnTypes() as $returnType) {
+            if (!($returnType instanceof ReflectionNamedType)) {
+                $this->reportError('Unsupported return type');
+            }
 
-        if (!($returnType instanceof ReflectionNamedType)) {
-            $this->reportError('Unsupported return type');
-        }
+            if ($returnType->isBuiltin() && 'void' !== $returnType->getName()) {
+                $this->reportError('Only supported return type');
+            }
 
-        if ($returnType->isBuiltin() && 'void' !== $returnType->getName()) {
-            $this->reportError('Only supported return type');
-        }
+            if (
+                is_a($returnType->getName(), HttpResponderInterface::class, true)
+                || is_a($returnType->getName(), HttpInterceptableInterface::class, true)
+            ) {
+                return;
+            }
 
-        if (!is_a($returnType->getName(), HttpResponderInterface::class, true)) {
-            $this->reportError('Controller handle can only return ?HttpResponderInterface');
+            $this->reportError(sprintf(
+                'Controller handle can only return null or %s or %s',
+                HttpResponderInterface::class,
+                HttpInterceptableInterface::class,
+            ));
         }
     }
 
@@ -103,6 +116,27 @@ readonly class HttpControllerReflectionMethod
             $className,
             $name,
         ));
+    }
+
+    /**
+     * @return Generator<null|ReflectionType>
+     */
+    private function extractReturnTypes(): Generator
+    {
+        $returnType = $this->reflectionMethod->getReturnType();
+
+        if (
+            $returnType instanceof ReflectionUnionType
+            || $returnType instanceof ReflectionIntersectionType
+        ) {
+            foreach ($returnType->getTypes() as $unionType) {
+                yield $unionType;
+            }
+
+            return;
+        }
+        yield $returnType;
+
     }
 
     /**

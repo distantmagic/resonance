@@ -19,6 +19,6 @@ interface HttpPreprocessorInterface
         Request $request,
         Response $response,
         Attribute $attribute,
-        HttpResponderInterface $next,
-    ): ?HttpResponderInterface;
+        HttpInterceptableInterface|HttpResponderInterface $next,
+    ): null|HttpInterceptableInterface|HttpResponderInterface;
 }

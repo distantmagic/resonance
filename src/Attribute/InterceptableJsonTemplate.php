@@ -8,4 +8,4 @@ use Attribute;
 use Distantmagic\Resonance\Attribute as BaseAttribute;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-final readonly class RenderableTwigTemplate extends BaseAttribute {}
+final readonly class InterceptableJsonTemplate extends BaseAttribute {}

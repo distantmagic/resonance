@@ -13,6 +13,7 @@ use Distantmagic\Resonance\HttpControllerDependencies;
 use Distantmagic\Resonance\HttpControllerParameterResolutionStatus;
 use Distantmagic\Resonance\HttpControllerParameterResolverAggregate;
 use Distantmagic\Resonance\HttpControllerReflectionMethod;
+use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\HttpResponder\Error\BadRequest;
 use Distantmagic\Resonance\HttpResponder\Error\Forbidden;
@@ -30,12 +31,7 @@ abstract readonly class HttpController extends HttpResponder
     private BadRequest $badRequest;
     private Forbidden $forbidden;
     private HttpControllerReflectionMethod $handleReflection;
-
-    /**
-     * @var null|Closure(mixed):?HttpResponderInterface
-     */
     private ?Closure $handleValidationErrorsCallback;
-
     private ?HttpControllerReflectionMethod $handleValidationErrorsReflection;
     private HttpControllerParameterResolverAggregate $httpControllerParameterResolverAggregate;
     private PageNotFound $pageNotFound;
@@ -50,9 +46,10 @@ abstract readonly class HttpController extends HttpResponder
         $reflectionClass = new ReflectionClass($this);
 
         /**
-         * @var null|Closure(mixed):?HttpResponderInterface
+         * @var null|Closure
          */
         $handleValidationErrorsCallback = null;
+
         /**
          * @var null|HttpControllerReflectionMethod
          */
@@ -61,12 +58,6 @@ abstract readonly class HttpController extends HttpResponder
         foreach ($reflectionClass->getMethods() as $validationErrorsReflectionMethod) {
             if (!empty($validationErrorsReflectionMethod->getAttributes(ValidationErrorsHandler::class))) {
                 $handleValidationErrorsReflection = new HttpControllerReflectionMethod($validationErrorsReflectionMethod);
-                /**
-                 * This function is validated in the
-                 * HttpControllerReflectionMethod
-                 *
-                 * @var Closure(mixed):?HttpResponderInterface
-                 */
                 $handleValidationErrorsCallback = $validationErrorsReflectionMethod->getClosure($this);
             }
         }
@@ -78,7 +69,7 @@ abstract readonly class HttpController extends HttpResponder
         $this->handleReflection = new HttpControllerReflectionMethod($reflectionMethod);
     }
 
-    public function respond(Request $request, Response $response): ?HttpResponderInterface
+    public function respond(Request $request, Response $response): null|HttpInterceptableInterface|HttpResponderInterface
     {
         /**
          * @var array <string,mixed>
@@ -155,15 +146,14 @@ abstract readonly class HttpController extends HttpResponder
          *
          * @psalm-suppress UndefinedMethod
          *
-         * @var ?HttpResponderInterface
+         * @var null|HttpInterceptableInterface|HttpResponderInterface
          */
         return $this->handle(...$resolvedParameterValues);
     }
 
     /**
-     * @param Closure(mixed):?HttpResponderInterface $handleValidationErrorsCallback
-     * @param array <string,mixed>                   $resolvedParameterValues
-     * @param Map<string,string>                     $validationErrors
+     * @param array <string,mixed> $resolvedParameterValues
+     * @param Map<string,string>   $validationErrors
      */
     private function handleValidationErrors(
         Request $request,
@@ -172,7 +162,7 @@ abstract readonly class HttpController extends HttpResponder
         Closure $handleValidationErrorsCallback,
         array $resolvedParameterValues,
         Map $validationErrors,
-    ): ?HttpResponderInterface {
+    ): null|HttpInterceptableInterface|HttpResponderInterface {
         /**
          * @var array <string,mixed>
          */
@@ -193,6 +183,9 @@ abstract readonly class HttpController extends HttpResponder
             };
         }
 
+        /**
+         * @var null|HttpInterceptableInterface|HttpResponderInterface
+         */
         return $handleValidationErrorsCallback(...$resolvedValidationHandlerParameters);
     }
 }

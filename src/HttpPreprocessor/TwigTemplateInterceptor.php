@@ -5,27 +5,29 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\HttpPreprocessor;
 
 use Distantmagic\Resonance\Attribute;
+use Distantmagic\Resonance\Attribute\InterceptableTwigTemplate;
 use Distantmagic\Resonance\Attribute\PreprocessesHttpResponder;
-use Distantmagic\Resonance\Attribute\RenderableTwigTemplate;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\ContentType;
+use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpPreprocessor;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\SingletonCollection;
-use Distantmagic\Resonance\Template\Layout\Twig as TwigTemplate;
+use Distantmagic\Resonance\TwigTemplate;
 use LogicException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Twig\Environment as TwigEnvironment;
 
 /**
- * @template-extends HttpPreprocessor<RenderableTwigTemplate>
+ * @template-extends HttpPreprocessor<InterceptableTwigTemplate>
  */
 #[PreprocessesHttpResponder(
-    attribute: RenderableTwigTemplate::class,
+    attribute: InterceptableTwigTemplate::class,
     priority: 0,
 )]
 #[Singleton(collection: SingletonCollection::HttpPreprocessor)]
-readonly class TwigTemplateRendererPreprocessor extends HttpPreprocessor
+readonly class TwigTemplateInterceptor extends HttpPreprocessor
 {
     public function __construct(private TwigEnvironment $twig) {}
 
@@ -33,14 +35,10 @@ readonly class TwigTemplateRendererPreprocessor extends HttpPreprocessor
         Request $request,
         Response $response,
         Attribute $attribute,
-        HttpResponderInterface $next,
+        HttpInterceptableInterface|HttpResponderInterface $next,
     ): null {
         if (!($next instanceof TwigTemplate)) {
-            throw new LogicException(sprintf(
-                'Only %s can have a %s attribute.',
-                TwigTemplate::class,
-                RenderableTwigTemplate::class,
-            ));
+            throw new LogicException('Expected '.TwigTemplate::class);
         }
 
         $rendered = $this->twig->render(
@@ -48,7 +46,7 @@ readonly class TwigTemplateRendererPreprocessor extends HttpPreprocessor
             $next->getTemplateData($request, $response),
         );
 
-        $next->sendContentTypeHeader($request, $response);
+        $response->header('content-type', ContentType::TextHtml->value.';charset=utf-8');
         $response->end($rendered);
 
         return null;

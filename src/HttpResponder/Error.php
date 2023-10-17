@@ -9,6 +9,7 @@ use Distantmagic\Resonance\ContentTypeResponder;
 use Distantmagic\Resonance\ErrorHttpResponderDependencies;
 use Distantmagic\Resonance\HtmlErrorTemplateInterface;
 use Distantmagic\Resonance\HttpError;
+use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\JsonErrorTemplateInterface;
@@ -38,7 +39,7 @@ abstract readonly class Error extends HttpResponder
         $this->contentTypeResponder->responders->add(ContentType::ApplicationJson);
     }
 
-    public function respond(Request $request, Response $response): HttpResponderInterface
+    public function respond(Request $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
     {
         return match ($this->contentTypeResponder->best($request)) {
             ContentType::ApplicationJson => $this->respondWithJson($request, $response),
@@ -47,23 +48,19 @@ abstract readonly class Error extends HttpResponder
         };
     }
 
-    protected function respondWithJson(Request $request, Response $response): HttpResponderInterface
+    protected function respondWithJson(Request $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
     {
         $response->status($this->httpError->code());
         $this->securityPolicyHeaders->sendJsonPagePolicyHeaders($response);
 
-        $this->jsonTemplate->setError($request, $this->httpError);
-
-        return $this->jsonTemplate;
+        return $this->jsonTemplate->renderHttpError($request, $response, $this->httpError);
     }
 
-    private function respondWithHtml(Request $request, Response $response): HttpResponderInterface
+    private function respondWithHtml(Request $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
     {
         $response->status($this->httpError->code());
         $this->securityPolicyHeaders->sendTemplatedPagePolicyHeaders($request, $response);
 
-        $this->htmlTemplate->setError($request, $this->httpError);
-
-        return $this->htmlTemplate;
+        return $this->htmlTemplate->renderHttpError($request, $response, $this->httpError);
     }
 }

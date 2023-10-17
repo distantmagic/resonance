@@ -9,6 +9,7 @@ use Distantmagic\Resonance\Attribute\ContentSecurityPolicy;
 use Distantmagic\Resonance\Attribute\PreprocessesHttpResponder;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\ContentSecurityPolicyType;
+use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpPreprocessor;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\SecurityPolicyHeaders;
@@ -34,8 +35,8 @@ readonly class ContentSecurityPolicyPreprocessor extends HttpPreprocessor
         Request $request,
         Response $response,
         Attribute $attribute,
-        HttpResponderInterface $next,
-    ): HttpResponderInterface {
+        HttpInterceptableInterface|HttpResponderInterface $next,
+    ): HttpInterceptableInterface|HttpResponderInterface {
         match ($attribute->contentSecurityPolicyType) {
             ContentSecurityPolicyType::Html => $this->securityPolicyHeaders->sendTemplatedPagePolicyHeaders($request, $response),
             ContentSecurityPolicyType::Json => $this->securityPolicyHeaders->sendJsonPagePolicyHeaders($response),

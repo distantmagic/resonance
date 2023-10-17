@@ -9,6 +9,7 @@ use Distantmagic\Resonance\Attribute\PreprocessesHttpResponder;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Attribute\ValidatesCSRFToken;
 use Distantmagic\Resonance\CSRFManager;
+use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpPreprocessor;
 use Distantmagic\Resonance\HttpResponder\Error\BadRequest;
 use Distantmagic\Resonance\HttpResponderInterface;
@@ -35,8 +36,8 @@ readonly class ValidatesCSRFTokenPreprocessor extends HttpPreprocessor
         Request $request,
         Response $response,
         Attribute $attribute,
-        HttpResponderInterface $next,
-    ): HttpResponderInterface {
+        HttpInterceptableInterface|HttpResponderInterface $next,
+    ): HttpInterceptableInterface|HttpResponderInterface {
         $requestData = $request->{$attribute->requestDataSource->value};
 
         if (!is_array($requestData) || !$this->csrfManager->checkToken($request, $requestData)) {

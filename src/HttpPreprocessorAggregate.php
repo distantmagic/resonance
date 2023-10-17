@@ -12,7 +12,7 @@ readonly class HttpPreprocessorAggregate
 {
     /**
      * @var Map<
-     *     class-string<HttpResponderInterface>,
+     *     class-string<HttpInterceptableInterface|HttpResponderInterface>,
      *     Set<HttpPreprocessorAttribute>
      * >
      */
@@ -20,7 +20,7 @@ readonly class HttpPreprocessorAggregate
 
     /**
      * @var Map<
-     *     class-string<HttpResponderInterface>,
+     *     class-string<HttpInterceptableInterface|HttpResponderInterface>,
      *     PriorityQueue<HttpPreprocessorAttribute>
      * >
      */
@@ -33,7 +33,7 @@ readonly class HttpPreprocessorAggregate
     }
 
     /**
-     * @param class-string<HttpResponderInterface> $httpResponderClassName
+     * @param class-string<HttpInterceptableInterface|HttpResponderInterface> $httpResponderClassName
      */
     public function registerPreprocessor(
         HttpPreprocessorInterface $httpPreprocessor,

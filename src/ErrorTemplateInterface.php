@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Swoole\Http\Request;
+use Swoole\Http\Response;
 
-interface ErrorTemplateInterface extends TemplateInterface, TemplateWriterInterface
+interface ErrorTemplateInterface
 {
-    public function setError(Request $request, HttpError $httpError): void;
+    public function renderHttpError(Request $request, Response $response, HttpError $httpError): HttpInterceptableInterface|HttpResponderInterface;
 }

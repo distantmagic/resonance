@@ -10,6 +10,7 @@ use Distantmagic\Resonance\ContentType;
 use Distantmagic\Resonance\Environment;
 use Distantmagic\Resonance\ErrorHttpResponderDependencies;
 use Distantmagic\Resonance\HttpError\ServerError as ServerErrorEntity;
+use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpResponder\Error;
 use Distantmagic\Resonance\HttpResponderInterface;
 use RuntimeException;
@@ -32,7 +33,7 @@ final readonly class ServerError extends Error
         Request $request,
         Response $response,
         Throwable $throwable,
-    ): ?HttpResponderInterface {
+    ): null|HttpInterceptableInterface|HttpResponderInterface {
         if (!$response->isWritable()) {
             throw new RuntimeException('Server response in not writable. Unable to report error', 0, $throwable);
         }
