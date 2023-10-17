@@ -41,7 +41,7 @@ final readonly class Twig extends Layout
     {
         $this->templates->offsetSet(
             $request,
-            $this->twig->render($templatePath, $templateData ?? [
+            $this->twig->render($templatePath, ($templateData ?? []) + [
                 'request' => $request,
                 'response' => $response,
             ])

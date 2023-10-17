@@ -11,4 +11,4 @@ use GraphQL\Type\Definition\NamedType;
 use GraphQL\Type\Definition\NullableType;
 use GraphQL\Type\Definition\OutputType;
 
-interface GraphQLSchemaQueryInterface extends CompositeType, HasFieldsType, ImplementingType, NamedType, NullableType, OutputType {}
+interface GraphQLSchemaRootFieldInterface extends CompositeType, HasFieldsType, ImplementingType, NamedType, NullableType, OutputType {}

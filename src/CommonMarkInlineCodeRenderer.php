@@ -14,7 +14,19 @@ use Stringable;
 
 final readonly class CommonMarkInlineCodeRenderer implements NodeRendererInterface
 {
-    private const NAMESPACE_REGEXP = '/^([\w|\\\\]+)$/';
+    /**
+     * @var array<string,string>
+     */
+    private array $patterns;
+
+    public function __construct()
+    {
+        $this->patterns = [
+            '::' => '::<wbr>',
+            '\\' => '\\<wbr>',
+            '->' => '-><wbr>',
+        ];
+    }
 
     /**
      * @param Code $node
@@ -32,15 +44,16 @@ final readonly class CommonMarkInlineCodeRenderer implements NodeRendererInterfa
         return new HtmlElement(
             'code',
             [],
-            match (preg_match(self::NAMESPACE_REGEXP, $node->getLiteral())) {
-                1 => $this->addWordBreaks($escaped),
-                0, false => $escaped,
-            },
+            $this->addWordBreaks($escaped),
         );
     }
 
-    private function addWordBreaks(string $namespace): string
+    private function addWordBreaks(string $code): string
     {
-        return str_replace('\\', '\\<wbr>', $namespace);
+        foreach ($this->patterns as $pattern => $replacement) {
+            $code = str_replace($pattern, $replacement, $code);
+        }
+
+        return $code;
     }
 }
