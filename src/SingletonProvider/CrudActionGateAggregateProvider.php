@@ -6,6 +6,7 @@ namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\Attribute\CrudActionSubject;
 use Distantmagic\Resonance\Attribute\DecidesCrudAction;
+use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\CrudActionGate;
 use Distantmagic\Resonance\CrudActionGateAggregate;
@@ -22,10 +23,8 @@ use LogicException;
 /**
  * @template-extends SingletonProvider<CrudActionGateAggregate>
  */
-#[Singleton(
-    provides: CrudActionGateAggregate::class,
-    requiresCollection: SingletonCollection::CrudActionGate,
-)]
+#[RequiresSingletonCollection(SingletonCollection::CrudActionGate)]
+#[Singleton(provides: CrudActionGateAggregate::class)]
 final readonly class CrudActionGateAggregateProvider extends SingletonProvider
 {
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): CrudActionGateAggregate

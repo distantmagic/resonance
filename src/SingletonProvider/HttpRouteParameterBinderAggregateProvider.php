@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\Attribute\ProvidesRouteParameter;
+use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpRouteParameterBinderAggregate;
 use Distantmagic\Resonance\HttpRouteParameterBinderInterface;
@@ -17,10 +18,8 @@ use Distantmagic\Resonance\SingletonProvider;
 /**
  * @template-extends SingletonProvider<HttpRouteParameterBinderAggregate>
  */
-#[Singleton(
-    provides: HttpRouteParameterBinderAggregate::class,
-    requiresCollection: SingletonCollection::HttpParameterBinder,
-)]
+#[RequiresSingletonCollection(SingletonCollection::HttpParameterBinder)]
+#[Singleton(provides: HttpRouteParameterBinderAggregate::class)]
 final readonly class HttpRouteParameterBinderAggregateProvider extends SingletonProvider
 {
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): HttpRouteParameterBinderAggregate

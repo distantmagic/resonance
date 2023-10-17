@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\Attribute\ListensTo;
+use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\EventListenerAggregate;
 use Distantmagic\Resonance\EventListenerInterface;
@@ -17,10 +18,8 @@ use Distantmagic\Resonance\SingletonProvider;
 /**
  * @template-extends SingletonProvider<EventListenerAggregate>
  */
-#[Singleton(
-    provides: EventListenerAggregate::class,
-    requiresCollection: SingletonCollection::EventListener,
-)]
+#[RequiresSingletonCollection(SingletonCollection::EventListener)]
+#[Singleton(provides: EventListenerAggregate::class)]
 final readonly class EventListenerAggregateProvider extends SingletonProvider
 {
     public function __construct(

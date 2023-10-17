@@ -16,7 +16,6 @@ final readonly class Singleton extends BaseAttribute
      */
     public function __construct(
         public ?SingletonCollectionInterface $collection = null,
-        public ?SingletonCollectionInterface $requiresCollection = null,
         public ?string $provides = null,
     ) {}
 }

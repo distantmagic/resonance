@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
+use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\ResolvesHttpControllerParameter;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpControllerParameterResolverAggregate;
@@ -17,10 +18,8 @@ use Distantmagic\Resonance\SingletonProvider;
 /**
  * @template-extends SingletonProvider<HttpControllerParameterResolverAggregate>
  */
-#[Singleton(
-    provides: HttpControllerParameterResolverAggregate::class,
-    requiresCollection: SingletonCollection::HttpControllerParameterResolver,
-)]
+#[RequiresSingletonCollection(SingletonCollection::HttpControllerParameterResolver)]
+#[Singleton(provides: HttpControllerParameterResolverAggregate::class)]
 final readonly class HttpControllerParameterResolverAggregateProvider extends SingletonProvider
 {
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): HttpControllerParameterResolverAggregate

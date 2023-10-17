@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\Attribute\ControlsWebSocketProtocol;
+use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonAttribute;
@@ -17,10 +18,8 @@ use Distantmagic\Resonance\WebSocketProtocolControllerInterface;
 /**
  * @template-extends SingletonProvider<WebSocketProtocolControllerAggregate>
  */
-#[Singleton(
-    provides: WebSocketProtocolControllerAggregate::class,
-    requiresCollection: SingletonCollection::WebSocketProtocolController,
-)]
+#[RequiresSingletonCollection(SingletonCollection::WebSocketProtocolController)]
+#[Singleton(provides: WebSocketProtocolControllerAggregate::class)]
 final readonly class WebSocketProtocolControllerAggregateProvider extends SingletonProvider
 {
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): WebSocketProtocolControllerAggregate

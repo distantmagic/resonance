@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Closure;
+use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Ds\Map;
 use Ds\Set;
@@ -114,10 +115,12 @@ readonly class DependencyInjectionContainer
                 $this->addToCollection($collectionName, $providedClassName);
             }
 
-            $requiredCollection = $reflectionAttribute->attribute->requiresCollection;
+            foreach ($reflectionAttribute->reflectionClass->getAttributes(RequiresSingletonCollection::class) as $requiresCollectionReflection) {
+                $requiredCollection = $requiresCollectionReflection->newInstance()->collection;
 
-            if ($requiredCollection instanceof SingletonCollectionInterface) {
-                $this->addCollectionDependency($providedClassName, $requiredCollection);
+                if ($requiredCollection instanceof SingletonCollectionInterface) {
+                    $this->addCollectionDependency($providedClassName, $requiredCollection);
+                }
             }
 
             $this->providers->put($providedClassName, $reflectionAttribute->reflectionClass);

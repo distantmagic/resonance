@@ -6,6 +6,7 @@ namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\ApplicationContext;
 use Distantmagic\Resonance\Attribute\GraphQLRootField;
+use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Environment;
 use Distantmagic\Resonance\GraphQLFieldableInterface;
@@ -23,10 +24,8 @@ use LogicException;
 /**
  * @template-extends SingletonProvider<Schema>
  */
-#[Singleton(
-    provides: Schema::class,
-    requiresCollection: SingletonCollection::GraphQLRootField,
-)]
+#[RequiresSingletonCollection(SingletonCollection::GraphQLRootField)]
+#[Singleton(provides: Schema::class)]
 final readonly class GraphQLSchemaProvider extends SingletonProvider
 {
     public function __construct(

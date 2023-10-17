@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
+use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\RespondsToHttp;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpResponderCollection;
@@ -17,10 +18,8 @@ use Distantmagic\Resonance\SingletonProvider;
 /**
  * @template-extends SingletonProvider<HttpResponderCollection>
  */
-#[Singleton(
-    provides: HttpResponderCollection::class,
-    requiresCollection: SingletonCollection::HttpResponder,
-)]
+#[RequiresSingletonCollection(SingletonCollection::HttpResponder)]
+#[Singleton(provides: HttpResponderCollection::class)]
 final readonly class HttpResponderCollectionProvider extends SingletonProvider
 {
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): HttpResponderCollection

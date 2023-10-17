@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
+use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\RespondsToWebSocketRPC;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\PHPProjectFiles;
@@ -17,10 +18,8 @@ use Distantmagic\Resonance\WebSocketRPCResponderInterface;
 /**
  * @template-extends SingletonProvider<WebSocketRPCResponderAggregate>
  */
-#[Singleton(
-    provides: WebSocketRPCResponderAggregate::class,
-    requiresCollection: SingletonCollection::WebSocketRPCResponder,
-)]
+#[RequiresSingletonCollection(SingletonCollection::WebSocketRPCResponder)]
+#[Singleton(provides: WebSocketRPCResponderAggregate::class)]
 final readonly class WebSocketRPCResponderAggregateProvider extends SingletonProvider
 {
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): WebSocketRPCResponderAggregate

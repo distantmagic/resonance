@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\Attribute\DecidesSiteAction;
+use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonAttribute;
@@ -17,10 +18,8 @@ use Distantmagic\Resonance\SiteActionGateAggregate;
 /**
  * @template-extends SingletonProvider<SiteActionGateAggregate>
  */
-#[Singleton(
-    provides: SiteActionGateAggregate::class,
-    requiresCollection: SingletonCollection::SiteActionGate,
-)]
+#[RequiresSingletonCollection(SingletonCollection::SiteActionGate)]
+#[Singleton(provides: SiteActionGateAggregate::class)]
 final readonly class SiteActionGateAggregateProvider extends SingletonProvider
 {
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): SiteActionGateAggregate
