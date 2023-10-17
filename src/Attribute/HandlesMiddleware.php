@@ -8,7 +8,7 @@ use Attribute;
 use Distantmagic\Resonance\Attribute as BaseAttribute;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-final readonly class PreprocessesHttpResponder extends BaseAttribute
+final readonly class HandlesMiddleware extends BaseAttribute
 {
     /**
      * @param class-string<BaseAttribute> $attribute

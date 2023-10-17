@@ -5,31 +5,31 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\HttpMiddleware;
 
 use Distantmagic\Resonance\Attribute;
-use Distantmagic\Resonance\Attribute\Can;
-use Distantmagic\Resonance\Attribute\PreprocessesHttpResponder;
+use Distantmagic\Resonance\Attribute\HandlesMiddleware;
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\Gatekeeper;
+use Distantmagic\Resonance\Attribute\ValidatesCSRFToken;
+use Distantmagic\Resonance\CSRFManager;
 use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpMiddleware;
-use Distantmagic\Resonance\HttpResponder\Error\Forbidden;
+use Distantmagic\Resonance\HttpResponder\Error\BadRequest;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\SingletonCollection;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
 /**
- * @template-extends HttpMiddleware<Can>
+ * @template-extends HttpMiddleware<ValidatesCSRFToken>
  */
-#[PreprocessesHttpResponder(
-    attribute: Can::class,
-    priority: 1000,
+#[HandlesMiddleware(
+    attribute: ValidatesCSRFToken::class,
+    priority: 1100,
 )]
 #[Singleton(collection: SingletonCollection::HttpMiddleware)]
-readonly class CanPreprocessor extends HttpMiddleware
+readonly class ValidatesCSRFTokenMiddleware extends HttpMiddleware
 {
     public function __construct(
-        private Forbidden $forbidden,
-        private Gatekeeper $gatekeeper,
+        private BadRequest $badRequest,
+        private CSRFManager $csrfManager,
     ) {}
 
     public function preprocess(
@@ -38,10 +38,10 @@ readonly class CanPreprocessor extends HttpMiddleware
         Attribute $attribute,
         HttpInterceptableInterface|HttpResponderInterface $next,
     ): HttpInterceptableInterface|HttpResponderInterface {
-        $gatekeeperUserContext = $this->gatekeeper->withRequest($request);
+        $requestData = $request->{$attribute->requestDataSource->value};
 
-        if (!$gatekeeperUserContext->can($attribute->siteAction)) {
-            return $this->forbidden;
+        if (!is_array($requestData) || !$this->csrfManager->checkToken($request, $requestData)) {
+            return $this->badRequest;
         }
 
         return $next;

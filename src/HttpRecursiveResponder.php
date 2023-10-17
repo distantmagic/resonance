@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
-use LogicException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
 #[Singleton]
-readonly class HttpRecursiveResponder
+final readonly class HttpRecursiveResponder
 {
     public function __construct(
+        private HttpInterceptorAggregate $httpInterceptorAggregate,
         private HttpMiddlewareAggregate $httpMiddlewareAggregate,
     ) {}
 
@@ -22,7 +22,8 @@ readonly class HttpRecursiveResponder
         null|HttpInterceptableInterface|HttpResponderInterface $responder,
     ): void {
         while ($responder) {
-            $middlewareAttributes = $this->httpMiddlewareAggregate
+            $middlewareAttributes = $this
+                ->httpMiddlewareAggregate
                 ->middlewares
                 ->get($responder::class, null)
             ;
@@ -36,20 +37,43 @@ readonly class HttpRecursiveResponder
                         $responder,
                     );
 
+                    if ($responder) {
+                        $responder = $this->doIntercept($request, $response, $responder);
+                    }
+
                     if (!$responder) {
                         return;
                     }
                 }
-            } elseif ($responder instanceof HttpInterceptableInterface) {
-                throw new LogicException(sprintf(
-                    '%s has no middleware assigned',
-                    $responder::class,
-                ));
             }
 
             if ($responder instanceof HttpResponderInterface) {
                 $responder = $responder->respond($request, $response);
             }
+
+            $responder = $this->doIntercept($request, $response, $responder);
         }
+    }
+
+    private function doIntercept(
+        Request $request,
+        Response $response,
+        null|HttpInterceptableInterface|HttpResponderInterface $responder,
+    ): null|HttpInterceptableInterface|HttpResponderInterface {
+        if (!$responder instanceof HttpInterceptableInterface) {
+            return $responder;
+        }
+
+        $interceptor = $this
+            ->httpInterceptorAggregate
+            ->interceptors
+            ->get($responder::class, null)
+        ;
+
+        if ($interceptor) {
+            return $interceptor->intercept($request, $response, $responder);
+        }
+
+        return $responder;
     }
 }

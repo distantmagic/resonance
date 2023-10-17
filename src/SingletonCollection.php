@@ -10,6 +10,7 @@ enum SingletonCollection implements SingletonCollectionInterface
     case EventListener;
     case GraphQLRootField;
     case HttpControllerParameterResolver;
+    case HttpInterceptor;
     case HttpMiddleware;
     case HttpParameterBinder;
     case HttpResponder;

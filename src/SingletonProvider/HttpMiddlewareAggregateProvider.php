@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
-use Distantmagic\Resonance\Attribute\PreprocessesHttpResponder;
+use Distantmagic\Resonance\Attribute\HandlesMiddleware;
 use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpInterceptableInterface;
@@ -29,8 +29,8 @@ final readonly class HttpMiddlewareAggregateProvider extends SingletonProvider
     {
         $httpMiddlewareAggregate = new HttpMiddlewareAggregate();
 
-        foreach ($this->collectPreprocessors($singletons) as $preprocessorAttribute) {
-            $attributeClassName = $preprocessorAttribute->attribute->attribute;
+        foreach ($this->collectMiddlewares($singletons) as $middlewareAttribute) {
+            $attributeClassName = $middlewareAttribute->attribute->attribute;
 
             foreach ($phpProjectFiles->findByAttribute($attributeClassName) as $subjectAttribute) {
                 $responderClassName = $subjectAttribute->reflectionClass->getName();
@@ -48,10 +48,10 @@ final readonly class HttpMiddlewareAggregateProvider extends SingletonProvider
                 }
 
                 $httpMiddlewareAggregate->registerPreprocessor(
-                    $preprocessorAttribute->singleton,
+                    $middlewareAttribute->singleton,
                     $responderClassName,
                     $subjectAttribute->attribute,
-                    $preprocessorAttribute->attribute->priority,
+                    $middlewareAttribute->attribute->priority,
                 );
             }
         }
@@ -62,14 +62,14 @@ final readonly class HttpMiddlewareAggregateProvider extends SingletonProvider
     }
 
     /**
-     * @return iterable<SingletonAttribute<HttpMiddlewareInterface,PreprocessesHttpResponder>>
+     * @return iterable<SingletonAttribute<HttpMiddlewareInterface,HandlesMiddleware>>
      */
-    private function collectPreprocessors(SingletonContainer $singletons): iterable
+    private function collectMiddlewares(SingletonContainer $singletons): iterable
     {
         return $this->collectAttributes(
             $singletons,
             HttpMiddlewareInterface::class,
-            PreprocessesHttpResponder::class,
+            HandlesMiddleware::class,
         );
     }
 }
