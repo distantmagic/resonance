@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Distantmagic\Resonance\HttpPreprocessor;
+namespace Distantmagic\Resonance\HttpMiddleware;
 
 use Distantmagic\Resonance\Attribute;
 use Distantmagic\Resonance\Attribute\ContentSecurityPolicy;
@@ -10,7 +10,7 @@ use Distantmagic\Resonance\Attribute\PreprocessesHttpResponder;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\ContentSecurityPolicyType;
 use Distantmagic\Resonance\HttpInterceptableInterface;
-use Distantmagic\Resonance\HttpPreprocessor;
+use Distantmagic\Resonance\HttpMiddleware;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\SecurityPolicyHeaders;
 use Distantmagic\Resonance\SingletonCollection;
@@ -18,14 +18,14 @@ use Swoole\Http\Request;
 use Swoole\Http\Response;
 
 /**
- * @template-extends HttpPreprocessor<ContentSecurityPolicy>
+ * @template-extends HttpMiddleware<ContentSecurityPolicy>
  */
 #[PreprocessesHttpResponder(
     attribute: ContentSecurityPolicy::class,
     priority: 900,
 )]
-#[Singleton(collection: SingletonCollection::HttpPreprocessor)]
-readonly class ContentSecurityPolicyPreprocessor extends HttpPreprocessor
+#[Singleton(collection: SingletonCollection::HttpMiddleware)]
+readonly class ContentSecurityPolicyPreprocessor extends HttpMiddleware
 {
     public function __construct(
         private SecurityPolicyHeaders $securityPolicyHeaders,

@@ -10,7 +10,7 @@ use Swoole\Http\Response;
 /**
  * @template TAttribute of Attribute
  */
-interface HttpPreprocessorInterface
+interface HttpMiddlewareInterface
 {
     /**
      * @param TAttribute $attribute

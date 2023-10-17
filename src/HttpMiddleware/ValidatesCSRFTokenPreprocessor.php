@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Distantmagic\Resonance\HttpPreprocessor;
+namespace Distantmagic\Resonance\HttpMiddleware;
 
 use Distantmagic\Resonance\Attribute;
 use Distantmagic\Resonance\Attribute\PreprocessesHttpResponder;
@@ -10,7 +10,7 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Attribute\ValidatesCSRFToken;
 use Distantmagic\Resonance\CSRFManager;
 use Distantmagic\Resonance\HttpInterceptableInterface;
-use Distantmagic\Resonance\HttpPreprocessor;
+use Distantmagic\Resonance\HttpMiddleware;
 use Distantmagic\Resonance\HttpResponder\Error\BadRequest;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\SingletonCollection;
@@ -18,14 +18,14 @@ use Swoole\Http\Request;
 use Swoole\Http\Response;
 
 /**
- * @template-extends HttpPreprocessor<ValidatesCSRFToken>
+ * @template-extends HttpMiddleware<ValidatesCSRFToken>
  */
 #[PreprocessesHttpResponder(
     attribute: ValidatesCSRFToken::class,
     priority: 1100,
 )]
-#[Singleton(collection: SingletonCollection::HttpPreprocessor)]
-readonly class ValidatesCSRFTokenPreprocessor extends HttpPreprocessor
+#[Singleton(collection: SingletonCollection::HttpMiddleware)]
+readonly class ValidatesCSRFTokenPreprocessor extends HttpMiddleware
 {
     public function __construct(
         private BadRequest $badRequest,

@@ -8,8 +8,8 @@ use Distantmagic\Resonance\Attribute\PreprocessesHttpResponder;
 use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpInterceptableInterface;
-use Distantmagic\Resonance\HttpPreprocessorAggregate;
-use Distantmagic\Resonance\HttpPreprocessorInterface;
+use Distantmagic\Resonance\HttpMiddlewareAggregate;
+use Distantmagic\Resonance\HttpMiddlewareInterface;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonAttribute;
@@ -19,15 +19,15 @@ use Distantmagic\Resonance\SingletonProvider;
 use LogicException;
 
 /**
- * @template-extends SingletonProvider<HttpPreprocessorAggregate>
+ * @template-extends SingletonProvider<HttpMiddlewareAggregate>
  */
-#[RequiresSingletonCollection(SingletonCollection::HttpPreprocessor)]
-#[Singleton(provides: HttpPreprocessorAggregate::class)]
-final readonly class HttpPreprocessorAggregateProvider extends SingletonProvider
+#[RequiresSingletonCollection(SingletonCollection::HttpMiddleware)]
+#[Singleton(provides: HttpMiddlewareAggregate::class)]
+final readonly class HttpMiddlewareAggregateProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): HttpPreprocessorAggregate
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): HttpMiddlewareAggregate
     {
-        $httpPreprocessorAggregate = new HttpPreprocessorAggregate();
+        $httpMiddlewareAggregate = new HttpMiddlewareAggregate();
 
         foreach ($this->collectPreprocessors($singletons) as $preprocessorAttribute) {
             $attributeClassName = $preprocessorAttribute->attribute->attribute;
@@ -36,8 +36,8 @@ final readonly class HttpPreprocessorAggregateProvider extends SingletonProvider
                 $responderClassName = $subjectAttribute->reflectionClass->getName();
 
                 if (
-                    !is_a($responderClassName, HttpResponderInterface::class, true)
-                    && !is_a($responderClassName, HttpInterceptableInterface::class, true)
+                    !is_a($responderClassName, HttpInterceptableInterface::class, true)
+                    && !is_a($responderClassName, HttpResponderInterface::class, true)
                 ) {
                     throw new LogicException(sprintf(
                         '%s is not a %s nor a %s',
@@ -47,7 +47,7 @@ final readonly class HttpPreprocessorAggregateProvider extends SingletonProvider
                     ));
                 }
 
-                $httpPreprocessorAggregate->registerPreprocessor(
+                $httpMiddlewareAggregate->registerPreprocessor(
                     $preprocessorAttribute->singleton,
                     $responderClassName,
                     $subjectAttribute->attribute,
@@ -56,19 +56,19 @@ final readonly class HttpPreprocessorAggregateProvider extends SingletonProvider
             }
         }
 
-        $httpPreprocessorAggregate->sortPreprocessors();
+        $httpMiddlewareAggregate->sortPreprocessors();
 
-        return $httpPreprocessorAggregate;
+        return $httpMiddlewareAggregate;
     }
 
     /**
-     * @return iterable<SingletonAttribute<HttpPreprocessorInterface,PreprocessesHttpResponder>>
+     * @return iterable<SingletonAttribute<HttpMiddlewareInterface,PreprocessesHttpResponder>>
      */
     private function collectPreprocessors(SingletonContainer $singletons): iterable
     {
         return $this->collectAttributes(
             $singletons,
-            HttpPreprocessorInterface::class,
+            HttpMiddlewareInterface::class,
             PreprocessesHttpResponder::class,
         );
     }

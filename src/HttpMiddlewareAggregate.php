@@ -8,27 +8,27 @@ use Ds\Map;
 use Ds\PriorityQueue;
 use Ds\Set;
 
-readonly class HttpPreprocessorAggregate
+readonly class HttpMiddlewareAggregate
 {
     /**
      * @var Map<
      *     class-string<HttpInterceptableInterface|HttpResponderInterface>,
-     *     Set<HttpPreprocessorAttribute>
+     *     Set<HttpMiddlewareAttribute>
      * >
      */
-    public Map $preprocessors;
+    public Map $middlewares;
 
     /**
      * @var Map<
      *     class-string<HttpInterceptableInterface|HttpResponderInterface>,
-     *     PriorityQueue<HttpPreprocessorAttribute>
+     *     PriorityQueue<HttpMiddlewareAttribute>
      * >
      */
     private Map $unsorted;
 
     public function __construct()
     {
-        $this->preprocessors = new Map();
+        $this->middlewares = new Map();
         $this->unsorted = new Map();
     }
 
@@ -36,16 +36,16 @@ readonly class HttpPreprocessorAggregate
      * @param class-string<HttpInterceptableInterface|HttpResponderInterface> $httpResponderClassName
      */
     public function registerPreprocessor(
-        HttpPreprocessorInterface $httpPreprocessor,
+        HttpMiddlewareInterface $httpMiddleware,
         string $httpResponderClassName,
         Attribute $attribute,
         int $priority,
     ): void {
         if (!$this->unsorted->hasKey($httpResponderClassName)) {
-            $this->preprocessors->put($httpResponderClassName, new Set());
+            $this->middlewares->put($httpResponderClassName, new Set());
 
             /**
-             * @var PriorityQueue<HttpPreprocessorAttribute>
+             * @var PriorityQueue<HttpMiddlewareAttribute>
              */
             $unsortedQueue = new PriorityQueue();
 
@@ -53,8 +53,8 @@ readonly class HttpPreprocessorAggregate
         }
 
         $this->unsorted->get($httpResponderClassName)->push(
-            new HttpPreprocessorAttribute(
-                $httpPreprocessor,
+            new HttpMiddlewareAttribute(
+                $httpMiddleware,
                 $attribute,
             ),
             $priority,
@@ -65,7 +65,7 @@ readonly class HttpPreprocessorAggregate
     {
         foreach ($this->unsorted as $httpResponderClassName => $processorAttributes) {
             foreach ($processorAttributes as $processorAttribute) {
-                $this->preprocessors->get($httpResponderClassName)->add($processorAttribute);
+                $this->middlewares->get($httpResponderClassName)->add($processorAttribute);
             }
         }
     }

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-readonly class HttpPreprocessorAttribute
+readonly class HttpMiddlewareAttribute
 {
     public function __construct(
-        public readonly HttpPreprocessorInterface $httpPreprocessor,
+        public readonly HttpMiddlewareInterface $httpMiddleware,
         public readonly Attribute $attribute,
     ) {}
 }

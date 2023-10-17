@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Distantmagic\Resonance\HttpPreprocessor;
+namespace Distantmagic\Resonance\HttpMiddleware;
 
 use Distantmagic\Resonance\Attribute;
 use Distantmagic\Resonance\Attribute\InterceptableInternalRedirect;
 use Distantmagic\Resonance\Attribute\PreprocessesHttpResponder;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpInterceptableInterface;
-use Distantmagic\Resonance\HttpPreprocessor;
+use Distantmagic\Resonance\HttpMiddleware;
 use Distantmagic\Resonance\HttpResponder\Redirect;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\InternalLinkBuilder;
@@ -20,14 +20,14 @@ use Swoole\Http\Request;
 use Swoole\Http\Response;
 
 /**
- * @template-extends HttpPreprocessor<InterceptableInternalRedirect>
+ * @template-extends HttpMiddleware<InterceptableInternalRedirect>
  */
 #[PreprocessesHttpResponder(
     attribute: InterceptableInternalRedirect::class,
     priority: 100,
 )]
-#[Singleton(collection: SingletonCollection::HttpPreprocessor)]
-readonly class InternalRedirectInterceptor extends HttpPreprocessor
+#[Singleton(collection: SingletonCollection::HttpMiddleware)]
+readonly class InternalRedirectInterceptor extends HttpMiddleware
 {
     public function __construct(private InternalLinkBuilder $internalLinkBuilder) {}
 

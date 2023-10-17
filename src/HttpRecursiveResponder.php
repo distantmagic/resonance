@@ -13,7 +13,7 @@ use Swoole\Http\Response;
 readonly class HttpRecursiveResponder
 {
     public function __construct(
-        private HttpPreprocessorAggregate $httpPreprocessorAggregate,
+        private HttpMiddlewareAggregate $httpMiddlewareAggregate,
     ) {}
 
     public function respondRecursive(
@@ -22,17 +22,17 @@ readonly class HttpRecursiveResponder
         null|HttpInterceptableInterface|HttpResponderInterface $responder,
     ): void {
         while ($responder) {
-            $preprocessorAttributes = $this->httpPreprocessorAggregate
-                ->preprocessors
+            $middlewareAttributes = $this->httpMiddlewareAggregate
+                ->middlewares
                 ->get($responder::class, null)
             ;
 
-            if ($preprocessorAttributes) {
-                foreach ($preprocessorAttributes as $preprocessorAttribute) {
-                    $responder = $preprocessorAttribute->httpPreprocessor->preprocess(
+            if ($middlewareAttributes) {
+                foreach ($middlewareAttributes as $middlewareAttribute) {
+                    $responder = $middlewareAttribute->httpMiddleware->preprocess(
                         $request,
                         $response,
-                        $preprocessorAttribute->attribute,
+                        $middlewareAttribute->attribute,
                         $responder,
                     );
 
@@ -42,7 +42,7 @@ readonly class HttpRecursiveResponder
                 }
             } elseif ($responder instanceof HttpInterceptableInterface) {
                 throw new LogicException(sprintf(
-                    '%s has no preprocessor assigned',
+                    '%s has no middleware assigned',
                     $responder::class,
                 ));
             }
