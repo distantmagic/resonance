@@ -39,10 +39,16 @@ final class GenerateHttpResponder extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $className = $input->getArgument('class_name');
+
+        if (!is_string($className)) {
+            $output->writeln('<error>class_name is not a string</error>');
+
+            return Command::FAILURE;
+        }
+
         $outputFilename = DM_APP_ROOT.'/HttpResponder/'.$className.'.php';
 
         if (file_exists($outputFilename)) {
-            $output->writeln(sprintf('<error>File already exists: %s</error>', $outputFilename));
 
             return Command::FAILURE;
         }

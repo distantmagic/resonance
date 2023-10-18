@@ -22,56 +22,86 @@ final readonly class HttpRecursiveResponder
         null|HttpInterceptableInterface|HttpResponderInterface $responder,
     ): void {
         while ($responder) {
-            $middlewareAttributes = $this
-                ->httpMiddlewareAggregate
-                ->middlewares
-                ->get($responder::class, null)
-            ;
+            $responder = $this->processMiddlewares($request, $response, $responder);
 
-            if ($middlewareAttributes) {
-                foreach ($middlewareAttributes as $middlewareAttribute) {
-                    $responder = $middlewareAttribute->httpMiddleware->preprocess(
-                        $request,
-                        $response,
-                        $middlewareAttribute->attribute,
-                        $responder,
-                    );
-
-                    if ($responder) {
-                        $responder = $this->doIntercept($request, $response, $responder);
-                    }
-
-                    if (!$responder) {
-                        return;
-                    }
-                }
+            if (!$responder) {
+                return;
             }
 
             if ($responder instanceof HttpResponderInterface) {
-                $responder = $responder->respond($request, $response);
+                $forwardedResponder = $responder->respond($request, $response);
+
+                if (!$forwardedResponder) {
+                    return;
+                }
+
+                if ($forwardedResponder !== $responder) {
+                    $this->respondRecursive($request, $response, $forwardedResponder);
+
+                    return;
+                }
             }
 
-            $responder = $this->doIntercept($request, $response, $responder);
+            if ($responder instanceof HttpInterceptableInterface) {
+                $responder = $this->processInterceptors($request, $response, $responder);
+            }
         }
     }
 
-    private function doIntercept(
+    private function processInterceptors(
         Request $request,
         Response $response,
-        null|HttpInterceptableInterface|HttpResponderInterface $responder,
+        HttpInterceptableInterface $responder,
     ): null|HttpInterceptableInterface|HttpResponderInterface {
-        if (!$responder instanceof HttpInterceptableInterface) {
-            return $responder;
-        }
-
         $interceptor = $this
             ->httpInterceptorAggregate
             ->interceptors
             ->get($responder::class, null)
         ;
 
-        if ($interceptor) {
-            return $interceptor->intercept($request, $response, $responder);
+        if (!$interceptor) {
+            return $responder;
+        }
+
+        $interceptorResponder = $interceptor->intercept($request, $response, $responder);
+
+        if ($interceptorResponder !== $responder) {
+            return $this->respondRecursive($request, $response, $interceptorResponder);
+        }
+
+        return $responder;
+    }
+
+    private function processMiddlewares(
+        Request $request,
+        Response $response,
+        HttpInterceptableInterface|HttpResponderInterface $responder,
+    ): null|HttpInterceptableInterface|HttpResponderInterface {
+        $middlewareAttributes = $this
+            ->httpMiddlewareAggregate
+            ->middlewares
+            ->get($responder::class, null)
+        ;
+
+        if (!$middlewareAttributes) {
+            return $responder;
+        }
+
+        foreach ($middlewareAttributes as $middlewareAttribute) {
+            $middlewareResponder = $middlewareAttribute->httpMiddleware->preprocess(
+                $request,
+                $response,
+                $middlewareAttribute->attribute,
+                $responder,
+            );
+
+            if (!$middlewareResponder) {
+                return null;
+            }
+
+            if ($middlewareResponder !== $responder) {
+                return $this->respondRecursive($request, $response, $middlewareResponder);
+            }
         }
 
         return $responder;
