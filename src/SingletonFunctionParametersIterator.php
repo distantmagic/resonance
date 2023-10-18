@@ -29,8 +29,21 @@ readonly class SingletonFunctionParametersIterator implements IteratorAggregate
                 throw new LogicException('Not a named type: '.$type::class);
             }
 
+            if ($type->isBuiltin()) {
+                throw new LogicException(sprintf(
+                    'Parameter uses builtin type: %s in %s',
+                    $type->getName(),
+                    $this->reflectionFunction->getFileName(),
+                ));
+            }
+
             $typeClassName = $type->getName();
 
+            /**
+             * This is a false positive
+             *
+             * @psalm-suppress NoValue
+             */
             if (!class_exists($typeClassName) && !interface_exists($typeClassName)) {
                 throw new LogicException('Class does not exist: '.$typeClassName);
             }
