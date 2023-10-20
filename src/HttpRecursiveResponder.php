@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use LogicException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
@@ -64,7 +65,7 @@ final readonly class HttpRecursiveResponder
         ;
 
         if (!$interceptor) {
-            return $responder;
+            throw new LogicException('There is no interceptor registered to handle: '.$responder::class);
         }
 
         $interceptorResponder = $interceptor->intercept($request, $response, $responder);
