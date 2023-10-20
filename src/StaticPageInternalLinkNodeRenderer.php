@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Ds\Map;
+use Ds\Set;
 use League\CommonMark\Node\Node;
 use League\CommonMark\Renderer\ChildNodeRendererInterface;
 use League\CommonMark\Renderer\NodeRendererInterface;
 use League\CommonMark\Util\HtmlElement;
+use Stringable;
 
 readonly class StaticPageInternalLinkNodeRenderer implements NodeRendererInterface
 {
@@ -17,16 +19,23 @@ readonly class StaticPageInternalLinkNodeRenderer implements NodeRendererInterfa
      */
     public function __construct(private Map $staticPages) {}
 
-    public function render(Node $node, ChildNodeRendererInterface $childRenderer)
+    public function render(Node $node, ChildNodeRendererInterface $childRenderer): null|string|Stringable
     {
         StaticPageInternalLinkNode::assertInstanceOf($node);
 
-        $staticPage = $this->getStaticPage($node, $childRenderer);
-        $attributes = [
-            'href' => $staticPage->getHref(),
-        ];
+        $staticPages = $this->getStaticPages($node, $childRenderer);
 
-        return new HtmlElement('a', $attributes, $staticPage->frontMatter->title);
+        if (!($staticPages instanceof Set)) {
+            return $this->renderStaticPageLink($staticPages);
+        }
+
+        return new HtmlElement(
+            'div',
+            [
+                'class' => 'document-links-group',
+            ],
+            $staticPages->map($this->renderStaticPageBlockLink(...))->toArray(),
+        );
     }
 
     private function getPageBasename(Node $node, ChildNodeRendererInterface $childRenderer): string
@@ -34,14 +43,87 @@ readonly class StaticPageInternalLinkNodeRenderer implements NodeRendererInterfa
         return $childRenderer->renderNodes($node->children());
     }
 
-    private function getStaticPage(Node $node, ChildNodeRendererInterface $childRenderer): StaticPage
+    /**
+     * @return Set<StaticPage>|StaticPage
+     */
+    private function getStaticPages(Node $node, ChildNodeRendererInterface $childRenderer): Set|StaticPage
     {
         $pageBasename = $this->getPageBasename($node, $childRenderer);
+
+        if (str_contains($pageBasename, '*')) {
+            return $this->getStaticPagesByPattern($node, $pageBasename);
+        }
 
         if (!$this->staticPages->hasKey($pageBasename)) {
             throw new StaticPageReferenceException('The page contains a link to another document that does not exist and thus cannot be rendered. The invalid link: {{'.$pageBasename.'}}');
         }
 
         return $this->staticPages->get($pageBasename);
+    }
+
+    /**
+     * @return Set<StaticPage>
+     */
+    private function getStaticPagesByPattern(Node $node, string $pattern): Set
+    {
+        /**
+         * @var Set<StaticPage>
+         */
+        $ret = new Set();
+
+        $chunks = explode('!', $pattern);
+
+        $pattern = $chunks[0];
+        $skip = $chunks[1] ?? null;
+
+        foreach ($this->staticPages as $baseUrl => $staticPage) {
+            if (fnmatch($pattern, $baseUrl, FNM_PATHNAME) && $baseUrl !== $skip) {
+                $ret->add($staticPage);
+            }
+        }
+
+        if ($ret->isEmpty()) {
+            throw new StaticPageReferenceException('There is no static page that matches pattern: '.$pattern);
+        }
+
+        return $ret;
+    }
+
+    private function renderStaticPageBlockLink(StaticPage $staticPage): Stringable
+    {
+        return new HtmlElement(
+            'a',
+            [
+                'class' => 'document-links-group__link',
+                'href' => $staticPage->getHref(),
+            ],
+            [
+                new HtmlElement(
+                    'div',
+                    [
+                        'class' => 'document-links-group__link__title',
+                    ],
+                    $staticPage->frontMatter->title
+                ),
+                new HtmlElement(
+                    'div',
+                    [
+                        'class' => 'document-links-group__link__description',
+                    ],
+                    $staticPage->frontMatter->description
+                ),
+            ],
+        );
+    }
+
+    private function renderStaticPageLink(StaticPage $staticPage): Stringable
+    {
+        return new HtmlElement(
+            'a',
+            [
+                'href' => $staticPage->getHref(),
+            ],
+            $staticPage->frontMatter->title,
+        );
     }
 }
