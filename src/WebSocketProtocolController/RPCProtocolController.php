@@ -59,7 +59,7 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
             return new WebSocketAuthResolution(false);
         }
 
-        $user = $this->sessionAuthentication->authenticatedUser($request);
+        $user = $this->sessionAuthentication->getAuthenticatedUser($request);
 
         return new WebSocketAuthResolution(
             $this->gatekeeper->withUser($user)->can(SiteAction::StartWebSocketRPCConnection),

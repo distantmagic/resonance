@@ -19,7 +19,7 @@ readonly class GatekeeperRequestContext
         return new GatekeeperUserContext(
             $this->crudActionGateAggregate,
             $this->siteActionGateAggregate,
-            $this->sessionAuthentication->authenticatedUser($request),
+            $this->sessionAuthentication->getAuthenticatedUser($request),
         );
     }
 }

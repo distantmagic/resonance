@@ -27,7 +27,18 @@ final readonly class SessionAuthentication
         $this->authenticatedUsers = new WeakMap();
     }
 
-    public function authenticatedUser(Request $request): ?UserInterface
+    public function clearAuthenticatedUser(Request $request): void
+    {
+        $session = $this->sessionManager->restoreFromRequest($request);
+
+        if (!$session) {
+            return;
+        }
+
+        $session->data->remove('authenticated_user_id');
+    }
+
+    public function getAuthenticatedUser(Request $request): ?UserInterface
     {
         if ($this->authenticatedUsers->offsetExists($request)) {
             return $this->authenticatedUsers->offsetGet($request);
@@ -38,17 +49,6 @@ final readonly class SessionAuthentication
         $this->authenticatedUsers->offsetSet($request, $user);
 
         return $user;
-    }
-
-    public function clearAuthenticatedUser(Request $request): void
-    {
-        $session = $this->sessionManager->restoreFromRequest($request);
-
-        if (!$session) {
-            return;
-        }
-
-        $session->data->remove('authenticated_user_id');
     }
 
     public function setAuthenticatedUser(Request $request, Response $response, UserInterface $user): void

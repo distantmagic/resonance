@@ -24,6 +24,28 @@ final readonly class SecurityPolicyHeaders
         $response->header('x-service-worker-cache', 'true');
     }
 
+    public function sendContentSecurityPolicyHeader(Request $request, Response $response): void
+    {
+        $response->header('content-security-policy', implode(';', [
+            "default-src 'none'",
+
+            "base-uri 'none'",
+            "connect-src 'self'",
+            "font-src 'self'",
+            "form-action 'self'",
+            "frame-ancestors 'none'",
+            "manifest-src 'self'",
+            "img-src 'self'",
+            "object-src 'none'",
+            "script-src 'self'",
+            "style-src 'self' ".$this->getHeaderNonce($request),
+            "worker-src 'self'",
+
+            'upgrade-insecure-requests',
+            'block-all-mixed-content',
+        ]));
+    }
+
     public function sendJsonPagePolicyHeaders(Response $response): void
     {
         $this->sendRefererPolicies($response);
@@ -45,28 +67,6 @@ final readonly class SecurityPolicyHeaders
         $nonce = $this->cspNonceManager->getRequestNonce($request);
 
         return "'nonce-".$nonce."'";
-    }
-
-    private function sendContentSecurityPolicyHeader(Request $request, Response $response): void
-    {
-        $response->header('content-security-policy', implode(';', [
-            "default-src 'none'",
-
-            "base-uri 'none'",
-            "connect-src 'self'",
-            "font-src 'self'",
-            "form-action 'self'",
-            "frame-ancestors 'none'",
-            "manifest-src 'self'",
-            "img-src 'self'",
-            "object-src 'none'",
-            "script-src 'self'",
-            "style-src 'self' ".$this->getHeaderNonce($request),
-            "worker-src 'self'",
-
-            'upgrade-insecure-requests',
-            'block-all-mixed-content',
-        ]));
     }
 
     private function sendCrossOriginPolicies(Response $response): void
