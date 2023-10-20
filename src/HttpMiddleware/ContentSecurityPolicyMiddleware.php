@@ -6,7 +6,7 @@ namespace Distantmagic\Resonance\HttpMiddleware;
 
 use Distantmagic\Resonance\Attribute;
 use Distantmagic\Resonance\Attribute\ContentSecurityPolicy;
-use Distantmagic\Resonance\Attribute\HandlesMiddleware;
+use Distantmagic\Resonance\Attribute\HandlesMiddlewareAttribute;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\ContentSecurityPolicyType;
 use Distantmagic\Resonance\HttpInterceptableInterface;
@@ -20,7 +20,7 @@ use Swoole\Http\Response;
 /**
  * @template-extends HttpMiddleware<ContentSecurityPolicy>
  */
-#[HandlesMiddleware(
+#[HandlesMiddlewareAttribute(
     attribute: ContentSecurityPolicy::class,
     priority: 900,
 )]

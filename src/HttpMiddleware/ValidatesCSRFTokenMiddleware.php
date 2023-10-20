@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\HttpMiddleware;
 
 use Distantmagic\Resonance\Attribute;
-use Distantmagic\Resonance\Attribute\HandlesMiddleware;
+use Distantmagic\Resonance\Attribute\HandlesMiddlewareAttribute;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Attribute\ValidatesCSRFToken;
 use Distantmagic\Resonance\CSRFManager;
@@ -20,7 +20,7 @@ use Swoole\Http\Response;
 /**
  * @template-extends HttpMiddleware<ValidatesCSRFToken>
  */
-#[HandlesMiddleware(
+#[HandlesMiddlewareAttribute(
     attribute: ValidatesCSRFToken::class,
     priority: 1100,
 )]

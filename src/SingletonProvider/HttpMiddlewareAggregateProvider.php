@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
-use Distantmagic\Resonance\Attribute\HandlesMiddleware;
+use Distantmagic\Resonance\Attribute\HandlesMiddlewareAttribute;
 use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpInterceptableInterface;
@@ -62,14 +62,14 @@ final readonly class HttpMiddlewareAggregateProvider extends SingletonProvider
     }
 
     /**
-     * @return iterable<SingletonAttribute<HttpMiddlewareInterface,HandlesMiddleware>>
+     * @return iterable<SingletonAttribute<HttpMiddlewareInterface,HandlesMiddlewareAttribute>>
      */
     private function collectMiddlewares(SingletonContainer $singletons): iterable
     {
         return $this->collectAttributes(
             $singletons,
             HttpMiddlewareInterface::class,
-            HandlesMiddleware::class,
+            HandlesMiddlewareAttribute::class,
         );
     }
 }

@@ -6,7 +6,7 @@ namespace Distantmagic\Resonance\HttpMiddleware;
 
 use Distantmagic\Resonance\Attribute;
 use Distantmagic\Resonance\Attribute\Can;
-use Distantmagic\Resonance\Attribute\HandlesMiddleware;
+use Distantmagic\Resonance\Attribute\HandlesMiddlewareAttribute;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Gatekeeper;
 use Distantmagic\Resonance\HttpInterceptableInterface;
@@ -20,7 +20,7 @@ use Swoole\Http\Response;
 /**
  * @template-extends HttpMiddleware<Can>
  */
-#[HandlesMiddleware(
+#[HandlesMiddlewareAttribute(
     attribute: Can::class,
     priority: 1000,
 )]

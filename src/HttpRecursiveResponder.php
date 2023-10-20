@@ -8,6 +8,10 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
+/**
+ * Each time the responder swaps to a adifferent one, start processing from
+ * the beginning / middleware.
+ */
 #[Singleton]
 final readonly class HttpRecursiveResponder
 {
