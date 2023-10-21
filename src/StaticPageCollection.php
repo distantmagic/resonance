@@ -61,7 +61,7 @@ readonly class StaticPageCollection
             $priorityCompare = $bPriority <=> $aPriority;
 
             if (0 === $priorityCompare) {
-                return $a->frontMatter->title <=> $b->frontMatter->title;
+                return $a->compare($b);
             }
 
             return $priorityCompare;

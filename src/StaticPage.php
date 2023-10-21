@@ -16,6 +16,15 @@ readonly class StaticPage
         public string $content,
     ) {}
 
+    public function compare(self $other): int
+    {
+        if ($this->is($other)) {
+            return 0;
+        }
+
+        return $this->frontMatter->title <=> $other->frontMatter->title;
+    }
+
     public function getBasename(): string
     {
         $relativePath = $this->file->getRelativePath();

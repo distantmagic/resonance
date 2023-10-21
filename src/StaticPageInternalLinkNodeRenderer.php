@@ -38,6 +38,11 @@ readonly class StaticPageInternalLinkNodeRenderer implements NodeRendererInterfa
         );
     }
 
+    private function compareStaticPages(StaticPage $a, StaticPage $b): int
+    {
+        return $a->compare($b);
+    }
+
     private function getPageBasename(Node $node, ChildNodeRendererInterface $childRenderer): string
     {
         return $childRenderer->renderNodes($node->children());
@@ -85,6 +90,8 @@ readonly class StaticPageInternalLinkNodeRenderer implements NodeRendererInterfa
         if ($ret->isEmpty()) {
             throw new StaticPageReferenceException('There is no static page that matches pattern: '.$pattern);
         }
+
+        $ret->sort($this->compareStaticPages(...));
 
         return $ret;
     }
