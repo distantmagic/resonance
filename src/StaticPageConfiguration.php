@@ -8,5 +8,9 @@ readonly class StaticPageConfiguration
 {
     public function __construct(
         public string $baseUrl,
+        public string $esbuildMetafile,
+        public string $inputDirectory,
+        public string $outputDirectory,
+        public string $sitemap,
     ) {}
 }

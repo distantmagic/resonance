@@ -13,6 +13,10 @@ use Nette\Schema\Schema;
 /**
  * @template-extends ConfigurationProvider<StaticPageConfiguration, object{
  *     base_url: string,
+ *     esbuild_metafile: string,
+ *     input_directory: string,
+ *     output_directory: string,
+ *     sitemap: string,
  * }>
  */
 #[Singleton(provides: StaticPageConfiguration::class)]
@@ -27,6 +31,10 @@ final readonly class StaticPageConfigurationProvider extends ConfigurationProvid
     {
         return Expect::structure([
             'base_url' => Expect::string()->min(1)->required(),
+            'esbuild_metafile' => Expect::string()->min(1)->required(),
+            'input_directory' => Expect::string()->min(1)->required(),
+            'output_directory' => Expect::string()->min(1)->required(),
+            'sitemap' => Expect::string()->min(1)->required(),
         ]);
     }
 
@@ -34,6 +42,10 @@ final readonly class StaticPageConfigurationProvider extends ConfigurationProvid
     {
         return new StaticPageConfiguration(
             baseUrl: $validatedData->base_url,
+            esbuildMetafile: $validatedData->esbuild_metafile,
+            inputDirectory: $validatedData->input_directory,
+            outputDirectory: $validatedData->output_directory,
+            sitemap: $validatedData->sitemap,
         );
     }
 }
