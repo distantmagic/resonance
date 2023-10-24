@@ -1,0 +1,14 @@
+name: distantmagic
+root: ~/workspace/distantmagic/resonance
+
+on_project_start:
+  - make node_modules
+  - make vendor
+  - make ssg
+
+windows:
+  - "esbuild.watch": make esbuild.watch
+  - "eslint.watch": make eslint.watch
+  - "psalm.watch": make psalm.watch
+  - "tsc.watch": make tsc.watch
+  - "shell": git status

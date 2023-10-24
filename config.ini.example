@@ -41,8 +41,6 @@ esbuild_metafile = esbuild-meta-docs.json
 input_directory = docs
 output_directory = docs/build
 sitemap = docs/build/sitemap.xml
-globals[discord] = https://discord.gg/kysUzFqSCK
-globals[github] = https://github.com/distantmagic/resonance
 
 [swoole]
 host = 127.0.0.1
