@@ -62,9 +62,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on:
-      - linux
-      - ubuntu-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: setup php with extensions
@@ -96,9 +94,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on:
-      - linux
-      - ubuntu-latest
+    runs-on: ubuntu-latest
 
     needs: build
     steps:
