@@ -79,8 +79,6 @@ jobs:
 
       - name: create static pages artifact
         run: BUILD_ID=$GITHUB_SHA make docs/artifact.tar
-        env:
-          APP_ENV: ${{ vars.APP_ENV }}
 
       - name: upload artifact
         uses: actions/upload-artifact@v3

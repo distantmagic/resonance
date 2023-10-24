@@ -1,4 +1,3 @@
-APP_ENV ?= development
 BUILD_ID ?= 20
 COMPOSER_BIN ?= $(shell which composer)
 DOCS_ESBUILD_TARGET_DIRECTORY ?= docs/build/assets
