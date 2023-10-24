@@ -1,0 +1,8 @@
+@font-face {
+  font-display: swap;
+  font-family: "undefined medium";
+  font-weight: 400;
+  src:
+    local("undefined medium"),
+    url("../fonts/undefined-medium/undefined-medium.ttf") format("truetype");
+}

@@ -1,0 +1,74 @@
+*,
+* * {
+  box-sizing: border-box;
+}
+
+::selection {
+  background-color: var(--color-body-font);
+  color: var(--color-body-background);
+}
+
+fieldset,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+pre,
+ol,
+ul {
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+button,
+input,
+textarea {
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+input,
+textarea {
+  color: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline solid var(--color-link-decoration);
+  text-decoration-thickness: 3px;
+}
+
+a:hover {
+  text-decoration-color: var(--color-text-decoration-highlight);
+}
+
+body {
+  background-color: var(--color-body-background);
+  color: var(--color-body-font);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
+  margin: 0;
+  padding: 0;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  color: inherit;
+  cursor: default;
+  filter: contrast(10%) opacity(0.6);
+  user-select: none;
+}
+
+canvas {
+  image-rendering: pixelated;
+}

@@ -1,0 +1,56 @@
+[app]
+env = development
+esbuild_metafile = esbuild-meta-app.json
+
+[database]
+default[driver] = mysql
+default[host] = 127.0.0.1
+default[port] = 3306
+default[database] = distantmagic
+default[username] = distantmagic
+default[password] = distantmagic
+default[log_queries] = false
+default[pool_prefill] = false
+default[pool_size] = 8
+
+[manifest]
+background_color = "#ffffff"
+theme_color = "#ffffff"
+
+[redis]
+default[db_index] = 0
+default[host] = 127.0.0.1
+default[password] =
+default[port] = 6379
+default[prefix] = dm:
+default[timeout] = 1
+default[pool_prefill] = false
+default[pool_size] = 8
+
+[sentry]
+dsn =
+
+[session]
+cookie_lifespan = 86400
+cookie_name = dmsession
+redis_connection_pool = default
+
+[static]
+base_url = https://docs.distantmagic.com
+esbuild_metafile = esbuild-meta-docs.json
+input_directory = docs
+output_directory = docs/build
+sitemap = docs/build/sitemap.xml
+globals[discord] = https://discord.gg/kysUzFqSCK
+globals[github] = https://github.com/distantmagic/resonance
+
+[swoole]
+host = 127.0.0.1
+port = 9501
+log_level = SWOOLE_LOG_DEBUG
+ssl_cert_file = ssl/origin.crt
+ssl_key_file = ssl/origin.key
+
+[translator]
+base_directory = app/lang
+default_primary_language = en

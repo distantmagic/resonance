@@ -1,0 +1,8 @@
+@font-face {
+  font-display: swap;
+  font-family: Lora;
+  font-weight: 400;
+  src:
+    local("Lora"),
+    url("../fonts/lora/lora.ttf") format("truetype");
+}

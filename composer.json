@@ -36,7 +36,8 @@
         "symfony/yaml": "^6.3",
         "twig/cache-extra": "^3.7",
         "twig/twig": "^3.7",
-        "webonyx/graphql-php": "^15.6"
+        "webonyx/graphql-php": "^15.6",
+        "nette/php-generator": "^4.1"
     },
     "require-dev": {
         "mockery/mockery": "^1.6",

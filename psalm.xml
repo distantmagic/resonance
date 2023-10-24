@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<psalm
+    errorLevel="1"
+    findUnusedBaselineEntry="true"
+    findUnusedCode="true"
+    findUnusedPsalmSuppress="true"
+    reportInfo="true"
+    resolveFromConfigFile="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+>
+    <projectFiles>
+        <directory name="src" />
+        <file name="constants.php" />
+        <ignoreFiles>
+            <directory name="vendor" />
+        </ignoreFiles>
+    </projectFiles>
+
+    <issueHandlers>
+        <PossiblyUnusedReturnValue>
+            <errorLevel type="suppress">
+                <directory name="src/HttpResponder"/>
+            </errorLevel>
+        </PossiblyUnusedReturnValue>
+        <PropertyNotSetInConstructor>
+            <errorLevel type="suppress">
+                <referencedProperty name="GraphQL\Type\Definition\HasFieldsTypeImplementation::$fields" />
+                <referencedProperty name="GraphQL\Type\Definition\ImplementingTypeImplementation::$interfaces" />
+            </errorLevel>
+        </PropertyNotSetInConstructor>
+        <UndefinedDocblockClass>
+            <errorLevel type="suppress">
+                <!--
+                    GraphQL library has some errors in docblock types
+                -->
+                <referencedClass name="GraphQL\Executor\SerializableResult" />
+            </errorLevel>
+        </UndefinedDocblockClass>
+        <UnusedClass>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </UnusedClass>
+    </issueHandlers>
+
+    <stubs>
+        <file name="vendor/swoole/ide-helper/src/swoole/Swoole/Http/Request.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole/Swoole/Http/Response.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole/Swoole/Http/Server.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole/Swoole/WebSocket/Frame.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole/Swoole/WebSocket/Server.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/ConnectionPool.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/Coroutine/WaitGroup.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/ObjectProxy.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/Database/ObjectProxy.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/Database/PDOConfig.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/Database/PDOPool.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/Database/PDOProxy.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/Database/PDOStatementProxy.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/Database/RedisConfig.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/Database/RedisPool.php" />
+    </stubs>
+</psalm>

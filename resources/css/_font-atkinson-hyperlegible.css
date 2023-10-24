@@ -1,0 +1,9 @@
+@font-face {
+  font-display: swap;
+  font-family: "Atkinson Hyperlegible";
+  font-weight: 400;
+  src:
+    local("Atkinson Hyperlegible"),
+    url("../fonts/atkinson-hyperlegible/atkinson-hyperlegible-regular.ttf")
+      format("truetype");
+}
