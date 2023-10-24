@@ -42,10 +42,11 @@ final readonly class StaticPageConfigurationProvider extends ConfigurationProvid
     {
         return new StaticPageConfiguration(
             baseUrl: $validatedData->base_url,
-            esbuildMetafile: $validatedData->esbuild_metafile,
-            inputDirectory: $validatedData->input_directory,
-            outputDirectory: $validatedData->output_directory,
-            sitemap: $validatedData->sitemap,
+            esbuildMetafile: DM_ROOT.'/'.$validatedData->esbuild_metafile,
+            inputDirectory: DM_ROOT.'/'.$validatedData->input_directory,
+            outputDirectory: DM_ROOT.'/'.$validatedData->output_directory,
+            sitemap: DM_ROOT.'/'.$validatedData->sitemap,
+            stripOutputPrefix: $validatedData->output_directory.'/',
         );
     }
 }

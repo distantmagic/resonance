@@ -11,12 +11,16 @@ use Throwable;
 class StaticPageFileException extends LogicException
 {
     public function __construct(
-        public SplFileInfo $splFileInfo,
+        SplFileInfo $splFileInfo,
         string $message,
         ?Throwable $previous = null,
     ) {
         parent::__construct(
-            message: $message,
+            message: sprintf(
+                '%s: "%s"',
+                $message,
+                $splFileInfo->getPathname(),
+            ),
             previous: $previous,
         );
     }

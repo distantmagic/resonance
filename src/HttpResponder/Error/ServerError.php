@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\HttpResponder\Error;
 
-use Distantmagic\Resonance\ApplicationContext;
+use Distantmagic\Resonance\ApplicationConfiguration;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\ContentType;
 use Distantmagic\Resonance\Environment;
@@ -22,7 +22,7 @@ use Throwable;
 final readonly class ServerError extends Error
 {
     public function __construct(
-        private ApplicationContext $applicationContext,
+        private ApplicationConfiguration $applicationConfiguration,
         ErrorHttpResponderDependencies $errorHttpResponderDependencies,
         ServerErrorEntity $httpError,
     ) {
@@ -38,7 +38,7 @@ final readonly class ServerError extends Error
             throw new RuntimeException('Server response in not writable. Unable to report error', 0, $throwable);
         }
 
-        if (Environment::Development !== $this->applicationContext->environment) {
+        if (Environment::Development !== $this->applicationConfiguration->environment) {
             return $this->respond($request, $response);
         }
 

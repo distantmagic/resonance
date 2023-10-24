@@ -12,7 +12,7 @@ use GraphQL\Type\Schema;
 readonly class GraphQLAdapter
 {
     public function __construct(
-        private ApplicationContext $applicationContext,
+        private ApplicationConfiguration $applicationConfiguration,
         private Schema $schema,
     ) {}
 
@@ -36,7 +36,7 @@ readonly class GraphQLAdapter
         );
 
         return new GraphQLExecutionPromise(
-            $this->applicationContext,
+            $this->applicationConfiguration,
             $promise,
         );
     }

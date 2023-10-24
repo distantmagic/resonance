@@ -15,7 +15,7 @@ class GraphQLExecutionPromise implements JsonSerializable
     private ?ExecutionResult $executionResult = null;
 
     public function __construct(
-        private ApplicationContext $applicationContext,
+        private ApplicationConfiguration $applicationConfiguration,
         private Promise $promise,
     ) {}
 
@@ -49,7 +49,7 @@ class GraphQLExecutionPromise implements JsonSerializable
         /**
          * @var array
          */
-        return Environment::Production === $this->applicationContext->environment
+        return Environment::Production === $this->applicationConfiguration->environment
             ? $result->toArray()
             : $result->toArray(DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::INCLUDE_TRACE);
     }

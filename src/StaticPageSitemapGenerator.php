@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Ds\Map;
+use Distantmagic\Resonance\Attribute\Singleton;
 
+#[Singleton]
 readonly class StaticPageSitemapGenerator
 {
-    /**
-     * @param Map<string, StaticPage> $staticPages
-     */
     public function __construct(
-        private Map $staticPages,
+        private StaticPageAggregate $staticPageAggregate,
         private StaticPageConfiguration $staticPageConfiguration,
     ) {}
 
@@ -25,7 +23,7 @@ readonly class StaticPageSitemapGenerator
             fwrite($fhandle, '<?xml version="1.0" encoding="UTF-8"?>'."\n");
             fwrite($fhandle, '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n");
 
-            foreach ($this->staticPages as $staticPage) {
+            foreach ($this->staticPageAggregate->staticPages as $staticPage) {
                 fwrite($fhandle, sprintf(
                     "<url><loc>%s</loc><lastmod>%s</lastmod></url>\n",
                     $baseUrl.$staticPage->getHref(),

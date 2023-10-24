@@ -5,24 +5,30 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Ds\Map;
-use Ds\Set;
 
 readonly class StaticPageCollectionAggregate
 {
     /**
-     * @var Set<string>
+     * @var Map<StaticPage, StaticPage>
      */
-    public Set $unusedCollections;
+    public Map $pagesFollowers;
+
+    /**
+     * @var Map<StaticPage, StaticPage>
+     */
+    public Map $pagesPredecessors;
 
     /**
      * @var Map<string, StaticPageCollection>
      */
     private Map $collections;
 
-    public function __construct()
-    {
+    public function __construct(
+        private StaticPageAggregate $staticPageAggregate,
+    ) {
         $this->collections = new Map();
-        $this->unusedCollections = new Set();
+        $this->pagesFollowers = new Map();
+        $this->pagesPredecessors = new Map();
     }
 
     public function addToCollections(StaticPage $staticPage): void
@@ -30,15 +36,27 @@ readonly class StaticPageCollectionAggregate
         foreach ($staticPage->frontMatter->collections as $frontMatterCollection) {
             $this->addToCollection($staticPage, $frontMatterCollection);
         }
+
+        $nextBasename = $staticPage->frontMatter->next;
+
+        if (!isset($nextBasename)) {
+            return;
+        }
+
+        if (!$this->staticPageAggregate->staticPages->hasKey($nextBasename)) {
+            throw new StaticPageReferenceException('Static Page referenced in the "next" field does not exist: '.$nextBasename);
+        }
+
+        $nextStaticPage = $this->staticPageAggregate->staticPages->get($nextBasename);
+
+        $this->pagesFollowers->put($staticPage, $nextStaticPage);
+        $this->pagesPredecessors->put($nextStaticPage, $staticPage);
     }
 
-    /**
-     * @param Map<string, StaticPage> $staticPages
-     */
-    public function sortCollections(Map $staticPages): void
+    public function sortCollections(): void
     {
         foreach ($this->collections as $collection) {
-            $collection->sort($staticPages);
+            $collection->sort($this->staticPageAggregate->staticPages);
         }
     }
 
@@ -47,8 +65,6 @@ readonly class StaticPageCollectionAggregate
         if (!$this->collections->hasKey($collectionName)) {
             throw new StaticPageReferenceException('Tried to use an empty collection. Please add elements to the collection or do not use it: '.$collectionName);
         }
-
-        $this->unusedCollections->remove($collectionName);
 
         return $this->collections->get($collectionName);
     }
@@ -72,7 +88,6 @@ readonly class StaticPageCollectionAggregate
         $collection = new StaticPageCollection();
 
         $this->collections->put($collectionName, $collection);
-        $this->unusedCollections->add($collectionName);
 
         return $collection;
     }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Ds\Map;
+use Distantmagic\Resonance\Attribute\Singleton;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
 use League\CommonMark\Extension\CommonMark\Node\Block\FencedCode;
@@ -15,16 +15,14 @@ use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
 use League\CommonMark\Extension\HeadingPermalink\HeadingPermalinkExtension;
 use League\CommonMark\MarkdownConverter;
 
+#[Singleton]
 readonly class StaticPageMarkdownParser
 {
     public MarkdownConverter $converter;
     public Environment $environment;
 
-    /**
-     * @param Map<string, StaticPage> $staticPages
-     */
     public function __construct(
-        Map $staticPages,
+        StaticPageAggregate $staticPageAggregate,
         StaticPageConfiguration $staticPageConfiguration,
     ) {
         $this->environment = new Environment([
@@ -49,7 +47,7 @@ readonly class StaticPageMarkdownParser
         $this->environment->addExtension(new HeadingPermalinkExtension());
 
         $this->environment->addExtension(new CommonMarkAdmonitionExtension());
-        $this->environment->addExtension(new StaticPageInternalLinkMarkdownExtension($staticPages));
+        $this->environment->addExtension(new StaticPageInternalLinkMarkdownExtension($staticPageAggregate->staticPages));
 
         $this->environment->addRenderer(Code::class, new CommonMarkInlineCodeRenderer());
         $this->environment->addRenderer(FencedCode::class, new CommonMarkFencedCodeRenderer());

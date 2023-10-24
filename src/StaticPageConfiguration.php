@@ -12,5 +12,6 @@ readonly class StaticPageConfiguration
         public string $inputDirectory,
         public string $outputDirectory,
         public string $sitemap,
+        public string $stripOutputPrefix,
     ) {}
 }

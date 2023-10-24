@@ -4,31 +4,36 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\Template\StaticPageLayout\Turbo;
 
-use Distantmagic\Resonance\EsbuildMeta;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\StaticPageLayout;
+use Distantmagic\Resonance\EsbuildMetaBuilder;
+use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\StaticPage;
+use Distantmagic\Resonance\StaticPageAggregate;
 use Distantmagic\Resonance\StaticPageCollectionAggregate;
+use Distantmagic\Resonance\StaticPageConfiguration;
 use Distantmagic\Resonance\StaticPageContentRenderer;
 use Distantmagic\Resonance\Template\StaticPageLayout\Turbo;
 use Distantmagic\Resonance\TemplateFilters;
-use Ds\Map;
 use Generator;
 
+#[Singleton(collection: SingletonCollection::StaticPageLayout)]
+#[StaticPageLayout('dm:page')]
 readonly class Page extends Turbo
 {
-    /**
-     * @param Map<string,StaticPage> $staticPages
-     */
     public function __construct(
-        EsbuildMeta $esbuildMeta,
-        Map $staticPages,
+        EsbuildMetaBuilder $esbuildMetaBuilder,
+        StaticPageAggregate $staticPageAggregate,
         StaticPageCollectionAggregate $staticPageCollectionAggregate,
+        StaticPageConfiguration $staticPageConfiguration,
         private StaticPageContentRenderer $staticPageContentRenderer,
         TemplateFilters $filters,
     ) {
         parent::__construct(
-            $esbuildMeta,
-            $staticPages,
+            $esbuildMetaBuilder,
+            $staticPageAggregate->staticPages,
             $staticPageCollectionAggregate,
+            $staticPageConfiguration,
             $filters,
         );
     }

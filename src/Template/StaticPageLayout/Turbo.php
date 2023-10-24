@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\Template\StaticPageLayout;
 
 use Distantmagic\Resonance\EsbuildMeta;
+use Distantmagic\Resonance\EsbuildMetaBuilder;
 use Distantmagic\Resonance\EsbuildMetaEntryPoints;
 use Distantmagic\Resonance\EsbuildMetaPreloadsRenderer;
 use Distantmagic\Resonance\StaticPage;
 use Distantmagic\Resonance\StaticPageCollectionAggregate;
+use Distantmagic\Resonance\StaticPageConfiguration;
 use Distantmagic\Resonance\StaticPageParentIterator;
 use Distantmagic\Resonance\Template\StaticPageLayout;
 use Distantmagic\Resonance\TemplateFilters;
@@ -18,6 +20,8 @@ use Generator;
 
 abstract readonly class Turbo extends StaticPageLayout
 {
+    private EsbuildMeta $esbuildMeta;
+
     /**
      * @return Generator<string>
      */
@@ -27,11 +31,17 @@ abstract readonly class Turbo extends StaticPageLayout
      * @param Map<string, StaticPage> $staticPages
      */
     public function __construct(
-        private EsbuildMeta $esbuildMeta,
+        private EsbuildMetaBuilder $esbuildMetaBuilder,
         protected Map $staticPages,
         private StaticPageCollectionAggregate $staticPageCollectionAggregate,
+        private StaticPageConfiguration $staticPageConfiguration,
         private TemplateFilters $filters,
-    ) {}
+    ) {
+        $this->esbuildMeta = $this->esbuildMetaBuilder->build(
+            $this->staticPageConfiguration->esbuildMetafile,
+            $this->staticPageConfiguration->stripOutputPrefix,
+        );
+    }
 
     /**
      * @return Generator<string>

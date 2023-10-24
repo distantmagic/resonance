@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\EventListener;
 
-use Distantmagic\Resonance\ApplicationContext;
+use Distantmagic\Resonance\ApplicationConfiguration;
 use Distantmagic\Resonance\Attribute\ListensTo;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Environment;
@@ -22,7 +22,7 @@ use Psr\Log\LoggerInterface;
 final readonly class ReportThrowableToLogger extends EventListener
 {
     public function __construct(
-        private ApplicationContext $app,
+        private ApplicationConfiguration $app,
         private LoggerInterface $logger,
     ) {}
 

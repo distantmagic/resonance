@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\Singleton;
 use Generator;
 use LogicException;
 use RuntimeException;
 
+#[Singleton]
 readonly class EsbuildMetaBuilder
 {
     public function build(

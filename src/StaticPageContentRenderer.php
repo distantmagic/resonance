@@ -4,24 +4,12 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Ds\Map;
+use Distantmagic\Resonance\Attribute\Singleton;
 
+#[Singleton]
 readonly class StaticPageContentRenderer
 {
-    public StaticPageMarkdownParser $markdownParser;
-
-    /**
-     * @param Map<string, StaticPage> $staticPages
-     */
-    public function __construct(
-        Map $staticPages,
-        StaticPageConfiguration $staticPageConfiguration,
-    ) {
-        $this->markdownParser = new StaticPageMarkdownParser(
-            $staticPages,
-            $staticPageConfiguration,
-        );
-    }
+    public function __construct(private StaticPageMarkdownParser $markdownParser) {}
 
     public function renderContent(StaticPage $staticPage): string
     {

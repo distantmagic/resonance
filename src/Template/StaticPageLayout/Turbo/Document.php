@@ -4,21 +4,27 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\Template\StaticPageLayout\Turbo;
 
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\StaticPageLayout;
 use Distantmagic\Resonance\CommonMarkTableOfContentsBuilder;
-use Distantmagic\Resonance\EsbuildMeta;
+use Distantmagic\Resonance\EsbuildMetaBuilder;
+use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\StaticPage;
+use Distantmagic\Resonance\StaticPageAggregate;
 use Distantmagic\Resonance\StaticPageCollectionAggregate;
-use Distantmagic\Resonance\StaticPageContentRenderer;
+use Distantmagic\Resonance\StaticPageConfiguration;
+use Distantmagic\Resonance\StaticPageMarkdownParser;
 use Distantmagic\Resonance\Template\Component\StaticPageBreadcrumbs;
 use Distantmagic\Resonance\Template\Component\StaticPageDocumentsMenu;
 use Distantmagic\Resonance\Template\Component\StaticPageDocumentTableOfContents;
 use Distantmagic\Resonance\Template\StaticPageLayout\Turbo;
 use Distantmagic\Resonance\TemplateFilters;
-use Ds\Map;
 use Ds\PriorityQueue;
 use Generator;
 use IntlDateFormatter;
 
+#[Singleton(collection: SingletonCollection::StaticPageLayout)]
+#[StaticPageLayout('dm:document')]
 readonly class Document extends Turbo
 {
     private StaticPageBreadcrumbs $breadcrumbs;
@@ -27,30 +33,25 @@ readonly class Document extends Turbo
     private StaticPageDocumentTableOfContents $tableOfContents;
     private CommonMarkTableOfContentsBuilder $tableOfContentsBuilder;
 
-    /**
-     * @param Map<string, StaticPage>    $staticPages
-     * @param Map<StaticPage,StaticPage> $staticPagesFollowers
-     * @param Map<StaticPage,StaticPage> $staticPagesPredecessors
-     */
     public function __construct(
-        EsbuildMeta $esbuildMeta,
-        Map $staticPages,
-        private Map $staticPagesFollowers,
-        private Map $staticPagesPredecessors,
-        StaticPageCollectionAggregate $staticPageCollectionAggregate,
-        private StaticPageContentRenderer $staticPageContentRenderer,
+        EsbuildMetaBuilder $esbuildMetaBuilder,
+        private StaticPageCollectionAggregate $staticPageCollectionAggregate,
+        StaticPageConfiguration $staticPageConfiguration,
+        private StaticPageMarkdownParser $staticPageMarkdownParser,
+        StaticPageAggregate $staticPageAggregate,
         TemplateFilters $filters,
     ) {
         parent::__construct(
-            $esbuildMeta,
-            $staticPages,
+            $esbuildMetaBuilder,
+            $staticPageAggregate->staticPages,
             $staticPageCollectionAggregate,
+            $staticPageConfiguration,
             $filters,
         );
 
-        $this->breadcrumbs = new StaticPageBreadcrumbs($staticPages);
+        $this->breadcrumbs = new StaticPageBreadcrumbs($staticPageAggregate->staticPages);
         $this->documentsMenu = new StaticPageDocumentsMenu(
-            $staticPages,
+            $staticPageAggregate->staticPages,
             $staticPageCollectionAggregate,
             1,
         );
@@ -84,9 +85,8 @@ readonly class Document extends Turbo
 
     protected function renderBodyContent(StaticPage $staticPage): Generator
     {
-        $markdownParser = $this->staticPageContentRenderer->markdownParser;
-
-        $renderedOutput = $markdownParser
+        $renderedOutput = $this
+            ->staticPageMarkdownParser
             ->converter
             ->convert($staticPage->content)
         ;
@@ -136,7 +136,7 @@ readonly class Document extends Turbo
 
     protected function renderMeta(StaticPage $staticPage): Generator
     {
-        $nextPage = $this->staticPagesFollowers->get($staticPage, null);
+        $nextPage = $this->staticPageCollectionAggregate->pagesFollowers->get($staticPage, null);
 
         if (isset($nextPage)) {
             yield <<<HTML
@@ -144,7 +144,7 @@ readonly class Document extends Turbo
             HTML;
         }
 
-        $prevPage = $this->staticPagesPredecessors->get($staticPage, null);
+        $prevPage = $this->staticPageCollectionAggregate->pagesPredecessors->get($staticPage, null);
 
         if (isset($prevPage)) {
             yield <<<HTML
@@ -158,8 +158,8 @@ readonly class Document extends Turbo
      */
     protected function renderRelatedPageReference(StaticPage $staticPage): Generator
     {
-        $nextPage = $this->staticPagesFollowers->get($staticPage, null);
-        $prevPage = $this->staticPagesPredecessors->get($staticPage, null);
+        $nextPage = $this->staticPageCollectionAggregate->pagesFollowers->get($staticPage, null);
+        $prevPage = $this->staticPageCollectionAggregate->pagesPredecessors->get($staticPage, null);
 
         if (!isset($nextPage) && !isset($prevPage)) {
             return;

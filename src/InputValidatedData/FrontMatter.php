@@ -7,7 +7,6 @@ namespace Distantmagic\Resonance\InputValidatedData;
 use Distantmagic\Resonance\FrontMatterCollectionReference;
 use Distantmagic\Resonance\InputValidatedData;
 use Distantmagic\Resonance\StaticPageContentType;
-use Distantmagic\Resonance\StaticPageLayoutHandler;
 
 readonly class FrontMatter extends InputValidatedData
 {
@@ -20,7 +19,7 @@ readonly class FrontMatter extends InputValidatedData
         public StaticPageContentType $contentType,
         public string $description,
         public bool $isDraft,
-        public StaticPageLayoutHandler $layout,
+        public string $layout,
         public ?string $next,
         public ?string $parent,
         public array $registerStylesheets,

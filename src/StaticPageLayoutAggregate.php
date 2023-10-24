@@ -4,48 +4,19 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Distantmagic\Resonance\Template\StaticPageLayout\Turbo\Document;
-use Distantmagic\Resonance\Template\StaticPageLayout\Turbo\Page;
 use Ds\Map;
 use Generator;
-use Throwable;
 
 readonly class StaticPageLayoutAggregate
 {
-    private TemplateStaticPageLayoutInterface $document;
-    private TemplateStaticPageLayoutInterface $page;
-
     /**
-     * @param Map<string,StaticPage>     $staticPages
-     * @param Map<StaticPage,StaticPage> $staticPagesFollowers
-     * @param Map<StaticPage,StaticPage> $staticPagesPredecessors
+     * @var Map<string,StaticPageLayoutInterface>
      */
-    public function __construct(
-        EsbuildMeta $esbuildMeta,
-        Map $staticPages,
-        Map $staticPagesFollowers,
-        Map $staticPagesPredecessors,
-        StaticPageCollectionAggregate $staticPageCollectionAggregate,
-        StaticPageContentRenderer $staticPageContentRenderer,
-    ) {
-        $templateFilters = new TemplateFilters();
+    public Map $staticPageLayout;
 
-        $this->document = new Document(
-            $esbuildMeta,
-            $staticPages,
-            $staticPagesFollowers,
-            $staticPagesPredecessors,
-            $staticPageCollectionAggregate,
-            $staticPageContentRenderer,
-            $templateFilters,
-        );
-        $this->page = new Page(
-            $esbuildMeta,
-            $staticPages,
-            $staticPageCollectionAggregate,
-            $staticPageContentRenderer,
-            $templateFilters,
-        );
+    public function __construct()
+    {
+        $this->staticPageLayout = new Map();
     }
 
     /**
@@ -53,25 +24,24 @@ readonly class StaticPageLayoutAggregate
      */
     public function render(StaticPage $staticPage): Generator
     {
-        try {
-            yield from $this
-                ->selectLayout($staticPage->frontMatter->layout)
-                ->renderStaticPage($staticPage)
-            ;
-        } catch (Throwable $exception) {
-            throw new StaticPageRenderingException(
-                'Error occurred while rendering the page: '.$staticPage->getBasename(),
-                0,
-                $exception
-            );
-        }
+        yield from $this
+            ->selectLayout($staticPage)
+            ->renderStaticPage($staticPage)
+        ;
     }
 
-    public function selectLayout(StaticPageLayoutHandler $layout): TemplateStaticPageLayoutInterface
+    public function selectLayout(StaticPage $staticPage): StaticPageLayoutInterface
     {
-        return match ($layout) {
-            StaticPageLayoutHandler::Document => $this->document,
-            StaticPageLayoutHandler::Page => $this->page,
-        };
+        $layout = $staticPage->frontMatter->layout;
+
+        if (!$this->staticPageLayout->hasKey($layout)) {
+            throw new StaticPageReferenceException(sprintf(
+                'Static page layout is not defined: "%s". Trying to render page: "%s"',
+                $layout,
+                $staticPage->getBasename(),
+            ));
+        }
+
+        return $this->staticPageLayout->get($layout);
     }
 }

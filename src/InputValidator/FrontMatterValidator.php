@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\InputValidator;
 
+use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\FrontMatterCollectionReference;
 use Distantmagic\Resonance\InputValidatedData\FrontMatter;
 use Distantmagic\Resonance\InputValidator;
 use Distantmagic\Resonance\StaticPageContentType;
-use Distantmagic\Resonance\StaticPageLayoutHandler;
 use Generator;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
@@ -26,6 +26,7 @@ use Nette\Schema\Schema;
  *     title: string,
  * }>
  */
+#[Singleton]
 readonly class FrontMatterValidator extends InputValidator
 {
     protected function castValidatedData(mixed $data): FrontMatter
@@ -37,7 +38,7 @@ readonly class FrontMatterValidator extends InputValidator
             contentType: StaticPageContentType::from($data->content_type),
             description: trim($data->description),
             isDraft: $data->draft,
-            layout: StaticPageLayoutHandler::from($data->layout),
+            layout: $data->layout,
             next: $data->next,
             parent: $data->parent,
             registerStylesheets: $data->register_stylesheets,
@@ -47,7 +48,6 @@ readonly class FrontMatterValidator extends InputValidator
 
     protected function makeSchema(): Schema
     {
-        $layouts = StaticPageLayoutHandler::values();
         $contentTypes = StaticPageContentType::values();
 
         return Expect::structure([
@@ -63,7 +63,7 @@ readonly class FrontMatterValidator extends InputValidator
             'content_type' => Expect::anyOf(...$contentTypes)->default(StaticPageContentType::Markdown->value),
             'description' => Expect::string()->min(1)->required(),
             'draft' => Expect::bool()->default(false),
-            'layout' => Expect::anyOf(...$layouts)->required(),
+            'layout' => Expect::string()->min(1)->required(),
             'next' => Expect::string()->min(1),
             'parent' => Expect::string()->min(1),
             'register_stylesheets' => Expect::listOf(

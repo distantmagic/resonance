@@ -6,7 +6,7 @@ namespace Distantmagic\Resonance;
 
 use Generator;
 
-interface TemplateStaticPageLayoutInterface extends TemplateInterface
+interface StaticPageLayoutInterface extends TemplateInterface
 {
     /**
      * @return Generator<string>
