@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Ds\Map;
 use Generator;
 use LogicException;
 use RuntimeException;
@@ -12,10 +13,24 @@ use RuntimeException;
 #[Singleton]
 readonly class EsbuildMetaBuilder
 {
+    /**
+     * @var Map<string,EsbuildMeta>
+     */
+    private Map $esbuildMetaCache;
+
+    public function __construct()
+    {
+        $this->esbuildMetaCache = new Map();
+    }
+
     public function build(
         string $esbuildMetafile,
         string $stripOutputPrefix = '',
     ): EsbuildMeta {
+        if ($this->esbuildMetaCache->hasKey($esbuildMetafile)) {
+            return $this->esbuildMetaCache->get($esbuildMetafile);
+        }
+
         $esbuildMeta = new EsbuildMeta();
 
         foreach (
@@ -27,6 +42,8 @@ readonly class EsbuildMetaBuilder
         ) {
             $esbuildMeta->registerImport($filename, $importPath);
         }
+
+        $this->esbuildMetaCache->put($esbuildMetafile, $esbuildMeta);
 
         return $esbuildMeta;
     }
