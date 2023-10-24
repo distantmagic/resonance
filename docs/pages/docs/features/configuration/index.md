@@ -94,7 +94,7 @@ default[pool_prefill] = true
 default[pool_size] = 8
 
 [static]
-base_url = https://docs.distantmagic.com
+base_url = https://resonance.distantmagic.com
 esbuild_metafile = esbuild-meta-docs.json
 input_directory = docs
 output_directory = docs/build

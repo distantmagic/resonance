@@ -63,4 +63,4 @@ jobs:
   #   needs: deploy
   #   steps:
   #     - name: ping Google about sitemap
-  #       run: curl "https://www.google.com/ping?sitemap=https://docs.distantmagic.com/sitemap.xml"
+  #       run: curl "https://www.google.com/ping?sitemap=https://resonance.distantmagic.com/sitemap.xml"
