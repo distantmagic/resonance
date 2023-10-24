@@ -9,7 +9,8 @@
   --color-link-active: #ffc000;
   --color-link-decoration: var(--color-link-active);
   --color-primary-footer-background: #0c0c0c;
-  --color-primary-navigation-background: #0c0c0c;
+/*  --color-primary-navigation-background: #0c0c0c;*/
+  --color-primary-navigation-background: var(--color-body-background);
   --color-text-decoration-highlight: var(--color-body-font);
   --font-family-body: "Atkinson Hyperlegible", sans-serif;
   --font-family-lora: "Lora", var(--font-family-body), serif;
@@ -132,6 +133,9 @@ a:active,
 .primary-navigation {
   align-items: center;
   background-color: var(--color-primary-navigation-background);
+  border-style: solid;
+  border-width: 0 0 1px 0;
+  border-color: var(--color-border);
   display: flex;
   flex-direction: row;
   grid-gap: 0;
@@ -144,7 +148,7 @@ a:active,
 }
 
 .primary-navigation a {
-  padding: 20px;
+  padding: 20px 20px;
   text-decoration: none;
 }
 

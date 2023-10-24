@@ -56,11 +56,5 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v2
 
-  # sitemap:
-  #   runs-on:
-  #     - linux
-  #     - self-hosted
-  #   needs: deploy
-  #   steps:
-  #     - name: ping Google about sitemap
-  #       run: curl "https://www.google.com/ping?sitemap=https://resonance.distantmagic.com/sitemap.xml"
+      - name: ping Google about sitemap
+        run: curl "https://www.google.com/ping?sitemap=https://resonance.distantmagic.com/sitemap.xml"

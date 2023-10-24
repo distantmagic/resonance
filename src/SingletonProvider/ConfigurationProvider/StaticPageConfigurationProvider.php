@@ -7,7 +7,6 @@ namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Distantmagic\Resonance\StaticPageConfiguration;
-use Ds\Map;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 

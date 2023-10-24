@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Ds\Map;
-
 readonly class StaticPageConfiguration
 {
     public function __construct(
