@@ -566,6 +566,7 @@ code[class] {
   display: block;
   font-family: var(--font-family-monospace);
   font-size: var(--font-size-code);
+  line-height: 1.5;
   overflow-x: auto;
   position: relative;
 }

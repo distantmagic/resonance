@@ -1,6 +1,3 @@
-@import url("./_font-atkinson-hyperlegible.css");
-@import url("./_font-lora.css");
-@import url("./_font-undefined-medium.css");
 @import url("./_reset.css");
 
 :root {
@@ -16,7 +13,7 @@
   --color-text-decoration-highlight: var(--color-body-font);
   --font-family-body: "Atkinson Hyperlegible", sans-serif;
   --font-family-lora: "Lora", var(--font-family-body), serif;
-  --font-family-monospace: "undefined medium", monospace;
+  --font-family-monospace: "Sometype Mono", monospace;
   --height-primary-navigation: 70px;
   --z-index-documentation-aside: 1;
   --z-index-primary-navigation: 2;
@@ -25,7 +22,7 @@
 @media screen and (max-width: 1023px) {
   :root {
     --font-size-base: 18px;
-    --font-size-code: 14px;
+    --font-size-code: 16px;
     --font-size-code-smaller: 14px;
     --font-size-smaller: 16px;
   }
@@ -34,7 +31,7 @@
   :root {
     --font-size-base: 24px;
     --font-size-code: 18px;
-    --font-size-code-smaller: 16px;
+    --font-size-code-smaller: 18px;
     --font-size-smaller: 20px;
   }
 }

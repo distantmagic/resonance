@@ -10,17 +10,20 @@ const defaults: RenderOptions = {
   edgeAttributes: {
     color: "white",
     fontcolor: "white",
+    fontname: "inherit",
     fontsize: 14,
   },
   graphAttributes: {
     bgcolor: "transparent",
     color: "#555",
     fontcolor: "white",
+    fontname: "inherit",
     fontsize: 14,
   },
   nodeAttributes: {
     color: "white",
     fontcolor: "white",
+    fontname: "inherit",
     fontsize: 14,
     margin: 0.1,
   },
@@ -43,7 +46,7 @@ export class controller_graphviz extends Controller<HTMLElement> {
 
     const viz = await controller_graphviz.getInstance();
     const renderedNode = viz.renderSVGElement(
-      this.sceneTarget.textContent,
+      String(this.sceneTarget.textContent),
       defaults,
     );
 
