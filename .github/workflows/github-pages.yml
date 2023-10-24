@@ -20,9 +20,15 @@ jobs:
   build:
     runs-on:
       - linux
-      - self-hosted
-      - yarnpkg
+      - ubuntu-latest
+
     steps:
+      - name: setup php with extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: ds, swoole
+
       - name: checkout
         uses: actions/checkout@v3
 
@@ -48,8 +54,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on:
       - linux
-      - self-hosted
-      - yarnpkg
+      - ubuntu-latest
+
     needs: build
     steps:
       - name: Deploy to GitHub Pages
