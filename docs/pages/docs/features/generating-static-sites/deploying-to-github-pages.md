@@ -32,6 +32,16 @@ $ tar
 
 ## GitHub Actions Workflow
 
+This is an example workflow. In the first step it install PHP extensions, 
+creates the artifact, then in the second step it uploads the artifact to the
+GitHub pages.
+
+:::note
+You might need to enable 
+[https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#publishing-with-a-custom-github-actions-workflow](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#publishing-with-a-custom-github-actions-workflow)
+in your GitHub repo first.
+:::
+
 ```yaml
 name: github pages
 
@@ -41,7 +51,6 @@ on:
     branches:
       - master
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
@@ -49,14 +58,21 @@ permissions:
 
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on:
       - linux
-      - self-hosted
+      - ubuntu-latest
+
     steps:
+      - name: setup php with extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: ds, swoole
+
       - name: checkout
         uses: actions/checkout@v3
 
@@ -68,7 +84,7 @@ jobs:
         env:
           APP_ENV: ${{ vars.APP_ENV }}
 
-      - name: Upload artifact
+      - name: upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: github-pages
@@ -82,7 +98,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on:
       - linux
-      - self-hosted
+      - ubuntu-latest
+
     needs: build
     steps:
       - name: Deploy to GitHub Pages
