@@ -79,25 +79,6 @@ abstract readonly class Turbo extends StaticPageLayout
         yield from $this->renderBodyContent($staticPage);
         yield <<<HTML
                 <footer class="primary-footer">
-                    <div class="primary-footer__link-groups">
-                        <nav class="primary-footer__links">
-                            <div class="primary-footer__links__header">
-                                Community
-                            </div>
-                            <a
-                                href="{$this->staticPageConfiguration->globals->get('discord')}"
-                                rel="external ugc"
-                            >
-                                Discord
-                            </a>
-                            <a
-                                href="{$this->staticPageConfiguration->globals->get('github')}"
-                                rel="external ugc"
-                            >
-                                GitHub
-                            </a>
-                        </nav>
-                    </div>
                     <div class="primary-footer__copyright">
                         Copyright &copy; 2023 Distantmagic.
                         Built with Resonance.
