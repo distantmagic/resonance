@@ -77,7 +77,7 @@ abstract readonly class Turbo extends StaticPageLayout
         yield from $this->renderPrimaryNavigation($staticPage);
         yield '</nav>';
         yield from $this->renderBodyContent($staticPage);
-        yield <<<HTML
+        yield <<<'HTML'
                 <footer class="primary-footer">
                     <div class="primary-footer__copyright">
                         Copyright &copy; 2023 Distantmagic.
