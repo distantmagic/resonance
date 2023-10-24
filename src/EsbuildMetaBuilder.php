@@ -31,6 +31,17 @@ readonly class EsbuildMetaBuilder
             return $this->esbuildMetaCache->get($esbuildMetafile);
         }
 
+        $esbuildMeta = $this->doBuild($esbuildMetafile, $stripOutputPrefix);
+
+        $this->esbuildMetaCache->put($esbuildMetafile, $esbuildMeta);
+
+        return $esbuildMeta;
+    }
+
+    private function doBuild(
+        string $esbuildMetafile,
+        string $stripOutputPrefix = '',
+    ): EsbuildMeta {
         $esbuildMeta = new EsbuildMeta();
 
         foreach (
@@ -42,8 +53,6 @@ readonly class EsbuildMetaBuilder
         ) {
             $esbuildMeta->registerImport($filename, $importPath);
         }
-
-        $this->esbuildMetaCache->put($esbuildMetafile, $esbuildMeta);
 
         return $esbuildMeta;
     }
