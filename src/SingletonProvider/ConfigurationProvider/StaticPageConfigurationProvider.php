@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Distantmagic\Resonance\StaticPageConfiguration;
+use Ds\Map;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 
@@ -14,6 +15,7 @@ use Nette\Schema\Schema;
  * @template-extends ConfigurationProvider<StaticPageConfiguration, object{
  *     base_url: string,
  *     esbuild_metafile: string,
+ *     globals: array<string,string>,
  *     input_directory: string,
  *     output_directory: string,
  *     sitemap: string,
@@ -32,6 +34,7 @@ final readonly class StaticPageConfigurationProvider extends ConfigurationProvid
         return Expect::structure([
             'base_url' => Expect::string()->min(1)->required(),
             'esbuild_metafile' => Expect::string()->min(1)->required(),
+            'globals' => Expect::arrayOf(Expect::string()->min(1))->default([]),
             'input_directory' => Expect::string()->min(1)->required(),
             'output_directory' => Expect::string()->min(1)->required(),
             'sitemap' => Expect::string()->min(1)->required(),
@@ -43,6 +46,7 @@ final readonly class StaticPageConfigurationProvider extends ConfigurationProvid
         return new StaticPageConfiguration(
             baseUrl: $validatedData->base_url,
             esbuildMetafile: DM_ROOT.'/'.$validatedData->esbuild_metafile,
+            globals: new Map($validatedData->globals),
             inputDirectory: DM_ROOT.'/'.$validatedData->input_directory,
             outputDirectory: DM_ROOT.'/'.$validatedData->output_directory,
             sitemap: DM_ROOT.'/'.$validatedData->sitemap,
