@@ -33,7 +33,19 @@
 
 .homepage__feature {
   border: 1px solid var(--color-border);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
   padding: 1em;
+  text-decoration: none;
+}
+
+.homepage__feature__title {
+  color: var(--color-link-active);
+}
+
+.homepage__feature__description {
 }
 
 .homepage__title {
@@ -49,7 +61,7 @@
     padding: 120px 0;
   }
   @media screen and (min-width: 1024px) {
-    padding: 180px 0 260px 0;
+    padding: 180px 0 200px 0;
   }
 }
 
