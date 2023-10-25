@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Distantmagic\Resonance\Template\Component;
+namespace Distantmagic\Docs\Template\Component;
 
+use Distantmagic\Docs\Template\Component;
 use Distantmagic\Resonance\CommonMarkTableOfContentsLink;
-use Distantmagic\Resonance\Template\Component;
 use Ds\PriorityQueue;
 use Generator;
 

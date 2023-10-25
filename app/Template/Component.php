@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Distantmagic\Resonance\Template;
+namespace Distantmagic\Docs\Template;
 
 use Distantmagic\Resonance\Template;
 use Distantmagic\Resonance\TemplateComponentInterface;

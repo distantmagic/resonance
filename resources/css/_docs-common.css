@@ -9,7 +9,7 @@
   --color-link-active: #ffc000;
   --color-link-decoration: var(--color-link-active);
   --color-primary-footer-background: #0c0c0c;
-/*  --color-primary-navigation-background: #0c0c0c;*/
+  /*  --color-primary-navigation-background: #0c0c0c;*/
   --color-primary-navigation-background: var(--color-body-background);
   --color-text-decoration-highlight: var(--color-body-font);
   --font-family-body: "Atkinson Hyperlegible", sans-serif;

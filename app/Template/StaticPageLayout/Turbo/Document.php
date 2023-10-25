@@ -2,8 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Distantmagic\Resonance\Template\StaticPageLayout\Turbo;
+namespace Distantmagic\Docs\Template\StaticPageLayout\Turbo;
 
+use Distantmagic\Docs\Template\Component\StaticPageBreadcrumbs;
+use Distantmagic\Docs\Template\Component\StaticPageDocumentsMenu;
+use Distantmagic\Docs\Template\Component\StaticPageDocumentTableOfContents;
+use Distantmagic\Docs\Template\StaticPageLayout\Turbo;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Attribute\StaticPageLayout;
 use Distantmagic\Resonance\CommonMarkTableOfContentsBuilder;
@@ -14,10 +18,6 @@ use Distantmagic\Resonance\StaticPageAggregate;
 use Distantmagic\Resonance\StaticPageCollectionAggregate;
 use Distantmagic\Resonance\StaticPageConfiguration;
 use Distantmagic\Resonance\StaticPageMarkdownParser;
-use Distantmagic\Resonance\Template\Component\StaticPageBreadcrumbs;
-use Distantmagic\Resonance\Template\Component\StaticPageDocumentsMenu;
-use Distantmagic\Resonance\Template\Component\StaticPageDocumentTableOfContents;
-use Distantmagic\Resonance\Template\StaticPageLayout\Turbo;
 use Distantmagic\Resonance\TemplateFilters;
 use Ds\PriorityQueue;
 use Generator;

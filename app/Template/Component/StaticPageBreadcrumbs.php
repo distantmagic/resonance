@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Distantmagic\Resonance\Template\Component;
+namespace Distantmagic\Docs\Template\Component;
 
+use Distantmagic\Docs\Template\Component;
 use Distantmagic\Resonance\StaticPage;
 use Distantmagic\Resonance\StaticPageParentIterator;
-use Distantmagic\Resonance\Template\Component;
 use Ds\Map;
 use Generator;
 

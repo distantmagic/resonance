@@ -2,12 +2,10 @@
 collections: 
     - documents
     - name: primary_navigation
-      next: tutorials/index
+      next: community/index
 description: docs
 layout: dm:document
-title: Documentation
+title: Tutorials
 ---
 
-# Documentation
-
-{{docs/*/index}}
+# Tutorials

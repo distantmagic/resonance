@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Distantmagic\Resonance\Template\StaticPageLayout\Turbo;
+namespace Distantmagic\Docs\Template\StaticPageLayout\Turbo;
 
+use Distantmagic\Docs\Template\StaticPageLayout\Turbo;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Attribute\StaticPageLayout;
 use Distantmagic\Resonance\EsbuildMetaBuilder;
@@ -13,7 +14,6 @@ use Distantmagic\Resonance\StaticPageAggregate;
 use Distantmagic\Resonance\StaticPageCollectionAggregate;
 use Distantmagic\Resonance\StaticPageConfiguration;
 use Distantmagic\Resonance\StaticPageContentRenderer;
-use Distantmagic\Resonance\Template\StaticPageLayout\Turbo;
 use Distantmagic\Resonance\TemplateFilters;
 use Generator;
 

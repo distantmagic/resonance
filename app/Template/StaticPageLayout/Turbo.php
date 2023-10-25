@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Distantmagic\Resonance\Template\StaticPageLayout;
+namespace Distantmagic\Docs\Template\StaticPageLayout;
 
+use Distantmagic\Docs\Template\StaticPageLayout;
 use Distantmagic\Resonance\EsbuildMeta;
 use Distantmagic\Resonance\EsbuildMetaBuilder;
 use Distantmagic\Resonance\EsbuildMetaEntryPoints;
@@ -12,7 +13,6 @@ use Distantmagic\Resonance\StaticPage;
 use Distantmagic\Resonance\StaticPageCollectionAggregate;
 use Distantmagic\Resonance\StaticPageConfiguration;
 use Distantmagic\Resonance\StaticPageParentIterator;
-use Distantmagic\Resonance\Template\StaticPageLayout;
 use Distantmagic\Resonance\TemplateFilters;
 use Ds\Map;
 use Ds\PriorityQueue;

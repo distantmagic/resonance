@@ -5,6 +5,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
+            "Distantmagic\\Docs\\": "app/",
             "Distantmagic\\Resonance\\": "src/"
         }
     },
