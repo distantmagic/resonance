@@ -58,7 +58,7 @@ readonly class Document extends Turbo
         $this->intlDateFormatter = new IntlDateFormatter(
             'en',
             IntlDateFormatter::LONG,
-            IntlDateFormatter::LONG,
+            IntlDateFormatter::NONE,
         );
         $this->tableOfContents = new StaticPageDocumentTableOfContents();
         $this->tableOfContentsBuilder = new CommonMarkTableOfContentsBuilder();
@@ -80,6 +80,10 @@ readonly class Document extends Turbo
     {
         parent::registerStylesheets($stylesheets);
 
+        $stylesheets->push('docs-breadcrumbs.css', 0);
+        $stylesheets->push('docs-formatted-content.css', 0);
+        $stylesheets->push('docs-links-group.css', 0);
+        $stylesheets->push('docs-hljs.css', 0);
         $stylesheets->push('docs-page-document.css', 0);
     }
 
@@ -109,7 +113,7 @@ readonly class Document extends Turbo
                 </div>
             </nav>
             <article
-                class="documentation__article"
+                class="documentation__article formatted-content"
                 data-controller="article"
             >
                 {$renderedOutput->getContent()}
@@ -126,31 +130,12 @@ readonly class Document extends Turbo
                 Last updated on
                 <strong>{$this->intlDateFormatter->format($lastUpdatedMTime)}</strong>
             </time>
-            <nav class="documentation__breadcrumbs">
+            <nav class="breadcrumbs documentation__breadcrumbs">
         HTML;
         yield from $this->breadcrumbs->render($staticPage);
         yield '</nav>';
         yield from $this->tableOfContents->render($tableOfContentsLinks);
         yield '</div>';
-    }
-
-    protected function renderMeta(StaticPage $staticPage): Generator
-    {
-        $nextPage = $this->staticPageCollectionAggregate->pagesFollowers->get($staticPage, null);
-
-        if (isset($nextPage)) {
-            yield <<<HTML
-            <link rel="next" href="{$nextPage->getHref()}">
-            HTML;
-        }
-
-        $prevPage = $this->staticPageCollectionAggregate->pagesPredecessors->get($staticPage, null);
-
-        if (isset($prevPage)) {
-            yield <<<HTML
-            <link rel="prev" href="{$prevPage->getHref()}">
-            HTML;
-        }
     }
 
     /**

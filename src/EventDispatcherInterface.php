@@ -11,8 +11,6 @@ interface EventDispatcherInterface
      *
      * This value is not used internally in the framework, but it still might
      * be useful.
-     *
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function collect(EventInterface $event): SwooleFutureResult;
 

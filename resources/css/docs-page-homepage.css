@@ -1,5 +1,3 @@
-@import url("./_docs-common.css");
-
 /**
  * Homepage
  */
@@ -23,10 +21,10 @@
   width: 100%;
   padding-bottom: 120px;
 
-  @media screen and (max-width: 1479px) {
+  @media screen and (max-width: 1279px) {
     grid-template-columns: 1fr;
   }
-  @media screen and (min-width: 1480px) {
+  @media screen and (min-width: 1280px) {
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -43,9 +41,6 @@
 
 .homepage__feature__title {
   color: var(--color-link-active);
-}
-
-.homepage__feature__description {
 }
 
 .homepage__title {
@@ -76,6 +71,7 @@
   @media screen and (min-width: 1024px) {
     font-size: 6em;
     letter-spacing: -6px;
+    position: relative;
   }
 }
 

@@ -28,8 +28,6 @@ final class SwooleFuture
 
     /**
      * To be used by the framework users.
-     *
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public static function create(callable $executor): self
     {
@@ -40,7 +38,6 @@ final class SwooleFuture
      * @param callable(mixed,mixed,mixed,ResolveInfo):mixed $callback
      *
      * @psalm-suppress MixedFunctionCall callback can return anything
-     * @psalm-suppress PossiblyUnusedMethod to be used by the framework users
      */
     public static function resolver(callable $callback): callable
     {

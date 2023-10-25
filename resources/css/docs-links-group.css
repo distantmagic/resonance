@@ -1,0 +1,29 @@
+/**
+ * Links group block
+ */
+
+.document-links-group {
+  display: grid;
+  grid-gap: 1em;
+
+  @media screen and (max-width: 1023px) {
+    grid-template-columns: 1fr;
+  }
+  @media screen and (min-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.document-links-group__link {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 1em;
+  row-gap: 10px;
+  text-decoration: none;
+}
+
+.document-links-group__link__title {
+  color: var(--color-link-active);
+}

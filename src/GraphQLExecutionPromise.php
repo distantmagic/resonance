@@ -32,11 +32,6 @@ class GraphQLExecutionPromise implements JsonSerializable
         return $this->executionResult;
     }
 
-    /**
-     * This is a false positive. It's used when rendering GraphQL Json layout.
-     *
-     * @psalm-suppress PossiblyUnusedMethod
-     */
     public function jsonSerialize(): mixed
     {
         return $this->toArray();

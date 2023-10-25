@@ -16,6 +16,8 @@
   --font-family-lora: "Lora", var(--font-family-body), serif;
   --font-family-monospace: "Sometype Mono", monospace;
   --height-primary-navigation: 70px;
+  --height-scrollbar-horizontal: 8px;
+  --width-scrollbar-vertical: 8px;
   --z-index-documentation-aside: 1;
   --z-index-primary-navigation: 2;
 }
@@ -39,8 +41,8 @@
 
 ::-webkit-scrollbar {
   background-color: transparent;
-  height: 8px;
-  width: 8px;
+  height: var(--height-scrollbar-horizontal);
+  width: var(--width-scrollbar-vertical);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -154,6 +156,28 @@ a:active,
 
 .primary-navigation a.active {
   color: var(--color-link-active);
+}
+
+.primary-navigation a.primary-navigation__github-link svg {
+  height: 40px;
+  width: 40px;
+}
+
+@media screen and (max-width: 1023px) {
+  .primary-navigation a.primary-navigation__github-link {
+    display: none;
+  }
+}
+@media screen and (min-width: 1024px) {
+  .primary-navigation a.primary-navigation__github-link {
+    display: flex;
+    margin-left: auto;
+    padding: 0px 20px;
+  }
+
+  .primary-navigation a.primary-navigation__github-link:active {
+    transform: unset;
+  }
 }
 
 /**

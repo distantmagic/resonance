@@ -1,0 +1,50 @@
+.tutorial {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.tutorial__breadcrumbs,
+.tutorial__list {
+  max-width: 1480px;
+}
+
+.tutorial__breadcrumbs,
+.tutorial__content,
+.tutorial__list {
+  width: 100%;
+
+  @media screen and (max-width: 1479px) {
+    padding: 20px;
+  }
+  @media screen and (min-width: 1480px) {
+    padding: 20px 60px;
+  }
+}
+
+.tutorial__content {
+  padding-bottom: 60px;
+  max-width: 70ch;
+}
+
+.tutorial__content,
+.tutorial__header {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1em;
+}
+
+.tutorial__header {
+  text-align: center;
+}
+
+.tutorial__last-updated {
+  font-size: var(--font-size-smaller);
+  text-align: center;
+}
+
+.tutorial__title {
+  font-family: var(--font-family-lora);
+  font-size: 3.35em;
+  margin-top: 72px;
+}

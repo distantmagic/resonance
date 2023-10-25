@@ -1,0 +1,128 @@
+/* hybrid  */
+/* see also: classic dark  */
+.hljs-name,
+.hljs-title {
+  color: #f0c674;
+}
+.hljs-comment,
+.hljs-meta,
+.hljs-meta .hljs-keyword {
+  color: #707880;
+}
+.hljs-deletion,
+.hljs-link,
+.hljs-literal,
+.hljs-number,
+.hljs-symbol {
+  color: #c66;
+}
+.hljs-addition,
+.hljs-doctag,
+.hljs-regexp,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-string {
+  color: #b5bd68;
+}
+.hljs-attribute,
+.hljs-code,
+.hljs-selector-id {
+  color: #b294bb;
+}
+.hljs-bullet,
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-tag {
+  color: #81a2be;
+}
+.hljs-subst,
+.hljs-template-tag,
+.hljs-template-variable,
+.hljs-variable {
+  color: #8abeb7;
+}
+.hljs-built_in,
+.hljs-quote,
+.hljs-section,
+.hljs-selector-class,
+.hljs-type {
+  color: #de935f;
+}
+.hljs-emphasis {
+  font-style: italic;
+}
+.hljs-strong {
+  font-weight: 700;
+}
+
+/**
+ * HLJS
+ */
+
+.hljs,
+code[class] {
+  display: block;
+  font-family: var(--font-family-monospace);
+  font-size: var(--font-size-code);
+  line-height: 1.5;
+  overflow-x: auto;
+  position: relative;
+}
+
+.fenced-code {
+  @media screen and (min-width: 1024px) {
+    position: relative;
+  }
+
+  border-radius: 4px;
+
+  code {
+    transition: opacity 0.3s ease;
+
+    @media screen and (max-width: 1023px) {
+      padding: 10px;
+    }
+    @media screen and (min-width: 1024px) {
+      padding: 20px;
+    }
+  }
+
+  code:not(.hljs, .language-unknown) {
+    opacity: 0;
+  }
+
+  .fenced-code__filename {
+    background-color: var(--color-border);
+    font-size: var(--font-size-code);
+    border-bottom: 1px solid var(--color-border);
+    overflow-x: auto;
+    width: 100%;
+
+    @media screen and (max-width: 1023px) {
+      padding: 10px;
+    }
+    @media screen and (min-width: 1024px) {
+      padding: 10px 20px;
+    }
+  }
+
+  .fenced-code__filename + .fenced-code__language-name {
+    display: none;
+  }
+
+  .fenced-code__language-name {
+    content: attr(data-language-name);
+    font-size: var(--font-size-code-smaller);
+    background-color: var(--color-border);
+    padding: 6px 10px;
+    pointer-events: none;
+    user-select: none;
+
+    @media screen and (min-width: 1024px) {
+      border-top-right-radius: 4px;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+  }
+}
