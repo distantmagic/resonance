@@ -1,8 +1,10 @@
 ---
 collections: 
-    - documents
+    - name: documents
+      next: docs/features/http/sessions
 layout: dm:document
-parent: docs/features/asset-bundling-esbuild/index
+next: docs/features/http/sessions
+parent: docs/features/http/index
 title: Serving Assets
 description: >
     Use Responders to serve assets over HTTP.

@@ -1,9 +1,9 @@
 ---
 collections: 
     - name: documents
-      next: docs/features/http/sessions
+      next: docs/features/http/serving-assets
 layout: dm:document
-next: docs/features/http/sessions
+next: docs/features/http/serving-assets
 parent: docs/features/http/index
 title: Interceptors
 description: >
