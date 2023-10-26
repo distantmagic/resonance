@@ -2,12 +2,12 @@
 collections: 
     - documents
     - primary_navigation
-description: docs
-layout: dm:document
+layout: dm:tutorial
 title: Community
+description: >
+    Join our community channels to stay informed about new Resonance 
+    developments and features.
 ---
-
-# Community
 
 You can find official channels here:
 

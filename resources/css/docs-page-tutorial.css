@@ -36,11 +36,16 @@
 
 .tutorial__header {
   text-align: center;
+  text-wrap: balance;
 }
 
 .tutorial__last-updated {
   font-size: var(--font-size-smaller);
   text-align: center;
+}
+
+.tutorial__sub-title {
+  line-height: 1.5;
 }
 
 .tutorial__title {

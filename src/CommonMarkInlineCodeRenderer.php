@@ -22,6 +22,7 @@ final readonly class CommonMarkInlineCodeRenderer implements NodeRendererInterfa
     public function __construct()
     {
         $this->patterns = [
+            ';' => ';<wbr>',
             '(' => '(<wbr>',
             '-' => '-<wbr>',
             '->' => '-><wbr>',

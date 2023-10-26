@@ -20,6 +20,9 @@ To authenticate users, you need to provide an authentication procedure on your
 own. You can use Resonance's user and session storage to store the 
 authenticated user's data securely.
 
+You can follow the {{tutorials/session-based-authentication/index}} tutorial
+to see how Session Authentication can be implemented.
+
 ### Storing the Authenticated User
 
 Then, you can use the `Distantmagic\Resonance\SessionAuthentication` helper

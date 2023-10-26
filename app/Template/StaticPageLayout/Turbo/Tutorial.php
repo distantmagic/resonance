@@ -93,7 +93,7 @@ readonly class Tutorial extends Turbo
                     <h1 class="tutorial__title">
                         {$staticPage->frontMatter->title}
                     </h1>
-                    <h2>
+                    <h2 class="tutorial__sub-title">
                         {$staticPage->frontMatter->description}
                     </h2>
                     <time
