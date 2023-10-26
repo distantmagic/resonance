@@ -384,6 +384,107 @@ final readonly class SelectUserByUsernamePassword extends DatabaseQuery
 }
 ```
 
+## User Repository
+
+{{docs/features/http/sessions}} use the `UserRepository` to check if the
+user that is currently stored in the session is valid, so the `findById` method
+has to be implemented:
+
+```php file:app/DatabaseQuery/SelectUserById.php
+<?php
+
+namespace App\DatabaseQuery;
+
+use App\DatabaseEntity\User;
+use App\Role;
+use Distantmagic\Resonance\DatabaseConnectionPoolRepository;
+use Distantmagic\Resonance\DatabaseQuery;
+use Distantmagic\Resonance\UserInterface;
+use PDO;
+
+/**
+ * @template-extends DatabaseQuery<null|UserInterface>
+ */
+final readonly class SelectUserById extends DatabaseQuery
+{
+    public function __construct(
+        DatabaseConnectionPoolRepository $databaseConnectionPoolRepository,
+        private int $userId,
+    ) {
+        parent::__construct($databaseConnectionPoolRepository);
+    }
+
+    public function execute(): ?UserInterface
+    {
+        /**
+         * @var null|array{
+         *     id: int,
+         *     role: string,
+         * }
+         */
+        $userData = $this
+            ->getConnection()
+            ->prepare(<<<'SQL'
+                SELECT
+                    users.id,
+                    users.role
+                FROM users
+                WHERE users.id = :user_id
+                LIMIT 1
+            SQL)
+            ->bindValue('user_id', $this->userId, PDO::PARAM_INT)
+            ->execute()
+            ->first()
+        ;
+
+        if (!$userData || !isset($userData['id'])) {
+            return null;
+        }
+
+        return new User($userData['id'], Role::User);
+    }
+}
+```
+
+Finally, the `UserRepository`:
+
+```php file:app\UserRepository.php
+<?php
+
+declare(strict_types=1);
+
+namespace App;
+
+use App\DatabaseQuery\SelectUserById;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\DatabaseConnectionPoolRepository;
+use Distantmagic\Resonance\UserInterface;
+use Distantmagic\Resonance\UserRepositoryInterface;
+use LogicException;
+
+#[Singleton(provides: UserRepositoryInterface::class)]
+readonly class UserRepository implements UserRepositoryInterface
+{
+    public function __construct(
+        private DatabaseConnectionPoolRepository $databaseConnectionPoolRepository,
+    ) {}
+
+    public function findUserById(int|string $userId): ?UserInterface
+    {
+        if (is_string($userId)) {
+            throw new LogicException('This user repository only supports int ids');
+        }
+
+        $selectUserById = new SelectUserById(
+            $this->databaseConnectionPoolRepository,
+            $userId,
+        );
+
+        return $selectUserById->execute();
+    }
+}
+```
+
 ## Authenticating Users
 
 Let's create another HTTP Responder that responds to the `POST /login` request, 
