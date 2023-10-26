@@ -53,7 +53,9 @@ identical as using the `create-project`.
 
 # First Use
 
-After installing the project, you should use `app/resonance.php` as an entry 
+After installing the project, you should create the `config.ini` file 
+(you can copy `config.ini.example` with it's default values) 
+and then use `app/resonance.php` as an entry 
 point. After invoking `php app/resonance.php` in the shell, you should see
 the list of available commands:
 
