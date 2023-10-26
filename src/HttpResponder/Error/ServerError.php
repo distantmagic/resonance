@@ -29,7 +29,7 @@ final readonly class ServerError extends Error
         parent::__construct($errorHttpResponderDependencies, $httpError);
     }
 
-    public function respondWithThrowable(
+    public function sendThrowable(
         Request $request,
         Response $response,
         Throwable $throwable,

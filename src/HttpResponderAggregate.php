@@ -47,7 +47,7 @@ readonly class HttpResponderAggregate
             $this->recursiveResponder->respondRecursive(
                 $request,
                 $response,
-                $this->serverError->respondWithThrowable($request, $response, $throwable),
+                $this->serverError->sendThrowable($request, $response, $throwable),
             );
         } finally {
             $this->eventDispatcher->dispatch(new HttpResponseReady($request));

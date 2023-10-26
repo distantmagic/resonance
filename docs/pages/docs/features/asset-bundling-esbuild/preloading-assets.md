@@ -2,6 +2,7 @@
 collections: 
     - documents
 layout: dm:document
+next: docs/features/asset-bundling-esbuild/serving-assets
 parent: docs/features/asset-bundling-esbuild/index
 title: Preloading Assets
 description: >

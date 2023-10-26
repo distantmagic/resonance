@@ -42,13 +42,13 @@ abstract readonly class Error extends HttpResponder
     public function respond(Request $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
     {
         return match ($this->contentTypeResponder->best($request)) {
-            ContentType::ApplicationJson => $this->respondWithJson($request, $response),
-            ContentType::TextHtml => $this->respondWithHtml($request, $response),
+            ContentType::ApplicationJson => $this->sendJson($request, $response),
+            ContentType::TextHtml => $this->sendHtml($request, $response),
             default => $this->notAcceptable,
         };
     }
 
-    protected function respondWithJson(Request $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
+    protected function sendJson(Request $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
     {
         $response->status($this->httpError->code());
         $this->securityPolicyHeaders->sendJsonPagePolicyHeaders($response);
@@ -56,7 +56,7 @@ abstract readonly class Error extends HttpResponder
         return $this->jsonTemplate->renderHttpError($request, $response, $this->httpError);
     }
 
-    private function respondWithHtml(Request $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
+    private function sendHtml(Request $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
     {
         $response->status($this->httpError->code());
         $this->securityPolicyHeaders->sendTemplatedPagePolicyHeaders($request, $response);
