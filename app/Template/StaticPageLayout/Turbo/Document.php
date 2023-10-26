@@ -60,7 +60,10 @@ readonly class Document extends Turbo
             IntlDateFormatter::LONG,
             IntlDateFormatter::NONE,
         );
-        $this->tableOfContents = new StaticPageDocumentTableOfContents();
+        $this->tableOfContents = new StaticPageDocumentTableOfContents(
+            'documentation',
+            '.documentation__article',
+        );
         $this->tableOfContentsBuilder = new CommonMarkTableOfContentsBuilder();
     }
 

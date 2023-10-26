@@ -11,6 +11,11 @@ use Generator;
 
 readonly class StaticPageDocumentTableOfContents extends Component
 {
+    public function __construct(
+        private string $baseClassName,
+        private string $outletSelector,
+    ) {}
+
     public function registerScripts(PriorityQueue $scripts): void
     {
         $scripts->push('controller_minimap.ts', 0);
@@ -23,14 +28,14 @@ readonly class StaticPageDocumentTableOfContents extends Component
      */
     public function render(Generator $links): Generator
     {
-        yield <<<'HTML'
+        yield <<<HTML
         <nav
-            class="documentation__toc"
+            class="{$this->baseClassName}__toc"
             data-controller="minimap"
-            data-minimap-article-outlet=".documentation__article"
+            data-minimap-article-outlet="{$this->outletSelector}"
         >
             <div
-                class="documentation__toc__links"
+                class="{$this->baseClassName}__toc__links"
                 data-minimap-target="track"
             >
         HTML;

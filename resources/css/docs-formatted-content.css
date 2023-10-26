@@ -161,6 +161,7 @@
     display: inline-flex;
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-smaller);
+    max-width: 100vw;
     position: relative;
 
     &::after {

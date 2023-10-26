@@ -9,7 +9,7 @@ description: >
     routes with session-based authentication.
 ---
 
-## Preparations
+# Preparations
 
 In this tutorial, we are going to use the following concepts; you might want to 
 familiarize yourself with the following documentation pages before we start:
@@ -37,11 +37,13 @@ username | string
 password_hash | string | We will use [`password_verify`](https://www.php.net/manual/en/function.password-verify.php) later to validate the password
 
 Then, add a user with `username` of `test_login` and `password` of
-`$2y$10$qElJNHEKCbwHrxFcSHOyTuLNLfwwNlPWzUuWGsQ4WWqStZ9TeFKRO` (which is a
-Bcrpyt encrypted string of `test`). So the login/password pair evaluates
-to `test_login` / `test`.
+```
+$2y$10$qElJNHEKCbwHrxFcSHOyTuLNLfwwNlPWzUuWGsQ4WWqStZ9TeFKRO
+```
+which is a Bcrpyt encrypted string of `test`). 
+So the login/password pair evaluates to `test_login` / `test`.
 
-## How Does Session Authentication Work?
+# How Does Session Authentication Work?
 
 This method of authentication uses {{docs/features/http/sessions}} to
 store the information about the authenticated user in the server-side session.
@@ -52,6 +54,8 @@ the server-side session - so it's not readable nor modifiable in the browser.
 
 From the user's perspective, it's the standard login and password authentication 
 flow.
+
+# Implementation
 
 ## HTTP Responders
 
@@ -186,7 +190,7 @@ We will need to validate two things:
 2. After validating the Login Form data - we need to check if the username and
     password pair is valid.
 
-### Login Form Validation
+## Login Form Validation
 
 First, let's define the `UsernamePasword` form model and validator.
 
@@ -258,7 +262,7 @@ readonly class UsernamePasswordValidator extends InputValidator
 }
 ```
 
-# Authentication Credentials Validation
+## Authentication Credentials Validation
 
 To validate the login and password, we are going to use the SQL query. Notice 
 that it uses the form data as a constructor parameter. 
@@ -425,9 +429,7 @@ final readonly class SelectUserById extends DatabaseQuery
         $userData = $this
             ->getConnection()
             ->prepare(<<<'SQL'
-                SELECT
-                    users.id,
-                    users.role
+                SELECT users.id
                 FROM users
                 WHERE users.id = :user_id
                 LIMIT 1

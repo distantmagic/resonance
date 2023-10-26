@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Distantmagic\Docs\Template\StaticPageLayout\Turbo;
 
 use Distantmagic\Docs\Template\Component\StaticPageBreadcrumbs;
+use Distantmagic\Docs\Template\Component\StaticPageDocumentTableOfContents;
 use Distantmagic\Docs\Template\StaticPageLayout\Turbo;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Attribute\StaticPageLayout;
+use Distantmagic\Resonance\CommonMarkTableOfContentsBuilder;
 use Distantmagic\Resonance\EsbuildMetaBuilder;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\StaticPage;
@@ -26,6 +28,8 @@ readonly class Tutorial extends Turbo
 {
     private StaticPageBreadcrumbs $breadcrumbs;
     private IntlDateFormatter $intlDateFormatter;
+    private StaticPageDocumentTableOfContents $tableOfContents;
+    private CommonMarkTableOfContentsBuilder $tableOfContentsBuilder;
 
     public function __construct(
         EsbuildMetaBuilder $esbuildMetaBuilder,
@@ -49,12 +53,20 @@ readonly class Tutorial extends Turbo
             IntlDateFormatter::LONG,
             IntlDateFormatter::NONE,
         );
+        $this->tableOfContents = new StaticPageDocumentTableOfContents(
+            'tutorial',
+            '.tutorial__content',
+        );
+        $this->tableOfContentsBuilder = new CommonMarkTableOfContentsBuilder();
     }
 
     protected function registerScripts(PriorityQueue $scripts): void
     {
         parent::registerScripts($scripts);
 
+        $this->tableOfContents->registerScripts($scripts);
+
+        $scripts->push('controller_article.ts', 0);
         $scripts->push('controller_graphviz.ts', 0);
         $scripts->push('controller_hljs.ts', 0);
     }
@@ -78,17 +90,30 @@ readonly class Tutorial extends Turbo
             ->convert($staticPage->content)
         ;
 
+        $tableOfContentsLinks = $this
+            ->tableOfContentsBuilder
+            ->getTableOfContentsLinks($renderedOutput->getDocument())
+        ;
+
         $lastUpdatedMTime = $staticPage->file->getMTime();
         $lastUpdatedDatetime = date(DATE_W3C, $lastUpdatedMTime);
 
         yield <<<'HTML'
         <div class="tutorial">
+        HTML;
+        yield <<<'HTML'
             <nav class="breadcrumbs tutorial__breadcrumbs">
         HTML;
         yield from $this->breadcrumbs->render($staticPage);
-        yield <<<HTML
+        yield <<<'HTML'
             </nav>
-            <div class="tutorial__content">
+            <div
+                class="tutorial__content"
+                data-controller="article"
+            >
+        HTML;
+        yield from $this->tableOfContents->render($tableOfContentsLinks);
+        yield <<<HTML
                 <hgroup class="tutorial__header">
                     <h1 class="tutorial__title">
                         {$staticPage->frontMatter->title}
