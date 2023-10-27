@@ -264,11 +264,8 @@ readonly class UsernamePasswordValidator extends InputValidator
 
 ## Authentication Credentials Validation
 
-To validate the login and password, we are going to use the SQL query. Notice 
-that it uses the form data as a constructor parameter. 
-
-Let's start with a user role. We do not distinguish roles yet, so let's just
-use a default `User` role for now:
+Let's start with a user role. We do not distinguish permissions based on roles 
+yet, so let's just use a default `User` role for now:
 
 ```php file:app/Role.php
 <?php
@@ -289,7 +286,6 @@ enum Role: string implements UserRoleInterface
     public function toInt(): int
     {
         return match ($this) {
-            Role::Admin => 2,
             Role::User => 1,
         };
     }
@@ -325,6 +321,9 @@ final readonly class User extends DatabaseEntity implements UserInterface
     }
 }
 ```
+
+To validate the login and password, we are going to use the SQL query. Notice 
+that it uses the form data as a constructor parameter. 
 
 This query returns null if it doesn't find any user with a given username and 
 password:
@@ -367,6 +366,7 @@ final readonly class SelectUserByUsernamePassword extends DatabaseQuery
                 SELECT
                     users.id,
                     users.password_hash
+                FROM users
                 WHERE users.username = :username
                 LIMIT 1
             SQL)
@@ -448,7 +448,10 @@ final readonly class SelectUserById extends DatabaseQuery
 }
 ```
 
-Finally, the `UserRepository`:
+Finally, we need to implement the `findUserById` in the `UserRepository`. 
+`UserRepository` is an implementation of the `UserRepositoryInteface` that is
+bundled with the application by default. It is used internally by Resonance to
+validate {{docs/features/http/sessions}}:
 
 ```php file:app\UserRepository.php
 <?php
@@ -626,7 +629,7 @@ final readonly class LogoutForm extends HttpResponder
     }
 }
 ```
-```twig file:app/views/logout_form.twig
+```twig file:app/views/auth/logout_form.twig
 <form
     action="{{ route(constant('App\\HttpRouteSymbol::LogoutValidation')) }}"
     method="post"
