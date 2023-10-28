@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Doctrine\DBAL\Driver\Connection;
+use Doctrine\DBAL\Driver\PDO\ParameterTypeMap;
+use Doctrine\DBAL\ParameterType;
+use LogicException;
 use PDO;
 use PDOStatement;
 use RuntimeException;
@@ -11,7 +15,7 @@ use Swoole\Database\PDOProxy;
 use Swoole\Database\PDOStatementProxy;
 use Swoole\Event;
 
-readonly class DatabaseConnection
+readonly class DatabaseConnection implements Connection
 {
     private PDO|PDOProxy $pdo;
 
@@ -29,9 +33,46 @@ readonly class DatabaseConnection
         });
     }
 
-    public function lastInsertId(): false|string
+    public function beginTransaction(): bool
     {
-        $lastInsertId = $this->pdo->lastInsertId();
+        /**
+         * @var bool $result
+         */
+        $result = $this->pdo->beginTransaction();
+        $this->assertNotFalse($result);
+
+        return true;
+    }
+
+    public function commit(): bool
+    {
+        /**
+         * @var bool $result
+         */
+        $result = $this->pdo->commit();
+        $this->assertNotFalse($result);
+
+        return true;
+    }
+
+    public function exec(string $sql): int
+    {
+        /**
+         * @var false|int
+         */
+        $result = $this->pdo->exec($sql);
+
+        return $this->assertNotFalse($result);
+    }
+
+    public function getNativeConnection(): PDO|PDOProxy
+    {
+        return $this->pdo;
+    }
+
+    public function lastInsertId($name = null): false|string
+    {
+        $lastInsertId = $this->pdo->lastInsertId($name);
 
         if (false === $lastInsertId) {
             return false;
@@ -50,15 +91,65 @@ readonly class DatabaseConnection
          * @var false|PDOStatement|PDOStatementProxy
          */
         $pdoPreparedStatement = $this->pdo->prepare($sql);
-
-        if (!$pdoPreparedStatement) {
-            throw new PDOException($this->pdo->errorInfo());
-        }
+        $pdoPreparedStatement = $this->assertNotFalse($pdoPreparedStatement);
 
         return new DatabasePreparedStatement(
             $this->databaseConnectionPoolRepository->eventDispatcher,
             $pdoPreparedStatement,
             $sql,
         );
+    }
+
+    public function query(string $sql): DatabaseExecutedStatement
+    {
+        /**
+         * @var false|PDOStatement|PDOStatementProxy
+         */
+        $result = $this->pdo->query($sql);
+        $result = $this->assertNotFalse($result);
+
+        return new DatabaseExecutedStatement($result);
+    }
+
+    /**
+     * @psalm-assert ParameterType::* $type
+     *
+     * @psalm-suppress InternalClass
+     * @psalm-suppress InternalMethod
+     */
+    public function quote($value, $type = ParameterType::STRING)
+    {
+        if (!is_string($value)) {
+            throw new LogicException('Only string values can be quoted');
+        }
+
+        return $this->pdo->quote($value, ParameterTypeMap::convertParamType($type));
+    }
+
+    public function rollBack(): bool
+    {
+        /**
+         * @var bool $result
+         */
+        $result = $this->pdo->rollBack();
+        $this->assertNotFalse($result);
+
+        return true;
+    }
+
+    /**
+     * @template TValue
+     *
+     * @param false|TValue $value
+     *
+     * @return TValue
+     */
+    private function assertNotFalse(mixed $value): mixed
+    {
+        if (false === $value) {
+            throw new PDOException($this->pdo->errorInfo());
+        }
+
+        return $value;
     }
 }

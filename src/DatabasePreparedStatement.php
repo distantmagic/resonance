@@ -20,6 +20,13 @@ readonly class DatabasePreparedStatement implements Statement
         private string $sql,
     ) {}
 
+    /**
+     * @param mixed $param         explicitly mixed for typechecks
+     * @param mixed $variable      explicitly mixed for typechecks
+     * @param mixed $type          explicitly mixed for typechecks
+     * @param mixed $length        explicitly mixed for typechecks
+     * @param mixed $driverOptions explicitly mixed for typechecks
+     */
     public function bindParam(
         $param,
         &$variable,
