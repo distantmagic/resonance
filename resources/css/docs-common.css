@@ -1,15 +1,15 @@
 @import url("./_reset.css");
 
 :root {
-  --color-body-background: #151515;
+  --color-body-background: #050505;
   --color-body-font: #ddd;
   --color-body-font-darker: #aaa;
   --color-border: #333;
+  --color-document-background: #111;
   --color-inline-code-background: #0080ff30;
   --color-link-active: #ffc000;
   --color-link-decoration: var(--color-link-active);
-  --color-primary-footer-background: #0c0c0c;
-  /*  --color-primary-navigation-background: #0c0c0c;*/
+  --color-primary-footer-background: var(--color-body-background);
   --color-primary-navigation-background: var(--color-body-background);
   --color-text-decoration-highlight: var(--color-body-font);
   --font-family-body: "Atkinson Hyperlegible", sans-serif;
@@ -112,6 +112,7 @@ a:active,
 .primary-footer {
   align-items: center;
   background-color: var(--color-primary-footer-background);
+  border-top: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
   padding: 40px 20px 40px 20px;

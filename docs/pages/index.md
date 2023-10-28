@@ -118,6 +118,53 @@ readonly class Homepage implements HttpResponderInterface
             </li>
             <li class="formatted-content homepage__example">
                 <h2 class="homepage__example__title">
+                    Consistency is Key
+                </h2>
+                <div class="homepage__example__description">
+                    <p>
+                        You can keep the same approach to writing software
+                        no matter the size of your project.
+                    </p>
+                    <p>
+                        There are no growing central configuration files, 
+                        services dependencies registries. Every relation 
+                        between code modules are local to those modules.
+                    </p>
+                    <a 
+                        class="homepage__cta homepage__cta--example"
+                        href="/docs/features/events/"
+                    >
+                        Learn More
+                    </a>
+                </div>
+                <pre class="homepage__example__code fenced-code"><code 
+                        class="language-php"
+                        data-controller="hljs"
+                        data-hljs-language-value="php"
+                    >use function Sentry\init as sentryInit;
+
+#[ListensTo(HttpServerStarted::class)]
+#[Singleton(collection: SingletonCollection::EventListener)]
+final readonly class InitializeSentry extends EventListener
+{
+    public function __construct(
+        private ApplicationConfiguration $applicationContext,
+        private SentryConfiguration $sentryConfiguration,
+    ) {}
+
+    public function handle(EventInterface $event): void
+    {
+        sentryInit([
+            'default_integrations' => false,
+            'dsn' => $this->sentryConfiguration->dsn,
+            'environment' => $this->applicationContext->environment->value,
+        ]);
+    }
+}
+</code></pre>
+            </li>
+            <li class="formatted-content homepage__example">
+                <h2 class="homepage__example__title">
                     Powerful Dependency Injection
                 </h2>
                 <div class="homepage__example__description">

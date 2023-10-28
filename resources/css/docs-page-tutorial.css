@@ -1,5 +1,6 @@
 .tutorial {
   align-items: center;
+  background-color: var(--color-document-background);
   display: flex;
   flex-direction: column;
 }

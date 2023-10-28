@@ -61,30 +61,29 @@ use Swoole\Database\PDOPool;
  */
 final readonly class SelectBlogPosts extends DatabaseQuery
 {
+    const SQL = <<<'SQL'
+        SELECT
+            blog_posts.content,
+            blog_posts.slug,
+            blog_posts.title
+        FROM blog_posts
+    SQL;
+
     /**
      * @return Generator<int, BlogPost>
      */
     public function execute(): Generator
     {
+        $stmt = $this->getConnection()->prepare(self::SQL);
+        
         /**
-         * @var Generator<int, array{
+         * @var list<array{
          *     content: string,
          *     slug: string,
          *     title: string,
          * }>
          */
-        $blogPostsData = $this
-            ->getConnection()
-            ->prepare(<<<'SQL'
-                SELECT
-                    blog_posts.content,
-                    blog_posts.slug,
-                    blog_posts.title
-                FROM blog_posts
-            SQL)
-            ->execute()
-            ->yieldAssoc()
-        ;
+        $blogPostsData = $stmt->execute()->fetchAllAssociative();
 
         foreach ($blogPostsData as $blogPostData) {
             yield new BlogPost(...$blogPostsData);

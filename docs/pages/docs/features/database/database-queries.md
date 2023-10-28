@@ -62,7 +62,7 @@ $conn = new DatabaseConnection($databaseConnectionPoolRepository);
 
 // After returning, when $conn is destroyed by the Garbage Collector
 // database connection is returned back to the pool
-$conn->prepare('SELECT 2 + 2')->execute()->first();
+$conn->prepare('SELECT 2 + 2')->execute();
 ```
 
 ## Using Specific Connection Pool
@@ -100,23 +100,24 @@ use Swoole\Database\PDOPool;
  * @var DatabaseConnectionPoolRepository $databaseConnectionPoolRepository
  */
 $conn = new DatabaseConnection($databaseConnectionPoolRepository);
-$conn
-    ->prepare(<<<'SQL'
-        INSERT INTO blog_posts
-        (
-            content,
-            title
-        )
-        VALUES
-        (
-            :content,
-            :title
-        )
-    SQL)
-    ->bindValue('content', 'blog post content')
-    ->bindValue('title', 'blog post title')
-    ->execute()
-;
+
+$stmt = $conn->prepare(<<<'SQL'
+    INSERT INTO blog_posts
+    (
+        content,
+        title
+    )
+    VALUES
+    (
+        :content,
+        :title
+    )
+SQL);
+
+$stmt->bindValue('content', 'blog post content');
+$stmt->bindValue('title', 'blog post title');
+
+$stmt->execute();
 ```
 
 ## Logging Queries

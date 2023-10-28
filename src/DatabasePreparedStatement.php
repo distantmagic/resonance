@@ -5,28 +5,45 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Event\SQLQueryBeforeExecute;
-use PDO;
+use Doctrine\DBAL\Driver\PDO\ParameterTypeMap;
+use Doctrine\DBAL\Driver\Statement;
+use Doctrine\DBAL\ParameterType;
+use LogicException;
 use PDOStatement;
-use Swoole\Database\PDOProxy;
 use Swoole\Database\PDOStatementProxy;
 
-readonly class DatabasePreparedStatement
+readonly class DatabasePreparedStatement implements Statement
 {
     public function __construct(
         private EventDispatcherInterface $eventDispatcher,
-        private PDO|PDOProxy $pdo,
         private PDOStatement|PDOStatementProxy $pdoStatement,
         private string $sql,
     ) {}
 
-    public function bindValue(int|string $param, int|string $value, int $type = PDO::PARAM_STR): self
-    {
-        $this->pdoStatement->bindValue($param, $value, $type);
-
-        return $this;
+    public function bindParam(
+        $param,
+        &$variable,
+        $type = ParameterType::STRING,
+        $length = null,
+        $driverOptions = null
+    ): never {
+        throw new LogicException('Use bindValue() instead');
     }
 
-    public function execute(): DatabaseExecutedStatement
+    /**
+     * @psalm-suppress InternalClass
+     * @psalm-suppress InternalMethod
+     */
+    public function bindValue($param, $value, $type = ParameterType::STRING)
+    {
+        return $this->pdoStatement->bindValue(
+            $param,
+            $value,
+            ParameterTypeMap::convertParamType($type),
+        );
+    }
+
+    public function execute($params = null): DatabaseExecutedStatement
     {
         $this->eventDispatcher->dispatch(new SQLQueryBeforeExecute($this->sql));
 
@@ -39,6 +56,6 @@ readonly class DatabasePreparedStatement
             throw new PDOException($this->pdoStatement->errorInfo());
         }
 
-        return new DatabaseExecutedStatement($this->pdo, $this->pdoStatement);
+        return new DatabaseExecutedStatement($this->pdoStatement);
     }
 }

@@ -38,7 +38,9 @@
         "twig/cache-extra": "^3.7",
         "twig/twig": "^3.7",
         "webonyx/graphql-php": "^15.6",
-        "nette/php-generator": "^4.1"
+        "nette/php-generator": "^4.1",
+        "doctrine/dbal": "^3.7",
+        "doctrine/orm": "^2.16"
     },
     "require-dev": {
         "mockery/mockery": "^1.6",

@@ -33,6 +33,16 @@ use Distantmagic\Resonance\DatabaseQuery;
  */
 final readonly class SelectBlogPostBySlug extends DatabaseQuery
 {
+    const SQL = <<<'SQL'
+        SELECT
+            blog_posts.content,
+            blog_posts.slug,
+            blog_posts.title,
+        FROM blog_posts
+        WHERE blog_posts.slug = :slug
+        LIMIT 1
+    SQL;
+
     public function __construct(
         DatabaseConnectionPoolRepository $databaseConnectionPoolRepository,
         private string $blogPostSlug,
@@ -41,29 +51,20 @@ final readonly class SelectBlogPostBySlug extends DatabaseQuery
     }
 
     /**
-     * @return null|array{
+     * @return false|array{
      *     content: string,
      *     slug: string,
      *     title: string,
      * }
      */
-    public function execute(): ?array
+    public function execute(): false|array
     {
-        return $this
-            ->getConnection()
-            ->prepare(<<<'SQL'
-                SELECT
-                    blog_posts.content,
-                    blog_posts.slug,
-                    blog_posts.title,
-                FROM blog_posts
-                WHERE blog_posts.slug = :slug
-                LIMIT 1
-            SQL)
-            ->bindValue('slug', $this->blogPostSlug)
-            ->execute()
-            ->first()
-        ;
+        $stmt = $this->getConnection()->prepare(self::SQL);
+
+        $stmt->bindValue('slug', $this->blogPostSlug);
+        $stmt->execute();
+        
+        return $stmt->fetchAssociative();
     }
 }
 ```
@@ -97,17 +98,16 @@ use Generator;
 
 final readonly class SelectBlogPosts extends DatabaseQuery
 {
-    public function execute(): Generator
+    const SQL = <<<'SQL'
+        SELECT blog_posts.title
+        FROM blog_posts
+    SQL;
+
+    public function execute(): false|array
     {
-        return $this
-            ->getConnection('readonly')
-            ->prepare(<<<'SQL'
-                SELECT blog_posts.title
-                FROM blog_posts
-            SQL)
-            ->execute()
-            ->yieldAssoc()
-        ;
+        $stmt = $this->getConnection('readonly')->prepare(self::SQL)
+        
+        return $stmt->execute()->fetchAllAssociative();
     }
 }
 ```

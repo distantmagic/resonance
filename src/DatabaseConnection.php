@@ -6,6 +6,7 @@ namespace Distantmagic\Resonance;
 
 use PDO;
 use PDOStatement;
+use RuntimeException;
 use Swoole\Database\PDOProxy;
 use Swoole\Database\PDOStatementProxy;
 use Swoole\Event;
@@ -28,6 +29,21 @@ readonly class DatabaseConnection
         });
     }
 
+    public function lastInsertId(): false|string
+    {
+        $lastInsertId = $this->pdo->lastInsertId();
+
+        if (false === $lastInsertId) {
+            return false;
+        }
+
+        if (!is_string($lastInsertId)) {
+            throw new RuntimeException('Last insert id is not a string');
+        }
+
+        return $lastInsertId;
+    }
+
     public function prepare(string $sql): DatabasePreparedStatement
     {
         /**
@@ -41,7 +57,6 @@ readonly class DatabaseConnection
 
         return new DatabasePreparedStatement(
             $this->databaseConnectionPoolRepository->eventDispatcher,
-            $this->pdo,
             $pdoPreparedStatement,
             $sql,
         );

@@ -3,6 +3,7 @@
  */
 
 .documentation {
+  background-color: var(--color-document-background);
   align-content: flex-start;
   display: grid;
   height: 100%;

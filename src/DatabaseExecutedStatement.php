@@ -4,83 +4,124 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Generator;
+use Doctrine\DBAL\Driver\Result;
 use PDO;
 use PDOStatement;
 use RuntimeException;
-use Swoole\Database\PDOProxy;
 use Swoole\Database\PDOStatementProxy;
 
-readonly class DatabaseExecutedStatement
+readonly class DatabaseExecutedStatement implements Result
 {
     public function __construct(
-        private PDO|PDOProxy $pdo,
         private PDOStatement|PDOStatementProxy $pdoStatement,
     ) {}
 
     public function __destruct()
     {
-        $this->pdoStatement->closeCursor();
+        $this->free();
+    }
+
+    public function columnCount(): int
+    {
+        /**
+         * @var int
+         */
+        return $this->pdoStatement->columnCount();
+    }
+
+    public function fetchAllAssociative(): array
+    {
+        /**
+         * @var list<array<string,mixed>>
+         */
+        return $this->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function fetchAllNumeric(): array
+    {
+        /**
+         * @var list<list<mixed>>
+         */
+        return $this->fetchAll(PDO::FETCH_NUM);
     }
 
     /**
      * In all cases, false is returned on failure or if there are no more rows.
      */
-    public function fetchAssoc(): array|false
+    public function fetchAssociative(): array|false
     {
-        $ret = $this->pdoStatement->fetch(PDO::FETCH_ASSOC);
+        /**
+         * @var array<string,mixed>|false
+         */
+        return $this->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function fetchFirstColumn(): array
+    {
+        /**
+         * @var list<mixed>
+         */
+        return $this->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    /**
+     * @return false|list<mixed>
+     */
+    public function fetchNumeric(): array|false
+    {
+        /**
+         * @var false|list<mixed>
+         */
+        return $this->fetch(PDO::FETCH_NUM);
+    }
+
+    public function fetchOne(): mixed
+    {
+        return $this->fetch(PDO::FETCH_COLUMN);
+    }
+
+    public function free(): void
+    {
+        $this->pdoStatement->closeCursor();
+    }
+
+    public function rowCount(): int
+    {
+        /**
+         * @var int
+         */
+        return $this->pdoStatement->rowCount();
+    }
+
+    /**
+     * @psalm-param PDO::FETCH_* $mode
+     */
+    private function fetch(int $mode): array|false
+    {
+        $ret = $this->pdoStatement->fetch($mode);
 
         if (false === $ret) {
             return $ret;
         }
 
         if (!is_array($ret)) {
-            throw new RuntimeException('FETCH_ASSOC returned something else than array');
+            throw new RuntimeException('Fetch returned something else than array');
         }
 
         return $ret;
     }
 
-    public function first(): ?array
+    /**
+     * @psalm-param PDO::FETCH_* $mode
+     */
+    private function fetchAll(int $mode): array
     {
-        try {
-            $data = $this->fetchAssoc();
+        $ret = $this->pdoStatement->fetchAll($mode);
 
-            if (false === $data) {
-                return null;
-            }
-
-            return $data;
-        } finally {
-            $this->pdoStatement->closeCursor();
-        }
-    }
-
-    public function lastInsertId(): false|string
-    {
-        $lastInsertId = $this->pdo->lastInsertId();
-
-        if (false === $lastInsertId) {
-            return false;
+        if (!is_array($ret)) {
+            throw new RuntimeException('FetchAll returned something else than array');
         }
 
-        if (!is_string($lastInsertId)) {
-            throw new RuntimeException('Last insert id is not a string');
-        }
-
-        return $lastInsertId;
-    }
-
-    public function yieldAssoc(): Generator
-    {
-        while (true) {
-            $data = $this->fetchAssoc();
-
-            if (false === $data) {
-                break;
-            }
-
-            yield $data;
-        }
+        return $ret;
     }
 }
