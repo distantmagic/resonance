@@ -18,8 +18,6 @@ use Stringable;
 #[Singleton(provides: LoggerInterface::class)]
 final readonly class SwooleLoggerBridge implements LoggerInterface
 {
-    public function __construct() {}
-
     public function alert(string|Stringable $message, array $context = []): void
     {
         $this->error($message, $context);

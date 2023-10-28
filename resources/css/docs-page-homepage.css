@@ -9,38 +9,61 @@
 }
 
 .homepage__content {
-  max-width: 1650px;
-  padding: 20px;
-  width: 100%;
-}
-
-.homepage__features {
-  display: grid;
-  gap: 1em;
-  list-style-type: none;
-  width: 100%;
-  padding-bottom: 120px;
-
-  @media screen and (max-width: 1279px) {
-    grid-template-columns: 1fr;
-  }
-  @media screen and (min-width: 1280px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.homepage__feature {
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
   display: flex;
   flex-direction: column;
-  row-gap: 10px;
-  padding: 1em;
-  text-decoration: none;
+  max-width: 1480px;
+  padding: 20px 20px 120px 20px;
+  row-gap: 120px;
+  width: 100%;
 }
 
-.homepage__feature__title {
-  color: var(--color-link-active);
+.homepage__example {
+  align-items: flex-start;
+  display: grid;
+
+  @media screen and (max-width: 1279px) {
+    column-gap: 80px;
+    grid-template-areas:
+      "title"
+      "code"
+      "description"
+    ;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, auto);
+    row-gap: 40px;
+  }
+  @media screen and (min-width: 1280px) {
+    column-gap: 80px;
+    grid-template-areas:
+      "title code"
+      "description code"
+    ;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto 1fr;
+    row-gap: 40px;
+  }
+}
+
+.homepage__example__code {
+  grid-area: code;
+}
+
+.homepage__example__description {
+  display: flex;
+  flex-direction: column;
+  grid-area: description;
+  row-gap: 1em;
+}
+
+h2.homepage__example__title {
+  grid-area: title;
+  margin-top: 0;
+}
+
+.homepage__examples {
+  display: flex;
+  flex-direction: column;
+  row-gap: 100px;
 }
 
 .homepage__title {
@@ -56,7 +79,7 @@
     padding: 120px 0;
   }
   @media screen and (min-width: 1024px) {
-    padding: 180px 0 200px 0;
+    padding: 160px 0 80px 0;
   }
 }
 
@@ -70,7 +93,6 @@
   }
   @media screen and (min-width: 1024px) {
     font-size: 6em;
-    letter-spacing: -6px;
     position: relative;
   }
 }
@@ -109,10 +131,14 @@
   width: 100%;
 }
 
-.homepage__title__cta {
+.homepage__cta {
   border-style: solid;
   border-width: 1px;
   margin-top: 20px;
   padding: 15px 20px;
   text-decoration: none;
+}
+
+.homepage__cta.homepage__cta--example {
+  align-self: flex-start;
 }
