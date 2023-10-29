@@ -36,12 +36,20 @@ Those are:
 
 # Usage
 
-In general you can follow 
+In general, you can follow 
 [Doctrine's documentation](https://www.doctrine-project.org/projects/orm). 
+The only caveat is obtaining `DBAL` connections. You shouldn't use Doctrine's
+adapters to obtain the `DBAL` connection - you should rely on 
+`Distantmagic\Resonance\DoctrineConnectionRepository` instead as it uses 
+the {{docs/features/database/swoole/connection-pools}} under the hood and 
+manages them transparently.
+
 If you want to use {{docs/features/database/swoole/connection-pools}} and
 other Resonance's features, you should use the 
 `Distantmagic\Resonance\DoctrineEntityManagerRepository` instead of 
-Doctrine's `Doctrine\ORM\EntityManager` to obtain entity managers.
+building Doctrine's `Doctrine\ORM\EntityManager` manually.
+
+Other than that, you can follow Doctrine documentation.
 
 ## Controllers
 
