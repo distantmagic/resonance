@@ -20,6 +20,15 @@ This approach allows multiple easy optimizations, like
 {{docs/features/graphql/index}}, or just simple performance optimizations, like
 fetching just the required columns from the database. 
 
+:::tip
+If you need ORM features you use the 
+{{docs/features/database/doctrine/index}} integration instead.
+
+Using Database Entities is more performant, but 
+{{docs/features/database/doctrine/index}} provides more ease-of-development
+features.
+:::
+
 # Usage
 
 First, you have to define your data model (an instance of `DatabaseEntity`):
