@@ -35,7 +35,7 @@ final readonly class DatabaseConnectionPoolRepositoryProvider extends SingletonP
                 ->withHost($connectionPoolConfiguration->host)
                 ->withPort($connectionPoolConfiguration->port)
                 ->withDbName($connectionPoolConfiguration->database)
-                ->withDriver($connectionPoolConfiguration->driver)
+                ->withDriver($connectionPoolConfiguration->driver->value)
                 ->withUsername($connectionPoolConfiguration->username)
                 ->withPassword($connectionPoolConfiguration->password)
                 // Sometimes Swoole PDO wrapper can't reconnect properly when

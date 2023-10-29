@@ -1,10 +1,10 @@
 ---
 collections: 
     - name: documents
-      next: docs/features/database/database-queries
+      next: docs/features/database/swoole/database-queries
 layout: dm:document
-next: docs/features/database/database-queries
-parent: docs/features/database/index
+next: docs/features/database/swoole/database-queries
+parent: docs/features/database/swoole/index
 title: Connection Pools
 description: >
     Use convenient connections pool wrapper for database interaction.
@@ -23,8 +23,8 @@ in the background and ensures that the connection pool never becomes depleted.
 To simplify the process and eliminate the need for manual borrowing and 
 returning connections to and from the pool, Resonance offers a convenient 
 wrapper, which consists of several tools, for example: 
-{{docs/features/database/database-queries}}, 
-{{docs/features/database/database-entities}}. 
+{{docs/features/database/swoole/database-queries}}, 
+{{docs/features/database/swoole/database-entities}}. 
 
 Follow this documentation page for configuration instructions and the following
 pages for specific use cases.
@@ -84,4 +84,4 @@ be established if they are used by the
 
 # Usage
 
-See usage at {{docs/features/database/database-queries}}.
+See usage at {{docs/features/database/swoole/database-queries}}.

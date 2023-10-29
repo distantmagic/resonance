@@ -17,7 +17,7 @@ authors and the currently authenticated user simultaneously.
 
 Resonance provides a mechanism to reuse specific queries to optimize database 
 performance and avoid redundant queries. This feature relies on
-{{docs/features/database/database-entities}} and the implementation of 
+{{docs/features/database/swoole/database-entities}} and the implementation of 
 a specific interface for GraphQL.
 
 ## Example

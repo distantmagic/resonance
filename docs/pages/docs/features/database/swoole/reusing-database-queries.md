@@ -1,10 +1,10 @@
 ---
 collections:
     - name: documents
-      next: docs/features/database/database-entities
+      next: docs/features/database/swoole/database-entities
 layout: dm:document
-next: docs/features/database/database-entities
-parent: docs/features/database/index
+next: docs/features/database/swoole/database-entities
+parent: docs/features/database/swoole/index
 title: Reusing Database Queries
 description: >
     Learn how to reuse the same database query in multiple places in your 

@@ -1,10 +1,10 @@
 ---
 collections:
     - name: documents
-      next: docs/features/database/reusing-database-queries
+      next: docs/features/database/swoole/reusing-database-queries
 layout: dm:document
-next: docs/features/database/reusing-database-queries
-parent: docs/features/database/index
+next: docs/features/database/swoole/reusing-database-queries
+parent: docs/features/database/swoole/index
 title: Database Queries
 description: >
     Use database queries with Swoole's connection pools.

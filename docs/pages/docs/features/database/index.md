@@ -11,4 +11,4 @@ description: >
 
 # Database
 
-{{docs/features/database/*!docs/features/database/index}}
+{{docs/features/database/*/index!docs/features/database/index}}

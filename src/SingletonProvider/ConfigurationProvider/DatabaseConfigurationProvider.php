@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\DatabaseConfiguration;
 use Distantmagic\Resonance\DatabaseConnectionPoolConfiguration;
+use Distantmagic\Resonance\DatabaseConnectionPoolDriverName;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
@@ -41,7 +42,7 @@ final readonly class DatabaseConfigurationProvider extends ConfigurationProvider
 
         $valueSchema = Expect::structure([
             'database' => Expect::string()->min(1)->required(),
-            'driver' => Expect::string()->min(1)->required(),
+            'driver' => Expect::anyOf(...DatabaseConnectionPoolDriverName::values())->required(),
             'host' => Expect::string()->min(1)->required(),
             'log_queries' => Expect::bool()->required(),
             'password' => Expect::string()->required(),
@@ -63,7 +64,7 @@ final readonly class DatabaseConfigurationProvider extends ConfigurationProvider
                 $name,
                 new DatabaseConnectionPoolConfiguration(
                     database: $connectionPoolConfiguration->database,
-                    driver: $connectionPoolConfiguration->driver,
+                    driver: DatabaseConnectionPoolDriverName::from($connectionPoolConfiguration->driver),
                     host: $connectionPoolConfiguration->host,
                     logQueries: $connectionPoolConfiguration->log_queries,
                     password: $connectionPoolConfiguration->password,

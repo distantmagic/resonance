@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Doctrine\DBAL\Driver\Connection;
 use Doctrine\DBAL\Driver\PDO\ParameterTypeMap;
+use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\ParameterType;
 use LogicException;
 use PDO;
@@ -15,7 +15,13 @@ use Swoole\Database\PDOProxy;
 use Swoole\Database\PDOStatementProxy;
 use Swoole\Event;
 
-readonly class DatabaseConnection implements Connection
+/**
+ * This interface is going to be mandatory in the next Doctrine release, but
+ * for now it has to be used.
+ *
+ * @psalm-suppress DeprecatedInterface
+ */
+readonly class DatabaseConnection implements ServerInfoAwareConnection
 {
     private PDO|PDOProxy $pdo;
 
@@ -68,6 +74,16 @@ readonly class DatabaseConnection implements Connection
     public function getNativeConnection(): PDO|PDOProxy
     {
         return $this->pdo;
+    }
+
+    public function getServerVersion(): string
+    {
+        /**
+         * @var false|string
+         */
+        $version = $this->pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
+
+        return $this->assertNotFalse($version);
     }
 
     public function lastInsertId($name = null): false|string

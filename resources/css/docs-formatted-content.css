@@ -158,22 +158,12 @@
   }
 
   code:not([class]) {
+    background-color: var(--color-inline-code-background);
     display: inline-flex;
     font-family: var(--font-family-monospace);
     font-size: var(--font-size-smaller);
     max-width: 100vw;
     position: relative;
-
-    &::after {
-      background-color: var(--color-inline-code-background);
-      content: "";
-      position: absolute;
-      top: -2px;
-      left: -4px;
-      right: -4px;
-      bottom: -2px;
-      z-index: -1;
-    }
   }
 
   table,

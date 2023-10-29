@@ -1,10 +1,8 @@
 ---
 collections:
-    - name: documents
-      next: docs/features/database/migrations
+    - documents
 layout: dm:document
-next: docs/features/database/migrations
-parent: docs/features/database/index
+parent: docs/features/database/swoole/index
 title: Database Entities
 description: >
     Learn how to map SQL queries results into reusable database entities.
@@ -12,7 +10,7 @@ description: >
 
 # Database Entities
 
-Resonance does not use the 
+Resonance's database wrapper over Swoole's connection pools does not use the 
 [Active Record](https://www.martinfowler.com/eaaCatalog/activeRecord.html) 
 pattern. Instead, it uses read-only Database Entities (which are intentionally 
 little more than basic PHP objects), hydrated directly from a query result.
