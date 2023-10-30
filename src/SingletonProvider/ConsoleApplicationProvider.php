@@ -8,6 +8,7 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\CommandLoader;
 use Distantmagic\Resonance\ConsoleApplication;
 use Distantmagic\Resonance\DependencyInjectionContainer;
+use Distantmagic\Resonance\DoctrineConsoleEntityManagerProvider;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
@@ -18,7 +19,10 @@ use Distantmagic\Resonance\SingletonProvider;
 #[Singleton(provides: ConsoleApplication::class)]
 final readonly class ConsoleApplicationProvider extends SingletonProvider
 {
-    public function __construct(private DependencyInjectionContainer $container) {}
+    public function __construct(
+        private DependencyInjectionContainer $container,
+        private DoctrineConsoleEntityManagerProvider $doctrineConsoleEntityManagerProvider,
+    ) {}
 
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): ConsoleApplication
     {

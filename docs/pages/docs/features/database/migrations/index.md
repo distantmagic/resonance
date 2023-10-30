@@ -50,14 +50,10 @@ defined('DM_ROOT') or exit('Configuration is not loaded.');
 use Distantmagic\Resonance\DatabaseConfiguration;
 use Distantmagic\Resonance\DatabaseConnectionPoolDriverName;
 use Distantmagic\Resonance\DependencyInjectionContainer;
-use Swoole\Runtime;
 
-$container = new DependencyInjectionContainer();
-$container->phpProjectFiles->indexDirectory(DM_RESONANCE_ROOT);
-$container->phpProjectFiles->indexDirectory(DM_APP_ROOT);
-$container->registerSingletons();
-
-return $container->call(static function (DatabaseConfiguration $databaseConfiguration) {
+return DependencyInjectionContainer::boot(static function (
+    DatabaseConfiguration $databaseConfiguration,
+) {
     $connectionPoolConfiguration = $databaseConfiguration
         ->connectionPoolConfiguration
         ->get('default')
@@ -75,7 +71,6 @@ return $container->call(static function (DatabaseConfiguration $databaseConfigur
         },
     ];
 });
-
 ```
 
 Then you should be able to use `php ./vendor/bin/doctrine-migrations` command
@@ -119,14 +114,10 @@ defined('DM_ROOT') or exit('Configuration is not loaded.');
 
 use Distantmagic\Resonance\DatabaseConfiguration;
 use Distantmagic\Resonance\DependencyInjectionContainer;
-use Swoole\Runtime;
 
-$container = new DependencyInjectionContainer();
-$container->phpProjectFiles->indexDirectory(DM_RESONANCE_ROOT);
-$container->phpProjectFiles->indexDirectory(DM_APP_ROOT);
-$container->registerSingletons();
-
-return $container->call(static function (DatabaseConfiguration $databaseConfiguration) {
+return DependencyInjectionContainer::boot(static function (
+    DatabaseConfiguration $databaseConfiguration,
+) {
     $connectionPoolConfiguration = $databaseConfiguration
         ->connectionPoolConfiguration
         ->get('default')

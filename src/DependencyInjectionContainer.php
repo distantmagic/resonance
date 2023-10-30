@@ -39,6 +39,23 @@ readonly class DependencyInjectionContainer
 
     private SingletonContainer $singletons;
 
+    /**
+     * @template TReturnType
+     *
+     * @param Closure(...mixed):TReturnType $function
+     *
+     * @return TReturnType
+     */
+    public static function boot(Closure $function): mixed
+    {
+        $container = new self();
+        $container->phpProjectFiles->indexDirectory(DM_RESONANCE_ROOT);
+        $container->phpProjectFiles->indexDirectory(DM_APP_ROOT);
+        $container->registerSingletons();
+
+        return $container->call($function);
+    }
+
     public function __construct()
     {
         $this->collectionDependencies = new Map();
