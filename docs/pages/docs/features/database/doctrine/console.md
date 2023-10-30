@@ -19,7 +19,7 @@ configuration file that uses entity maanager specific to Resonance:
 
 declare(strict_types=1);
 
-require_once __DIR__.'/vendor/autoload.php';
+require_once __DIR__.'/../vendor/autoload.php';
 
 defined('DM_ROOT') or exit('Configuration is not loaded.');
 
