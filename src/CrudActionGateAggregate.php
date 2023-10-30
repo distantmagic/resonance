@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Ds\Map;
+use LogicException;
 
 readonly class CrudActionGateAggregate
 {
@@ -20,6 +21,10 @@ readonly class CrudActionGateAggregate
 
     public function getSubjectGate(CrudActionSubjectInterface $subject): CrudActionGateInterface
     {
+        if (!$this->crudActionGates->hasKey($subject::class)) {
+            throw new LogicException('There is no CRUD gate assigned to handle subject: '.$subject::class);
+        }
+
         return $this->crudActionGates->get($subject::class);
     }
 }

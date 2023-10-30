@@ -103,6 +103,18 @@ readonly class DoctrineConnectionRepository extends EventListener
         }
 
         foreach ($this->connections->offsetGet($event->request) as $connection) {
+            /**
+             * This doesn't really terminate the connection, instead (as of
+             * writing this), internally to Doctrine, it just sets the pointer
+             * to that connection to NULL, thus allowing the GC to collect the
+             * underlying PDO object.
+             *
+             * This is exactly the behavior we need.
+             *
+             * This also seems to be the PDO's recommended way of terminating
+             * connections - PDO closes a connection when all references to
+             * that connection are gone.
+             */
             $connection->close();
         }
     }

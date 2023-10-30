@@ -26,7 +26,7 @@ final readonly class HttpRouteParameterBinderAggregateProvider extends Singleton
     {
         $httpResponderAggregate = new HttpRouteParameterBinderAggregate();
 
-        foreach ($this->collectResponders($singletons) as $httpResponderAttribute) {
+        foreach ($this->collectBinders($singletons) as $httpResponderAttribute) {
             $httpResponderAggregate->httpRouteParameterBinders->put(
                 $httpResponderAttribute->attribute->class,
                 $httpResponderAttribute->singleton,
@@ -39,7 +39,7 @@ final readonly class HttpRouteParameterBinderAggregateProvider extends Singleton
     /**
      * @return iterable<SingletonAttribute<HttpRouteParameterBinderInterface,ProvidesRouteParameter>>
      */
-    private function collectResponders(SingletonContainer $singletons): iterable
+    private function collectBinders(SingletonContainer $singletons): iterable
     {
         return $this->collectAttributes(
             $singletons,

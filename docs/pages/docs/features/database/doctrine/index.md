@@ -34,79 +34,11 @@ Those are:
 3. Doctrine integration uses {{docs/features/database/swoole/connection-pools}}
     and it does so transparently.
 
-# Usage
-
-In general, you can follow 
-[Doctrine's documentation](https://www.doctrine-project.org/projects/orm). 
-The only caveat is obtaining `DBAL` connections. You shouldn't use Doctrine's
-adapters to obtain the `DBAL` connection - you should rely on 
-`Distantmagic\Resonance\DoctrineConnectionRepository` instead as it uses 
-the {{docs/features/database/swoole/connection-pools}} under the hood and 
-manages them transparently.
-
-If you want to use {{docs/features/database/swoole/connection-pools}} and
-other Resonance's features, you should use the 
-`Distantmagic\Resonance\DoctrineEntityManagerRepository` instead of 
-building Doctrine's `Doctrine\ORM\EntityManager` manually.
-
-Other than that, you can follow Doctrine documentation.
-
-## Controllers
-
-You should use `Distantmagic\Resonance\DoctrineEntityManagerRepository` to 
-obtain the `Doctrine\ORM\EntityManager`. 
-
-:::caution
-You shouldn't use the `Doctrine\DBAL\DriverManager` to obtain the connection.
-`Distantmagic\Resonance\DoctrineEntityManagerRepository` does that and takes 
-care of integration with Resonance and Swoole.
-
-It makes sure that after each request, the connection used by the `DBAL`
-and `EntityManager`
-is returned to the {{docs/features/database/swoole/connection-pools}}.
+:::tip
+If you just want to make a plain SQL query and you don't need a query builder
+you might consider using plain 
+{{docs/features/database/swoole/database-queries}} withtout the overhead of 
+Doctrine.
 :::
 
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\HttpResponder;
-
-use App\DoctrineEntity\BlogPost;
-use App\HttpRouteSymbol;
-use Distantmagic\Resonance\Attribute\RespondsToHttp;
-use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\DoctrineEntityManagerRepository;
-use Distantmagic\Resonance\HttpInterceptableInterface;
-use Distantmagic\Resonance\HttpResponder;
-use Distantmagic\Resonance\RequestMethod;
-use Distantmagic\Resonance\SingletonCollection;
-use Distantmagic\Resonance\TwigTemplate;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
-
-#[RespondsToHttp(
-    method: RequestMethod::GET,
-    pattern: '/blog',
-    routeSymbol: HttpRouteSymbol::Blog,
-)]
-#[Singleton(collection: SingletonCollection::HttpResponder)]
-final readonly class Blog extends HttpResponder
-{
-    public function __construct(
-        private DoctrineEntityManagerRepository $doctrineEntityManagerRepository,
-    ) {}
-
-    public function respond(Request $request, Response $response): HttpInterceptableInterface
-    {
-        $entityManager = $this->doctrineEntityManagerRepository->getEntityManager($request);
-
-        $blogPostsRepository = $entityManager->getRepository(BlogPost::class);
-
-        return new TwigTemplate('turbo/website/blog.twig', [
-            'blog_posts' => $blogPostsRepository->findAll(),
-        ]);
-    }
-}
-```
+{{docs/features/database/doctrine/*!docs/features/database/doctrine/index}}

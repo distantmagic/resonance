@@ -103,6 +103,11 @@ final readonly class BlogPostShow extends HttpController
 }
 ```
 
+### Providing Doctrine Entities as Parameters
+
+You can learn more at Doctrine {{docs/features/database/doctrine/entities}} 
+page.
+
 ### Providing Route Parameters
 
 To inform the framework where to retrieve route parameter values, you must 

@@ -6,6 +6,7 @@
   display: grid;
   grid-gap: 1em;
   line-height: 1.5;
+  margin-top: 3em;
 
   @media screen and (max-width: 1023px) {
     grid-template-columns: 1fr;

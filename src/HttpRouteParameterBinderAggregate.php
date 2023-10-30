@@ -6,6 +6,8 @@ namespace Distantmagic\Resonance;
 
 use Ds\Map;
 use LogicException;
+use Swoole\Http\Request;
+use Swoole\Http\Response;
 
 readonly class HttpRouteParameterBinderAggregate
 {
@@ -26,13 +28,21 @@ readonly class HttpRouteParameterBinderAggregate
      *
      * @return null|TResult
      */
-    public function provide(string $className, string $routeParameterValue): ?object
-    {
+    public function provide(
+        Request $request,
+        Response $response,
+        string $className,
+        string $routeParameterValue,
+    ): ?object {
         if (!$this->httpRouteParameterBinders->hasKey($className)) {
             throw new LogicException('There is no parameter binder registered for: '.$className);
         }
 
-        $object = $this->httpRouteParameterBinders->get($className)->provide($routeParameterValue);
+        $object = $this->httpRouteParameterBinders->get($className)->provide(
+            $request,
+            $response,
+            $routeParameterValue,
+        );
 
         if (is_null($object)) {
             return null;
