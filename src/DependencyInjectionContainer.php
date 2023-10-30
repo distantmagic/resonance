@@ -112,7 +112,7 @@ readonly class DependencyInjectionContainer
         });
 
         if (!$coroutineResult) {
-            throw new RuntimeException('Container event loop failed');
+            throw new RuntimeException('Container event loop failed. Tried to build: '.$className);
         }
 
         if (!($ret instanceof $className)) {

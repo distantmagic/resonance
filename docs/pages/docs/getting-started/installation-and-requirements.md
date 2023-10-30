@@ -55,8 +55,8 @@ identical as using the `create-project`.
 
 After installing the project, you should create the `config.ini` file 
 (you can copy `config.ini.example` with it's default values) 
-and then use `app/resonance.php` as an entry 
-point. After invoking `php app/resonance.php` in the shell, you should see
+and then use `bin/resonance.php` as an entry 
+point. After invoking `php bin/resonance.php` in the shell, you should see
 the list of available commands:
 
 ```shell
@@ -84,5 +84,5 @@ Available commands:
   generate:static-pages     Generate static pages
 ```
 
-`php app/resonance.php serve` should start the HTTP server. If you need to, 
+`php bin/resonance.php serve` should start the HTTP server. If you need to, 
 you can generate the {{docs/extras/ssl-certificate-for-local-development}}.

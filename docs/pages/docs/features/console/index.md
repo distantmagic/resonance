@@ -68,6 +68,6 @@ final class Hello extends Command
 Then you can use it:
 
 ```shell
-$ php ./app/resonance.php hello
+$ php ./bin/resonance.php hello
 Hello, world!
 ```

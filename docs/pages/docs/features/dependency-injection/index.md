@@ -22,14 +22,14 @@ once some other class uses them as a constructor dependency.
 
 ## Building the Container
 
-By default, Resonance comes with the predefined `app/resonance.php` file which
+By default, Resonance comes with the predefined `bin/resonance.php` file which
 initializes the container and your {{docs/features/console/index}} commands.
 
 You can modify this file the way you need. By default, it scans your 
 application's files and the base Resonance framework files to search for the
 classes with the `#[Singleton]` attribute:
 
-```php file:app/resonance.php
+```php file:bin/resonance.php
 <?php
 
 namespace App;

@@ -33,7 +33,7 @@ If you want to generate a new controller, you can do this manually, or you can
 use the `generate:http-controller` command:
 
 ```shell
-$ php ./app/resonance.php generate:http-controller Name
+$ php ./bin/resonance.php generate:http-controller Name
 ```
 
 ## Route Parameters

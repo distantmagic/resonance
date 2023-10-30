@@ -63,7 +63,7 @@ You can change the port on which the HTTP server should be listening.
 To start the server, you need to run this command in the terminal:
 
 ```shell
-$ php ./app/resonance.php serve
+$ php ./bin/resonance.php serve
 ```
 
 Then you should see the message:

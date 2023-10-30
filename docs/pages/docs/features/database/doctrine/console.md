@@ -14,7 +14,7 @@ description: >
 To make Doctrine use Resonance's features, you need to create a dedicated
 configuration file that uses entity maanager specific to Resonance:
 
-```php file:doctrine.php
+```php file:bin/doctrine.php
 <?php
 
 declare(strict_types=1);
@@ -23,21 +23,15 @@ require_once __DIR__.'/vendor/autoload.php';
 
 defined('DM_ROOT') or exit('Configuration is not loaded.');
 
-use Distantmagic\Resonance\DependencyInjectionContainer;
-use Distantmagic\Resonance\DoctrineConsoleEntityManagerProvider;
-use Doctrine\ORM\Tools\Console\ConsoleRunner;
+use Distantmagic\Resonance\DoctrineConsoleRunner;
 
-DependencyInjectionContainer::boot(static function (
-    DoctrineConsoleEntityManagerProvider $entityManagerProvider,
-) {
-    ConsoleRunner::run($entityManagerProvider);
-});
+DoctrineConsoleRunner::run();
 ```
 
 Then, after invoking `php doctrine.php` you should see Donctrine's commands:
 
 ```shell
-$ php ./doctrine.php
+$ php ./bin/doctrine.php
 Doctrine Command Line Interface 2.16.2.0
 
 Usage:

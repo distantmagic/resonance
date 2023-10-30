@@ -23,7 +23,7 @@ with Swoole extension.
 ## Using the Default Command
 
 By default, Resonance ships with the `generate:static-pages` command 
-(`php ./app/resonance.php generate:static-pages`) which uses `docs/` directory 
+(`php ./bin/resonance.php generate:static-pages`) which uses `docs/` directory 
 to build your documentation and the `build/` directory to store the output 
 files.
 

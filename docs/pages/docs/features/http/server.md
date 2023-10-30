@@ -17,7 +17,7 @@ description: >
 ## Setting up the Command
 
 Resonance comes with the `serve` command by default. You can call
-`php ./app/resonance.php serve` to start the http server.
+`php ./bin/resonance.php serve` to start the http server.
 
 You can configure it using the {{docs/features/configuration/index}} file.
 If you want to add {{docs/features/websockets/index}}, you can follow their 

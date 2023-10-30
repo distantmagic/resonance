@@ -42,7 +42,7 @@ You can generate a new responder class manually, or you can use the
 `generate:http-responder` command:
 
 ```shell
-$ php ./app/resonance.php generate:http-responder Name
+$ php ./bin/resonance.php generate:http-responder Name
 ```
 
 ## Responding to HTTP Requests

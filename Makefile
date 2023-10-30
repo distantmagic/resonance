@@ -54,7 +54,7 @@ docs/artifact.tar: docs/build
 		--directory "docs/build" .
 
 docs/build: config.ini esbuild vendor $(MD_SOURCES) $(PHP_SOURCES)
-	${PHP_BIN} ./app/resonance.php generate:static-pages;
+	${PHP_BIN} ./bin/resonance.php generate:static-pages;
 
 node_modules: yarn.lock
 	yarnpkg install --check-files --frozen-lockfile --non-interactive;
