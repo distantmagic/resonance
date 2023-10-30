@@ -45,6 +45,8 @@ readonly class DependencyInjectionContainer
      * @param Closure(...mixed):TReturnType $function
      *
      * @return TReturnType
+     *
+     * @psalm-suppress PossiblyUnusedReturnValue it's used in config files
      */
     public static function boot(Closure $function): mixed
     {

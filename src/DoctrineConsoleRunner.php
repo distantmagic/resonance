@@ -26,6 +26,9 @@ final readonly class DoctrineConsoleRunner
 
             ConsoleRunner::addCommands($cli, $entityManagerProvider);
 
+            /**
+             * @var bool
+             */
             $coroutineResult = run(static function () use ($cli) {
                 $cli->run();
             });

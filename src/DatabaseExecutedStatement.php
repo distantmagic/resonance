@@ -96,7 +96,7 @@ readonly class DatabaseExecutedStatement implements Result
     /**
      * @psalm-param PDO::FETCH_* $mode
      */
-    private function fetch(int $mode): array|false
+    private function fetch(int $mode): array|false|string
     {
         $ret = $this->pdoStatement->fetch($mode);
 
@@ -104,8 +104,8 @@ readonly class DatabaseExecutedStatement implements Result
             return $ret;
         }
 
-        if (!is_array($ret)) {
-            throw new RuntimeException('Fetch returned something else than array');
+        if (!is_array($ret) && !is_string($ret)) {
+            throw new RuntimeException('Fetch returned something else than array or string');
         }
 
         return $ret;
