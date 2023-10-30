@@ -31,13 +31,13 @@ there are two primary differences:
 1. Obtaining `DBAL` connections: you shouldn't use Doctrine's adapters to 
     obtain the `DBAL` connection - you should rely on 
     `Distantmagic\Resonance\DoctrineConnectionRepository`
-    instead as it uses the {{docs/features/database/swoole/connection-pools}} 
+    instead, as it uses the {{docs/features/database/swoole/connection-pools}} 
     under the hood and manages them transparently.
 2. Obtaining `EntityManager`:  use 
     `Distantmagic\Resonance\DoctrineEntityManagerRepository` instead of 
     building Doctrine's `Doctrine\ORM\EntityManager` manually.
 
-This is because Resonance is using a custom driver to make Doctrine work in an
+That is because Resonance is using a custom driver to make Doctrine work in an
 async environment with connection pools.
 
 For example, manual usage in {{docs/features/http/responders}}:

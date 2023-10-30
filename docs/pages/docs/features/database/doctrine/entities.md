@@ -13,14 +13,14 @@ description: >
 
 Entities are a part of 
 [Doctrine's ORM](https://www.doctrine-project.org/projects/orm.html). In 
-general terms hey are PHP objects that represent database records.
+general terms, they are PHP objects that represent database records.
 
 If you want to learn how to use them, please refer to Doctrine documentation. 
-They work exactly the same as in synchronous PHP environments, with a few 
+They work the same as in synchronous PHP environments, with a few 
 caveats related to obtaining DBAL connections. You can learn more about those 
 in the {{docs/features/database/doctrine/index}} feature page.
 
-Here we will describe how you can integrate them with Resonance's 
+Here, we will describe how you can integrate them with Resonance's 
 features.
 
 # Usage
