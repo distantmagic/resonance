@@ -10,6 +10,77 @@ description: >
 
 # Migrations
 
+Since Resonance supports {{docs/features/database/doctrine/index}}, we 
+recommend using Doctrine's migration tool.
+
+If you want to use some different tools, like, for example, 
+[Phinx](https://phinx.org/), you can also learn here how to do so.
+
+## Using Doctrine
+
+You need to 
+[install doctrine/migrations](https://www.doctrine-project.org/projects/migrations.html) 
+first, by following their documentation.
+
+To configure Doctrine's migration configuration, you need to create 
+`migrations.php` in the root of your project:
+
+```php file:migrations.php
+<?php
+
+return [
+    // leave this file empty if you are OK with Doctrine's defaults
+    // see more at:
+    // https://www.doctrine-project.org/projects/doctrine-migrations/en/3.6/reference/configuration.html
+];
+```
+
+Then, the simplest way to configure Doctrine connection parameters is to create 
+`migrations-db.php` file in the project's root folder and use Resonance's
+{{docs/features/dependency-injection/index}} to obtain the Database 
+Configuration:
+
+```php file:migrations-db.php
+<?php
+
+require_once __DIR__.'/vendor/autoload.php';
+
+defined('DM_ROOT') or exit('Configuration is not loaded.');
+
+use Distantmagic\Resonance\DatabaseConfiguration;
+use Distantmagic\Resonance\DatabaseConnectionPoolDriverName;
+use Distantmagic\Resonance\DependencyInjectionContainer;
+use Swoole\Runtime;
+
+$container = new DependencyInjectionContainer();
+$container->phpProjectFiles->indexDirectory(DM_RESONANCE_ROOT);
+$container->phpProjectFiles->indexDirectory(DM_APP_ROOT);
+$container->registerSingletons();
+
+return $container->call(static function (DatabaseConfiguration $databaseConfiguration) {
+    $connectionPoolConfiguration = $databaseConfiguration
+        ->connectionPoolConfiguration
+        ->get('default')
+    ;
+
+    return [
+        'dbname' => $connectionPoolConfiguration->database,
+        'user' => $connectionPoolConfiguration->username,
+        'password' => $connectionPoolConfiguration->password,
+        'host' => $connectionPoolConfiguration->host,
+        'driver' => match ($connectionPoolConfiguration->driver) {
+            DatabaseConnectionPoolDriverName::MySQL => 'pdo_mysql',
+            DatabaseConnectionPoolDriverName::PostgreSQL => 'pdo_pgsql',
+            DatabaseConnectionPoolDriverName::SQLite => 'pdo_sqlite',
+        },
+    ];
+});
+
+```
+
+Then you should be able to use `php ./vendor/bin/doctrine-migrations` command
+line tool to manage your migrations.
+
 ## Using Phinx
 
 [Phinx](https://phinx.org/) is a popular database migration tool. You can
@@ -70,7 +141,7 @@ return $container->call(static function (DatabaseConfiguration $databaseConfigur
             'default_migration_table' => 'phinxlog',
             'default_environment' => 'mysql',
             'mysql' => [
-                'adapter' => 'mysql',
+                'adapter' => $connectionPoolConfiguration->driver->value,
                 'host' => $connectionPoolConfiguration->host,
                 'name' => $connectionPoolConfiguration->database,
                 'user' => $connectionPoolConfiguration->username,
