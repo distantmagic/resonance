@@ -121,8 +121,10 @@ final readonly class Blog extends HttpResponder
 You can skipp all the tedious steps related to using the Dependency Injection 
 manually and opt for {{docs/features/http/controllers}} instead.
 
-You can use Resonance's `DoctrineEntityRepository` attribute to inject a 
-an `EntityRepository` for the given model:
+You can use `DoctrineEntityManager` attribute to inject the `EntityManager`.
+
+In the same way, you can use Resonance's `DoctrineEntityRepository` attribute 
+to inject a an `EntityRepository` for the given model:
 
 ```php file:app/HttpResponder/Blog.php
 <?php
@@ -131,6 +133,7 @@ namespace App\HttpResponder;
 
 use App\DoctrineEntity\BlogPost;
 use App\HttpRouteSymbol;
+use Distantmagic\Resonance\Attribute\DoctrineEntityManager;
 use Distantmagic\Resonance\Attribute\DoctrineEntityRepository;
 use Distantmagic\Resonance\Attribute\RespondsToHttp;
 use Distantmagic\Resonance\Attribute\Singleton;
@@ -140,6 +143,7 @@ use Distantmagic\Resonance\HttpResponder\HttpController;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigTemplate;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
 #[RespondsToHttp(
@@ -151,6 +155,8 @@ use Doctrine\ORM\EntityRepository;
 final readonly class Blog extends HttpController
 {
     public function handle(
+        #[DoctrineEntityManager]
+        EntityManager $entityManager,
         #[DoctrineEntityRepository(BlogPost::class)]
         EntityRepository $blogPosts,
     ): HttpInterceptableInterface {

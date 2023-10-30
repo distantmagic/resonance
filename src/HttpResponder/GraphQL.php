@@ -65,7 +65,7 @@ readonly class GraphQL extends HttpResponder
             $swoolePromiseAdapter,
             $query,
             null,
-            null,
+            $request,
             $variables,
         );
 

@@ -43,7 +43,11 @@ readonly class SessionAuthenticatedResolver extends HttpControllerParameterResol
                 );
             }
 
-            throw new LogicException('Expected user to be an instance of: '.$parameter->className);
+            throw new LogicException(sprintf(
+                'Expected user to be an instance of: %s. Got: %s',
+                $parameter->className,
+                $user::class,
+            ));
         }
 
         if ($parameter->reflectionParameter->isOptional()) {
