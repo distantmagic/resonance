@@ -33,6 +33,7 @@ Prepare the `users` table in your SQL database upfront:
 Field | Type | Description
 -|-|-
 id | int | auto increment
+role | string | `"user"` by default
 username | string
 password_hash | string | We will use [`password_verify`](https://www.php.net/manual/en/function.password-verify.php) later to validate the password
 
@@ -60,7 +61,7 @@ flow.
 ## User Entity
 
 Let's start with a user role. We do not distinguish permissions based on roles 
-yet, so let's just use a default `User` role for now:
+yet, so let's just use a default `user` role for now:
 
 ```php file:app/Role.php
 <?php
