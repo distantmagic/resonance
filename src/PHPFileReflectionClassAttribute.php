@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Distantmagic\Resonance\Attribute as BaseAttribute;
 use ReflectionClass;
 
 /**
  * @template TClass of object
- * @template TAttribute of BaseAttribute
+ * @template TAttribute of object
  */
 readonly class PHPFileReflectionClassAttribute
 {
@@ -19,6 +18,6 @@ readonly class PHPFileReflectionClassAttribute
      */
     public function __construct(
         public ReflectionClass $reflectionClass,
-        public BaseAttribute $attribute,
+        public object $attribute,
     ) {}
 }

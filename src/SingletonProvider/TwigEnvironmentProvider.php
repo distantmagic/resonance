@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
+use Distantmagic\Resonance\ApplicationConfiguration;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Environment;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
@@ -26,20 +28,17 @@ use function Swoole\Coroutine\go;
 #[Singleton(provides: TwigEnvironment::class)]
 final readonly class TwigEnvironmentProvider extends SingletonProvider
 {
-    public function __construct(private TwigBridgeExtension $twigBridgeExtension) {}
+    public function __construct(
+        private ApplicationConfiguration $applicationConfiguration,
+        private TwigBridgeExtension $twigBridgeExtension,
+    ) {}
 
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): TwigEnvironment
     {
-        $cacheDirectory = DM_ROOT.'/cache/twig';
-
-        $filesystem = new Filesystem();
-        $filesystem->remove($cacheDirectory);
-
         $loader = new FilesystemLoader(DM_APP_ROOT.'/views');
-        $cache = new FilesystemCache($cacheDirectory, FilesystemCache::FORCE_BYTECODE_INVALIDATION);
 
         $environment = new TwigEnvironment($loader, [
-            'cache' => $cache,
+            'cache' => $this->getCache(),
             'strict_variables' => false,
         ]);
 
@@ -48,6 +47,20 @@ final readonly class TwigEnvironmentProvider extends SingletonProvider
         $this->warmupCache($environment);
 
         return $environment;
+    }
+
+    private function getCache(): false|FilesystemCache
+    {
+        if (Environment::Development === $this->applicationConfiguration->environment) {
+            return false;
+        }
+
+        $cacheDirectory = DM_ROOT.'/cache/twig';
+
+        $filesystem = new Filesystem();
+        $filesystem->remove($cacheDirectory);
+
+        return new FilesystemCache($cacheDirectory, FilesystemCache::FORCE_BYTECODE_INVALIDATION);
     }
 
     private function warmupCache(TwigEnvironment $environment): void

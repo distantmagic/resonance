@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Distantmagic\Resonance\Attribute\Singleton;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,7 +11,6 @@ use Ds\Map;
 use Swoole\Http\Request;
 use WeakMap;
 
-#[Singleton]
 readonly class DoctrineEntityManagerRepository
 {
     /**
@@ -28,6 +26,14 @@ readonly class DoctrineEntityManagerRepository
          * @var WeakMap<Request,Map<string,EntityManagerInterface>>
          */
         $this->entityManagers = new WeakMap();
+    }
+
+    public function buildEntityManager(string $name = 'default'): EntityManagerInterface
+    {
+        return new EntityManager(
+            $this->doctrineConnectionRepository->buildConnection($name),
+            $this->configuration,
+        );
     }
 
     public function getEntityManager(Request $request, string $name = 'default'): EntityManagerInterface
