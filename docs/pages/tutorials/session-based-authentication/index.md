@@ -98,6 +98,8 @@ use App\Role;
 use Distantmagic\Resonance\UserInterface;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\Entity]
+#[ORM\Table('users')]
 final readonly class User implements UserInterface
 {
     #[ORM\Id]
@@ -122,6 +124,16 @@ final readonly class User implements UserInterface
     public function getRole(): Role
     {
         return $this->role;
+    }
+
+    public function getPasswordHash(): string
+    {
+        return $this->passwordHash;
+    }
+
+    public function getUsername(): string
+    {
+        return $this->username;
     }
 }
 ```
@@ -441,7 +453,7 @@ final readonly class LoginValidation extends HttpController
             'username' => $usernamePassword->username,
         ]);
 
-        if (!$user || !password_verify($usernamePassword->password, $user->passwordHash)) {
+        if (!$user || !password_verify($usernamePassword->password, $user->getPasswordHash())) {
             return $this->handleValidationErrors($response, new Map([
                 'username' => 'Invalid credentials',
             ]));
