@@ -57,6 +57,115 @@ flow.
 
 # Implementation
 
+## User Entity
+
+Let's start with a user role. We do not distinguish permissions based on roles 
+yet, so let's just use a default `User` role for now:
+
+```php file:app/Role.php
+<?php
+
+namespace App;
+
+use Distantmagic\Resonance\UserRoleInterface;
+
+enum Role: string implements UserRoleInterface
+{
+    case User = 'user';
+
+    public function isAtLeast(UserRoleInterface $other): bool
+    {
+        return $this->toInt() >= $other->toInt();
+    }
+
+    public function toInt(): int
+    {
+        return match ($this) {
+            Role::User => 1,
+        };
+    }
+}
+```
+
+User model that implements framework's `UserInterface`:
+
+```php file:app/DoctrineEntity/User.php
+<?php
+
+namespace App\DoctrineEntity;
+
+use App\Role;
+use Distantmagic\Resonance\UserInterface;
+use Doctrine\ORM\Mapping as ORM;
+
+final readonly class User implements UserInterface
+{
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
+    private int $id;
+
+    #[ORM\Column(name: 'role', type: 'string', enumType: Role::class)]
+    private Role $role;
+
+    #[ORM\Column]
+    private string $username;
+
+    #[ORM\Column(name: 'password_hash')]
+    private string $passwordHash;
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getRole(): Role
+    {
+        return $this->role;
+    }
+}
+```
+
+## User Repository
+
+{{docs/features/http/sessions}} use the `UserRepository` to check if the
+user that is currently stored in the session is valid, so the `findById` method
+has to be implemented:
+
+```php file:app\UserRepository.php
+<?php
+
+declare(strict_types=1);
+
+namespace App;
+
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\DatabaseConnectionPoolRepository;
+use Distantmagic\Resonance\DoctrineEntityManagerRepository;
+use Distantmagic\Resonance\UserInterface;
+use Distantmagic\Resonance\UserRepositoryInterface;
+use LogicException;
+use Swoole\Http\Request;
+
+#[Singleton(provides: UserRepositoryInterface::class)]
+readonly class UserRepository implements UserRepositoryInterface
+{
+    public function __construct(
+        private DoctrineEntityManagerRepository $doctrineEntityManagerRepository,
+    ) {}
+
+    public function findUserById(Request $request, int|string $userId): ?UserInterface
+    {
+        return $this
+            ->doctrineEntityManagerRepository
+            ->getEntityManager($request)
+            ->getRepository(User::class)
+            ->find($userId)
+        ;
+    }
+}
+```
+
 ## HTTP Responders
 
 We are going to need a few HTTP {{docs/features/http/responders}}:
@@ -68,7 +177,7 @@ We are going to need a few HTTP {{docs/features/http/responders}}:
 
 By design, each Responder handles just one HTTP route.
 
-## Route Symbols
+### Route Symbols
 
 Let's start with defining all the HTTP Route Symbols we will need. They can be
 thought of as a registry of route names:
@@ -181,7 +290,7 @@ upfront. `errors` variable is a
 (a [`Map`](https://www.php.net/manual/en/class.ds-map.php) with both keys
 and values as strings).
 
-## Login Validation
+### Validation
 
 We will need to validate two things:
 
@@ -189,8 +298,6 @@ We will need to validate two things:
     there. That is handled by the form {{docs/features/validation/index}}.
 2. After validating the Login Form data - we need to check if the username and
     password pair is valid.
-
-## Login Form Validation
 
 First, let's define the `UsernamePasword` form model and validator.
 
@@ -262,234 +369,6 @@ readonly class UsernamePasswordValidator extends InputValidator
 }
 ```
 
-## Authentication Credentials Validation
-
-Let's start with a user role. We do not distinguish permissions based on roles 
-yet, so let's just use a default `User` role for now:
-
-```php file:app/Role.php
-<?php
-
-namespace App;
-
-use Distantmagic\Resonance\UserRoleInterface;
-
-enum Role: string implements UserRoleInterface
-{
-    case User = 'user';
-
-    public function isAtLeast(UserRoleInterface $other): bool
-    {
-        return $this->toInt() >= $other->toInt();
-    }
-
-    public function toInt(): int
-    {
-        return match ($this) {
-            Role::User => 1,
-        };
-    }
-}
-```
-
-User model that implements framework's `UserInterface`:
-
-```php file:app/DatabaseEntity/User.php
-<?php
-
-namespace App\DatabaseEntity;
-
-use App\Role;
-use Distantmagic\Resonance\DatabaseEntity;
-use Distantmagic\Resonance\UserInterface;
-
-final readonly class User extends DatabaseEntity implements UserInterface
-{
-    public function __construct(
-        private int $id,
-        private Role $role,
-    ) {}
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    public function getRole(): Role
-    {
-        return $this->role;
-    }
-}
-```
-
-To validate the login and password, we are going to use the SQL query. Notice 
-that it uses the form data as a constructor parameter. 
-
-This query returns null if it doesn't find any user with a given username and 
-password:
-
-```php file:app/DatabaseQuery/SelectUserByUsernamePassword.php
-<?php
-
-namespace App\DatabaseQuery;
-
-use App\DatabaseEntity\User;
-use App\InputValidatedData\UsernamePassword;
-use App\Role;
-use Distantmagic\Resonance\DatabaseConnectionPoolRepository;
-use Distantmagic\Resonance\DatabaseQuery;
-use Distantmagic\Resonance\UserInterface;
-
-/**
- * @template-extends DatabaseQuery<null|UserInterface>
- */
-final readonly class SelectUserByUsernamePassword extends DatabaseQuery
-{
-    public function __construct(
-        DatabaseConnectionPoolRepository $databaseConnectionPoolRepository,
-        private UsernamePassword $usernamePassword,
-    ) {
-        parent::__construct($databaseConnectionPoolRepository);
-    }
-
-    public function execute(): ?UserInterface
-    {
-        /**
-         * @var null|array{
-         *     id: int,
-         *     password_hash: string,
-         * }
-         */
-        $userData = $this
-            ->getConnection()
-            ->prepare(<<<'SQL'
-                SELECT
-                    users.id,
-                    users.password_hash
-                FROM users
-                WHERE users.username = :username
-                LIMIT 1
-            SQL)
-            ->bindValue('username', $this->usernamePassword->username)
-            ->execute()
-            ->first()
-        ;
-
-        if (!is_array($userData)) {
-            return null;
-        }
-
-        if (!password_verify($this->usernamePassword->password, $userData['password_hash'])) {
-            return null;
-        }
-
-        return new User($userData['id'], Role::User);
-    }
-}
-```
-
-## User Repository
-
-{{docs/features/http/sessions}} use the `UserRepository` to check if the
-user that is currently stored in the session is valid, so the `findById` method
-has to be implemented:
-
-```php file:app/DatabaseQuery/SelectUserById.php
-<?php
-
-namespace App\DatabaseQuery;
-
-use App\DatabaseEntity\User;
-use App\Role;
-use Distantmagic\Resonance\DatabaseConnectionPoolRepository;
-use Distantmagic\Resonance\DatabaseQuery;
-use Distantmagic\Resonance\UserInterface;
-use PDO;
-
-/**
- * @template-extends DatabaseQuery<null|UserInterface>
- */
-final readonly class SelectUserById extends DatabaseQuery
-{
-    public function __construct(
-        DatabaseConnectionPoolRepository $databaseConnectionPoolRepository,
-        private int $userId,
-    ) {
-        parent::__construct($databaseConnectionPoolRepository);
-    }
-
-    public function execute(): ?UserInterface
-    {
-        /**
-         * @var null|array{
-         *     id: int,
-         *     role: string,
-         * }
-         */
-        $userData = $this
-            ->getConnection()
-            ->prepare(<<<'SQL'
-                SELECT users.id
-                FROM users
-                WHERE users.id = :user_id
-                LIMIT 1
-            SQL)
-            ->bindValue('user_id', $this->userId, PDO::PARAM_INT)
-            ->execute()
-            ->first()
-        ;
-
-        if (!$userData || !isset($userData['id'])) {
-            return null;
-        }
-
-        return new User($userData['id'], Role::User);
-    }
-}
-```
-
-Finally, we need to implement the `findUserById` in the `UserRepository`. 
-`UserRepository` is an implementation of the `UserRepositoryInteface` that is
-bundled with the application by default. It is used internally by Resonance to
-validate {{docs/features/http/sessions}}:
-
-```php file:app\UserRepository.php
-<?php
-
-declare(strict_types=1);
-
-namespace App;
-
-use App\DatabaseQuery\SelectUserById;
-use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\DatabaseConnectionPoolRepository;
-use Distantmagic\Resonance\UserInterface;
-use Distantmagic\Resonance\UserRepositoryInterface;
-use LogicException;
-
-#[Singleton(provides: UserRepositoryInterface::class)]
-readonly class UserRepository implements UserRepositoryInterface
-{
-    public function __construct(
-        private DatabaseConnectionPoolRepository $databaseConnectionPoolRepository,
-    ) {}
-
-    public function findUserById(int|string $userId): ?UserInterface
-    {
-        if (is_string($userId)) {
-            throw new LogicException('This user repository only supports int ids');
-        }
-
-        $selectUserById = new SelectUserById(
-            $this->databaseConnectionPoolRepository,
-            $userId,
-        );
-
-        return $selectUserById->execute();
-    }
-}
-```
-
 ## Authenticating Users
 
 Let's create another HTTP Responder that responds to the `POST /login` request, 
@@ -508,7 +387,7 @@ is queried to check if a user with given credentials exists.
 
 namespace App\HttpResponder;
 
-use App\DatabaseQuery\SelectUserByUsernamePassword;
+use App\DoctrineEntity\User;
 use App\HttpRouteSymbol;
 use App\InputValidatedData\UsernamePassword;
 use App\InputValidator\UsernamePasswordValidator;
@@ -518,16 +397,15 @@ use Distantmagic\Resonance\Attribute\ValidatedRequest;
 use Distantmagic\Resonance\Attribute\ValidatesCSRFToken;
 use Distantmagic\Resonance\Attribute\ValidationErrors;
 use Distantmagic\Resonance\Attribute\ValidationErrorsHandler;
-use Distantmagic\Resonance\DatabaseConnectionPoolRepository;
 use Distantmagic\Resonance\HttpControllerDependencies;
 use Distantmagic\Resonance\HttpInterceptableInterface;
-use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\HttpResponder\HttpController;
 use Distantmagic\Resonance\InternalRedirect;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SessionAuthentication;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigTemplate;
+use Doctrine\ORM\EntityRepository;
 use Ds\Map;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -542,7 +420,6 @@ use Swoole\Http\Response;
 final readonly class LoginValidation extends HttpController
 {
     public function __construct(
-        private DatabaseConnectionPoolRepository $databaseConnectionPoolRepository,
         private HttpControllerDependencies $controllerDependencies,
         private SessionAuthentication $sessionAuthentication,
     ) {
@@ -554,21 +431,27 @@ final readonly class LoginValidation extends HttpController
         Response $response,
         #[ValidatedRequest(UsernamePasswordValidator::class)]
         UsernamePassword $usernamePassword,
+        #[DoctrineEntityRepository(User::class)]
+        EntityRepository $users,
     ): HttpInterceptableInterface {
-        $selectUser = new SelectUserByUsernamePassword(
-            $this->databaseConnectionPoolRepository,
-            $usernamePassword,
-        );
+        /**
+         * @var null|User
+         */
+        $user = $users->findOneBy([
+            'username' => $usernamePassword->username,
+        ]);
 
-        $user = $selectUser->execute();
-
-        if (!$user) {
+        if (!$user || !password_verify($usernamePassword->password, $user->passwordHash)) {
             return $this->handleValidationErrors($response, new Map([
                 'username' => 'Invalid credentials',
             ]));
         }
 
-        $this->sessionAuthentication->setAuthenticatedUser($request, $response, $user);
+        $this->sessionAuthentication->setAuthenticatedUser(
+            $request,
+            $response,
+            $user->user,
+        );
 
         return new InternalRedirect(HttpRouteSymbol::Homepage);
     }
