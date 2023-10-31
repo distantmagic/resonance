@@ -96,13 +96,21 @@ abstract readonly class Turbo extends StaticPageLayout
         HTML;
         yield '</nav>';
         yield from $this->renderBodyContent($staticPage);
-        yield <<<'HTML'
+        yield <<<HTML
                 <footer class="primary-footer">
                     <div class="primary-footer__copyright">
                         Copyright &copy; 2023 Distantmagic.
                         Built with Resonance.
                     </div>
                 </footer>
+                <a
+                    class="global-edit-on-github"
+                    href="https://github.com/distantmagic/resonance/tree/master/docs/pages/{$staticPage->file->getRelativePathname()}"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                >
+                    Edit on GitHub
+                </a>
             </main>
         </body>
         </html>
