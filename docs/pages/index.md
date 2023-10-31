@@ -265,7 +265,7 @@ assert($future2->resolve(1)->result === 7);</code></pre>
     type: GraphQLRootFieldType::Query,
 )]
 #[Singleton(collection: SingletonCollection::GraphQLRootField)]
-final readonly class WorldMap implements GraphQLFieldableInterface
+final readonly class Blog implements GraphQLFieldableInterface
 {
     public function __construct(
         private DatabaseConnectionPoolRepository $connectionPool,
