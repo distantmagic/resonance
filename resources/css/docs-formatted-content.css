@@ -175,14 +175,16 @@
   table {
     border-collapse: collapse;
     line-height: 1.5;
-    overflow-x: scroll;
+    overflow-x: auto;
     max-width: calc(100vw - 40px);
+    table-layout: fixed;
     width: 100%;
-  }
 
-  th,
-  td {
-    padding: 10px;
+    th,
+    td {
+      padding: 10px;
+      overflow: auto;
+    }
   }
 }
 
