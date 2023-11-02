@@ -77,11 +77,11 @@ Available commands:
   completion                Dump the shell completion script
   help                      Display help for a command
   list                      List commands
-  serve                     Start combined HTTP and WebSocket server
  generate
   generate:http-controller  Generate http-controller
   generate:http-responder   Generate http-responder
-  generate:static-pages     Generate static pages
+ static-pages
+  static-pages:build        Generate static pages
 ```
 
 `php bin/resonance.php serve` should start the HTTP server. If you need to, 

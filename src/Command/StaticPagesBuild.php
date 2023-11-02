@@ -13,10 +13,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use function Swoole\Coroutine\run;
 
 #[ConsoleCommand(
-    name: 'generate:static-pages',
+    name: 'static-pages:build',
     description: 'Generate static pages'
 )]
-final class GenerateStaticSite extends Command
+final class StaticPagesBuild extends Command
 {
     public function __construct(private StaticPageProcessor $staticPageProcessor)
     {
