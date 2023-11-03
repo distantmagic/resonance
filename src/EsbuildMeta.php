@@ -48,7 +48,11 @@ readonly class EsbuildMeta
         $filenameImports = $this->imports->get($filename);
 
         if ($filenameImports->contains($importPath)) {
-            throw new LogicException('Duplicate import '.$filename.' -> '.$importPath);
+            /**
+             * This might not be correct for JS files, but CSS files might use
+             * the same image in several different selectors.
+             */
+            return;
         }
 
         $filenameImports->add($importPath);
