@@ -81,6 +81,7 @@ esbuild: $(CSS_SOURCES) node_modules
 		--loader:.otf=file \
 		--loader:.svg=file \
 		--loader:.ttf=file \
+		--loader:.webp=file \
 		--metafile=esbuild-meta-docs.json \
 		--outdir=$(DOCS_ESBUILD_TARGET_DIRECTORY) \
 		--sourcemap \
