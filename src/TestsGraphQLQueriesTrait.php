@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use function Swoole\Coroutine\run;
-
 trait TestsGraphQLQueriesTrait
 {
     use TestsDependencyInectionContainerTrait;
@@ -15,32 +13,26 @@ trait TestsGraphQLQueriesTrait
         /**
          * @var null|array $result
          */
-        $result = null;
-
-        $coroutineResult = run(static function () use ($query, &$result) {
-            $result = self::$container->call(static function (
-                CrudActionGateAggregate $crudActionGateAggregate,
-                GraphQLAdapter $graphQLAdapter,
-                SiteActionGateAggregate $siteActionGateAggregate,
-            ) use ($query) {
-                $swoolePromiseAdapter = new SwoolePromiseAdapter(
-                    new GraphQLDatabaseQueryAdapter(
-                        new GatekeeperUserContext(
-                            $crudActionGateAggregate,
-                            $siteActionGateAggregate,
-                            null,
-                        ),
+        $result = self::$container->call(static function (
+            CrudActionGateAggregate $crudActionGateAggregate,
+            GraphQLAdapter $graphQLAdapter,
+            SiteActionGateAggregate $siteActionGateAggregate,
+        ) use ($query) {
+            $swoolePromiseAdapter = new SwoolePromiseAdapter(
+                new GraphQLDatabaseQueryAdapter(
+                    new GatekeeperUserContext(
+                        $crudActionGateAggregate,
+                        $siteActionGateAggregate,
+                        null,
                     ),
-                );
+                ),
+            );
 
-                return $graphQLAdapter
-                    ->query($swoolePromiseAdapter, $query)
-                    ->toArray()
-                ;
-            });
+            return $graphQLAdapter
+                ->query($swoolePromiseAdapter, $query)
+                ->toArray()
+            ;
         });
-
-        self::assertTrue($coroutineResult);
 
         self::assertIsArray($result);
         self::assertArrayNotHasKey('errors', $result);

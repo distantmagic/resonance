@@ -27,15 +27,16 @@ readonly class PHPFileReflectionClassIterator implements IteratorAggregate
     public function getIterator(): Generator
     {
         foreach ($this->phpFileIterator as $file) {
-            $filename = $file->getPathname();
+            $fileBasename = $file->getBasename();
 
             $className = $this->readClassName($file);
 
             if ($className) {
                 $reflectionClass = new ReflectionClass($className);
+                $reflectionBasename = basename($reflectionClass->getFileName());
 
-                if ($reflectionClass->getFileName() !== $filename) {
-                    throw new LogicException('Class is not defined in the expected file: '.$filename);
+                if ($reflectionBasename !== $fileBasename) {
+                    throw new LogicException('Class is not defined in the file named after the class: '.$fileBasename);
                 }
 
                 yield $reflectionClass;

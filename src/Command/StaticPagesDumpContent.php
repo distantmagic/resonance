@@ -7,11 +7,8 @@ namespace Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\StaticPageAggregate;
-use Distantmagic\Resonance\StaticPageProcessor;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use function Swoole\Coroutine\run;
 
 #[ConsoleCommand(
     name: 'static-pages:dump-content',
@@ -21,8 +18,7 @@ final class StaticPagesDumpContent extends Command
 {
     public function __construct(
         private StaticPageAggregate $staticPageAggregate,
-    )
-    {
+    ) {
         parent::__construct();
     }
 

@@ -45,7 +45,9 @@
     },
     "require-dev": {
         "mockery/mockery": "^1.6",
-        "phpunit/phpunit": "^10.0"
+        "phpunit/phpunit": "^10.0",
+        "vimeo/psalm": "^5.15",
+        "swoole/ide-helper": "^5.1"
     },
     "suggest": {
         "ext-intl": "Date formatting",

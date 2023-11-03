@@ -161,6 +161,7 @@ psalm.watch: node_modules vendor
 		--watch ./config.schema.php \
 		--watch ./constants.php \
 		--watch ./resonance \
+		--watch ./src \
 		--exec '$(MAKE) psalm || exit 1'
 
 .PHONY: ssg

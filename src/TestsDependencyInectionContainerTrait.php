@@ -10,12 +10,7 @@ trait TestsDependencyInectionContainerTrait
 
     public static function setUpBeforeClass(): void
     {
-        $container = new DependencyInjectionContainer();
-        $container->phpProjectFiles->indexDirectory(DM_RESONANCE_ROOT);
-        $container->phpProjectFiles->indexDirectory(DM_APP_ROOT);
-        $container->registerSingletons();
-
-        self::$container = $container;
+        self::$container = DependencyInjectionContainer::fromGlobals();
     }
 
     public static function tearDownAfterClass(): void

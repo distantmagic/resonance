@@ -28,8 +28,6 @@ use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server;
 use Throwable;
 
-use function Sentry\captureException;
-
 #[ControlsWebSocketProtocol(WebSocketProtocol::RPC)]
 #[Singleton(collection: SingletonCollection::WebSocketProtocolController)]
 final readonly class RPCProtocolController extends WebSocketProtocolController
@@ -125,7 +123,6 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
 
     private function onException(Server $server, Frame $frame, Throwable $exception): void
     {
-        captureException($exception);
         $this->logger->debug((string) $exception);
     }
 

@@ -32,9 +32,6 @@ abstract readonly class WebSocketRPCResponder implements WebSocketRPCResponderIn
         );
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedParam
-     */
     protected function onNotification(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,

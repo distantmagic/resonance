@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <psalm
+    autoloader="constants.php"
     errorLevel="1"
     findUnusedBaselineEntry="true"
     findUnusedCode="true"
@@ -19,11 +20,42 @@
     </projectFiles>
 
     <issueHandlers>
+
+        <!--
+            PossiblyUnused* errors make sense in general, but this is a
+            framework, so some methods are intended to be used externally, so
+            they have no references in this project.
+        -->
+        <PossiblyUnusedMethod>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </PossiblyUnusedMethod>
+        <PossiblyUnusedParam>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </PossiblyUnusedParam>
+        <PossiblyUnusedProperty>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </PossiblyUnusedProperty>
         <PossiblyUnusedReturnValue>
             <errorLevel type="suppress">
                 <directory name="src/HttpResponder"/>
             </errorLevel>
         </PossiblyUnusedReturnValue>
+        <UnusedClass>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </UnusedClass>
+
+        <!--
+            GraphQL library docblock seems to be designed with PHPStan in mind.
+            Some annotations are not recognized / do not work with Psalm.
+        -->
         <PropertyNotSetInConstructor>
             <errorLevel type="suppress">
                 <referencedProperty name="GraphQL\Type\Definition\HasFieldsTypeImplementation::$fields" />
@@ -32,17 +64,10 @@
         </PropertyNotSetInConstructor>
         <UndefinedDocblockClass>
             <errorLevel type="suppress">
-                <!--
-                    GraphQL library has some errors in docblock types
-                -->
                 <referencedClass name="GraphQL\Executor\SerializableResult" />
             </errorLevel>
         </UndefinedDocblockClass>
-        <UnusedClass>
-            <errorLevel type="suppress">
-                <directory name="src"/>
-            </errorLevel>
-        </UnusedClass>
+
     </issueHandlers>
 
     <stubs>

@@ -50,12 +50,17 @@ readonly class DependencyInjectionContainer
      */
     public static function boot(Closure $function): mixed
     {
+        return self::fromGlobals()->call($function);
+    }
+
+    public static function fromGlobals(): self
+    {
         $container = new self();
         $container->phpProjectFiles->indexDirectory(DM_RESONANCE_ROOT);
         $container->phpProjectFiles->indexDirectory(DM_APP_ROOT);
         $container->registerSingletons();
 
-        return $container->call($function);
+        return $container;
     }
 
     public function __construct()
@@ -83,7 +88,7 @@ readonly class DependencyInjectionContainer
         $parameters = [];
 
         foreach (new SingletonFunctionParametersIterator($reflectionFunction) as $name => $typeClassName) {
-            $parameters[$name] = $this->makeSingleton($typeClassName, new Set());
+            $parameters[$name] = $this->make($typeClassName);
         }
 
         return $function(...$parameters);
