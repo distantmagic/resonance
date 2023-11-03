@@ -1,6 +1,6 @@
 BUILD_ID ?= 20
 COMPOSER_BIN ?= $(shell which composer)
-DOCS_ESBUILD_TARGET_DIRECTORY ?= docs/build/assets
+ESBUILD_TARGET_DIRECTORY ?= docs/build/assets
 PHP_BIN ?= $(shell which php)
 SHELL_PWD := $(shell pwd)
 
@@ -71,28 +71,6 @@ yarn.lock: package.json
 	yarnpkg install;
 	touch yarn.lock;
 
-esbuild: $(CSS_SOURCES) node_modules
-	./node_modules/.bin/esbuild \
-		--bundle \
-		--asset-names="./[name]_[hash]" \
-		--entry-names="./[name]_[hash]" \
-		--format=esm \
-		--loader:.jpg=file \
-		--loader:.otf=file \
-		--loader:.svg=file \
-		--loader:.ttf=file \
-		--loader:.webp=file \
-		--metafile=esbuild-meta-docs.json \
-		--outdir=$(DOCS_ESBUILD_TARGET_DIRECTORY) \
-		--sourcemap \
-		--splitting \
-		--target=safari16 \
-		--tree-shaking=true \
-		--tsconfig=tsconfig.json \
-		$(CSS_ENTRYPOINTS) \
-		$(TS_ENTRYPOINTS) \
-	;
-
 # -----------------------------------------------------------------------------
 # Phony targets
 # -----------------------------------------------------------------------------
@@ -111,6 +89,29 @@ clean:
 	rm -rf ./docs/build
 	rm -rf ./node_modules
 	rm -rf ./vendor
+
+.PHONY: esbuild
+esbuild: $(CSS_SOURCES) node_modules
+	./node_modules/.bin/esbuild \
+		--bundle \
+		--asset-names="./[name]_[hash]" \
+		--entry-names="./[name]_[hash]" \
+		--format=esm \
+		--loader:.jpg=file \
+		--loader:.otf=file \
+		--loader:.svg=file \
+		--loader:.ttf=file \
+		--loader:.webp=file \
+		--metafile=esbuild-meta-docs.json \
+		--outdir=$(ESBUILD_TARGET_DIRECTORY) \
+		--sourcemap \
+		--splitting \
+		--target=safari16 \
+		--tree-shaking=true \
+		--tsconfig=tsconfig.json \
+		$(CSS_ENTRYPOINTS) \
+		$(TS_ENTRYPOINTS) \
+	;
 
 .PHONY: eslint
 eslint: node_modules
