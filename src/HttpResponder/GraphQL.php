@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\HttpResponder;
 
+use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Gatekeeper;
 use Distantmagic\Resonance\GraphQLAdapter;
 use Distantmagic\Resonance\GraphQLDatabaseQueryAdapter;
@@ -16,7 +17,8 @@ use Distantmagic\Resonance\SwoolePromiseAdapter;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
-readonly class GraphQL extends HttpResponder
+#[Singleton]
+final readonly class GraphQL extends HttpResponder
 {
     public function __construct(
         private BadRequest $badRequest,
