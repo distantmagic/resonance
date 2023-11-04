@@ -292,7 +292,7 @@ final readonly class LoginForm extends HttpResponder
 ```
 
 Notice that we used the `csrf_token` function. It's a part of 
-{{docs/features/templating/twig}} extension bundled with Resonance. 
+{{docs/features/templating/twig/index}} extension bundled with Resonance. 
 `csrf_token` stores a {{docs/features/security/csrf-protection}} token in the
 session. Resonance will validate that token after the user submits the form.
 

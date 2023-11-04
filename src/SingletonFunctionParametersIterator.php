@@ -8,6 +8,7 @@ use Generator;
 use IteratorAggregate;
 use LogicException;
 use ReflectionFunctionAbstract;
+use ReflectionMethod;
 use ReflectionNamedType;
 
 /**
@@ -24,6 +25,17 @@ readonly class SingletonFunctionParametersIterator implements IteratorAggregate
     {
         foreach ($this->reflectionFunction->getParameters() as $constructorParameter) {
             $type = $constructorParameter->getType();
+
+            if (!$type) {
+                throw new LogicException(sprintf(
+                    'Constructor parameter has no type: %s@%s',
+                    $this->reflectionFunction instanceof ReflectionMethod
+                        ? $this->reflectionFunction->getDeclaringClass()->getName()
+                        : ''
+                    ,
+                    $constructorParameter->getName(),
+                ));
+            }
 
             if (!($type instanceof ReflectionNamedType)) {
                 throw new LogicException('Not a named type: '.$type::class);

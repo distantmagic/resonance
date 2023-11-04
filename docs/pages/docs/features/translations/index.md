@@ -77,4 +77,4 @@ You can use the `trans` filter. The code below outputs `Earth`:
 ```
 
 You can learn more info about twig in it's documentation page: 
-{{docs/features/templating/twig}}.
+{{docs/features/templating/twig/index}}.

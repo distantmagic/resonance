@@ -2,22 +2,16 @@
 collections: 
     - documents
 layout: dm:document
-parent: docs/features/templating/index
-title: Twig
+next: docs/features/templating/twig/template-loaders
+parent: docs/features/templating/twig/index
+title: Rendering Templates
 description: >
-    Learn how the the Twig environment is integrated within the Resonance 
-    framework.
+    Learn how to render Twig templates and use built-in filters.
 ---
 
-# Twig
+# Rendering Templates
 
-[Twig](https://twig.symfony.com/) is "the flexible, fast, and secure template 
-engine for PHP." It's bundled with Resonance alongside a few useful extensions
-that integrate the Twig environment with the framework.
-
-# Usage
-
-## Rendering Templates
+## Usage
 
 ```php
 <?php

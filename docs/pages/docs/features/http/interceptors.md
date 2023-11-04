@@ -70,7 +70,7 @@ Captures | Produces
 -|-
 `Distantmagic\Resonance\InternalRedirect` | HTTP Redirect response
 `Distantmagic\Resonance\JsonTemplate` | HTTP Response with `Content-Type: application/json` and stringified JSON data
-`Distantmagic\Resonance\TwigTemplate` | HTTP Response with `Content-Type: text/html;charset=utf-8` and rendered {{docs/features/templating/twig}} Template
+`Distantmagic\Resonance\TwigTemplate` | HTTP Response with `Content-Type: text/html;charset=utf-8` and rendered {{docs/features/templating/twig/index}} Template
 
 ## Writing Interceptors
 

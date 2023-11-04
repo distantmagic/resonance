@@ -72,4 +72,4 @@ the Content Security Headers returned by the HTTP Response.
 Twig integration works the same way as PHP Nonce Manager but can be used 
 directly in templates without using the `CSPNonceManager` directly.
 
-Learn more at {{docs/features/templating/twig}} documentation.
+Learn more at {{docs/features/templating/twig/index}} documentation.

@@ -1,9 +1,8 @@
 ---
 collections: 
     - name: documents
-      next: docs/features/templating/twig
+      next: docs/features/templating/twig/index
 layout: dm:document
-next: docs/features/templating/twig
 parent: docs/features/templating/index
 title: PHP Templates
 description: >
@@ -24,7 +23,7 @@ You should familiarize yourself with {{docs/features/http/responders}} and
 :::caution
 You should be sure that you need this kind of performance 
 before deciding to use pure PHP instead of 
-{{docs/features/templating/twig}} or any other templating engine.
+{{docs/features/templating/twig/index}} or any other templating engine.
 :::
 
 # Usage

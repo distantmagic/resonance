@@ -183,8 +183,8 @@ $templateFilters = new TemplateFilters();
 
 ## Twig
 
-{{docs/features/templating/twig}} is bundled with a bridge layer between itself
-and the Resonance framework.
+{{docs/features/templating/twig/index}} is bundled with a bridge layer between 
+itself and the Resonance framework.
 
 To preload assets first, you need to use either `esbuild` or `esbuild_preload`
 function that is built into Resonance's Twig extension. Then you must render

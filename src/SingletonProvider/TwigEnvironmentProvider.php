@@ -6,21 +6,19 @@ namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\ApplicationConfiguration;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\TwigLoader;
 use Distantmagic\Resonance\Environment;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
 use Distantmagic\Resonance\TwigBridgeExtension;
-use LogicException;
-use RuntimeException;
-use Swoole\Coroutine\WaitGroup;
+use Distantmagic\Resonance\TwigChainLoader;
+use Distantmagic\Resonance\SingletonAttribute;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 use Twig\Cache\FilesystemCache;
 use Twig\Environment as TwigEnvironment;
 use Twig\Loader\FilesystemLoader;
-
-use function Swoole\Coroutine\go;
+use Twig\Loader\LoaderInterface;
 
 /**
  * @template-extends SingletonProvider<TwigEnvironment>
@@ -31,20 +29,17 @@ final readonly class TwigEnvironmentProvider extends SingletonProvider
     public function __construct(
         private ApplicationConfiguration $applicationConfiguration,
         private TwigBridgeExtension $twigBridgeExtension,
+        private TwigChainLoader $twigChainLoader,
     ) {}
 
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): TwigEnvironment
     {
-        $loader = new FilesystemLoader(DM_APP_ROOT.'/views');
-
-        $environment = new TwigEnvironment($loader, [
+        $environment = new TwigEnvironment($this->twigChainLoader, [
             'cache' => $this->getCache(),
             'strict_variables' => false,
         ]);
 
         $environment->addExtension($this->twigBridgeExtension);
-
-        $this->warmupCache($environment);
 
         return $environment;
     }
@@ -61,41 +56,5 @@ final readonly class TwigEnvironmentProvider extends SingletonProvider
         $filesystem->remove($cacheDirectory);
 
         return new FilesystemCache($cacheDirectory, FilesystemCache::FORCE_BYTECODE_INVALIDATION);
-    }
-
-    private function warmupCache(TwigEnvironment $environment): void
-    {
-        $finder = new Finder();
-        $found = $finder
-            ->files()
-            ->ignoreDotFiles(true)
-            ->ignoreUnreadableDirs()
-            ->ignoreVCS(true)
-            ->name('*.twig')
-            ->in(DM_APP_ROOT.'/views')
-        ;
-
-        $waitGroup = new WaitGroup();
-
-        foreach ($found as $template) {
-            $waitGroup->add();
-
-            $cid = go(static function () use ($environment, $template, $waitGroup) {
-                try {
-                    $environment->load($template->getRelativePathname());
-                } finally {
-                    $waitGroup->done();
-                }
-            });
-
-            if (!is_int($cid)) {
-                throw new LogicException('Unable to start template loader coroutine');
-            }
-        }
-
-        // Give it 100ms / template
-        if (!$waitGroup->wait($waitGroup->count() * 0.1)) {
-            throw new RuntimeException('Cache warmup timed out.');
-        }
     }
 }
