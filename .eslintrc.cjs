@@ -4,7 +4,6 @@ module.exports = {
     },
     extends: [
         'eslint:recommended',
-        "plugin:react/recommended",
         'plugin:@typescript-eslint/recommended-type-checked',
     ],
     parser: '@typescript-eslint/parser',
@@ -101,10 +100,6 @@ module.exports = {
                 ],
                 "@typescript-eslint/switch-exhaustiveness-check": "error",
                 "@typescript-eslint/unified-signatures": "error",
-                "react/button-has-type": "error",
-                "react/jsx-no-leaked-render": "error",
-                "react/jsx-no-script-url": "error",
-                "react/jsx-no-undef": "error",
             },
         }
     ],
@@ -131,9 +126,4 @@ module.exports = {
         "import/newline-after-import": "error",
         "import/no-duplicates": "error"
     },
-    settings: {
-        react: {
-            version: "detect",
-        }
-    }
 };
