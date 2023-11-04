@@ -10,4 +10,4 @@ description: >
 
 # Templating
 
-{{docs/features/templating/*!docs/features/templating/index}}
+{{docs/features/templating/*/index}}
