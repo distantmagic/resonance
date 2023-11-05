@@ -34,10 +34,16 @@ final readonly class TwigEnvironmentProvider extends SingletonProvider
 
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): TwigEnvironment
     {
-        return new TwigEnvironment($this->twigChainLoader, [
+        $twigEnvironment = new TwigEnvironment($this->twigChainLoader, [
             'cache' => $this->getCache(),
             'strict_variables' => false,
         ]);
+
+        foreach ($this->collectExtensions($singletons) as $twigExtensionAttribute) {
+            $twigEnvironment->addExtension($twigExtensionAttribute->singleton);
+        }
+
+        return $twigEnvironment;
     }
 
     /**
