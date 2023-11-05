@@ -5,43 +5,51 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\ApplicationConfiguration;
+use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\Attribute\TwigLoader;
+use Distantmagic\Resonance\Attribute\TwigExtension;
 use Distantmagic\Resonance\Environment;
 use Distantmagic\Resonance\PHPProjectFiles;
+use Distantmagic\Resonance\SingletonAttribute;
+use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
-use Distantmagic\Resonance\TwigBridgeExtension;
 use Distantmagic\Resonance\TwigChainLoader;
-use Distantmagic\Resonance\SingletonAttribute;
 use Symfony\Component\Filesystem\Filesystem;
 use Twig\Cache\FilesystemCache;
 use Twig\Environment as TwigEnvironment;
-use Twig\Loader\FilesystemLoader;
-use Twig\Loader\LoaderInterface;
+use Twig\Extension\ExtensionInterface;
 
 /**
  * @template-extends SingletonProvider<TwigEnvironment>
  */
+#[RequiresSingletonCollection(SingletonCollection::TwigExtension)]
 #[Singleton(provides: TwigEnvironment::class)]
 final readonly class TwigEnvironmentProvider extends SingletonProvider
 {
     public function __construct(
         private ApplicationConfiguration $applicationConfiguration,
-        private TwigBridgeExtension $twigBridgeExtension,
         private TwigChainLoader $twigChainLoader,
     ) {}
 
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): TwigEnvironment
     {
-        $environment = new TwigEnvironment($this->twigChainLoader, [
+        return new TwigEnvironment($this->twigChainLoader, [
             'cache' => $this->getCache(),
             'strict_variables' => false,
         ]);
+    }
 
-        $environment->addExtension($this->twigBridgeExtension);
-
-        return $environment;
+    /**
+     * @return iterable<SingletonAttribute<ExtensionInterface,TwigExtension>>
+     */
+    private function collectExtensions(SingletonContainer $singletons): iterable
+    {
+        return $this->collectAttributes(
+            $singletons,
+            ExtensionInterface::class,
+            TwigExtension::class,
+        );
     }
 
     private function getCache(): false|FilesystemCache

@@ -29,7 +29,7 @@ final readonly class ApplicationConfigurationProvider extends ConfigurationProvi
     {
         return Expect::structure([
             'env' => Expect::anyOf(...Environment::values())->required(),
-            'esbuild_metafile' => Expect::string()->min(1)->required(),
+            'esbuild_metafile' => Expect::string()->min(1)->default('esbuild-meta.json'),
         ]);
     }
 

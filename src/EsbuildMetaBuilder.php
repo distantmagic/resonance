@@ -44,6 +44,11 @@ readonly class EsbuildMetaBuilder
     ): EsbuildMeta {
         $esbuildMeta = new EsbuildMeta();
 
+        if (!file_exists($esbuildMetafile)) {
+            // Nothing to be done here
+            return $esbuildMeta;
+        }
+
         foreach (
             $this->entryPointImports(
                 $esbuildMetafile,

@@ -9,10 +9,8 @@ use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Ds\Map;
 use Ds\Set;
-use LogicException;
 use ReflectionClass;
 use ReflectionFunction;
-use RuntimeException;
 use Swoole\Coroutine\WaitGroup;
 use Throwable;
 
@@ -109,21 +107,41 @@ readonly class DependencyInjectionContainer
         $ret = null;
 
         /**
+         * Bringing this reference out of the coroutine event loops allows the
+         * console component to catch that exception and format it.
+         *
+         * @var null|Throwable
+         */
+        $exception = null;
+
+        /**
          * WaitGroup is not necesary here since `run` is going to wait for all
          * coroutines to finish.
          *
          * @var bool $coroutineResult
          */
-        $coroutineResult = run(function () use ($className, &$ret) {
-            $ret = $this->doMake($className);
+        $coroutineResult = run(function () use ($className, &$exception, &$ret) {
+            try {
+                $ret = $this->doMake($className);
+            } catch (Throwable $throwable) {
+                $exception = $throwable;
+            }
         });
 
+        if ($exception) {
+            throw $exception;
+        }
+
         if (!$coroutineResult) {
-            throw new RuntimeException('Container event loop failed. Tried to build: '.$className);
+            throw new DependencyInjectionContainerException(
+                message: 'Container event loop failed',
+            );
         }
 
         if (!($ret instanceof $className)) {
-            throw new LogicException('Unable to make an instance of '.$className);
+            throw new DependencyInjectionContainerException(
+                message: 'Unable to make an instance of '.$className,
+            );
         }
 
         return $ret;
@@ -222,19 +240,23 @@ readonly class DependencyInjectionContainer
     private function doMakeSingleton(string $className, Set $previous): object
     {
         if (!$this->providers->hasKey($className)) {
-            throw new LogicException(sprintf(
-                "No singleton provider registered for:\n-> %s\n-> %s\n",
-                $previous->join("\n-> "),
-                $className,
-            ));
+            throw new DependencyInjectionContainerException(
+                message: sprintf(
+                    "No singleton provider registered for:\n-> %s\n-> %s\n",
+                    $previous->join("\n-> "),
+                    $className,
+                ),
+            );
         }
 
         if ($previous->contains($className)) {
-            throw new LogicException(sprintf(
-                "Dependency injection cycle:\n-> %s\n-> %s\n",
-                $previous->join("\n-> "),
-                $className,
-            ));
+            throw new DependencyInjectionContainerException(
+                message: sprintf(
+                    "Dependency injection cycle:\n-> %s\n-> %s\n",
+                    $previous->join("\n-> "),
+                    $className,
+                ),
+            );
         }
 
         $previous->add($className);
@@ -295,7 +317,7 @@ readonly class DependencyInjectionContainer
 
             return $singleton;
         } catch (Throwable $throwable) {
-            throw new LogicException(
+            throw new DependencyInjectionContainerException(
                 message: 'Error while building: '.$className,
                 previous: $throwable,
             );

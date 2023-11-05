@@ -31,8 +31,7 @@ readonly class SingletonFunctionParametersIterator implements IteratorAggregate
                     'Constructor parameter has no type: %s@%s',
                     $this->reflectionFunction instanceof ReflectionMethod
                         ? $this->reflectionFunction->getDeclaringClass()->getName()
-                        : ''
-                    ,
+                        : '',
                     $constructorParameter->getName(),
                 ));
             }

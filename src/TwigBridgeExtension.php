@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\TwigExtension;
 use Twig\Extension\ExtensionInterface;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
-#[Singleton]
+#[Singleton(collection: SingletonCollection::TwigExtension)]
+#[TwigExtension]
 readonly class TwigBridgeExtension implements ExtensionInterface
 {
     public function __construct(
@@ -17,9 +19,6 @@ readonly class TwigBridgeExtension implements ExtensionInterface
         private TwigFilterTrans $filterTrans,
         private TwigFunctionCSPNonce $functionCspNonce,
         private TwigFunctionCSRFToken $functionCSRFToken,
-        private TwigFunctionEsbuild $functionEsbuild,
-        private TwigFunctionEsbuildPreload $functionEsbuildPreload,
-        private TwigFunctionEsbuildRenderPreloads $functionEsbuildRenderPreloads,
         private TwigFunctionGatekeeperCan $functionGatekeeperCan,
         private TwigFunctionGatekeeperCanCrud $functionGatekeeperCanCrud,
         private TwigFunctionOld $functionOld,
@@ -49,9 +48,6 @@ readonly class TwigBridgeExtension implements ExtensionInterface
             new TwigFunction('can_crud', $this->functionGatekeeperCanCrud, $safe),
             new TwigFunction('csp_nonce', $this->functionCspNonce, $safe),
             new TwigFunction('csrf_token', $this->functionCSRFToken, $safe),
-            new TwigFunction('esbuild', $this->functionEsbuild, $safe),
-            new TwigFunction('esbuild_preload', $this->functionEsbuildPreload, $safe),
-            new TwigFunction('esbuild_render_preloads', $this->functionEsbuildRenderPreloads, $safe),
             new TwigFunction('old', $this->functionOld),
             new TwigFunction('route', $this->functionRoute, $safe),
         ];
