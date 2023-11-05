@@ -3,13 +3,13 @@ collections:
     - documents
 layout: dm:document
 parent: docs/features/templating/twig/index
-title: Template Loaders
+title: Registering Template Loaders
 description: >
     Learn how to register a template provider to load templates from various
     sources.
 ---
 
-# Template Loaders
+# Registering Template Loaders
 
 # Usage
 

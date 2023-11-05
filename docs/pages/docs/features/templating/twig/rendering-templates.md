@@ -1,8 +1,9 @@
 ---
 collections: 
-    - documents
+    - name: documents
+      next: docs/features/templating/twig/registering-extensions
 layout: dm:document
-next: docs/features/templating/twig/template-loaders
+next: docs/features/templating/twig/registering-extensions
 parent: docs/features/templating/twig/index
 title: Rendering Templates
 description: >
