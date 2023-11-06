@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\SwooleFuture\SwooleFuture;
+use Distantmagic\SwooleFuture\SwooleFutureResult;
 use Swoole\Event;
 
 use function Swoole\Coroutine\batch;

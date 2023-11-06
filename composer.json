@@ -42,7 +42,8 @@
         "doctrine/dbal": "^3.7",
         "doctrine/orm": "^2.16",
         "doctrine/migrations": "^3.6",
-        "php-ds/php-ds": "^1.4"
+        "php-ds/php-ds": "^1.4",
+        "distantmagic/swoole-futures": "^0.1.0"
     },
     "require-dev": {
         "mockery/mockery": "^1.6",

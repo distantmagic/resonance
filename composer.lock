@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4a954ceb9448d916a64dc680e3b170d6",
+    "content-hash": "edfa53684f51aff1e556bf8c5d3b5e56",
     "packages": [
         {
             "name": "dflydev/dot-access-data",
@@ -80,6 +80,40 @@
                 "source": "https://github.com/dflydev/dflydev-dot-access-data/tree/v3.0.2"
             },
             "time": "2022-10-27T11:44:00+00:00"
+        },
+        {
+            "name": "distantmagic/swoole-futures",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/distantmagic/swoole-futures.git",
+                "reference": "c7c21acbf547af939c91b84de2d433cbd2b4ff72"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/distantmagic/swoole-futures/zipball/c7c21acbf547af939c91b84de2d433cbd2b4ff72",
+                "reference": "c7c21acbf547af939c91b84de2d433cbd2b4ff72",
+                "shasum": ""
+            },
+            "require": {
+                "php-ds/php-ds": "^1.4",
+                "webonyx/graphql-php": "^15.6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Distantmagic\\SwooleFuture\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "support": {
+                "issues": "https://github.com/distantmagic/swoole-futures/issues",
+                "source": "https://github.com/distantmagic/swoole-futures/tree/v0.1.0"
+            },
+            "time": "2023-11-06T17:49:40+00:00"
         },
         {
             "name": "doctrine/cache",

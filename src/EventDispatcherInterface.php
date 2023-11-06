@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\SwooleFuture\SwooleFutureResult;
+
 interface EventDispatcherInterface
 {
     /**

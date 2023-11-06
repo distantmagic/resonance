@@ -20,7 +20,7 @@ example of standalone usage:
 ```php
 <?php
 
-use Distantmagic\Resonance\SwooleFuture;
+use Distantmagic\SwooleFuture\SwooleFuture;
 
 use function Swoole\Coroutine\run;
 

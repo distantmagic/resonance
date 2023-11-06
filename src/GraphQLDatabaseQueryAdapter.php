@@ -6,6 +6,8 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\GraphQLResolverException\Forbidden;
 use Distantmagic\Resonance\GraphQLResolverException\InvalidReturnType;
+use Distantmagic\SwooleFuture\PromiseState;
+use Distantmagic\SwooleFuture\SwooleFutureResult;
 use Ds\Map;
 
 readonly class GraphQLDatabaseQueryAdapter

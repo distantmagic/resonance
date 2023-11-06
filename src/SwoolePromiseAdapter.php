@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\SwooleFuture\PromiseState;
+use Distantmagic\SwooleFuture\SwooleFuture;
+use Distantmagic\SwooleFuture\SwooleFutureResult;
 use GraphQL\Executor\Promise\Promise;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use LogicException;

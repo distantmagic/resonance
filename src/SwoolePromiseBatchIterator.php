@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\SwooleFuture\PromiseState;
+use Distantmagic\SwooleFuture\SwooleFuture;
+use Distantmagic\SwooleFuture\SwooleFutureResult;
 use Generator;
 use GraphQL\Executor\Promise\Promise;
 use IteratorAggregate;

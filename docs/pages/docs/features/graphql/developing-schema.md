@@ -240,7 +240,7 @@ operations like database queries or API requests in a `SwooleFuture`:
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\SwooleFuture;
+use Distantmagic\SwooleFuture\SwooleFuture;
 
 #[Singleton]
 final class PingType extends ObjectType

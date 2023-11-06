@@ -274,7 +274,7 @@ listener's contents asynchronously:
 ```php
 <?php
 
-use Distantmagic\Resonance\SwooleFuture;
+use Distantmagic\SwooleFuture\SwooleFuture;
 
 #[ListensTo(MyFirstEvent::class)]
 #[ListensTo(MySecondEvent::class)]
