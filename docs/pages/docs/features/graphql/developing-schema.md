@@ -92,50 +92,6 @@ combined with this framework, as it already constructs everything during
 the application bootstrap phase.
 :::
 
-## Object Types
-
-Object types should extend `GraphQL\Type\Definition\ObjectType`. First, they 
-should be registered in the Root Field, then they should be nested inside
-each other:
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\ObjectType;
-
-use Distantmagic\Resonance\Attribute\Singleton;
-use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Definition\Type;
-
-#[Singleton]
-final class PingType extends ObjectType
-{
-    public function __construct()
-    {
-        parent::__construct([
-            'name' => 'Ping',
-            'description' => 'Test field',
-            'fields' => [
-                'message' => [
-                    'type' => Type::string(),
-                    'description' => 'Always responds with pong',
-                    'resolve' => $this->resolvePong(...),
-                ],
-            ],
-        ]);
-    }
-
-    private function resolvePong(): string
-    {
-        return 'pong';
-    }
-}
-```
-
-## Registering Root Fields
-
 Let's start with an example type, `PingType`:
 
 ```php
@@ -225,5 +181,107 @@ Will yield this response:
             "message": "pong"
         }
     }
+}
+```
+
+
+## Object Types
+
+Object types should extend `GraphQL\Type\Definition\ObjectType`. First, they 
+should be registered in the Root Field, then they should be nested inside
+each other:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\ObjectType;
+
+use Distantmagic\Resonance\Attribute\Singleton;
+use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\Type;
+
+#[Singleton]
+final class PingType extends ObjectType
+{
+    public function __construct()
+    {
+        parent::__construct([
+            'name' => 'Ping',
+            'description' => 'Test field',
+            'fields' => [
+                'message' => [
+                    'type' => Type::string(),
+                    'description' => 'Always responds with pong',
+                    'resolve' => $this->resolvePong(...),
+                ],
+            ],
+        ]);
+    }
+
+    private function resolvePong(): string
+    {
+        return 'pong';
+    }
+}
+```
+
+# Promises in Resolvers
+
+## GraphQL Resolvers
+
+When working with GraphQL resolvers, it's a good practice to wrap asynchronous 
+operations like database queries or API requests in a `SwooleFuture`:
+
+```php
+<?php
+
+use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\Type;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\SwooleFuture;
+
+#[Singleton]
+final class PingType extends ObjectType
+{
+    public function __construct()
+    {
+        parent::__construct([
+            'name' => 'Ping',
+            'description' => 'Test field',
+            'fields' => [
+                'message' => [
+                    'type' => Type::string(),
+                    'description' => 'Always responds with pong',
+                    'resolve' => $this->resolveMessage(...),
+                ],
+            ],
+        ]);
+    }
+
+    private function resolveMessage(): SwooleFuture
+    {
+        return new SwooleFuture(function () {
+            sleep(1);
+
+            return 'pong';
+        });
+    }
+}
+```
+
+By using `SwooleFuture`, you ensure the framework executes resolve callbacks in 
+parallel. That significantly improves performance, especially when multiple 
+resolvers are involved.
+
+For example, the following GraphQL query will take around 1 second (instead of 
+3 seconds) because resolvers are executed in parallel. 
+
+```graphql
+query MultiPing() {
+    ping1: ping { message }
+    ping2: ping { message }
+    ping3: ping { message }
 }
 ```

@@ -41,7 +41,8 @@
         "nette/php-generator": "^4.1",
         "doctrine/dbal": "^3.7",
         "doctrine/orm": "^2.16",
-        "doctrine/migrations": "^3.6"
+        "doctrine/migrations": "^3.6",
+        "php-ds/php-ds": "^1.4"
     },
     "require-dev": {
         "mockery/mockery": "^1.6",
