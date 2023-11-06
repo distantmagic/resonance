@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f5b4e0cbcefc325507fa6a82b8a7c192",
+    "content-hash": "4f5121e97273177abab61ba21fcc0c29",
     "packages": [
         {
             "name": "dflydev/dot-access-data",
@@ -83,19 +83,26 @@
         },
         {
             "name": "distantmagic/graphql-swoole-promise-adapter",
-            "version": "dev-master",
+            "version": "v0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/distantmagic/graphql-swoole-promise-adapter.git",
-                "reference": "1c1b02f4f7a279d2cc156adc19698cc8c7c4712a"
+                "reference": "0064d7d6107975abd7dedb46a988a706ff7ef4e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/distantmagic/graphql-swoole-promise-adapter/zipball/1c1b02f4f7a279d2cc156adc19698cc8c7c4712a",
-                "reference": "1c1b02f4f7a279d2cc156adc19698cc8c7c4712a",
+                "url": "https://api.github.com/repos/distantmagic/graphql-swoole-promise-adapter/zipball/0064d7d6107975abd7dedb46a988a706ff7ef4e0",
+                "reference": "0064d7d6107975abd7dedb46a988a706ff7ef4e0",
                 "shasum": ""
             },
-            "default-branch": true,
+            "require": {
+                "distantmagic/swoole-futures": "^0.1.0",
+                "php-ds/php-ds": "^1.4"
+            },
+            "require-dev": {
+                "swoole/ide-helper": "^5.1",
+                "vimeo/psalm": "^5.15"
+            },
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -108,9 +115,9 @@
             ],
             "support": {
                 "issues": "https://github.com/distantmagic/graphql-swoole-promise-adapter/issues",
-                "source": "https://github.com/distantmagic/graphql-swoole-promise-adapter/tree/master"
+                "source": "https://github.com/distantmagic/graphql-swoole-promise-adapter/tree/v0.1.0"
             },
-            "time": "2023-11-06T14:45:14+00:00"
+            "time": "2023-11-06T21:39:05+00:00"
         },
         {
             "name": "distantmagic/swoole-futures",
@@ -6727,9 +6734,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "distantmagic/graphql-swoole-promise-adapter": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

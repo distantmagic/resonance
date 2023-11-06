@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\GraphqlSwoolePromiseAdapter\GraphQLResolverPromiseAdapterInterface;
 use Distantmagic\Resonance\GraphQLResolverException\Forbidden;
 use Distantmagic\Resonance\GraphQLResolverException\InvalidReturnType;
 use Distantmagic\SwooleFuture\PromiseState;
 use Distantmagic\SwooleFuture\SwooleFutureResult;
 use Ds\Map;
-use Distantmagic\GraphqlSwoolePromiseAdapter\GraphQLResolverPromiseAdapterInterface;
 
 /**
  * @template-implements GraphQLResolverPromiseAdapterInterface<GraphQLReusableDatabaseQueryInterface>
@@ -48,7 +48,7 @@ readonly class GraphQLDatabaseQueryAdapter implements GraphQLResolverPromiseAdap
         }
 
         if (!is_object($data)) {
-            throw new InvalidReturnType('Query execution result is not an object');
+            return $data;
         }
 
         if (!($data instanceof CrudActionSubjectInterface)) {
