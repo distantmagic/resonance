@@ -9,8 +9,12 @@ use Distantmagic\Resonance\GraphQLResolverException\InvalidReturnType;
 use Distantmagic\SwooleFuture\PromiseState;
 use Distantmagic\SwooleFuture\SwooleFutureResult;
 use Ds\Map;
+use Distantmagic\GraphqlSwoolePromiseAdapter\GraphQLResolverPromiseAdapterInterface;
 
-readonly class GraphQLDatabaseQueryAdapter
+/**
+ * @template-implements GraphQLResolverPromiseAdapterInterface<GraphQLReusableDatabaseQueryInterface>
+ */
+readonly class GraphQLDatabaseQueryAdapter implements GraphQLResolverPromiseAdapterInterface
 {
     /**
      * @var Map<string,SwooleFutureResult>
@@ -22,15 +26,15 @@ readonly class GraphQLDatabaseQueryAdapter
         $this->reusableFutures = new Map();
     }
 
-    public function convertThenable(GraphQLReusableDatabaseQueryInterface $reusableDatabaseQuery): SwooleFutureResult
+    public function convertThenable(object $thenable): SwooleFutureResult
     {
-        $reusableQueryId = $reusableDatabaseQuery::class.$reusableDatabaseQuery->reusableQueryId();
+        $reusableQueryId = $thenable::class.$thenable->reusableQueryId();
 
         if ($this->reusableFutures->hasKey($reusableQueryId)) {
             return $this->reusableFutures->get($reusableQueryId);
         }
 
-        $future = $this->wrap($reusableDatabaseQuery);
+        $future = $this->wrap($thenable);
 
         $this->reusableFutures->put($reusableQueryId, $future);
 

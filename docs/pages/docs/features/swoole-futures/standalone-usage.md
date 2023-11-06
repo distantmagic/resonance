@@ -11,6 +11,25 @@ description: >
 
 # Standalone Usage
 
+# Installation
+
+:::note
+If you are using Resonance framework you don't have to additionally install 
+this package - its already bundled.
+
+You need this page only if you want to use just Swoole Futures - without
+the remaining Resonance features.
+:::
+
+Swoole Futures are bundled with the base Resonance framework, but if you want
+to install just those, without other Resonance features, you can use:
+
+```shell
+$ composer require distantmagic/swoole-futures
+```
+
+# Usage
+
 While Swoole Futures are primarily designed for use within GraphQL resolvers 
 or event listeners, you can also use them independently. You don't need any 
 additional wrappers (besides the Swoole's event loop, of course), as 

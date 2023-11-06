@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "edfa53684f51aff1e556bf8c5d3b5e56",
+    "content-hash": "f5b4e0cbcefc325507fa6a82b8a7c192",
     "packages": [
         {
             "name": "dflydev/dot-access-data",
@@ -80,6 +80,37 @@
                 "source": "https://github.com/dflydev/dflydev-dot-access-data/tree/v3.0.2"
             },
             "time": "2022-10-27T11:44:00+00:00"
+        },
+        {
+            "name": "distantmagic/graphql-swoole-promise-adapter",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/distantmagic/graphql-swoole-promise-adapter.git",
+                "reference": "1c1b02f4f7a279d2cc156adc19698cc8c7c4712a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/distantmagic/graphql-swoole-promise-adapter/zipball/1c1b02f4f7a279d2cc156adc19698cc8c7c4712a",
+                "reference": "1c1b02f4f7a279d2cc156adc19698cc8c7c4712a",
+                "shasum": ""
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Distantmagic\\GraphqlSwoolePromiseAdapter\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "support": {
+                "issues": "https://github.com/distantmagic/graphql-swoole-promise-adapter/issues",
+                "source": "https://github.com/distantmagic/graphql-swoole-promise-adapter/tree/master"
+            },
+            "time": "2023-11-06T14:45:14+00:00"
         },
         {
             "name": "distantmagic/swoole-futures",
@@ -6696,7 +6727,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "distantmagic/graphql-swoole-promise-adapter": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

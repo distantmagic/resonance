@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\GraphqlSwoolePromiseAdapter\SwoolePromiseAdapter;
+
 trait TestsGraphQLQueriesTrait
 {
     use TestsDependencyInectionContainerTrait;
@@ -18,15 +20,15 @@ trait TestsGraphQLQueriesTrait
             GraphQLAdapter $graphQLAdapter,
             SiteActionGateAggregate $siteActionGateAggregate,
         ) use ($query) {
-            $swoolePromiseAdapter = new SwoolePromiseAdapter(
-                new GraphQLDatabaseQueryAdapter(
-                    new GatekeeperUserContext(
-                        $crudActionGateAggregate,
-                        $siteActionGateAggregate,
-                        null,
-                    ),
+            $graphQLDatabaseQueryAdapter = new GraphQLDatabaseQueryAdapter(
+                new GatekeeperUserContext(
+                    $crudActionGateAggregate,
+                    $siteActionGateAggregate,
+                    null,
                 ),
             );
+
+            $swoolePromiseAdapter = new SwoolePromiseAdapter();
 
             return $graphQLAdapter
                 ->query($swoolePromiseAdapter, $query)

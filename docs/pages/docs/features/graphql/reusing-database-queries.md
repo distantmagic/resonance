@@ -1,7 +1,9 @@
 ---
 collections: 
-    - documents
+    - name: documents
+      next: docs/features/graphql/standalone-promise-adapter
 layout: dm:document
+next: docs/features/graphql/standalone-promise-adapter
 parent: docs/features/graphql/index
 title: Reusing Database Queries
 description: >

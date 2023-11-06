@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\HttpResponder;
 
+use Distantmagic\GraphqlSwoolePromiseAdapter\SwoolePromiseAdapter;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Gatekeeper;
 use Distantmagic\Resonance\GraphQLAdapter;
 use Distantmagic\Resonance\GraphQLDatabaseQueryAdapter;
+use Distantmagic\Resonance\GraphQLReusableDatabaseQueryInterface;
 use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\HttpResponder\Error\BadRequest;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\JsonTemplate;
-use Distantmagic\Resonance\SwoolePromiseAdapter;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
@@ -60,8 +61,14 @@ final readonly class GraphQL extends HttpResponder
          */
         $variables = $requestInput['variables'] ?? null;
 
-        $graphQLDatabaseQueryAdapter = new GraphQLDatabaseQueryAdapter($this->gatekeeper->withRequest($request));
-        $swoolePromiseAdapter = new SwoolePromiseAdapter($graphQLDatabaseQueryAdapter);
+        $swoolePromiseAdapter = new SwoolePromiseAdapter();
+        $swoolePromiseAdapter
+            ->resolverPromiseAdapterRegistry
+            ->registerResolverPromiseAdapter(
+                GraphQLReusableDatabaseQueryInterface::class,
+                new GraphQLDatabaseQueryAdapter($this->gatekeeper->withRequest($request)),
+            )
+        ;
 
         $result = $this->graphQLAdapter->query(
             $swoolePromiseAdapter,
