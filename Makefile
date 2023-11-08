@@ -63,6 +63,9 @@ node_modules: yarn.lock
 tools/php-cs-fixer/vendor/bin/php-cs-fixer:
 	$(MAKE) -C tools/php-cs-fixer vendor
 
+tools/psalm/vendor/bin/psalm:
+	$(MAKE) -C tools/psalm vendor
+
 vendor: composer.lock
 	${PHP_BIN} ${COMPOSER_BIN} install --no-interaction --prefer-dist --optimize-autoloader;
 	touch vendor;
@@ -150,8 +153,11 @@ prettier: node_modules
 		"resources/{css,ts}/**/*.{js,css,ts,tsx}"
 
 .PHONY: psalm
-psalm: config.ini vendor
-	./vendor/bin/psalm --no-cache --show-info=true
+psalm: tools/psalm/vendor/bin/psalm
+	./tools/psalm/vendor/bin/psalm \
+		--no-cache \
+		--show-info=true \
+		--root=$(CURDIR)
 
 .PHONY: psalm.watch
 psalm.watch: node_modules vendor

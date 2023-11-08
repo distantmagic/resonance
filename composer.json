@@ -17,11 +17,9 @@
     ],
     "require": {
         "php": ">=8.2",
-        "ext-ds": "*",
         "ext-igbinary": "*",
-        "ext-sockets": "*",
-        "distantmagic/graphql-swoole-promise-adapter": "^0.1.0",
-        "distantmagic/swoole-futures": "^0.1.0",
+        "distantmagic/graphql-swoole-promise-adapter": "^0.1.1",
+        "distantmagic/swoole-futures": "^0.1.1",
         "doctrine/dbal": "^3.7",
         "doctrine/migrations": "^3.6",
         "doctrine/orm": "^2.16",
@@ -47,10 +45,10 @@
     "require-dev": {
         "mockery/mockery": "^1.6",
         "phpunit/phpunit": "^10.0",
-        "vimeo/psalm": "^5.15",
         "swoole/ide-helper": "^5.1"
     },
     "suggest": {
+        "ext-ds": "For better memory management",
         "ext-intl": "Date formatting",
         "ext-readline": "Unlocks some console features",
         "ext-redis": "HTTP Sessions driver",

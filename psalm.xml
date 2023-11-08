@@ -71,6 +71,8 @@
     </issueHandlers>
 
     <stubs>
+        <file name="tools/psalm/vendor/vimeo/psalm/stubs/extensions/ds.phpstub" />
+
         <file name="vendor/swoole/ide-helper/src/swoole/Swoole/Http/Request.php" />
         <file name="vendor/swoole/ide-helper/src/swoole/Swoole/Http/Response.php" />
         <file name="vendor/swoole/ide-helper/src/swoole/Swoole/Http/Server.php" />
