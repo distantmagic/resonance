@@ -12,7 +12,7 @@ readonly class PHPProjectFiles
     /**
      * @var Set<ReflectionClass>
      */
-    private Set $reflections;
+    public Set $reflections;
 
     public function __construct()
     {

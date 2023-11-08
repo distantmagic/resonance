@@ -31,7 +31,6 @@
         "nette/php-generator": "^4.1",
         "nette/schema": "^1.2",
         "nicmart/tree": "^0.7.2",
-        "php-ds/php-ds": "^1.4",
         "psr/container": "^2.0",
         "psr/link": "^2.0",
         "psr/log": "^3.0",
