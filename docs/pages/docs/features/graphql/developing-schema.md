@@ -55,6 +55,36 @@ final readonly class GraphQL extends HttpResponder
 }
 ```
 
+## Authorization
+
+You need to provide the {{docs/features/security/authorization}} gate for
+`SiteAction::UseGraphQL`:
+
+```php
+<?php
+
+namespace App\SiteActionGate;
+
+use App\Role;
+use Distantmagic\Resonance\Attribute\DecidesSiteAction;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\SingletonCollection;
+use Distantmagic\Resonance\SiteAction;
+use Distantmagic\Resonance\SiteActionGate;
+use Distantmagic\Resonance\UserInterface;
+
+#[DecidesSiteAction(SiteAction::UseGraphQL)]
+#[Singleton(collection: SingletonCollection::SiteActionGate)]
+final readonly class UseGraphQLGate extends SiteActionGate
+{
+    public function can(?UserInterface $user): bool
+    {
+        // Insert authorization rules here:
+        return true;
+    }
+}
+```
+
 ## Building GraphQL Root Query
 
 ```graphviz render
