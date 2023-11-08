@@ -20,7 +20,6 @@
         "ext-ds": "*",
         "ext-igbinary": "*",
         "ext-sockets": "*",
-        "ext-swoole": "*",
         "distantmagic/graphql-swoole-promise-adapter": "^0.1.0",
         "distantmagic/swoole-futures": "^0.1.0",
         "doctrine/dbal": "^3.7",
