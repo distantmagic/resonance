@@ -52,6 +52,37 @@ readonly class ClientCredentialsGrantProvider extends OAuth2GrantProvider
 
 ## Persistent Data Repositories
 
+:::tip
+If you want to implement repositories by using
+{{docs/features/database/doctrine/index}}, you should use `getWeakReference()`
+method to obtain the Entity Manager. For example:
+
+```php
+<?php
+
+use Distantmagic\Resonance\DoctrineEntityManagerRepository;
+
+#[Singleton(provides: AccessTokenRepositoryInterface::class)]
+readonly class OAuth2AccessTokenRepository implements AccessTokenRepositoryInterface
+{
+    public function __construct(private DoctrineEntityManagerRepository $doctrineEntityManagerRepository) 
+    {
+    }
+
+    public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null)
+    {
+        $em = $this->doctrineEntityManagerRepository->getWeakReference()->getEntityManager();
+
+        // ...
+    }
+
+    // ...
+}
+```
+
+You can learn more on {{docs/features/database/doctrine/entity-managers}} page.
+:::
+
 ### Access Token Repository
 
 All grant types require this repository.

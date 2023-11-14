@@ -55,4 +55,9 @@ readonly class DoctrineEntityManagerRepository
 
         return $entityManager;
     }
+
+    public function getWeakReference(string $name = 'default'): EntityManagerWeakReference
+    {
+        return new EntityManagerWeakReference($this->buildEntityManager($name));
+    }
 }

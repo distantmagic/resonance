@@ -166,3 +166,24 @@ final readonly class Blog extends HttpController
     }
 }
 ```
+
+## Weak References
+
+:::caution
+Entity Manager obtained this way will have it's connection closed (returned to
+the pool) when the `WeakReference` wrapper object is garbage collected.
+
+This is fine in most cases, but you should be aware of it.
+:::
+
+If you need to obtain an `EntityManager` during the application runtime and you
+cannot use the `getEntityManager` method (for example when you are not in a 
+context without a `Request` object), you might want to use `getWeakReference` 
+instead:
+
+```php
+/**
+ * @var Distantmagic\Resonance\DoctrineEntityManagerRepository $doctrineEntityManagerRepository
+ */
+$doctrineEntityManagerRepository->getWeakReference()->getEntityManager();
+```
