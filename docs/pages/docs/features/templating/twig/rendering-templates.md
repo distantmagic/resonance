@@ -69,7 +69,7 @@ It needs the request object to determine the currently used language.
 ### `can`
 
 Determines if the current user can perform the given site action. Learn more 
-about site actions at the {{docs/features/security/authorization}} page.
+about site actions at the {{docs/features/security/authorization/index}} page.
 
 ```twig
 {% if can(request, constant('App\\SiteAction::CreateBlogPost')) %}
@@ -80,7 +80,7 @@ about site actions at the {{docs/features/security/authorization}} page.
 ### `can_crud`
 
 Determines if the current user can perform the given CRUD action. Learn more 
-about CRUD actions at the {{docs/features/security/authorization}} page.
+about CRUD actions at the {{docs/features/security/authorization/index}} page.
 
 ```twig
 {% if can_crud(request, blog_post, constant('Resonance\\CrudAction::Delete')) %}

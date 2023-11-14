@@ -2,7 +2,7 @@
 collections: 
     - documents
 layout: dm:document
-next: docs/features/security/content-security-policy
+next: docs/features/security/content-security-policy/index
 parent: docs/features/security/index
 title: CSRF Protection
 description: >
@@ -23,7 +23,7 @@ use those first.
 :::tip
 **Besides** the CSRF protection, it's a good idea to protect your site by 
 setting
-{{docs/features/security/content-security-policy}} wherever they may be 
+{{docs/features/security/content-security-policy/index}} wherever they may be 
 applied.
 :::
 

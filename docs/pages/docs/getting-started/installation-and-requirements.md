@@ -33,6 +33,7 @@ extension | symbol | why?
 -|-|-
 [Igbinary](https://www.php.net/manual/en/book.igbinary.php) | `ext-igbinary` | It's used to serialize and unserialize {{docs/features/http/sessions}}. It has a better memory footprint than a basic PHP `serialize` and allows to use `ext-ds` to store the session data.
 [Intl](https://www.php.net/manual/en/book.intl.php) | `ext-intl` | Handles date formatting, helps with translations etc.
+[OpenSSL](https://datatracker.ietf.org/doc/html/rfc7519) | `ext-openssl` | Handles security keys, especially useful for {{docs/features/security/oauth2/index}}.
 [Readline](https://www.php.net/manual/en/book.readline.php) | `ext-readline` | Unlocks {{docs/features/console/index}} features, formatting, piping etc.
 [Redis](https://github.com/phpredis/phpredis) | `ext-redis` | Redis to handle {{docs/features/http/sessions}}
 [uuid](https://pecl.php.net/package/uuid) | `ext-uuid` | Faster UUID generation for session ids and such.

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-interface UserInterface
+use League\OAuth2\Server\Entities\UserEntityInterface;
+
+interface UserInterface extends UserEntityInterface
 {
-    public function getId(): int|string;
+    public function getIdentifier(): int|string;
 
     public function getRole(): UserRoleInterface;
 }

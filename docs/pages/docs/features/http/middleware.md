@@ -70,9 +70,9 @@ Resonance comes with several middleware handlers:
 
 attribute | description
 -|-
-`Can` | Uses {{docs/features/security/authorization}} to check if user can perform a given Site Action before accesing the responder.
-`ContentSecurityPolicy` | Sends selected {{docs/features/security/content-security-policy}} headers with the response.
-`ValidatesCSRFToken` | Uses the {{docs/features/security/csrf-protection}} mechanisms to validate CSRF token.
+`Can` | Uses {{docs/features/security/authorization/index}} to check if user can perform a given Site Action before accesing the responder.
+`ContentSecurityPolicy` | Sends selected {{docs/features/security/content-security-policy/index}} headers with the response.
+`ValidatesCSRFToken` | Uses the {{docs/features/security/csrf-protection/index}} mechanisms to validate CSRF token.
 
 You can add them to any HTTP Responder. For example:
 

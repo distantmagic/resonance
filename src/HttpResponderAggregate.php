@@ -25,6 +25,7 @@ use Throwable;
 readonly class HttpResponderAggregate
 {
     public function __construct(
+        private ApplicationConfiguration $applicationConfiguration,
         private EventDispatcherInterface $eventDispatcher,
         private HttpRecursiveResponder $recursiveResponder,
         private HttpResponderCollection $httpResponderCollection,
@@ -87,7 +88,7 @@ readonly class HttpResponderAggregate
             ->setPathInfo((string) $request->server['path_info'])
             ->setHost((string) $request->server['remote_addr'])
             ->setHttpsPort((int) $request->server['server_port'])
-            ->setScheme('https')
+            ->setScheme($this->applicationConfiguration->scheme)
         ;
 
         try {

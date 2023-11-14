@@ -18,16 +18,7 @@ trait TestsGraphQLQueriesTrait
         $result = self::$container->call(static function (
             CrudActionGateAggregate $crudActionGateAggregate,
             GraphQLAdapter $graphQLAdapter,
-            SiteActionGateAggregate $siteActionGateAggregate,
         ) use ($query) {
-            $graphQLDatabaseQueryAdapter = new GraphQLDatabaseQueryAdapter(
-                new GatekeeperUserContext(
-                    $crudActionGateAggregate,
-                    $siteActionGateAggregate,
-                    null,
-                ),
-            );
-
             $swoolePromiseAdapter = new SwoolePromiseAdapter();
 
             return $graphQLAdapter

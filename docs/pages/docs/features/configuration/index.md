@@ -71,6 +71,8 @@ This is the default configuration file:
 ```ini file:config.ini
 [app]
 env = development
+esbuild_metafile = esbuild-meta-app.json
+scheme = https
 
 [database]
 default[driver] = mysql

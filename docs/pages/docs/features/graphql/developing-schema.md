@@ -57,7 +57,7 @@ final readonly class GraphQL extends HttpResponder
 
 ## Authorization
 
-You need to provide the {{docs/features/security/authorization}} gate for
+You need to provide the {{docs/features/security/authorization/index}} gate for
 `SiteAction::UseGraphQL`:
 
 ```php

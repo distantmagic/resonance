@@ -22,7 +22,7 @@ Modern browsers implement CSP, but it needs to be activated by sending them a
 series of specific headers.
 
 `Distantmagic\Resonance\SecurityPolicyHeaders` provides not only 
-{{docs/features/security/content-security-policy}} headers but also some 
+{{docs/features/security/content-security-policy/index}} headers but also some 
 additional headers recommended by 
 [OWASP's Secure Headers Project](https://owasp.org/www-project-secure-headers/).
 

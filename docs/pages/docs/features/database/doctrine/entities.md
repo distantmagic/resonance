@@ -79,5 +79,5 @@ final readonly class BlogPostShow extends HttpController
 ```
 
 If you use an entity in a controller parameters, you might also need to add 
-{{docs/features/security/authorization}} gate to determine who can use that
-entity.
+{{docs/features/security/authorization/index}} gate to determine who can use 
+that entity.

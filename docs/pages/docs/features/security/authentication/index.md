@@ -2,7 +2,7 @@
 collections: 
     - documents
 layout: dm:document
-next: docs/features/security/authorization
+next: docs/features/security/authorization/index
 parent: docs/features/security/index
 title: Authentication
 description: >

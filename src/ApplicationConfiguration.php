@@ -9,5 +9,6 @@ readonly class ApplicationConfiguration
     public function __construct(
         public Environment $environment,
         public string $esbuildMetafile,
+        public string $scheme,
     ) {}
 }

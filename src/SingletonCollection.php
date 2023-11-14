@@ -15,6 +15,7 @@ enum SingletonCollection implements SingletonCollectionInterface
     case HttpParameterBinder;
     case HttpResponder;
     case InputValidator;
+    case OAuth2Grant;
     case SiteActionGate;
     case StaticPageLayout;
     case TwigExtension;

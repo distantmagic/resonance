@@ -17,7 +17,6 @@
     ],
     "require": {
         "php": ">=8.2",
-        "ext-igbinary": "*",
         "distantmagic/graphql-swoole-promise-adapter": "^0.1.1",
         "distantmagic/swoole-futures": "^0.1.1",
         "doctrine/dbal": "^3.7",
@@ -40,7 +39,12 @@
         "symfony/yaml": "^6.3",
         "twig/cache-extra": "^3.7",
         "twig/twig": "^3.7",
-        "webonyx/graphql-php": "^15.6"
+        "webonyx/graphql-php": "^15.6",
+        "league/oauth2-server": "^8.5",
+        "psr/http-message": "^2.0",
+        "defuse/php-encryption": "^2.4",
+        "nyholm/psr7": "^1.8",
+        "nyholm/psr7-server": "^1.1"
     },
     "require-dev": {
         "mockery/mockery": "^1.6",
@@ -50,6 +54,8 @@
     "suggest": {
         "ext-ds": "For better memory management",
         "ext-intl": "Date formatting",
+        "ext-igbinary": "For better object serialization",
+        "ext-openssl": "To generate application keys",
         "ext-readline": "Unlocks some console features",
         "ext-redis": "HTTP Sessions driver",
         "ext-uuid": "Faster UUID generation"

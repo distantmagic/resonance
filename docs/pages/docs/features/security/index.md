@@ -30,4 +30,4 @@ That means sometimes you must provide an authorization gate (and possibly an
 authentication mechanism - unless you want to *explicitly* enable guest access 
 to all resources).
 
-{{docs/features/security/*!docs/features/security/index}}
+{{docs/features/security/*/index}}

@@ -1,7 +1,7 @@
 ---
 collections: 
     - name: documents
-      next: docs/extras/index
+      next: docs/changelog/index
 layout: dm:document
 parent: docs/index
 title: Getting Started

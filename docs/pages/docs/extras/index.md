@@ -1,7 +1,6 @@
 ---
 collections: 
-    - name: documents
-      next: docs/features/index
+    - documents
 layout: dm:document
 parent: docs/index
 title: Extras

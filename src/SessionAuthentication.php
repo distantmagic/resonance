@@ -54,7 +54,7 @@ final readonly class SessionAuthentication
     public function setAuthenticatedUser(Request $request, Response $response, UserInterface $user): void
     {
         $session = $this->sessionManager->start($request, $response);
-        $session->data->put('authenticated_user_id', $user->getId());
+        $session->data->put('authenticated_user_id', $user->getIdentifier());
 
         $this->authenticatedUsers->offsetSet($request, $user);
     }

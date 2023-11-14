@@ -2,7 +2,7 @@
 collections: 
     - documents
 layout: dm:document
-next: docs/features/security/csrf-protection
+next: docs/features/security/csrf-protection/index
 parent: docs/features/security/index
 title: Authorization
 description: >

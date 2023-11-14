@@ -70,20 +70,20 @@ code[class] {
 }
 
 .fenced-code {
+  border-radius: 4px;
+
   @media screen and (min-width: 1024px) {
     position: relative;
   }
-
-  border-radius: 4px;
 
   code {
     transition: opacity 0.3s ease;
 
     @media screen and (max-width: 1023px) {
-      padding: 10px;
+      padding: 10px 10ch 10px 10px;
     }
     @media screen and (min-width: 1024px) {
-      padding: 20px;
+      padding: 20px 10ch 20px 20px;
     }
   }
 
@@ -117,6 +117,7 @@ code[class] {
     padding: 6px 10px;
     pointer-events: none;
     user-select: none;
+    z-index: 1;
 
     @media screen and (min-width: 1024px) {
       border-top-right-radius: 4px;

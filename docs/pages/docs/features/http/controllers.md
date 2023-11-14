@@ -51,7 +51,7 @@ resource.
 
 :::note
 Using the `RouteParameter` might require to create a Crud Gate. See more at
-the {{docs/features/security/authorization}} page.
+the {{docs/features/security/authorization/index}} page.
 :::
 
 Remember that the framework resolves parameters assigned to the `handle` method 
@@ -63,7 +63,7 @@ resolves during the application bootstrap phase thanks to the
 
 :::note
 You can learn more about CRUD actions on the
-{{docs/features/security/authorization}} page.
+{{docs/features/security/authorization/index}} page.
 :::
 
 ```php

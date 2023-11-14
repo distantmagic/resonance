@@ -15,6 +15,7 @@ use Nette\Schema\Schema;
  * @template-extends ConfigurationProvider<ApplicationConfiguration, object{
  *     env: string,
  *     esbuild_metafile: string,
+ *     scheme: string,
  * }>
  */
 #[Singleton(provides: ApplicationConfiguration::class)]
@@ -30,6 +31,7 @@ final readonly class ApplicationConfigurationProvider extends ConfigurationProvi
         return Expect::structure([
             'env' => Expect::anyOf(...Environment::values())->required(),
             'esbuild_metafile' => Expect::string()->min(1)->default('esbuild-meta.json'),
+            'scheme' => Expect::anyOf('http', 'https')->default('https'),
         ]);
     }
 
@@ -38,6 +40,7 @@ final readonly class ApplicationConfigurationProvider extends ConfigurationProvi
         return new ApplicationConfiguration(
             environment: Environment::from($validatedData->env),
             esbuildMetafile: DM_ROOT.'/'.$validatedData->esbuild_metafile,
+            scheme: $validatedData->scheme,
         );
     }
 }

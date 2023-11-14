@@ -1,6 +1,7 @@
 [app]
 env = development
 esbuild_metafile = esbuild-meta-app.json
+scheme = https
 
 [database]
 default[driver] = mysql
