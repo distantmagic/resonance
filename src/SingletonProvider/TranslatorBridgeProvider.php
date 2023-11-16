@@ -12,6 +12,7 @@ use Distantmagic\Resonance\SingletonProvider;
 use Distantmagic\Resonance\TranslationsLoader;
 use Distantmagic\Resonance\TranslatorBridge;
 use Distantmagic\Resonance\TranslatorConfiguration;
+use Ds\Map;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -38,9 +39,22 @@ final readonly class TranslatorBridgeProvider extends SingletonProvider
         ;
 
         foreach ($translationFiles as $translationFile) {
+            $loadedTranslations = TranslationsLoader::load($translationFile->getPathname());
+            $relativePath = $translationFile->getRelativePath();
+
+            /**
+             * @var Map<string,string>
+             */
+            $currentTranslations = $translator->translations->hasKey($relativePath)
+                ? $translator->translations->get($relativePath)
+                : new Map()
+            ;
+
+            $currentTranslations->putAll($loadedTranslations);
+
             $translator->translations->put(
-                $translationFile->getRelativePath(),
-                TranslationsLoader::load($translationFile->getPathname())
+                $relativePath,
+                $currentTranslations,
             );
         }
 
