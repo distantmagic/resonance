@@ -36,9 +36,13 @@ readonly class TranslationsLoader
             throw new RuntimeException('Unable to parse translations file:'.$this->filename);
         }
 
+        $basename = pathinfo($this->filename, PATHINFO_FILENAME);
+
         /**
          * @var Map<string, string>
          */
-        return ArrayFlattenIterator::flatten($translations);
+        return ArrayFlattenIterator::flatten([
+            $basename => $translations,
+        ]);
     }
 }

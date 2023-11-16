@@ -32,7 +32,7 @@ final readonly class OAuth2ConfigurationProvider extends ConfigurationProvider
     {
         return Expect::structure([
             'encryption_key' => Expect::string()->min(1)->required(),
-            'jwt_signing_key_passphrase' => Expect::string()->min(1)->default(null),
+            'jwt_signing_key_passphrase' => Expect::string()->default(null),
             'jwt_signing_key_private' => Expect::string()->min(1)->required(),
             'jwt_signing_key_public' => Expect::string()->min(1)->required(),
         ]);

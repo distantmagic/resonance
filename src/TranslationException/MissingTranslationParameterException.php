@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Distantmagic\Resonance\TranslationException;
 
 use Distantmagic\Resonance\TranslationException;

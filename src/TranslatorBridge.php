@@ -57,17 +57,17 @@ readonly class TranslatorBridge
      */
     protected function fillParameters(string $phrase, array $parameters): string
     {
-        if (! $this->labels->hasKey($phrase)) {
+        if (!$this->labels->hasKey($phrase)) {
             $labels = new Vector($this->resolveLabels($phrase));
 
             $this->labels->put($phrase, $labels);
         }
 
-        /** @var Vector<string>|null $labels */
-        $labels ??= $this->labels->get($phrase, new Vector);
+        /** @var null|Vector<string> $labels */
+        $labels ??= $this->labels->get($phrase, new Vector());
 
         foreach ($labels ?? [] as $label) {
-            if (! isset($parameters[$label])) {
+            if (!isset($parameters[$label])) {
                 throw new MissingTranslationParameterException($phrase, $label);
             }
 
