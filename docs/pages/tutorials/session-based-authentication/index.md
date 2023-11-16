@@ -342,7 +342,7 @@ readonly class UsernamePassword extends InputValidatedData
 ```
 
 We will use this input validator in the HTTP Responder. It uses
-[Nette's Data Validator](https://doc.nette.org/en/schemahttps://www.php.net/manual/en/class.sensitiveparameter.php)
+[Nette's Data Validator](https://doc.nette.org/en/schema)
 to validate the incoming data:
 
 ```php file:app/InputValidator/UsernamePasswordValidator.php

@@ -153,7 +153,7 @@ prettier: node_modules
 		"resources/{css,ts}/**/*.{js,css,ts,tsx}"
 
 .PHONY: psalm
-psalm: tools/psalm/vendor/bin/psalm
+psalm: tools/psalm/vendor/bin/psalm vendor
 	./tools/psalm/vendor/bin/psalm \
 		--no-cache \
 		--show-info=true \

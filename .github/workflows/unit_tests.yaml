@@ -1,0 +1,53 @@
+name: unit tests
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  pull_request:
+  pull_request_review:
+  push:
+    paths-ignore:
+      - 'docs/**'
+
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: test
+        run: make eslint
+
+  phpunit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup php with extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: ds, uuid, swoole
+
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: create esbuild-meta.json
+        run: BUILD_ID=$GITHUB_SHA make esbuild
+
+      - name: test
+        run: make phpunit
+
+  psalm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup php with extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: ds, uuid, swoole
+
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: test
+        run: make psalm

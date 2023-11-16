@@ -2,3 +2,4 @@
 /esbuild-meta-docs.json
 /node_modules
 /vendor
+/*.cache
