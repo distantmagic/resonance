@@ -242,9 +242,9 @@ readonly class DependencyInjectionContainer
         if (!$this->providers->hasKey($className)) {
             throw new DependencyInjectionContainerException(
                 message: sprintf(
-                    "No singleton provider registered for:\n-> %s\n-> %s\n",
-                    $previous->join("\n-> "),
+                    "No singleton provider is registered for:\n-> %s\nDependency stack:\n-> %s\n",
                     $className,
+                    $previous->join("\n-> "),
                 ),
             );
         }
