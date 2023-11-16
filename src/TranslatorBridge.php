@@ -63,9 +63,10 @@ readonly class TranslatorBridge
             $this->labels->put($phrase, $labels);
         }
 
+        /** @var Vector<string>|null $labels */
         $labels ??= $this->labels->get($phrase, new Vector);
 
-        foreach ($labels as $label) {
+        foreach ($labels ?? [] as $label) {
             if (! isset($parameters[$label])) {
                 throw new MissingTranslationParameterException($phrase, $label);
             }
