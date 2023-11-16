@@ -12,8 +12,11 @@ readonly class TwigFilterTrans
 {
     public function __construct(private TranslatorBridge $translatorBridge) {}
 
-    public function __invoke(string $message, Request $request): string
+    /**
+     * @param array<string, string> $parameters
+     */
+    public function __invoke(string $message, Request $request, array $parameters = []): string
     {
-        return $this->translatorBridge->trans($request, $message);
+        return $this->translatorBridge->trans($request, $message, $parameters);
     }
 }

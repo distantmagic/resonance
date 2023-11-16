@@ -30,6 +30,7 @@ is `en`:
 
 ```ini file:app/lang/my.ini
 hello = "world"
+greeting = "Hello, :name!"
 
 [planet]
 ours = "Earth"
@@ -40,7 +41,7 @@ ours = "Earth"
 In the below case, the `"my.hello"` phrase is going to be loaded from the
 `app/lang/en/my.ini` file.
 
-The `Request` object is used to determine the current client's languge (by 
+The `Request` object is used to determine the current client's language (by 
 default by using the [Accept-Language](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language)
 header).
 
@@ -60,12 +61,27 @@ readonly class MyClass
 
     public function doSomething(Request $request): string
     {
-        return $this->translatorBridge->trans(
+        return $this->translator->trans(
             $request, 
             'my.hello',
         );
     }
 }
+```
+
+### Passing parameters
+
+To pass parameters to your translation strings you need to 
+provide the `TranslatorBridge::trans` method an associative
+array of values.
+
+```php
+/**
+ * @var \Distantmagic\Resonance\TranslatorBridge $translator
+ */
+$translator->trans($request, 'my.greeting', [
+    'name' => 'Resonance',
+])
 ```
 
 ## Twig
@@ -76,5 +92,14 @@ You can use the `trans` filter. The code below outputs `Earth`:
 {{ 'my.planet.ours'|trans(request) }}
 ```
 
-You can learn more info about twig in it's documentation page: 
+### Passing parameters
+
+To provide parameters to the translation string, you have to pass an
+object with values to the `trans` filter.
+
+```twig
+{{ 'my.greeting'|trans(request, {name: 'Magic'}) }}
+```
+
+You can learn more info about twig in its documentation page: 
 {{docs/features/templating/twig/index}}.
