@@ -10,6 +10,10 @@ title: Changelog
 
 # Changelog
 
+## v0.11.1
+
+- Fix: translation files were incorrectly loaded
+
 ## v0.11.0
 
 - Added translation strings parameters ({{docs/features/translations/index}}) - thanks to [@dulkoss](https://github.com/dulkoss) [#2](https://github.com/distantmagic/resonance/pull/2)
