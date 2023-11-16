@@ -29,6 +29,9 @@ readonly class TranslatorBridge
         $this->labels = new Map();
     }
 
+    /**
+     * @param array<string, string> $parameters
+     */
     public function trans(Request $request, string $phrase, array $parameters = []): string
     {
         $language = $this->languageDetector->detectPrimaryLanguage($request);
@@ -49,6 +52,9 @@ readonly class TranslatorBridge
         );
     }
 
+    /**
+     * @param array<string, string> $parameters
+     */
     protected function fillParameters(string $phrase, array $parameters): string
     {
         if (! $this->labels->hasKey($phrase)) {
@@ -57,7 +63,7 @@ readonly class TranslatorBridge
             $this->labels->put($phrase, $labels);
         }
 
-        $labels ??= $this->labels->get($phrase);
+        $labels ??= $this->labels->get($phrase, new Vector);
 
         foreach ($labels as $label) {
             if (! isset($parameters[$label])) {
@@ -72,9 +78,12 @@ readonly class TranslatorBridge
         return $phrase;
     }
 
+    /**
+     * @return array<int, string>
+     */
     protected function resolveLabels(string $phrase): array
     {
-        preg_match_all('/:([a-zA-Z]+)/m', $phrase, $matches);
+        preg_match_all('/:([a-zA-Z_]+)/m', $phrase, $matches);
 
         [1 => $labels] = $matches;
 
