@@ -16,13 +16,13 @@ interface OAuth2AuthorizationCodeFlowControllerInterface
         AuthorizationRequest $authorizationRequest,
     ): null|HttpInterceptableInterface|HttpResponderInterface;
 
-    public function showClientScopeConsentPage(
+    public function redirectToClientScopeConsentPage(
         Request $request,
         Response $response,
         AuthorizationRequest $authorizationRequest,
     ): HttpInterceptableInterface|HttpResponderInterface;
 
-    public function showLoginPage(
+    public function redirectToLoginPage(
         Request $request,
         Response $response,
         AuthorizationRequest $authorizationRequest,

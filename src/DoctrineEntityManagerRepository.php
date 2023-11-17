@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Ds\Map;
 use Swoole\Http\Request;
 use WeakMap;
@@ -54,6 +55,18 @@ readonly class DoctrineEntityManagerRepository
         $entityManagers->put($name, $entityManager);
 
         return $entityManager;
+    }
+
+    /**
+     * @param class-string $className
+     */
+    public function getRepository(string $className, string $name = 'default'): EntityRepository
+    {
+        return $this
+            ->getWeakReference($name)
+            ->getEntityManager()
+            ->getRepository($className)
+        ;
     }
 
     public function getWeakReference(string $name = 'default'): EntityManagerWeakReference

@@ -7,17 +7,18 @@ namespace Distantmagic\Resonance\HttpResponder\OAuth2;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpResponder;
+use Distantmagic\Resonance\HttpResponder\PsrResponder;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\OAuth2AuthorizationCodeFlowControllerInterface;
 use Distantmagic\Resonance\OAuth2AuthorizationRequestSessionStore;
 use Distantmagic\Resonance\PsrServerRequestConverter;
-use Distantmagic\Resonance\SingletonCollection;
 use League\OAuth2\Server\AuthorizationServer as LeagueAuthorizationServer;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
-#[Singleton(collection: SingletonCollection::HttpResponder)]
+#[Singleton]
 final readonly class Authorization extends HttpResponder
 {
     public function __construct(
@@ -35,10 +36,17 @@ final readonly class Authorization extends HttpResponder
             ->convertToServerRequest($request)
         ;
 
-        $authRequest = $this
-            ->leagueAuthorizationServer
-            ->validateAuthorizationRequest($serverRequest)
-        ;
+        try {
+            $authRequest = $this
+                ->leagueAuthorizationServer
+                ->validateAuthorizationRequest($serverRequest)
+            ;
+
+        } catch (OAuthServerException $exception) {
+            $psrResponse = $this->psr17Factory->createResponse();
+
+            return new PsrResponder($exception->generateHttpResponse($psrResponse));
+        }
 
         $this
             ->authorizationRequestSessionStore
@@ -56,7 +64,7 @@ final readonly class Authorization extends HttpResponder
 
         return $this
             ->authorizationCodeFlowController
-            ->showClientScopeConsentPage($request, $response, $authRequest)
+            ->redirectToClientScopeConsentPage($request, $response, $authRequest)
         ;
     }
 }

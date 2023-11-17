@@ -22,9 +22,9 @@ abstract readonly class OAuth2AuthorizationCodeFlowController implements OAuth2A
         $authenticatedUser = $this->sessionAuthentication->getAuthenticatedUser($request);
 
         if ($authenticatedUser) {
-            $authorizationRequest->setUser($authenticatedUser);
+            $authorizationRequest->setUser(new OAuth2AuthorizedUser($authenticatedUser->getIdentifier()));
         }
 
-        return $this->showLoginPage($request, $response, $authorizationRequest);
+        return $this->redirectToLoginPage($request, $response, $authorizationRequest);
     }
 }

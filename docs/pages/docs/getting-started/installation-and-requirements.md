@@ -24,6 +24,19 @@ extension | symbol | why?
 [Sockets](https://www.php.net/manual/en/intro.sockets.php) | `ext-sockets` | Required by Swoole and other services.
 [Swoole](https://www.swoole.com/) | `ext-swoole` | Provides asynchronous features to PHP.<br><br>Can also be replaced by it's fork - [OpenSwoole](https://openswoole.com/).
 
+:::note
+If you are using [Psalm](https://psalm.dev/) or [PHPStan](https://phpstan.org/) 
+and you need types then you can install 
+[php-ds/polyfill](https://github.com/php-ds/polyfill) for `php-ds` and
+[swoole/ide-helper](https://github.com/swoole/ide-helper) for `swoole`.
+
+`php-ds` polyfill is configured to use the native extension if it's installed,
+so if you use both the extension and polyfill, it will effectively provide just
+the types. Do not rely on polyfill instead of having the extensions installed,
+because the polyfill won't grant you the memory management features, which
+is the primary reason behind having the extension here.
+:::
+
 ## Recommended PHP Extensions
 
 Without the recommended extensions, some framework's features won't work at all 

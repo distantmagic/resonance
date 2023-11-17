@@ -17,6 +17,16 @@ readonly class OAuth2AuthorizationRequestSessionStore
 
     public function __construct(private SessionManager $sessionManager) {}
 
+    public function clear(Request $request, Response $response): void
+    {
+        $this
+            ->sessionManager
+            ->start($request, $response)
+            ->data
+            ->remove(self::SESSION_KEY, null)
+        ;
+    }
+
     public function get(Request $request, Response $response): AuthorizationRequest
     {
         $authorizationRequest = $this->doGetFromSession($request, $response);

@@ -24,7 +24,7 @@ readonly class PsrResponder extends HttpResponder
             $response->header((string) $name, $values);
         }
 
-        $response->end($this->psrResponse->getBody()->getContents());
+        $response->end((string) $this->psrResponse->getBody());
 
         return null;
     }
