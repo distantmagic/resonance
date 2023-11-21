@@ -10,6 +10,12 @@ use Swoole\Http\Response;
 
 interface OAuth2AuthorizationCodeFlowControllerInterface
 {
+    public function completeConsentRequest(
+        Request $request,
+        Response $response,
+        bool $userConsented,
+    ): HttpInterceptableInterface|HttpResponderInterface;
+
     public function obtainAuthenticatedUser(
         Request $request,
         Response $response,

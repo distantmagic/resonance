@@ -47,8 +47,7 @@ final readonly class TranslatorBridgeProvider extends SingletonProvider
              */
             $currentTranslations = $translator->translations->hasKey($relativePath)
                 ? $translator->translations->get($relativePath)
-                : new Map()
-            ;
+                : new Map();
 
             $currentTranslations->putAll($loadedTranslations);
 

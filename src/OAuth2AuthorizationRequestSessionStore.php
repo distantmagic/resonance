@@ -13,9 +13,10 @@ use Swoole\Http\Response;
 #[Singleton]
 readonly class OAuth2AuthorizationRequestSessionStore
 {
-    public const SESSION_KEY = 'oauth2.authorization_request';
-
-    public function __construct(private SessionManager $sessionManager) {}
+    public function __construct(
+        private OAuth2Configuration $oauth2Configuration,
+        private SessionManager $sessionManager,
+    ) {}
 
     public function clear(Request $request, Response $response): void
     {
@@ -23,7 +24,10 @@ readonly class OAuth2AuthorizationRequestSessionStore
             ->sessionManager
             ->start($request, $response)
             ->data
-            ->remove(self::SESSION_KEY, null)
+            ->remove(
+                $this->oauth2Configuration->sessionKeyAuthorizationRequest,
+                null,
+            )
         ;
     }
 
@@ -54,7 +58,10 @@ readonly class OAuth2AuthorizationRequestSessionStore
             ->sessionManager
             ->start($request, $response)
             ->data
-            ->put(self::SESSION_KEY, $authorizationRequest)
+            ->put(
+                $this->oauth2Configuration->sessionKeyAuthorizationRequest,
+                $authorizationRequest,
+            )
         ;
     }
 
@@ -67,7 +74,10 @@ readonly class OAuth2AuthorizationRequestSessionStore
             ->sessionManager
             ->start($request, $response)
             ->data
-            ->get(self::SESSION_KEY, null)
+            ->get(
+                $this->oauth2Configuration->sessionKeyAuthorizationRequest,
+                null,
+            )
         ;
 
         if ($authorizationRequest instanceof AuthorizationRequest) {

@@ -18,6 +18,9 @@ use Nette\Schema\Schema;
  *     jwt_signing_key_passphrase: null|string,
  *     jwt_signing_key_private: string,
  *     jwt_signing_key_public: string,
+ *     session_key_authorization_request: string,
+ *     session_key_pkce: string,
+ *     session_key_state: string,
  * }>
  */
 #[Singleton(provides: OAuth2Configuration::class)]
@@ -35,6 +38,9 @@ final readonly class OAuth2ConfigurationProvider extends ConfigurationProvider
             'jwt_signing_key_passphrase' => Expect::string()->default(null),
             'jwt_signing_key_private' => Expect::string()->min(1)->required(),
             'jwt_signing_key_public' => Expect::string()->min(1)->required(),
+            'session_key_authorization_request' => Expect::string()->min(1)->default('oauth2.authorization_request'),
+            'session_key_pkce' => Expect::string()->min(1)->default('oauth2.pkce'),
+            'session_key_state' => Expect::string()->min(1)->default('oauth2.state'),
         ]);
     }
 
@@ -50,6 +56,9 @@ final readonly class OAuth2ConfigurationProvider extends ConfigurationProvider
                 DM_ROOT.'/'.$validatedData->jwt_signing_key_public,
                 $validatedData->jwt_signing_key_passphrase,
             ),
+            sessionKeyAuthorizationRequest: $validatedData->session_key_authorization_request,
+            sessionKeyPkce: $validatedData->session_key_pkce,
+            sessionKeyState: $validatedData->session_key_state,
         );
     }
 }

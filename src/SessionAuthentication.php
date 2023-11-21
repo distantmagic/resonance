@@ -29,13 +29,7 @@ final readonly class SessionAuthentication
 
     public function clearAuthenticatedUser(Request $request): void
     {
-        $session = $this->sessionManager->restoreFromRequest($request);
-
-        if (!$session) {
-            return;
-        }
-
-        $session->data->remove('authenticated_user_id');
+        $this->sessionManager->restoreFromRequest($request)?->data->clear();
     }
 
     public function getAuthenticatedUser(Request $request): ?UserInterface

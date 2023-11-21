@@ -13,5 +13,8 @@ readonly class OAuth2Configuration
         public Key $encryptionKey,
         public CryptKey $jwtSigningKeyPrivate,
         public CryptKey $jwtSigningKeyPublic,
+        public string $sessionKeyAuthorizationRequest,
+        public string $sessionKeyPkce,
+        public string $sessionKeyState,
     ) {}
 }
