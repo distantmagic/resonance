@@ -28,7 +28,10 @@ final readonly class TranslatorBridgeProvider extends SingletonProvider
 
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): TranslatorBridge
     {
-        $translator = new TranslatorBridge($this->languageDetector);
+        $translator = new TranslatorBridge(
+            $this->languageDetector,
+            $this->translatorConfiguration,
+        );
         $finder = new Finder();
         $translationFiles = $finder
             ->files()
