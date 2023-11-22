@@ -23,7 +23,10 @@ readonly class TranslatorBridge
      */
     protected Map $labels;
 
-    public function __construct(private HttpRequestLanguageDetector $languageDetector)
+    public function __construct(
+        private HttpRequestLanguageDetector $languageDetector,
+        private TranslatorConfiguration $translatorConfiguration
+    )
     {
         $this->translations = new Map();
         $this->labels = new Map();
@@ -35,6 +38,10 @@ readonly class TranslatorBridge
     public function trans(Request $request, string $phrase, array $parameters = []): string
     {
         $language = $this->languageDetector->detectPrimaryLanguage($request);
+
+        if (!$this->translations->hasKey($language)) {
+            $language = $this->translatorConfiguration->defaultPrimaryLanguage;
+        }
 
         if (!$this->translations->hasKey($language)) {
             throw new LanguageNotFoundException($language);
