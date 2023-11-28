@@ -94,7 +94,7 @@ final readonly class SessionManager extends EventListener
             expires: time() + $this->sessionConfiguration->cookieLifespan,
             httponly: true,
             name: $this->sessionConfiguration->cookieName,
-            samesite: 'lax',
+            samesite: $this->sessionConfiguration->cookieSameSite,
             secure: true,
             value: $session->id,
         );

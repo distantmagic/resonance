@@ -17,6 +17,7 @@ use Nette\Schema\Schema;
  * @template-extends ConfigurationProvider<SessionConfiguration, object{
  *     cookie_lifespan: int,
  *     cookie_name: string,
+ *     cookie_samesite: string,
  *     redis_connection_pool: string,
  * }>
  */
@@ -48,6 +49,7 @@ final readonly class SessionConfigurationProvider extends ConfigurationProvider
         return Expect::structure([
             'cookie_lifespan' => Expect::int()->min(1)->required(),
             'cookie_name' => Expect::string()->min(1)->required(),
+            'cookie_samesite' => Expect::anyOf('lax', 'none', 'strict')->default('lax'),
             'redis_connection_pool' => Expect::anyOf(...$redisConnectionPools),
         ]);
     }
@@ -57,6 +59,7 @@ final readonly class SessionConfigurationProvider extends ConfigurationProvider
         return new SessionConfiguration(
             cookieLifespan: $validatedData->cookie_lifespan,
             cookieName: $validatedData->cookie_name,
+            cookieSameSite: $validatedData->cookie_samesite,
             redisConnectionPool: $validatedData->redis_connection_pool,
         );
     }
