@@ -11,7 +11,7 @@ use Swoole\Http\Response;
 
 readonly class PsrResponder extends HttpResponder
 {
-    public function __construct(private ResponseInterface $psrResponse) {}
+    public function __construct(public ResponseInterface $psrResponse) {}
 
     public function respond(Request $request, Response $response): null
     {

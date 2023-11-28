@@ -8,6 +8,7 @@ use Distantmagic\Resonance\HttpResponder\PsrResponder;
 use League\OAuth2\Server\AuthorizationServer as LeagueAuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -37,6 +38,11 @@ abstract readonly class OAuth2AuthorizationCodeFlowController implements OAuth2A
                     $this->psr17Factory->createResponse(),
                 )
             ;
+
+            if ($psrResponse->hasHeader('Location')) {
+                $locations = $psrResponse->hasHeader('Location');
+                $psrResponse = $psrResponse->withHeader('Access-Control-Allow-Origin', $locations);
+            }
 
             return new PsrResponder($psrResponse);
         } catch (OAuthServerException $exception) {
