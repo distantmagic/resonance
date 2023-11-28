@@ -30,6 +30,12 @@ readonly class DatabaseConnection implements ServerInfoAwareConnection
         private string $connectionPoolName = 'default',
     ) {
         $this->pdo = $this->databaseConnectionPoolRepository->getConnection($this->connectionPoolName);
+
+        /**
+         * Make sure the errmode is silent. Otherwise the connection pool won't
+         * replenish itself.
+         */
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
     }
 
     public function __destruct()
