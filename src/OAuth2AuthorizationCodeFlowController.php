@@ -40,7 +40,7 @@ abstract readonly class OAuth2AuthorizationCodeFlowController implements OAuth2A
             ;
 
             if ($psrResponse->hasHeader('Location')) {
-                $locations = $psrResponse->hasHeader('Location');
+                $locations = $psrResponse->getHeader('Location');
                 $psrResponse = $psrResponse->withHeader('Access-Control-Allow-Origin', $locations);
             }
 
