@@ -38,13 +38,6 @@ final readonly class DatabaseConnectionPoolRepositoryProvider extends SingletonP
                 ->withDriver($connectionPoolConfiguration->driver->value)
                 ->withUsername($connectionPoolConfiguration->username)
                 ->withPassword($connectionPoolConfiguration->password)
-                // Sometimes Swoole PDO wrapper can't reconnect properly when
-                // interrupted with an exception. Silent mode should be used
-                // instead.
-                // All errors should be handled outside of the PDO wrapper.
-                ->withOptions([
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT,
-                ])
             ;
 
             $pdoPool = new PDOPool($pdoConfig, $connectionPoolConfiguration->poolSize);
