@@ -14,6 +14,7 @@ use Nette\Schema\Schema;
  * @template-extends ConfigurationProvider<SwooleConfiguration, object{
  *     host: string,
  *     log_level: string,
+ *     log_requests: boolean,
  *     port: int,
  *     ssl_cert_file: string,
  *     ssl_key_file: string,
@@ -32,6 +33,7 @@ final readonly class SwooleConfigurationProvider extends ConfigurationProvider
         return Expect::structure([
             'host' => Expect::string()->min(1)->required(),
             'log_level' => Expect::string()->min(1)->required(),
+            'log_requests' => Expect::bool()->default(false),
             'port' => Expect::int()->min(1)->max(65535)->required(),
             'ssl_cert_file' => Expect::string()->min(1)->required(),
             'ssl_key_file' => Expect::string()->min(1)->required(),
@@ -43,6 +45,7 @@ final readonly class SwooleConfigurationProvider extends ConfigurationProvider
         return new SwooleConfiguration(
             host: $validatedData->host,
             logLevel: (int) ($validatedData->log_level),
+            logRequests: $validatedData->log_requests,
             port: $validatedData->port,
             sslCertFile: $validatedData->ssl_cert_file,
             sslKeyFile: $validatedData->ssl_key_file,
