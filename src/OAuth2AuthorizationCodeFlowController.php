@@ -15,7 +15,6 @@ use Swoole\Http\Response;
 abstract readonly class OAuth2AuthorizationCodeFlowController implements OAuth2AuthorizationCodeFlowControllerInterface
 {
     public function __construct(
-        private ContentSecurityPolicyRulesRepository $contentSecurityPolicyRulesRepository,
         private LeagueAuthorizationServer $leagueAuthorizationServer,
         private OAuth2AuthorizationRequestSessionStore $authorizationRequestSessionStore,
         private Psr17Factory $psr17Factory,
@@ -38,18 +37,6 @@ abstract readonly class OAuth2AuthorizationCodeFlowController implements OAuth2A
                     $this->psr17Factory->createResponse(),
                 )
             ;
-
-            if ($psrResponse->hasHeader('Location')) {
-                $formActionRules = $this
-                    ->contentSecurityPolicyRulesRepository
-                    ->from($request)
-                    ->formAction
-                ;
-
-                foreach ($psrResponse->getHeader('Location') as $location) {
-                    $formActionRules->add($location);
-                }
-            }
 
             return new PsrResponder($psrResponse);
         } catch (OAuthServerException $exception) {
