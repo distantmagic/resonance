@@ -26,8 +26,7 @@ readonly class TranslatorBridge
     public function __construct(
         private HttpRequestLanguageDetector $languageDetector,
         private TranslatorConfiguration $translatorConfiguration
-    )
-    {
+    ) {
         $this->translations = new Map();
         $this->labels = new Map();
     }

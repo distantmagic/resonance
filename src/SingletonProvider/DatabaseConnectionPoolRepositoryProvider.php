@@ -11,7 +11,6 @@ use Distantmagic\Resonance\EventDispatcherInterface;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
-use PDO;
 use Swoole\Database\PDOConfig;
 use Swoole\Database\PDOPool;
 

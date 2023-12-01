@@ -11,7 +11,10 @@ use Swoole\Http\Response;
 #[Singleton]
 final readonly class SecurityPolicyHeaders
 {
-    public function __construct(private CSPNonceManager $cspNonceManager) {}
+    public function __construct(
+        private ContentSecurityPolicyRulesRepository $contentSecurityPolicyRulesRepository,
+        private CSPNonceManager $cspNonceManager,
+    ) {}
 
     public function sendAssetHeaders(Response $response): void
     {
@@ -26,13 +29,18 @@ final readonly class SecurityPolicyHeaders
 
     public function sendContentSecurityPolicyHeader(Request $request, Response $response): void
     {
+
         $response->header('content-security-policy', implode(';', [
             "default-src 'none'",
 
             "base-uri 'none'",
             "connect-src 'self'",
             "font-src 'self'",
-            "form-action 'self'",
+            'form-action '.(
+                $this->contentSecurityPolicyRulesRepository->has($request)
+                    ? (string) $this->contentSecurityPolicyRulesRepository->from($request)->formAction
+                    : "'self'"
+            ),
             "frame-ancestors 'none'",
             "manifest-src 'self'",
             "img-src 'self'",
