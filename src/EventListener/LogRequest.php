@@ -33,6 +33,8 @@ final readonly class LogRequest extends EventListener
         $server = $event->request->server;
 
         if (!is_array($server)) {
+            $this->logger->debug('request has no server data to log');
+
             return;
         }
 
