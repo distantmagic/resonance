@@ -10,4 +10,5 @@ enum SiteAction implements SiteActionInterface
 
     case StartWebSocketRPCConnection;
     case UseGraphQL;
+    case UseOAuth2;
 }
