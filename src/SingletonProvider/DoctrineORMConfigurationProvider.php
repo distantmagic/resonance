@@ -46,9 +46,7 @@ final readonly class DoctrineORMConfigurationProvider extends SingletonProvider
     }
 
     /**
-     * Ask Doctrine to scan JUST the Entities and nothing more. It uses
-     * `require` internally to check file reflections, so sometimes it produces
-     * side effects.
+     * Ask Doctrine to scan JUST the Entities and nothing more.
      */
     private function buildMetadataDriver(PHPProjectFiles $phpProjectFiles): DoctrineAttributeDriver
     {

@@ -16,6 +16,7 @@ use Nette\Schema\Schema;
  *     env: string,
  *     esbuild_metafile: string,
  *     scheme: string,
+ *     url: string,
  * }>
  */
 #[Singleton(provides: ApplicationConfiguration::class)]
@@ -32,6 +33,7 @@ final readonly class ApplicationConfigurationProvider extends ConfigurationProvi
             'env' => Expect::anyOf(...Environment::values())->required(),
             'esbuild_metafile' => Expect::string()->min(1)->default('esbuild-meta.json'),
             'scheme' => Expect::anyOf('http', 'https')->default('https'),
+            'url' => Expect::string()->required()->assert($this->isUrl(...)),
         ]);
     }
 
@@ -41,6 +43,13 @@ final readonly class ApplicationConfigurationProvider extends ConfigurationProvi
             environment: Environment::from($validatedData->env),
             esbuildMetafile: DM_ROOT.'/'.$validatedData->esbuild_metafile,
             scheme: $validatedData->scheme,
+            url: rtrim($validatedData->url, '/'),
         );
+    }
+
+    private function isUrl(string $pattern): bool
+    {
+        // if a user puts here something like gopher://abc it's on them
+        return false !== filter_var($pattern, FILTER_VALIDATE_URL);
     }
 }

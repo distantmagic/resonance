@@ -10,5 +10,6 @@ readonly class ApplicationConfiguration
         public Environment $environment,
         public string $esbuildMetafile,
         public string $scheme,
+        public string $url,
     ) {}
 }

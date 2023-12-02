@@ -9,12 +9,14 @@ use League\OAuth2\Server\AuthorizationServer as LeagueAuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
 abstract readonly class OAuth2AuthorizationCodeFlowController implements OAuth2AuthorizationCodeFlowControllerInterface
 {
     public function __construct(
+        private ContentSecurityPolicyRulesRepository $contentSecurityPolicyRulesRepository,
         private LeagueAuthorizationServer $leagueAuthorizationServer,
         private OAuth2AuthorizationRequestSessionStore $authorizationRequestSessionStore,
         private Psr17Factory $psr17Factory,
@@ -60,5 +62,30 @@ abstract readonly class OAuth2AuthorizationCodeFlowController implements OAuth2A
         }
 
         return $this->redirectToLoginPage($request, $response, $authorizationRequest);
+    }
+
+    public function prepareConsentRequest(Request $request, Response $response): void
+    {
+        if (!$this->authorizationRequestSessionStore->has($request, $response)) {
+            throw new RuntimeException('Authorization request is not in progress');
+        }
+
+        $authorizationRequest = $this->authorizationRequestSessionStore->get($request, $response);
+
+        $formAction = $this
+            ->contentSecurityPolicyRulesRepository
+            ->from($request)
+            ->formAction
+        ;
+
+        $redirectUris = $authorizationRequest->getClient()->getRedirectUri();
+
+        if (is_array($redirectUris)) {
+            foreach ($redirectUris as $redirectUri) {
+                $formAction->add($redirectUri);
+            }
+        } else {
+            $formAction->add($redirectUris);
+        }
     }
 }

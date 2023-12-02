@@ -37,30 +37,6 @@ readonly class DependencyInjectionContainer
 
     private SingletonContainer $singletons;
 
-    /**
-     * @template TReturnType
-     *
-     * @param Closure(...mixed):TReturnType $function
-     *
-     * @return TReturnType
-     *
-     * @psalm-suppress PossiblyUnusedReturnValue it's used in config files
-     */
-    public static function boot(Closure $function): mixed
-    {
-        return self::fromGlobals()->call($function);
-    }
-
-    public static function fromGlobals(): self
-    {
-        $container = new self();
-        $container->phpProjectFiles->indexDirectory(DM_RESONANCE_ROOT);
-        $container->phpProjectFiles->indexDirectory(DM_APP_ROOT);
-        $container->registerSingletons();
-
-        return $container;
-    }
-
     public function __construct()
     {
         $this->collectionDependencies = new Map();
@@ -76,6 +52,8 @@ readonly class DependencyInjectionContainer
      * @template TReturnType
      *
      * @param Closure(...mixed):TReturnType $function
+     *
+     * @psalm-suppress PossiblyUnusedReturnValue it's used in apps
      *
      * @return TReturnType
      */

@@ -22,6 +22,11 @@ interface OAuth2AuthorizationCodeFlowControllerInterface
         AuthorizationRequest $authorizationRequest,
     ): null|HttpInterceptableInterface|HttpResponderInterface;
 
+    public function prepareConsentRequest(
+        Request $request,
+        Response $response,
+    ): void;
+
     public function redirectToClientScopeConsentPage(
         Request $request,
         Response $response,

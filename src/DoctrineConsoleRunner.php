@@ -12,11 +12,11 @@ use function Swoole\Coroutine\run;
 
 final readonly class DoctrineConsoleRunner
 {
-    public static function run(): never
+    public static function run(DependencyInjectionContainer $container): never
     {
         Runtime::enableCoroutine(SWOOLE_HOOK_ALL);
 
-        DependencyInjectionContainer::boot(static function (
+        $container->call(static function (
             DoctrineConsoleEntityManagerProvider $entityManagerProvider,
         ) {
             $cli = new Application('Doctrine Command Line Interface');
