@@ -9,6 +9,7 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Event\HttpResponseReady;
 use Distantmagic\Resonance\EventInterface;
 use Distantmagic\Resonance\EventListener;
+use Distantmagic\Resonance\HttpResponderLoggableInterface;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SwooleConfiguration;
 use Psr\Log\LoggerInterface;
@@ -30,6 +31,10 @@ final readonly class LogRequest extends EventListener
      */
     public function handle(EventInterface $event): void
     {
+        if (($event->responder instanceof HttpResponderLoggableInterface) && !$event->responder->shoudLog()) {
+            return;
+        }
+
         $server = $event->request->server;
 
         if (!is_array($server)) {

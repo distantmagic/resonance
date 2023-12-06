@@ -23,7 +23,9 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 #[Singleton(provides: Configuration::class)]
 final readonly class DoctrineORMConfigurationProvider extends SingletonProvider
 {
-    public function __construct(private ApplicationConfiguration $applicationConfiguration) {}
+    public function __construct(
+        private ApplicationConfiguration $applicationConfiguration,
+    ) {}
 
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): Configuration
     {

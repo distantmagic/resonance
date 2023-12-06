@@ -53,7 +53,7 @@ readonly class HttpResponderAggregate
                 $this->serverError->sendThrowable($request, $response, $throwable),
             );
         } finally {
-            $this->eventDispatcher->dispatch(new HttpResponseReady($request));
+            $this->eventDispatcher->dispatch(new HttpResponseReady($responder, $request));
         }
     }
 

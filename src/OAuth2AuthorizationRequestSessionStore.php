@@ -67,18 +67,15 @@ readonly class OAuth2AuthorizationRequestSessionStore
 
     private function doGetFromSession(Request $request, Response $response): ?AuthorizationRequest
     {
+        $session = $this->sessionManager->start($request, $response);
+
         /**
          * @var mixed explicitly mixed for typechecks
          */
-        $authorizationRequest = $this
-            ->sessionManager
-            ->start($request, $response)
-            ->data
-            ->get(
-                $this->oauth2Configuration->sessionKeyAuthorizationRequest,
-                null,
-            )
-        ;
+        $authorizationRequest = $session->data->get(
+            $this->oauth2Configuration->sessionKeyAuthorizationRequest,
+            null,
+        );
 
         if ($authorizationRequest instanceof AuthorizationRequest) {
             return $authorizationRequest;

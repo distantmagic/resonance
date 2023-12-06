@@ -10,7 +10,7 @@ trait TestsDependencyInectionContainerTrait
 
     public static function setUpBeforeClass(): void
     {
-        self::$container = DependencyInjectionContainer::fromGlobals();
+        self::$container = require DM_ROOT.'/container.php';
     }
 
     public static function tearDownAfterClass(): void

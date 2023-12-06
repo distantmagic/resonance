@@ -36,13 +36,14 @@ documentation page that explains the process further.
 # Doctrine Considerations
 
 If you want to implement repositories by using
-{{docs/features/database/doctrine/index}}, you should use `getWeakReference()`
-method to obtain the Entity Manager. For example:
+{{docs/features/database/doctrine/index}}, you should probably use 
+`withRepository()` method to obtain the Entity Manager. For example:
 
 ```php
 <?php
 
 use Distantmagic\Resonance\DoctrineEntityManagerRepository;
+use Doctrine\ORM\EntityRepository;
 
 #[Singleton(provides: AccessTokenRepositoryInterface::class)]
 readonly class OAuth2AccessTokenRepository implements AccessTokenRepositoryInterface
@@ -53,7 +54,12 @@ readonly class OAuth2AccessTokenRepository implements AccessTokenRepositoryInter
 
     public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null)
     {
-        $em = $this->doctrineEntityManagerRepository->getWeakReference()->getEntityManager();
+        $this
+            ->doctrineEntityManagerRepository
+            ->withRepository(MyDoctrineTokenRepository::class, function (EntityRepository $entityRepository) {
+                // ...
+            })
+        ;
 
         // ...
     }

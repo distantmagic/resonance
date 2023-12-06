@@ -23,11 +23,8 @@ abstract readonly class OAuth2AuthorizationCodeFlowController implements OAuth2A
         private SessionAuthentication $sessionAuthentication,
     ) {}
 
-    public function completeConsentRequest(
-        Request $request,
-        Response $response,
-        bool $userConsented,
-    ): HttpResponderInterface {
+    public function completeConsentRequest(Request $request, Response $response, bool $userConsented): HttpResponderInterface
+    {
         $authorizationRequest = $this->authorizationRequestSessionStore->get($request, $response);
         $authorizationRequest->setAuthorizationApproved($userConsented);
 
@@ -48,11 +45,8 @@ abstract readonly class OAuth2AuthorizationCodeFlowController implements OAuth2A
         }
     }
 
-    public function obtainAuthenticatedUser(
-        Request $request,
-        Response $response,
-        AuthorizationRequest $authorizationRequest,
-    ): null|HttpInterceptableInterface|HttpResponderInterface {
+    public function obtainAuthenticatedUser(Request $request, Response $response, AuthorizationRequest $authorizationRequest): null|HttpInterceptableInterface|HttpResponderInterface
+    {
         $authenticatedUser = $this->sessionAuthentication->getAuthenticatedUser($request);
 
         if ($authenticatedUser) {
