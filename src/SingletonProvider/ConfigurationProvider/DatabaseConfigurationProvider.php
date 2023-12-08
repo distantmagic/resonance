@@ -24,6 +24,7 @@ use Nette\Schema\Schema;
  *         pool_prefill: bool,
  *         pool_size: int,
  *         port: int,
+ *         unix_socket: string,
  *         username: string,
  *     }>
  * >
@@ -43,12 +44,13 @@ final readonly class DatabaseConfigurationProvider extends ConfigurationProvider
         $valueSchema = Expect::structure([
             'database' => Expect::string()->min(1)->required(),
             'driver' => Expect::anyOf(...DatabaseConnectionPoolDriverName::values())->required(),
-            'host' => Expect::string()->min(1)->required(),
+            'host' => Expect::string()->min(1)->nullable()->default(null),
             'log_queries' => Expect::bool()->required(),
             'password' => Expect::string()->required(),
             'pool_prefill' => Expect::bool()->required(),
             'pool_size' => Expect::int()->min(1)->required(),
-            'port' => Expect::int()->min(1)->max(65535)->required(),
+            'port' => Expect::int()->min(1)->max(65535)->default(3306),
+            'unix_socket' => Expect::string()->min(1)->nullable()->default(null),
             'username' => Expect::string()->min(1)->required(),
         ]);
 
@@ -71,6 +73,7 @@ final readonly class DatabaseConfigurationProvider extends ConfigurationProvider
                     poolPrefill: $connectionPoolConfiguration->pool_prefill,
                     poolSize: $connectionPoolConfiguration->pool_size,
                     port: $connectionPoolConfiguration->port,
+                    unixSocket: $connectionPoolConfiguration->unix_socket,
                     username: $connectionPoolConfiguration->username,
                 ),
             );

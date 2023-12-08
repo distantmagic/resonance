@@ -30,14 +30,21 @@ final readonly class DatabaseConnectionPoolRepositoryProvider extends SingletonP
         $databaseConnectionPoolRepository = new DatabaseConnectionPoolRepository($this->eventDispatcher);
 
         foreach ($this->databaseConfiguration->connectionPoolConfiguration as $name => $connectionPoolConfiguration) {
-            $pdoConfig = (new PDOConfig())
-                ->withHost($connectionPoolConfiguration->host)
-                ->withPort($connectionPoolConfiguration->port)
-                ->withDbName($connectionPoolConfiguration->database)
-                ->withDriver($connectionPoolConfiguration->driver->value)
-                ->withUsername($connectionPoolConfiguration->username)
-                ->withPassword($connectionPoolConfiguration->password)
-            ;
+            $pdoConfig = new PDOConfig();
+
+            if ($connectionPoolConfiguration->host) {
+                $pdoConfig->withHost($connectionPoolConfiguration->host);
+                $pdoConfig->withPort($connectionPoolConfiguration->port);
+            }
+
+            if ($connectionPoolConfiguration->unixSocket) {
+                $pdoConfig->withUnixSocket($connectionPoolConfiguration->unixSocket);
+            }
+
+            $pdoConfig->withDbName($connectionPoolConfiguration->database);
+            $pdoConfig->withDriver($connectionPoolConfiguration->driver->value);
+            $pdoConfig->withUsername($connectionPoolConfiguration->username);
+            $pdoConfig->withPassword($connectionPoolConfiguration->password);
 
             $pdoPool = new PDOPool($pdoConfig, $connectionPoolConfiguration->poolSize);
 
