@@ -14,7 +14,7 @@ readonly class DatabaseConnectionPoolConfiguration
         #[SensitiveParameter]
         public DatabaseConnectionPoolDriverName $driver,
         #[SensitiveParameter]
-        public null|string $host,
+        public ?string $host,
         #[SensitiveParameter]
         public bool $logQueries,
         #[SensitiveParameter]

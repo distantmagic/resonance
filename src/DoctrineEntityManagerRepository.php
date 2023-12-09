@@ -76,15 +76,15 @@ readonly class DoctrineEntityManagerRepository
      * @template TEntityClass of object
      * @template TCallbackReturn
      *
-     * @param class-string<TEntityClass>                               $className
-     * @param callable(EntityRepository<TEntityClass>):TCallbackReturn $callback
+     * @param class-string<TEntityClass>                                                      $className
+     * @param callable(EntityRepository<TEntityClass>,EntityManagerInterface):TCallbackReturn $callback
      *
      * @return TCallbackReturn
      */
     public function withRepository(string $className, callable $callback, string $name = 'default'): mixed
     {
         return $this->withEntityManager(static function (EntityManagerInterface $entityManager) use ($className, $callback) {
-            return $callback($entityManager->getRepository($className));
+            return $callback($entityManager->getRepository($className), $entityManager);
         }, $name);
     }
 
