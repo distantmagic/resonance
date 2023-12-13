@@ -199,7 +199,7 @@ a:active,
 
 @media screen and (max-width: 1023px) {
   .primary-navigation a.primary-navigation__github-link {
-    display: none;
+    padding: 5px 20px 0;
   }
 }
 @media screen and (min-width: 1024px) {
