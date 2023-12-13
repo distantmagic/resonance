@@ -12,7 +12,7 @@ class Client extends OAuth2Entity implements ClientEntityInterface
 {
     use ClientTrait;
 
-    private $allowPlainTextPkce = false;
+    private bool $allowPlainTextPkce = false;
 
     public function isPlainTextPkceAllowed(): bool
     {

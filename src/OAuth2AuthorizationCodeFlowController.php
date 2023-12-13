@@ -28,6 +28,8 @@ abstract readonly class OAuth2AuthorizationCodeFlowController implements OAuth2A
         $authorizationRequest = $this->authorizationRequestSessionStore->get($request, $response);
         $authorizationRequest->setAuthorizationApproved($userConsented);
 
+        $this->authorizationRequestSessionStore->clear($request, $response);
+
         try {
             $psrResponse = $this
                 ->leagueAuthorizationServer
