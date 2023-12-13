@@ -26,7 +26,7 @@ readonly class DatabaseConnectionPoolConfiguration
         #[SensitiveParameter]
         public int $port,
         #[SensitiveParameter]
-        public string $unixSocket,
+        public ?string $unixSocket,
         #[SensitiveParameter]
         public string $username,
     ) {}

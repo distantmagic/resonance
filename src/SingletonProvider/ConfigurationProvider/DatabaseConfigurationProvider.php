@@ -50,7 +50,7 @@ final readonly class DatabaseConfigurationProvider extends ConfigurationProvider
             'pool_prefill' => Expect::bool()->required(),
             'pool_size' => Expect::int()->min(1)->required(),
             'port' => Expect::int()->min(1)->max(65535)->default(3306),
-            'unix_socket' => Expect::string()->min(1)->nullable()->default(null),
+            'unix_socket' => Expect::string()->nullable()->default(null),
             'username' => Expect::string()->min(1)->required(),
         ]);
 

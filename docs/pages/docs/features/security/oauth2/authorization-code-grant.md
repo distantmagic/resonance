@@ -1,7 +1,9 @@
 ---
 collections: 
-    - documents
+    - name: documents
+      next: docs/features/security/oauth2/persistent-data
 layout: dm:document
+next: docs/features/security/oauth2/persistent-data
 parent: docs/features/security/oauth2/index
 title: Authorization Code Grant
 description: >

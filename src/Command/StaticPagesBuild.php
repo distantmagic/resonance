@@ -24,7 +24,7 @@ final class StaticPagesBuild extends CoroutineCommand
 
     protected function executeInCoroutine(InputInterface $input, OutputInterface $output): int
     {
-        $this->staticPageProcessor->process(...);
+        $this->staticPageProcessor->process();
 
         return Command::SUCCESS;
     }

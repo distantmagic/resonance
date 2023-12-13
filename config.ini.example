@@ -2,6 +2,7 @@
 env = development
 esbuild_metafile = esbuild-meta-app.json
 scheme = https
+url = https://resonance.distantmagic.com
 
 [database]
 default[driver] = mysql
