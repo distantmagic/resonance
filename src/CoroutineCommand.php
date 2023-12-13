@@ -38,10 +38,6 @@ abstract class CoroutineCommand extends SymfonyCommand
             return Command::FAILURE;
         }
 
-        if (is_int($result)) {
-            return $result;
-        }
-
-        return Command::SUCCESS;
+        return $result;
     }
 }

@@ -50,11 +50,6 @@ readonly class SingletonFunctionParametersIterator implements IteratorAggregate
 
             $typeClassName = $type->getName();
 
-            /**
-             * This is a false positive
-             *
-             * @psalm-suppress NoValue
-             */
             if (!class_exists($typeClassName) && !interface_exists($typeClassName)) {
                 throw new LogicException('Class does not exist: '.$typeClassName);
             }

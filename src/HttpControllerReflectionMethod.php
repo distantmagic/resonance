@@ -101,11 +101,6 @@ readonly class HttpControllerReflectionMethod
 
         $className = $type->getName();
 
-        /**
-         * This psalm error is a false positive.
-         *
-         * @psalm-suppress NoValue
-         */
         if (!class_exists($className) && !interface_exists($className)) {
             $this->reportError('Class does not exist: '.$className, $reflectionParameter, $type);
         }

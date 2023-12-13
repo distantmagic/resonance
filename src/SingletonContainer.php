@@ -78,7 +78,16 @@ final readonly class SingletonContainer implements SingletonContainerInterface
          * @psalm-suppress DocblockTypeContradiction
          */
         if (!($object instanceof $id)) {
-            throw new SingletonContainerException('Object '.$object::class.' is not instance of '.$id);
+            /**
+             * @var class-string $className
+             */
+            $className = $object::class;
+
+            throw new SingletonContainerException(sprintf(
+                'Object %s is not instance of %s',
+                $className,
+                $id,
+            ));
         }
 
         $this->singletons->put($id, $object);
