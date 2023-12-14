@@ -1,9 +1,9 @@
 ---
 collections: 
     - name: documents
-      next: docs/features/security/oauth2/configuration
+      next: docs/features/security/oauth2/configuration/index
 layout: dm:document
-next: docs/features/security/oauth2/configuration
+next: docs/features/security/oauth2/configuration/index
 parent: docs/features/security/oauth2/index
 title: Installation
 description: >

@@ -2,34 +2,33 @@
 collections: 
     - documents
 layout: dm:document
-parent: docs/features/security/oauth2/index
-title: Persistent Data
+parent: docs/features/security/oauth2/persistent-data/index
+title: Repositories
 description: >
-    Learn how to persist OAuth2 tokens and other data by using Doctrine.
+    Learn how to persist OAuth2 tokens and other data by using granular 
+    repositories.
 ---
 
-# Persistent Data
+# Repositories
 
 You can implement only the ones you need in your application. Grants use 
 repositories to store and retrieve the data they need to operate.
 
 Grant Type | Note | Repositories to Implement
 -|-|-
-{{docs/features/security/oauth2/authorization-code-grant}} | Machine <-> Human. For example: display authentication form, use login and password to obtain the access token. | Access Token, Auth Code, Client, Refresh Token, Scope
+{{docs/features/security/oauth2/authorization-code-grant/index}} | Machine <-> Human. For example: display authentication form, use login and password to obtain the access token. | Access Token, Auth Code, Client, Refresh Token, Scope
 Client Credentials | Machine <-> Machine. For example: exchange client's secret over API to obtain the access token. | Access Token, Client, Refresh Token, Scope
 Password | Use *only* on first party sites. Consider using Authorization Code instead. | Access Token, Client, User, Refresh Token, Scope
 Refresh Token | Exchange refresh token obtained from any other grant for a fresh access token. | Access Token, Client, Refresh Token, Scope
 
-{{docs/features/security/oauth2/authorization-code-grant}} requires an 
+{{docs/features/security/oauth2/authorization-code-grant/index}} requires an 
 additional step compared to other grant types (exchanging code for an access 
 token instead of immediately generating access token), thus it has it's own
 documentation page that explains the process further.
 
-## Persistent Data Repositories
-
 You can learn more on {{docs/features/database/doctrine/entity-managers}} page.
 
-### Access Token Repository
+## Access Token Repository
 
 All grant types require this repository.
 
@@ -57,7 +56,7 @@ readonly class OAuth2AccessTokenRepository implements AccessTokenRepositoryInter
 }
 ```
 
-### Auth Code Repository
+## Auth Code Repository
 
 You have to implement this repository if you want to use the Authorization Code
 Grant. Otherwise it's optional.
@@ -83,7 +82,7 @@ readonly class OAuth2AuthCodeRepository implements AuthCodeRepositoryInterface
 }
 ```
 
-### Client Repository
+## Client Repository
 
 :::tip
 If you have a static list of clients, for example you only use OAuth in your
@@ -115,7 +114,7 @@ readonly class OAuth2ClientRepository implements ClientRepositoryInterface
 }
 ```
 
-### Refresh Token Repository
+## Refresh Token Repository
 
 All grant types require this repository. 
 
@@ -140,7 +139,7 @@ readonly class OAuth2RefreshTokenRepository implements RefreshTokenRepositoryInt
 }
 ```
 
-### Scope Repository
+## Scope Repository
 
 :::tip
 If you have a static list of scopes, you do not have to necessarily use a 
@@ -212,7 +211,7 @@ readonly class OAuth2ScopeRepository implements ScopeRepositoryInterface
 }
 ```
 
-### User Repository
+## User Repository
 
 Only password grant requires user repository explicitly.
 

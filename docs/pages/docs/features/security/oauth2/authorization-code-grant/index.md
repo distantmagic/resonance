@@ -1,9 +1,9 @@
 ---
 collections: 
     - name: documents
-      next: docs/features/security/oauth2/persistent-data
+      next: docs/features/security/oauth2/persistent-data/index
 layout: dm:document
-next: docs/features/security/oauth2/persistent-data
+next: docs/features/security/oauth2/persistent-data/index
 parent: docs/features/security/oauth2/index
 title: Authorization Code Grant
 description: >
@@ -18,11 +18,11 @@ other grant types.
 
 # Usage
 
-You need to complete {{docs/features/security/oauth2/installation}}, 
-{{docs/features/security/oauth2/configuration}} first.
+You need to complete {{docs/features/security/oauth2/installation/index}}, 
+{{docs/features/security/oauth2/configuration/index}} first.
 
 You also need to implement all the required repositories (see more at: 
-{{docs/features/security/oauth2/enabling-grants}}).
+{{docs/features/security/oauth2/enabling-grants/index}}).
 
 Next, go through this document step-by-step.
 

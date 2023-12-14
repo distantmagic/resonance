@@ -19,4 +19,4 @@ Resonance provides a way to set up all aspects of OAuth 2.0 integrations
 through PHP attributes and comes in with sensible configuration defaults. It
 also integrates with other framework's features.
 
-{{docs/features/security/oauth2/*!docs/features/security/oauth2/index}}
+{{docs/features/security/oauth2/*/index}}

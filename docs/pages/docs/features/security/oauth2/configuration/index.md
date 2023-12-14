@@ -1,9 +1,9 @@
 ---
 collections: 
     - name: documents
-      next: docs/features/security/oauth2/enabling-grants
+      next: docs/features/security/oauth2/enabling-grants/index
 layout: dm:document
-next: docs/features/security/oauth2/enabling-grants
+next: docs/features/security/oauth2/enabling-grants/index
 parent: docs/features/security/oauth2/index
 title: Configuration
 description: >
@@ -34,8 +34,8 @@ You need to add endpoints to your application that expose OAuth2 server.
 Most grants require just the Access Token Endpoint:
 
 :::note
-{{docs/features/security/oauth2/authorization-code-grant}} requires more setup
-and it has more detailed explanation on it's documentation page.
+{{docs/features/security/oauth2/authorization-code-grant/index}} requires more 
+setup and it has more detailed explanation on it's documentation page.
 :::
 
 ```php file:app/HttpResponder/OAuth2AccessToken.php

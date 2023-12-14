@@ -1,9 +1,9 @@
 ---
 collections: 
     - name: documents
-      next: docs/features/security/oauth2/authorization-code-grant
+      next: docs/features/security/oauth2/authorization-code-grant/index
 layout: dm:document
-next: docs/features/security/oauth2/authorization-code-grant
+next: docs/features/security/oauth2/authorization-code-grant/index
 parent: docs/features/security/oauth2/index
 title: Enabling Grants
 description: >
