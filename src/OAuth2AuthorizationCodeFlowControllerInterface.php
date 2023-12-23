@@ -16,7 +16,7 @@ interface OAuth2AuthorizationCodeFlowControllerInterface
         bool $userConsented,
     ): HttpInterceptableInterface|HttpResponderInterface;
 
-    public function obtainAuthenticatedUser(
+    public function obtainSessionAuthenticatedUser(
         Request $request,
         Response $response,
         AuthorizationRequest $authorizationRequest,

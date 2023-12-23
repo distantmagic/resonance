@@ -15,7 +15,7 @@ final readonly class RespondsToHttp extends BaseAttribute
     public function __construct(
         public RequestMethod $method,
         public string $pattern,
-        public HttpRouteSymbolInterface $routeSymbol,
+        public ?HttpRouteSymbolInterface $routeSymbol = null,
         public int $priority = 0,
         public array $requirements = [],
     ) {}

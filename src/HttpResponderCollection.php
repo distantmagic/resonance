@@ -9,7 +9,7 @@ use Ds\Map;
 readonly class HttpResponderCollection
 {
     /**
-     * @var Map<HttpRouteSymbolInterface,HttpResponderInterface> $httpResponders
+     * @var Map<class-string<HttpResponderInterface>,HttpResponderInterface> $httpResponders
      */
     public Map $httpResponders;
 

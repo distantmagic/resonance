@@ -14,7 +14,7 @@ use Swoole\Http\Response;
 readonly class OAuth2AuthorizationRequestSessionStore
 {
     public function __construct(
-        private OAuth2Configuration $oauth2Configuration,
+        private OAuth2Configuration $oAuth2Configuration,
         private SessionManager $sessionManager,
     ) {}
 
@@ -25,7 +25,7 @@ readonly class OAuth2AuthorizationRequestSessionStore
             ->start($request, $response)
             ->data
             ->remove(
-                $this->oauth2Configuration->sessionKeyAuthorizationRequest,
+                $this->oAuth2Configuration->sessionKeyAuthorizationRequest,
                 null,
             )
         ;
@@ -59,7 +59,7 @@ readonly class OAuth2AuthorizationRequestSessionStore
             ->start($request, $response)
             ->data
             ->put(
-                $this->oauth2Configuration->sessionKeyAuthorizationRequest,
+                $this->oAuth2Configuration->sessionKeyAuthorizationRequest,
                 $authorizationRequest,
             )
         ;
@@ -73,7 +73,7 @@ readonly class OAuth2AuthorizationRequestSessionStore
          * @var mixed explicitly mixed for typechecks
          */
         $authorizationRequest = $session->data->get(
-            $this->oauth2Configuration->sessionKeyAuthorizationRequest,
+            $this->oAuth2Configuration->sessionKeyAuthorizationRequest,
             null,
         );
 

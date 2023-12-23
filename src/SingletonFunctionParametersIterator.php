@@ -12,19 +12,19 @@ use ReflectionMethod;
 use ReflectionNamedType;
 
 /**
- * @template-implements IteratorAggregate<string,class-string>
+ * @template-implements IteratorAggregate<string,SingletonFunctionParameter>
  */
 readonly class SingletonFunctionParametersIterator implements IteratorAggregate
 {
     public function __construct(private ReflectionFunctionAbstract $reflectionFunction) {}
 
     /**
-     * @return Generator<string,class-string>
+     * @return Generator<string,SingletonFunctionParameter>
      */
     public function getIterator(): Generator
     {
-        foreach ($this->reflectionFunction->getParameters() as $constructorParameter) {
-            $type = $constructorParameter->getType();
+        foreach ($this->reflectionFunction->getParameters() as $reflectionParameter) {
+            $type = $reflectionParameter->getType();
 
             if (!$type) {
                 throw new LogicException(sprintf(
@@ -32,7 +32,7 @@ readonly class SingletonFunctionParametersIterator implements IteratorAggregate
                     $this->reflectionFunction instanceof ReflectionMethod
                         ? $this->reflectionFunction->getDeclaringClass()->getName()
                         : '',
-                    $constructorParameter->getName(),
+                    $reflectionParameter->getName(),
                 ));
             }
 
@@ -54,7 +54,10 @@ readonly class SingletonFunctionParametersIterator implements IteratorAggregate
                 throw new LogicException('Class does not exist: '.$typeClassName);
             }
 
-            yield $constructorParameter->getName() => $typeClassName;
+            yield $reflectionParameter->getName() => new SingletonFunctionParameter(
+                className: $typeClassName,
+                reflectionParameter: $reflectionParameter,
+            );
         }
     }
 }

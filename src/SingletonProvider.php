@@ -11,6 +11,11 @@ namespace Distantmagic\Resonance;
  */
 abstract readonly class SingletonProvider implements SingletonProviderInterface
 {
+    public function shouldRegister(): bool
+    {
+        return true;
+    }
+
     /**
      * @template TFilteredObject of object
      * @template TFilteredAttribute of Attribute

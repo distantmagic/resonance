@@ -56,7 +56,7 @@ readonly class AuthCodeGrantProvider extends OAuth2GrantProvider
     {
     }
 
-    public function getGrant(): GrantTypeInterface
+    public function provideGrant(): GrantTypeInterface
     {
         return new AuthCodeGrant(
             $this->authCodeRepository,

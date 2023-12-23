@@ -9,14 +9,14 @@ use IteratorAggregate;
 use ReflectionClass;
 
 /**
- * @template-implements IteratorAggregate<string,class-string>
+ * @template-implements IteratorAggregate<string,SingletonFunctionParameter>
  */
 readonly class SingletonConstructorParametersIterator implements IteratorAggregate
 {
     public function __construct(private ReflectionClass $reflectionClass) {}
 
     /**
-     * @return Generator<string,class-string>
+     * @return Generator<string,SingletonFunctionParameter>
      */
     public function getIterator(): Generator
     {

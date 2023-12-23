@@ -57,14 +57,17 @@ readonly class HttpResponderAggregate
         }
     }
 
+    /**
+     * @param null|class-string<HttpResponderInterface> $responderClass
+     */
     private function matchResponder(
         HttpRouteMatchStatus $routeStatus,
-        ?HttpRouteSymbolInterface $routeSymbol,
+        ?string $responderClass,
     ): HttpResponderInterface {
         return match ($routeStatus) {
             HttpRouteMatchStatus::MethodNotAllowed => $this->methodNotAllowed,
             HttpRouteMatchStatus::NotFound => $this->pageNotFound,
-            HttpRouteMatchStatus::Found => $this->resolveFoundResponder($routeSymbol),
+            HttpRouteMatchStatus::Found => $this->resolveFoundResponder($responderClass),
 
             default => throw new DomainException('Unexpected route status'),
         };
@@ -98,18 +101,18 @@ readonly class HttpResponderAggregate
              * @var array<string,string>
              */
             $routeMatch = $this->urlMatcher->match((string) $request->server['path_info']);
-            $routeSymbol = constant($routeMatch['_route']);
+            $responderClass = $routeMatch['_route'];
 
-            if (!($routeSymbol instanceof HttpRouteSymbolInterface)) {
-                throw new LogicException('Route symbol is not an instance of HttpRouteSymbolInterface');
+            if (!is_a($responderClass, HttpResponderInterface::class, true)) {
+                throw new LogicException('Matched route does not resolve to an instance of HttpResponderInterface');
             }
 
             unset($routeMatch['_route']);
 
             return new HttpRouteMatch(
-                status: HttpRouteMatchStatus::Found,
-                handler: $routeSymbol,
+                responderClass: $responderClass,
                 routeVars: $routeMatch,
+                status: HttpRouteMatchStatus::Found,
             );
         } catch (MethodNotAllowedException $methodNotAllowed) {
             return new HttpRouteMatch(HttpRouteMatchStatus::MethodNotAllowed);
@@ -118,13 +121,16 @@ readonly class HttpResponderAggregate
         }
     }
 
-    private function resolveFoundResponder(?HttpRouteSymbolInterface $routeSymbol): HttpResponderInterface
+    /**
+     * @param null|class-string<HttpResponderInterface> $responderClass
+     */
+    private function resolveFoundResponder(?string $responderClass): HttpResponderInterface
     {
-        if (!$routeSymbol || !$this->httpResponderCollection->httpResponders->hasKey($routeSymbol)) {
-            $this->unimplementedHttpRouteResponder($routeSymbol);
+        if (!$responderClass || !$this->httpResponderCollection->httpResponders->hasKey($responderClass)) {
+            $this->unimplementedHttpRouteResponder($responderClass);
         }
 
-        return $this->httpResponderCollection->httpResponders->get($routeSymbol);
+        return $this->httpResponderCollection->httpResponders->get($responderClass);
     }
 
     private function selectResponder(Request $request): HttpResponderInterface
@@ -134,14 +140,17 @@ readonly class HttpResponderAggregate
 
         return $this->matchResponder(
             $routeMatchingStatus->status,
-            $routeMatchingStatus->handler,
+            $routeMatchingStatus->responderClass,
         );
     }
 
-    private function unimplementedHttpRouteResponder(?HttpRouteSymbolInterface $routeSymbol): never
+    /**
+     * @param null|class-string<HttpResponderInterface> $responderClass
+     */
+    private function unimplementedHttpRouteResponder(?string $responderClass): never
     {
-        if ($routeSymbol) {
-            throw new DomainException('Unresolved route responder: '.$routeSymbol->getName());
+        if ($responderClass) {
+            throw new DomainException('Unresolved route responder: '.$responderClass);
         }
 
         throw new DomainException('Unresolved route responder.');

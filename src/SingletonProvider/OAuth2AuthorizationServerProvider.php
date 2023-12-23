@@ -45,7 +45,7 @@ final readonly class OAuth2AuthorizationServerProvider extends SingletonProvider
 
         foreach ($this->collectGrants($singletons) as $grantAttribute) {
             $authorizationServer->enableGrantType(
-                $grantAttribute->singleton->getGrant(),
+                $grantAttribute->singleton->provideGrant(),
                 $grantAttribute->singleton->getAccessTokenTTL(),
             );
         }

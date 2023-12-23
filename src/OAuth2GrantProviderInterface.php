@@ -11,5 +11,5 @@ interface OAuth2GrantProviderInterface
 {
     public function getAccessTokenTTL(): DateInterval;
 
-    public function getGrant(): GrantTypeInterface;
+    public function provideGrant(): GrantTypeInterface;
 }

@@ -14,12 +14,12 @@ final readonly class Gatekeeper
 
     public function __construct(
         private CrudActionGateAggregate $crudActionGateAggregate,
-        SessionAuthentication $sessionAuthentication,
+        CurrentUserProvider $currentUserProvider,
         private SiteActionGateAggregate $siteActionGateAggregate,
     ) {
         $this->gatekeeperRequestContext = new GatekeeperRequestContext(
             $crudActionGateAggregate,
-            $sessionAuthentication,
+            $currentUserProvider,
             $siteActionGateAggregate,
         );
     }

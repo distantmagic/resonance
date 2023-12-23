@@ -50,4 +50,9 @@ abstract readonly class ConfigurationProvider extends SingletonProvider
 
         return $this->provideConfiguration($validatedData);
     }
+
+    public function shouldRegister(): bool
+    {
+        return $this->configurationFile->config->has($this->getConfigurationKey());
+    }
 }

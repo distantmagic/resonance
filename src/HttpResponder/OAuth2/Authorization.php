@@ -55,7 +55,7 @@ final readonly class Authorization extends HttpResponder
 
         $authUserResponse = $this
             ->authorizationCodeFlowController
-            ->obtainAuthenticatedUser($request, $response, $authRequest)
+            ->obtainSessionAuthenticatedUser($request, $response, $authRequest)
         ;
 
         if ($authUserResponse) {

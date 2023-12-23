@@ -47,7 +47,7 @@ abstract readonly class OAuth2AuthorizationCodeFlowController implements OAuth2A
         }
     }
 
-    public function obtainAuthenticatedUser(Request $request, Response $response, AuthorizationRequest $authorizationRequest): null|HttpInterceptableInterface|HttpResponderInterface
+    public function obtainSessionAuthenticatedUser(Request $request, Response $response, AuthorizationRequest $authorizationRequest): null|HttpInterceptableInterface|HttpResponderInterface
     {
         $authenticatedUser = $this->sessionAuthentication->getAuthenticatedUser($request);
 

@@ -10,7 +10,7 @@ readonly class GatekeeperRequestContext
 {
     public function __construct(
         private CrudActionGateAggregate $crudActionGateAggregate,
-        private SessionAuthentication $sessionAuthentication,
+        private CurrentUserProvider $currentUserProvider,
         private SiteActionGateAggregate $siteActionGateAggregate,
     ) {}
 
@@ -19,7 +19,7 @@ readonly class GatekeeperRequestContext
         return new GatekeeperUserContext(
             $this->crudActionGateAggregate,
             $this->siteActionGateAggregate,
-            $this->sessionAuthentication->getAuthenticatedUser($request),
+            $this->currentUserProvider->getAuthenticatedUser($request),
         );
     }
 }

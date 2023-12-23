@@ -8,7 +8,7 @@ register_stylesheets:
     - docs-page-homepage.css
 title: Resonance
 description: >
-    PHP Hub Framework designed from the ground up to facilitate 
+    PHP Hub/SaaS Framework designed from the ground up to facilitate 
     interoperability and messaging between services in your infrastructure and
     beyond.
 ---
@@ -17,7 +17,7 @@ description: >
     <div class="homepage__content">
         <hgroup class="homepage__title">
             <h1>Resonance</h1>
-            <h2>PHP Hub Framework</h2>
+            <h2>PHP Hub/SaaS Framework</h2>
             <p>
                 Designed from the ground up to facilitate interoperability
                 and messaging between services in your infrastructure and 

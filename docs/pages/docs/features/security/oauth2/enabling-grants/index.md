@@ -81,7 +81,7 @@ use League\OAuth2\Server\Grant\GrantTypeInterface;
 #[Singleton(collection: SingletonCollection::OAuth2Grant)]
 readonly class ClientCredentialsGrantProvider extends OAuth2GrantProvider
 {
-    public function getGrant(): GrantTypeInterface
+    public function provideGrant(): GrantTypeInterface
     {
         return new ClientCredentialsGrant();
     }
