@@ -13,7 +13,7 @@ interface CrudActionGateInterface
      * @param TSubject $subject
      */
     public function can(
-        ?UserInterface $user,
+        ?AuthenticatedUser $authenticatedUser,
         CrudActionSubjectInterface $subject,
         CrudAction $crudAction,
     ): bool;

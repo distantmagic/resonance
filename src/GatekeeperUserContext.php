@@ -9,7 +9,7 @@ readonly class GatekeeperUserContext
     public function __construct(
         private CrudActionGateAggregate $crudActionGateAggregate,
         private SiteActionGateAggregate $siteActionGateAggregate,
-        private ?UserInterface $user,
+        private ?AuthenticatedUser $authenticatedUser,
     ) {}
 
     public function can(SiteActionInterface $action): bool
@@ -17,7 +17,7 @@ readonly class GatekeeperUserContext
         return $this
             ->siteActionGateAggregate
             ->selectSiteActionGate($action)
-            ->can($this->user)
+            ->can($this->authenticatedUser)
         ;
     }
 
@@ -26,7 +26,7 @@ readonly class GatekeeperUserContext
         return $this
             ->crudActionGateAggregate
             ->getSubjectGate($subject)
-            ->can($this->user, $subject, $crudAction)
+            ->can($this->authenticatedUser, $subject, $crudAction)
         ;
     }
 }

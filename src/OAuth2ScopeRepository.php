@@ -14,7 +14,6 @@ readonly class OAuth2ScopeRepository implements ScopeRepositoryInterface
 {
     public function __construct(
         private OAuth2ScopeCollection $scopeCollection,
-        private OAuth2ScopePatternMatcher $scopePatternMatcher,
     ) {}
 
     /**
@@ -46,10 +45,10 @@ readonly class OAuth2ScopeRepository implements ScopeRepositoryInterface
     public function getScopeEntityByIdentifier($identifier)
     {
         foreach ($this->scopeCollection->scopes as $attribute => $scopeClass) {
-            $parameters = $this->scopePatternMatcher->match($attribute, $identifier);
+            $match = $attribute->pattern->match($identifier);
 
-            if ($parameters) {
-                return new $scopeClass($parameters);
+            if ($match) {
+                return new $scopeClass($match->parameters);
             }
         }
 

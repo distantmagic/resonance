@@ -6,5 +6,5 @@ namespace Distantmagic\Resonance;
 
 abstract readonly class SiteActionGate
 {
-    abstract public function can(?UserInterface $user): bool;
+    abstract public function can(?AuthenticatedUser $authenticatedUser): bool;
 }

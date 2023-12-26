@@ -6,8 +6,8 @@ namespace Distantmagic\Resonance\WebSocketProtocolController;
 
 use Distantmagic\Resonance\Attribute\ControlsWebSocketProtocol;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\AuthenticatedUserProvider;
 use Distantmagic\Resonance\CSRFManager;
-use Distantmagic\Resonance\CurrentUserProvider;
 use Distantmagic\Resonance\Gatekeeper;
 use Distantmagic\Resonance\InputValidator\RPCMessageValidator;
 use Distantmagic\Resonance\SingletonCollection;
@@ -39,7 +39,7 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
 
     public function __construct(
         private CSRFManager $csrfManager,
-        private CurrentUserProvider $currentUserProvider,
+        private AuthenticatedUserProvider $authenticatedUserProvider,
         private Gatekeeper $gatekeeper,
         private LoggerInterface $logger,
         private RPCMessageValidator $rpcMessageValidator,
@@ -57,7 +57,7 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
             return new WebSocketAuthResolution(false);
         }
 
-        $user = $this->currentUserProvider->getAuthenticatedUser($request);
+        $user = $this->authenticatedUserProvider->getAuthenticatedUser($request);
 
         return new WebSocketAuthResolution(
             $this->gatekeeper->withUser($user)->can(SiteAction::StartWebSocketRPCConnection),

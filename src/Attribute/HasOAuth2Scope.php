@@ -8,8 +8,8 @@ use Attribute;
 use Distantmagic\Resonance\Attribute as BaseAttribute;
 use Distantmagic\Resonance\OAuth2ScopePattern;
 
-#[Attribute(Attribute::TARGET_CLASS)]
-final readonly class ProvidesOAuth2Scope extends BaseAttribute
+#[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_CLASS)]
+final readonly class HasOAuth2Scope extends BaseAttribute
 {
     public OAuth2ScopePattern $pattern;
 

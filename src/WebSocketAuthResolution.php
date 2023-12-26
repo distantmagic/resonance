@@ -14,6 +14,6 @@ readonly class WebSocketAuthResolution
 {
     public function __construct(
         public bool $isAuthorizedToConnect,
-        public ?UserInterface $user = null,
+        public ?AuthenticatedUser $authenticatedUser = null,
     ) {}
 }

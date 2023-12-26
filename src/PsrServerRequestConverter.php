@@ -10,14 +10,24 @@ use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Swoole\Http\Request;
+use WeakMap;
 
 #[Singleton]
 readonly class PsrServerRequestConverter
 {
     private ServerRequestCreator $serverRequestCreator;
 
+    /**
+     * @var WeakMap<Request,ServerRequestInterface>
+     */
+    private WeakMap $serverRequests;
+
     public function __construct(Psr17Factory $psr17Factory)
     {
+        /**
+         * @var WeakMap<Request,ServerRequestInterface>
+         */
+        $this->serverRequests = new WeakMap();
         $this->serverRequestCreator = new ServerRequestCreator(
             $psr17Factory,
             $psr17Factory,
@@ -28,6 +38,10 @@ readonly class PsrServerRequestConverter
 
     public function convertToServerRequest(Request $request): ServerRequestInterface
     {
+        if ($this->serverRequests->offsetExists($request)) {
+            return $this->serverRequests->offsetGet($request);
+        }
+
         if (!is_array($request->server)) {
             throw new RuntimeException('Server variables are not set.');
         }
@@ -41,7 +55,7 @@ readonly class PsrServerRequestConverter
             $serverUppercase[mb_strtoupper((string) $key)] = $value;
         }
 
-        return $this->serverRequestCreator->fromArrays(
+        $serverRequest = $this->serverRequestCreator->fromArrays(
             $serverUppercase,
             is_array($request->header) ? $request->header : [],
             is_array($request->cookie) ? $request->cookie : [],
@@ -50,5 +64,9 @@ readonly class PsrServerRequestConverter
             is_array($request->files) ? $request->files : [],
             $request->getContent() ?: null,
         );
+
+        $this->serverRequests->offsetSet($request, $serverRequest);
+
+        return $serverRequest;
     }
 }
