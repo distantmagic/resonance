@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpResponder\PsrResponder;
 use League\OAuth2\Server\AuthorizationServer as LeagueAuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -13,12 +14,14 @@ use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
-abstract readonly class OAuth2AuthorizationCodeFlowController implements OAuth2AuthorizationCodeFlowControllerInterface
+#[Singleton(provides: OAuth2AuthorizationCodeFlowControllerInterface::class)]
+readonly class OAuth2AuthorizationCodeFlowController implements OAuth2AuthorizationCodeFlowControllerInterface
 {
     public function __construct(
         private ContentSecurityPolicyRulesRepository $contentSecurityPolicyRulesRepository,
         private LeagueAuthorizationServer $leagueAuthorizationServer,
         private OAuth2AuthorizationRequestSessionStore $authorizationRequestSessionStore,
+        private OAuth2EndpointResponderAggregate $oAuth2EndpointResponderAggregate,
         private Psr17Factory $psr17Factory,
         private SessionAuthentication $sessionAuthentication,
     ) {}
@@ -83,5 +86,25 @@ abstract readonly class OAuth2AuthorizationCodeFlowController implements OAuth2A
         } else {
             $formAction->add($redirectUris);
         }
+    }
+
+    public function redirectToClientScopeConsentPage(
+        Request $request,
+        Response $response,
+        AuthorizationRequest $authorizationRequest,
+    ): HttpInterceptableInterface {
+        $routeSymbol = $this->oAuth2EndpointResponderAggregate->endpointResponderRouteSymbol->get(OAuth2Endpoint::ClientScopeConsentForm);
+
+        return new InternalRedirect($routeSymbol);
+    }
+
+    public function redirectToLoginPage(
+        Request $request,
+        Response $response,
+        AuthorizationRequest $authorizationRequest,
+    ): HttpInterceptableInterface {
+        $routeSymbol = $this->oAuth2EndpointResponderAggregate->endpointResponderRouteSymbol->get(OAuth2Endpoint::LoginForm);
+
+        return new InternalRedirect($routeSymbol);
     }
 }
