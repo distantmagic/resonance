@@ -8,6 +8,7 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Doctrine\ORM\EntityManagerInterface;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
+use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use LogicException;
 
@@ -72,6 +73,14 @@ readonly class OAuth2EntityRepository implements OAuth2EntityRepositoryInterface
     public function findUser(EntityManagerInterface $entityManager, int|string $id): null
     {
         return null;
+    }
+
+    public function toAccessToken(
+        EntityManagerInterface $entityManager,
+        ClientEntityInterface $clientEntity,
+        $accessToken,
+    ): never {
+        throw new LogicException('You need to provide your own OAuth2 repository');
     }
 
     public function toClientEntity(

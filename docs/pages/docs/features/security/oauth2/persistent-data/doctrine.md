@@ -32,4 +32,5 @@ Method | Description
 `findClient`          | find client in your database, return your entity
 `findRefreshToken`    | find refresh token in your database, return your entity
 `findUser`            | find user in your database, return your entity
+`toAccessToken`       | find access token in your database, return your entity
 `toClientEntity`      | find client in your database, return your entity

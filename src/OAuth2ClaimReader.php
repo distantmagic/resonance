@@ -7,8 +7,6 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Doctrine\ORM\EntityManagerInterface;
 use Ds\Set;
-use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\ResourceServer;
@@ -77,7 +75,7 @@ readonly class OAuth2ClaimReader
                     ->findAccessToken($entityManager, $accessTokenId)
                 ;
 
-                if (!($accessToken instanceof AccessTokenEntityInterface)) {
+                if (is_null($accessToken)) {
                     throw OAuthServerException::invalidRequest('oauth_access_token_id');
                 }
 
@@ -92,7 +90,7 @@ readonly class OAuth2ClaimReader
                     ->findClient($entityManager, $clientId)
                 ;
 
-                if (!($client instanceof ClientEntityInterface)) {
+                if (is_null($client)) {
                     throw OAuthServerException::invalidRequest('oauth_client_id');
                 }
 
@@ -136,9 +134,20 @@ readonly class OAuth2ClaimReader
                     $validatedScopes->add($validatedScope);
                 }
 
-                return new OAuth2Claim(
-                    $accessToken,
+                $clientEntity = $this->oAuth2EntityRepository->toClientEntity(
+                    $entityManager,
                     $client,
+                );
+
+                $accessTokenEntity = $this->oAuth2EntityRepository->toAccessToken(
+                    $entityManager,
+                    $clientEntity,
+                    $accessToken,
+                );
+
+                return new OAuth2Claim(
+                    $accessTokenEntity,
+                    $clientEntity,
                     $user,
                     $validatedScopes,
                 );

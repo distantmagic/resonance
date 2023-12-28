@@ -82,6 +82,15 @@ interface OAuth2EntityRepositoryInterface
     public function findUser(EntityManagerInterface $entityManager, int|string $id): ?UserInterface;
 
     /**
+     * @param TAccessToken $accessToken
+     */
+    public function toAccessToken(
+        EntityManagerInterface $entityManager,
+        ClientEntityInterface $clientEntity,
+        $accessToken,
+    ): AccessTokenEntityInterface;
+
+    /**
      * @param TClient $client
      */
     public function toClientEntity(
