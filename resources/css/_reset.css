@@ -41,7 +41,10 @@ textarea {
 
 a {
   color: inherit;
-  text-decoration: underline solid var(--color-link-decoration);
+  text-decoration: underline;
+  text-decoration-color: var(--color-link-decoration);
+  text-decoration-line: underline;
+  text-decoration-style: solid;
   text-decoration-thickness: 3px;
 }
 
