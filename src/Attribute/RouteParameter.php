@@ -11,6 +11,9 @@ use Distantmagic\Resonance\CrudAction;
 #[Attribute(Attribute::TARGET_PARAMETER)]
 final readonly class RouteParameter extends BaseAttribute
 {
+    /**
+     * @param non-empty-string $from
+     */
     public function __construct(
         public string $from,
         public CrudAction $intent = CrudAction::Read,

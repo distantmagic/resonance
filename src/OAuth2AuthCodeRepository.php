@@ -78,7 +78,6 @@ readonly class OAuth2AuthCodeRepository implements AuthCodeRepositoryInterface
                 );
 
                 $entityManager->persist($doctrineAuthCode);
-                $entityManager->flush();
             })
         ;
     }
@@ -95,7 +94,6 @@ readonly class OAuth2AuthCodeRepository implements AuthCodeRepositoryInterface
 
                 if ($accessToken) {
                     $entityManager->remove($accessToken);
-                    $entityManager->flush();
                 }
             })
         ;

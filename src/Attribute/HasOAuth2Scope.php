@@ -14,6 +14,7 @@ final readonly class HasOAuth2Scope extends BaseAttribute
     public OAuth2ScopePattern $pattern;
 
     /**
+     * @param non-empty-string $pattern
      * @param non-empty-string $separator
      */
     public function __construct(

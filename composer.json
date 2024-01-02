@@ -45,7 +45,8 @@
         "symfony/yaml": "^7.0",
         "twig/cache-extra": "^3.7",
         "twig/twig": "^3.7",
-        "webonyx/graphql-php": "^15.6"
+        "webonyx/graphql-php": "^15.6",
+        "dragonmantank/cron-expression": "^3.3"
     },
     "require-dev": {
         "mockery/mockery": "^1.6",

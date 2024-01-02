@@ -10,5 +10,8 @@ use Distantmagic\Resonance\Attribute as BaseAttribute;
 #[Attribute(Attribute::TARGET_PARAMETER)]
 final readonly class DoctrineEntityManager extends BaseAttribute
 {
+    /**
+     * @param non-empty-string $connection
+     */
     public function __construct(public string $connection = 'default') {}
 }

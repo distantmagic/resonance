@@ -100,10 +100,7 @@ readonly class OAuth2ClaimReader
                     throw OAuthServerException::invalidRequest('oauth_user_id');
                 }
 
-                $user = $this
-                    ->userRepository
-                    ->findUserById($request, $userId)
-                ;
+                $user = $this->userRepository->findUserById($request, $userId);
 
                 if (!$user) {
                     throw OAuthServerException::invalidRequest('oauth_user_id');

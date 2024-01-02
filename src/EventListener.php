@@ -10,7 +10,7 @@ namespace Distantmagic\Resonance;
  *
  * @template-implements EventListenerInterface<TEvent, TResult>
  */
-abstract readonly class EventListener implements EventListenerInterface, RegisterableInterface
+abstract readonly class EventListener implements EventListenerInterface
 {
     public function shouldRegister(): bool
     {

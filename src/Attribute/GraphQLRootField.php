@@ -11,6 +11,9 @@ use Distantmagic\Resonance\GraphQLRootFieldType;
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class GraphQLRootField extends BaseAttribute
 {
+    /**
+     * @param non-empty-string $name
+     */
     public function __construct(
         public string $name,
         public GraphQLRootFieldType $type,

@@ -6,6 +6,7 @@ namespace Distantmagic\Resonance;
 
 enum SingletonCollection implements SingletonCollectionInterface
 {
+    case CronJob;
     case CrudActionGate;
     case EventListener;
     case GraphQLRootField;
@@ -18,6 +19,7 @@ enum SingletonCollection implements SingletonCollectionInterface
     case OAuth2Grant;
     case SiteActionGate;
     case StaticPageLayout;
+    case TickTimerJob;
     case TwigExtension;
     case TwigLoader;
     case WebSocketProtocolController;

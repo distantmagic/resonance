@@ -67,7 +67,6 @@ readonly class OAuth2RefreshTokenRepository implements RefreshTokenRepositoryInt
                 );
 
                 $entityManager->persist($doctrineRefreshToken);
-                $entityManager->flush();
             })
         ;
     }
@@ -84,7 +83,6 @@ readonly class OAuth2RefreshTokenRepository implements RefreshTokenRepositoryInt
 
                 if ($refreshToken) {
                     $entityManager->remove($refreshToken);
-                    $entityManager->flush();
                 }
             })
         ;

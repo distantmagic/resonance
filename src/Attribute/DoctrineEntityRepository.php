@@ -11,7 +11,8 @@ use Distantmagic\Resonance\Attribute as BaseAttribute;
 final readonly class DoctrineEntityRepository extends BaseAttribute
 {
     /**
-     * @param class-string $entityClass
+     * @param class-string     $entityClass
+     * @param non-empty-string $connection
      */
     public function __construct(
         public string $entityClass,

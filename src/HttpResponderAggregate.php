@@ -12,7 +12,6 @@ use Distantmagic\Resonance\HttpResponder\Error\PageNotFound;
 use Distantmagic\Resonance\HttpResponder\Error\ServerError;
 use DomainException;
 use LogicException;
-use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -31,7 +30,6 @@ readonly class HttpResponderAggregate
         private HttpRecursiveResponder $recursiveResponder,
         private HttpResponderCollection $httpResponderCollection,
         private HttpRouteMatchRegistry $routeMatchRegistry,
-        private LoggerInterface $logger,
         private MethodNotAllowed $methodNotAllowed,
         private PageNotFound $pageNotFound,
         private RequestContext $requestContext,

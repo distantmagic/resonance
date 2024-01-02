@@ -6,7 +6,6 @@ namespace Distantmagic\Resonance;
 
 use Doctrine\ORM\EntityManagerInterface;
 use RuntimeException;
-use Swoole\Event;
 use WeakReference;
 
 /**
@@ -27,9 +26,7 @@ readonly class EntityManagerWeakReference
 
     public function __destruct()
     {
-        Event::defer(function () {
-            $this->getEntityManager()->getConnection()->close();
-        });
+        $this->getEntityManager()->getConnection()->close();
     }
 
     public function getEntityManager(): EntityManagerInterface

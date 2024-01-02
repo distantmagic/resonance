@@ -11,6 +11,11 @@ use Distantmagic\Resonance\CrudAction;
 #[Attribute(Attribute::TARGET_PARAMETER)]
 final readonly class DoctrineEntityRouteParameter extends BaseAttribute
 {
+    /**
+     * @param non-empty-string $from
+     * @param non-empty-string $lookupField
+     * @param non-empty-string $connection
+     */
     public function __construct(
         public string $from,
         public CrudAction $intent = CrudAction::Read,

@@ -102,7 +102,6 @@ readonly class OAuth2AccessTokenRepository implements AccessTokenRepositoryInter
                 );
 
                 $entityManager->persist($doctrineAccessToken);
-                $entityManager->flush();
             })
         ;
     }
@@ -119,7 +118,6 @@ readonly class OAuth2AccessTokenRepository implements AccessTokenRepositoryInter
 
                 if ($accessToken) {
                     $entityManager->remove($accessToken);
-                    $entityManager->flush();
                 }
             })
         ;

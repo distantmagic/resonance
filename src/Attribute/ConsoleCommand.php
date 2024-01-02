@@ -11,7 +11,9 @@ use Distantmagic\Resonance\Attribute as BaseAttribute;
 readonly class ConsoleCommand extends BaseAttribute
 {
     /**
-     * @param array<string> $aliases
+     * @param non-empty-string      $name
+     * @param array<string>         $aliases
+     * @param null|non-empty-string $description
      */
     public function __construct(
         public string $name,

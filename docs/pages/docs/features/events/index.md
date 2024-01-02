@@ -298,5 +298,6 @@ final readonly class MyListener extends EventListener
 Event | Description
 -|-
 `HttpServerStarted`     | Dispatched when the HTTP server has just started.
+`HttpServerBeforeStop`  | Dispatched just before the HTTP server stops.
 `SQLQueryBeforeExecute` | It is dispatched just before an SQL query is executed. It contains an `$sql` property with the query itself.
 `UnhandledException`    | Dispatched when an exception is not caught in {{docs/features/http/responders}} or similar. You can use this event to attach your error reporters.

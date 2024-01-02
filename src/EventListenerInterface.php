@@ -8,7 +8,7 @@ namespace Distantmagic\Resonance;
  * @template TEvent of EventInterface
  * @template TResult
  */
-interface EventListenerInterface
+interface EventListenerInterface extends RegisterableInterface
 {
     /**
      * I wish PHP had generics.
@@ -18,6 +18,4 @@ interface EventListenerInterface
      * @return TResult
      */
     public function handle(EventInterface $event);
-
-    public function shouldRegister(): bool;
 }

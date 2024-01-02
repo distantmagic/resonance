@@ -9,6 +9,9 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Ds\Map;
+use LogicException;
+use Swoole\Coroutine;
+use Swoole\Coroutine\Context;
 use Swoole\Http\Request;
 use WeakMap;
 
@@ -64,12 +67,38 @@ readonly class DoctrineEntityManagerRepository
      *
      * @return TCallbackReturn
      */
-    public function withEntityManager(callable $callback, string $name = 'default'): mixed
+    public function withEntityManager(callable $callback, string $name = 'default', bool $flush = true): mixed
     {
-        $entityManagerWeakReference = $this->getWeakReference($name);
+        /**
+         * @var null|Context $context
+         */
+        $context = Coroutine::getContext();
+
+        $contextKey = sprintf('%s.entityManager.%s', __METHOD__, $name);
+
+        if ($context && isset($context[$contextKey])) {
+            $entityManagerWeakReference = $context[$contextKey];
+
+            if (!($entityManagerWeakReference instanceof EntityManagerWeakReference)) {
+                throw new LogicException('Expected weak reference to entity manager');
+            }
+        } else {
+            $entityManagerWeakReference = $this->getWeakReference($name);
+
+            if ($context) {
+                $context[$contextKey] = $entityManagerWeakReference;
+            }
+        }
+
         $entityManager = $entityManagerWeakReference->getEntityManager();
 
-        return $callback($entityManager);
+        try {
+            return $callback($entityManager);
+        } finally {
+            if ($flush) {
+                $entityManager->flush();
+            }
+        }
     }
 
     /**
