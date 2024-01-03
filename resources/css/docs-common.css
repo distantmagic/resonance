@@ -1,6 +1,7 @@
 @import url("./_reset.css");
 
 :root {
+  --color-aside-background: var(--color-body-background);
   --color-body-background: #050505;
   --color-body-font: #ddd;
   --color-body-font-darker: #aaa;
@@ -33,7 +34,15 @@
 }
 @media screen and (min-width: 1024px) {
   :root {
-    --font-size-base: 24px;
+    --font-size-base: 20px;
+    --font-size-code: 18px;
+    --font-size-code-smaller: 18px;
+    --font-size-smaller: 18px;
+  }
+}
+@media screen and (min-width: 2000px) {
+  :root {
+    --font-size-base: 22px;
     --font-size-code: 18px;
     --font-size-code-smaller: 18px;
     --font-size-smaller: 20px;
