@@ -19,5 +19,6 @@ readonly class DependencyProvider
         public Set $requiredCollections,
         public ?SingletonCollectionInterface $collection,
         public string $providedClassName,
+        public ?FeatureInterface $wantsFeature,
     ) {}
 }

@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Closure;
-use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
-use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\DependencyInjectionContainerException\AmbiguousProvider;
 use Distantmagic\Resonance\DependencyInjectionContainerException\DisabledFeatureProvider;
 use Distantmagic\Resonance\DependencyInjectionContainerException\MissingProvider;
 use Ds\Map;
 use Ds\Set;
-use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionFunctionAbstract;
@@ -159,37 +156,13 @@ readonly class DependencyInjectionContainer
 
     public function registerSingletons(): void
     {
-        foreach ($this->phpProjectFiles->findByAttribute(Singleton::class) as $reflectionAttribute) {
-            $providedClassName = $reflectionAttribute->attribute->provides ?? $reflectionAttribute->reflectionClass->getName();
-
-            $requiredCollectionsReflections = $reflectionAttribute
-                ->reflectionClass
-                ->getAttributes(RequiresSingletonCollection::class, ReflectionAttribute::IS_INSTANCEOF)
-            ;
-
-            /**
-             * @var Set<SingletonCollectionInterface> $requiredCollections
-             */
-            $requiredCollections = new Set();
-
-            foreach ($requiredCollectionsReflections as $requiredCollectionReflection) {
-                $requiredCollections->add($requiredCollectionReflection->newInstance()->collection);
-            }
-
-            $dependencyProvider = new DependencyProvider(
-                collection: $reflectionAttribute->attribute->collection,
-                grantsFeature: $reflectionAttribute->attribute->grantsFeature,
-                providedClassName: $providedClassName,
-                providerReflectionClass: $reflectionAttribute->reflectionClass,
-                requiredCollections: $requiredCollections,
-            );
-
-            if ($reflectionAttribute->attribute->wantsFeature) {
-                $this->wantedFeatures->add($reflectionAttribute->attribute->wantsFeature);
-            }
-
+        foreach (new DependencyProviderIterator($this->phpProjectFiles) as $providedClassName => $dependencyProvider) {
             if ($this->dependencyProviders->hasKey($providedClassName)) {
                 throw new AmbiguousProvider($providedClassName);
+            }
+
+            if ($dependencyProvider->wantsFeature) {
+                $this->wantedFeatures->add($dependencyProvider->wantsFeature);
             }
 
             $this->dependencyProviders->put($providedClassName, $dependencyProvider);
@@ -199,22 +172,17 @@ readonly class DependencyInjectionContainer
             if ($dependencyProvider->grantsFeature && !$this->wantedFeatures->contains($dependencyProvider->grantsFeature)) {
                 $this->disabledFeatureProviders->put($providedClassName, $dependencyProvider->grantsFeature);
             } elseif ($dependencyProvider->collection) {
-                $this->addToCollection($dependencyProvider->collection, $dependencyProvider);
+                if (!$this->collections->hasKey($dependencyProvider->collection)) {
+                    $this->collections->put($dependencyProvider->collection, new Set());
+                }
+
+                $this->collections->get($dependencyProvider->collection)->add($dependencyProvider);
             }
         }
 
         foreach ($this->disabledFeatureProviders->keys() as $providedClassName) {
             $this->dependencyProviders->remove($providedClassName);
         }
-    }
-
-    private function addToCollection(SingletonCollectionInterface $collectionName, DependencyProvider $dependencyProvider): void
-    {
-        if (!$this->collections->hasKey($collectionName)) {
-            $this->collections->put($collectionName, new Set());
-        }
-
-        $this->collections->get($collectionName)->add($dependencyProvider);
     }
 
     /**
