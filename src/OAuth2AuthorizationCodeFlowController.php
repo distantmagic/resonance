@@ -14,7 +14,10 @@ use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
-#[Singleton(provides: OAuth2AuthorizationCodeFlowControllerInterface::class)]
+#[Singleton(
+    grantsFeature: Feature::OAuth2,
+    provides: OAuth2AuthorizationCodeFlowControllerInterface::class,
+)]
 readonly class OAuth2AuthorizationCodeFlowController implements OAuth2AuthorizationCodeFlowControllerInterface
 {
     public function __construct(
@@ -86,6 +89,15 @@ readonly class OAuth2AuthorizationCodeFlowController implements OAuth2Authorizat
         } else {
             $formAction->add($redirectUris);
         }
+    }
+
+    public function redirectToAuthenticatedPage(
+        Request $request,
+        Response $response,
+    ): HttpInterceptableInterface {
+        $routeSymbol = $this->oAuth2EndpointResponderAggregate->endpointResponderRouteSymbol->get(OAuth2Endpoint::AuthenticatedPage);
+
+        return new InternalRedirect($routeSymbol);
     }
 
     public function redirectToClientScopeConsentPage(

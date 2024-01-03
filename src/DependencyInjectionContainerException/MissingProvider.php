@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\DependencyInjectionContainerException;
 
 use Distantmagic\Resonance\DependencyInjectionContainerException;
-use Ds\Set;
+use Distantmagic\Resonance\DependencyStack;
 use Throwable;
 
 class MissingProvider extends DependencyInjectionContainerException
 {
     /**
-     * @param class-string      $className
-     * @param Set<class-string> $stack
+     * @param class-string $className
      */
     public function __construct(
         string $className,
-        Set $stack,
+        DependencyStack $stack,
         ?Throwable $previous = null,
     ) {
         parent::__construct(

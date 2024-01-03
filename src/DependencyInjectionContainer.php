@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Closure;
-use Distantmagic\Resonance\Attribute\OverridesSingletonProvider;
 use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\DependencyInjectionContainerException\AmbiguousProvider;
-use Distantmagic\Resonance\DependencyInjectionContainerException\DependencyCycle;
+use Distantmagic\Resonance\DependencyInjectionContainerException\DisabledFeatureProvider;
 use Distantmagic\Resonance\DependencyInjectionContainerException\MissingProvider;
 use Ds\Map;
 use Ds\Set;
+use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionFunction;
-use Swoole\Coroutine\WaitGroup;
+use ReflectionFunctionAbstract;
 use Throwable;
 
 use function Swoole\Coroutine\run;
@@ -25,37 +25,37 @@ readonly class DependencyInjectionContainer
     public PHPProjectFiles $phpProjectFiles;
 
     /**
-     * @var Map<class-string,Set<SingletonCollectionInterface>>
-     */
-    private Map $collectionDependencies;
-
-    /**
-     * @var Map<SingletonCollectionInterface,Set<class-string>>
+     * @var Map<SingletonCollectionInterface,Set<DependencyProvider>>
      */
     private Map $collections;
 
     /**
-     * @var Set<string>
+     * @var Map<class-string,DependencyProvider>
      */
-    private Set $notBuildable;
+    private Map $dependencyProviders;
 
     /**
-     * @var Map<class-string,ReflectionClass>
+     * @var Map<class-string,FeatureInterface>
      */
-    private Map $providers;
+    private Map $disabledFeatureProviders;
 
     private SingletonContainer $singletons;
 
+    /**
+     * @var Set<FeatureInterface>
+     */
+    private Set $wantedFeatures;
+
     public function __construct()
     {
-        $this->collectionDependencies = new Map();
         $this->collections = new Map();
-        $this->notBuildable = new Set();
-        $this->providers = new Map();
+        $this->dependencyProviders = new Map();
+        $this->disabledFeatureProviders = new Map();
         $this->phpProjectFiles = new PHPProjectFiles();
+        $this->wantedFeatures = new Set();
 
         $this->singletons = new SingletonContainer();
-        $this->singletons->set(self::class, $this);
+        $this->singletons->set($this::class, $this);
     }
 
     /**
@@ -69,31 +69,6 @@ readonly class DependencyInjectionContainer
      */
     public function call(Closure $function): mixed
     {
-        $reflectionFunction = new ReflectionFunction($function);
-
-        $parameters = [];
-
-        foreach (new SingletonFunctionParametersIterator($reflectionFunction) as $name => $functionParameter) {
-            $parameters[$name] = $this->make($functionParameter->className);
-        }
-
-        return $function(...$parameters);
-    }
-
-    /**
-     * @template TSingleton
-     *
-     * @param class-string<TSingleton> $className
-     *
-     * @return TSingleton
-     */
-    public function make(string $className): object
-    {
-        /**
-         * @var null|TSingleton
-         */
-        $ret = null;
-
         /**
          * Bringing this reference out of the coroutine event loops allows the
          * console component to catch that exception and format it.
@@ -103,14 +78,18 @@ readonly class DependencyInjectionContainer
         $exception = null;
 
         /**
-         * WaitGroup is not necesary here since `run` is going to wait for all
-         * coroutines to finish.
-         *
+         * @var null|array<string,mixed>
+         */
+        $parameters = null;
+
+        /**
          * @var bool $coroutineResult
          */
-        $coroutineResult = run(function () use ($className, &$exception, &$ret) {
+        $coroutineResult = run(function () use (&$exception, $function, &$parameters) {
             try {
-                $ret = $this->doMake($className);
+                $reflectionFunction = new ReflectionFunction($function);
+
+                $parameters = $this->makeParameters($reflectionFunction, new DependencyStack());
             } catch (Throwable $throwable) {
                 $exception = $throwable;
             }
@@ -121,18 +100,61 @@ readonly class DependencyInjectionContainer
         }
 
         if (!$coroutineResult) {
-            throw new DependencyInjectionContainerException(
-                message: 'Container event loop failed',
-            );
+            throw new DependencyInjectionContainerException('Unable to start event loop');
         }
 
-        if (!($ret instanceof $className)) {
-            throw new DependencyInjectionContainerException(
-                message: 'Unable to make an instance of '.$className,
-            );
+        if (!is_array($parameters)) {
+            throw new DependencyInjectionContainerException('Unable to build function parameters');
         }
 
-        return $ret;
+        return $function(...$parameters);
+    }
+
+    /**
+     * @template TSingleton as object
+     *
+     * @param class-string<TSingleton> $className
+     *
+     * @return TSingleton
+     */
+    public function make(string $className): object
+    {
+        /**
+         * @var null|Throwable
+         */
+        $exception = null;
+
+        /**
+         * @var null|TSingleton
+         */
+        $ret = null;
+
+        /**
+         * @var bool $coroutineResult
+         */
+        $coroutineResult = run(function () use ($className, &$exception, &$ret) {
+            $stack = new DependencyStack();
+
+            try {
+                if ($this->dependencyProviders->hasKey($className)) {
+                    $ret = $this->makeSingleton($className, $stack);
+                } else {
+                    $ret = $this->makeClass($className, $stack);
+                }
+            } catch (Throwable $throwable) {
+                $exception = $throwable;
+            }
+        });
+
+        if ($exception) {
+            throw $exception;
+        }
+
+        if (!$coroutineResult) {
+            throw new DependencyInjectionContainerException('Unable to start event loop');
+        }
+
+        return $this->assertClass($className, $ret);
     }
 
     public function registerSingletons(): void
@@ -140,92 +162,151 @@ readonly class DependencyInjectionContainer
         foreach ($this->phpProjectFiles->findByAttribute(Singleton::class) as $reflectionAttribute) {
             $providedClassName = $reflectionAttribute->attribute->provides ?? $reflectionAttribute->reflectionClass->getName();
 
-            foreach ($reflectionAttribute->reflectionClass->getAttributes(OverridesSingletonProvider::class) as $overrides) {
-                $overridesClassName = $overrides->newInstance()->overrides;
+            $requiredCollectionsReflections = $reflectionAttribute
+                ->reflectionClass
+                ->getAttributes(RequiresSingletonCollection::class, ReflectionAttribute::IS_INSTANCEOF)
+            ;
 
-                if ($this->providers->get($providedClassName)->getName() === $overridesClassName) {
-                    $this->providers->remove($providedClassName);
-                } else {
-                    throw new DependencyInjectionContainerException(sprintf(
-                        'Overridden provider is not registered: "%s"',
-                        $overridesClassName,
-                    ));
-                }
+            /**
+             * @var Set<SingletonCollectionInterface> $requiredCollections
+             */
+            $requiredCollections = new Set();
+
+            foreach ($requiredCollectionsReflections as $requiredCollectionReflection) {
+                $requiredCollections->add($requiredCollectionReflection->newInstance()->collection);
             }
 
-            if ($this->providers->hasKey($providedClassName)) {
-                throw new AmbiguousProvider(
-                    $providedClassName,
-                    [
-                        $this->providers->get($providedClassName)->getName(),
-                        $reflectionAttribute->reflectionClass->getName(),
-                    ]
-                );
+            $dependencyProvider = new DependencyProvider(
+                collection: $reflectionAttribute->attribute->collection,
+                grantsFeature: $reflectionAttribute->attribute->grantsFeature,
+                providedClassName: $providedClassName,
+                providerReflectionClass: $reflectionAttribute->reflectionClass,
+                requiredCollections: $requiredCollections,
+            );
+
+            if ($reflectionAttribute->attribute->wantsFeature) {
+                $this->wantedFeatures->add($reflectionAttribute->attribute->wantsFeature);
             }
 
-            $collectionName = $reflectionAttribute->attribute->collection;
-
-            if ($collectionName) {
-                $this->addToCollection($collectionName, $providedClassName);
+            if ($this->dependencyProviders->hasKey($providedClassName)) {
+                throw new AmbiguousProvider($providedClassName);
             }
 
-            foreach ($reflectionAttribute->reflectionClass->getAttributes(RequiresSingletonCollection::class) as $requiresCollectionReflection) {
-                $requiredCollection = $requiresCollectionReflection->newInstance()->collection;
+            $this->dependencyProviders->put($providedClassName, $dependencyProvider);
+        }
 
-                if ($requiredCollection instanceof SingletonCollectionInterface) {
-                    $this->addCollectionDependency($providedClassName, $requiredCollection);
-                }
+        foreach ($this->dependencyProviders as $providedClassName => $dependencyProvider) {
+            if ($dependencyProvider->grantsFeature && !$this->wantedFeatures->contains($dependencyProvider->grantsFeature)) {
+                $this->disabledFeatureProviders->put($providedClassName, $dependencyProvider->grantsFeature);
+                $this->dependencyProviders->remove($providedClassName);
+            } elseif ($dependencyProvider->collection) {
+                $this->addToCollection($dependencyProvider->collection, $dependencyProvider);
             }
-
-            $this->providers->put($providedClassName, $reflectionAttribute->reflectionClass);
         }
     }
 
-    /**
-     * @param class-string $className
-     */
-    private function addCollectionDependency(string $className, SingletonCollectionInterface $collectionName): void
-    {
-        if (!$this->collectionDependencies->hasKey($className)) {
-            $this->collectionDependencies->put($className, new Set());
-        }
-
-        $this->collectionDependencies->get($className)->add($collectionName);
-    }
-
-    /**
-     * @param class-string $providedClassName
-     */
-    private function addToCollection(SingletonCollectionInterface $collectionName, string $providedClassName): void
+    private function addToCollection(SingletonCollectionInterface $collectionName, DependencyProvider $dependencyProvider): void
     {
         if (!$this->collections->hasKey($collectionName)) {
             $this->collections->put($collectionName, new Set());
         }
 
-        $this->collections->get($collectionName)->add($providedClassName);
+        $this->collections->get($collectionName)->add($dependencyProvider);
     }
 
     /**
-     * @param Set<class-string> $previous
+     * @template TObject
      *
-     * @return Map<string,null|object>
+     * @param class-string<TObject> $className
+     *
+     * @return TObject
      */
-    private function buildSingletonParameters(ReflectionClass $reflectionClass, bool $isNullable, Set $previous): Map
+    private function assertClass(string $className, mixed $providedObject): object
+    {
+        if (is_null($providedObject)) {
+            throw new DependencyInjectionContainerException(sprintf('Expected: %s, got NULL', $className));
+        }
+
+        if (!is_object($providedObject)) {
+            throw new DependencyInjectionContainerException(sprintf('Expected: %s, got %s', $className, gettype($providedObject)));
+        }
+
+        if (is_a($providedObject, $className, true)) {
+            return $providedObject;
+        }
+
+        throw new DependencyInjectionContainerException(sprintf(
+            'Invalid provided class: %s, expected: %s',
+            $providedObject::class,
+            $className,
+        ));
+    }
+
+    private function buildCollection(SingletonCollectionInterface $singletonCollection, DependencyStack $stack): void
+    {
+        $collection = $this->collections->get($singletonCollection, null);
+
+        if (!$collection) {
+            return;
+        }
+
+        foreach ($collection as $collectionMember) {
+            $this->makeSingleton(
+                $collectionMember->providedClassName,
+                $stack->branch($collectionMember->providedClassName),
+            );
+        }
+    }
+
+    /**
+     * @template TObject as object
+     *
+     * @param class-string<TObject> $className
+     *
+     * @return TObject
+     */
+    private function makeClass(string $className, DependencyStack $stack): object
+    {
+        return $this->makeClassFromReflection(new ReflectionClass($className), $stack);
+    }
+
+    /**
+     * @template TObject as object
+     *
+     * @param ReflectionClass<TObject> $reflectionClass
+     *
+     * @return TObject
+     */
+    private function makeClassFromReflection(ReflectionClass $reflectionClass, DependencyStack $stack): object
+    {
+        $constructorReflection = $reflectionClass->getConstructor();
+
+        if ($constructorReflection) {
+            return $reflectionClass->newInstance(...$this->makeParameters($constructorReflection, $stack));
+        }
+
+        return $reflectionClass->newInstance();
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    private function makeParameters(ReflectionFunctionAbstract $reflectionFunction, DependencyStack $stack): array
     {
         /**
-         * @var Map<string,null|object> $parameters
+         * @var array<string,mixed> $parameters
          */
-        $parameters = new Map();
+        $parameters = [];
 
-        foreach (new SingletonConstructorParametersIterator($reflectionClass) as $name => $functionParameter) {
-            $parameters->put(
-                $name,
-                $this->makeSingleton(
-                    $functionParameter->className,
-                    $functionParameter->reflectionParameter->allowsNull(),
-                    $previous->copy(),
-                ),
-            );
+        foreach (new SingletonFunctionParametersIterator($reflectionFunction) as $name => $singletonFunctionParameter) {
+            if ($singletonFunctionParameter->reflectionParameter->isOptional() && !$this->dependencyProviders->hasKey($singletonFunctionParameter->className)) {
+                $parameters[$name] = null;
+            } else {
+                $parameters[$name] = $this->makeSingleton(
+                    $singletonFunctionParameter->className,
+                    $stack->branch($singletonFunctionParameter->className),
+                );
+            }
         }
 
         return $parameters;
@@ -238,121 +319,42 @@ readonly class DependencyInjectionContainer
      *
      * @return TSingleton
      */
-    private function doMake(string $className): object
+    private function makeSingleton(string $className, DependencyStack $stack): object
     {
         if ($this->singletons->has($className)) {
             return $this->singletons->get($className);
         }
 
-        if ($this->providers->hasKey($className)) {
-            return $this->makeSingleton($className, false, new Set());
-        }
+        $dependencyProvider = $this->dependencyProviders->get($className, null);
 
-        $reflectionClass = new ReflectionClass($className);
-
-        $parameters = $this->buildSingletonParameters($reflectionClass, false, new Set());
-
-        return $reflectionClass->newInstance(...$parameters->toArray());
-    }
-
-    /**
-     * @template TSingleton
-     *
-     * @param class-string<TSingleton> $className
-     * @param Set<class-string>        $previous
-     *
-     * @return null|TSingleton
-     */
-    private function doMakeSingleton(string $className, bool $isNullable, Set $previous): ?object
-    {
-        if (!$this->providers->hasKey($className)) {
-            throw new MissingProvider($className, $previous);
-        }
-
-        if ($previous->contains($className)) {
-            throw new DependencyCycle($className, $previous);
-        }
-
-        $previous->add($className);
-
-        $providerReflection = $this->providers->get($className);
-
-        if ($this->collectionDependencies->hasKey($className)) {
-            $collectionDependencies = $this->collectionDependencies->get($className);
-
-            foreach ($collectionDependencies as $collectionName) {
-                if ($this->collections->hasKey($collectionName)) {
-                    foreach ($this->collections->get($collectionName) as $collectionClassName) {
-                        $this->makeSingleton($collectionClassName, false, $previous->copy());
-                    }
-                }
-            }
-        }
-
-        $parameters = $this->buildSingletonParameters($providerReflection, $isNullable, $previous);
-
-        $provider = $providerReflection->newInstance(...$parameters->toArray());
-
-        if ($provider instanceof SingletonProviderInterface) {
-            if (!$provider->shouldRegister()) {
-                if ($isNullable) {
-                    return null;
-                }
-
-                throw new MissingProvider($className, $previous);
+        if (!$dependencyProvider) {
+            if ($this->disabledFeatureProviders->hasKey($className)) {
+                throw new DisabledFeatureProvider(
+                    $className,
+                    $this->disabledFeatureProviders->get($className),
+                    $stack,
+                );
             }
 
-            /**
-             * @var TSingleton
-             */
-            return $provider->provide($this->singletons, $this->phpProjectFiles);
+            throw new MissingProvider($className, $stack);
         }
 
-        /**
-         * @var null|TSingleton
-         */
-        return $provider;
-    }
-
-    /**
-     * @template TSingleton
-     *
-     * @param class-string<TSingleton> $className
-     * @param Set<class-string>        $previous
-     *
-     * @return null|TSingleton
-     */
-    private function makeSingleton(string $className, bool $isNullable, Set $previous): ?object
-    {
-        if ($this->notBuildable->contains($className) && $isNullable) {
-            return null;
+        foreach ($dependencyProvider->requiredCollections as $singletonCollection) {
+            $this->buildCollection($singletonCollection, $stack);
         }
 
-        if ($this->singletons->has($className)) {
-            return $this->singletons->get($className);
+        $potentialSingletonProvider = $this->makeClassFromReflection($dependencyProvider->providerReflectionClass, $stack);
+
+        if ($potentialSingletonProvider instanceof SingletonProviderInterface) {
+            $potentialSingleton = $potentialSingletonProvider->provide($this->singletons, $this->phpProjectFiles);
+        } else {
+            $potentialSingleton = $potentialSingletonProvider;
         }
 
-        try {
-            $singleton = $this->doMakeSingleton($className, $isNullable, $previous);
+        $singleton = $this->assertClass($className, $potentialSingleton);
 
-            if (!$singleton) {
-                $this->notBuildable->add($className);
+        $this->singletons->set($className, $singleton);
 
-                if ($isNullable) {
-                    return null;
-                }
-
-                throw new MissingProvider($className, $previous);
-            }
-
-            $this->singletons->set($className, $singleton);
-
-            return $singleton;
-        } catch (Throwable $throwable) {
-            throw new DependencyInjectionContainerException(
-                message: 'Error while building: '.$className,
-                previous: $throwable,
-            );
-        }
+        return $singleton;
     }
 }

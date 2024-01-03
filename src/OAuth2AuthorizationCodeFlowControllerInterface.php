@@ -27,6 +27,11 @@ interface OAuth2AuthorizationCodeFlowControllerInterface
         Response $response,
     ): void;
 
+    public function redirectToAuthenticatedPage(
+        Request $request,
+        Response $response,
+    ): HttpInterceptableInterface|HttpResponderInterface;
+
     public function redirectToClientScopeConsentPage(
         Request $request,
         Response $response,

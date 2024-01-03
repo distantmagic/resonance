@@ -12,7 +12,10 @@ use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationExcep
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use RuntimeException;
 
-#[Singleton(provides: RefreshTokenRepositoryInterface::class)]
+#[Singleton(
+    grantsFeature: Feature::OAuth2,
+    provides: RefreshTokenRepositoryInterface::class,
+)]
 readonly class OAuth2RefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
     public function __construct(

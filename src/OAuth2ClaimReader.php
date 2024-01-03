@@ -13,7 +13,7 @@ use League\OAuth2\Server\ResourceServer;
 use Swoole\Http\Request;
 use WeakMap;
 
-#[Singleton]
+#[Singleton(grantsFeature: Feature::OAuth2)]
 readonly class OAuth2ClaimReader
 {
     /**

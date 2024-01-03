@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\HttpResponder\OAuth2;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\HttpResponder\PsrResponder;
@@ -18,7 +19,7 @@ use Nyholm\Psr7\Factory\Psr17Factory;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
-#[Singleton]
+#[Singleton(grantsFeature: Feature::OAuth2)]
 final readonly class Authorization extends HttpResponder
 {
     public function __construct(

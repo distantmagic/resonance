@@ -56,4 +56,9 @@ readonly class CronScheduler implements TickTimerJobInterface
             }
         }
     }
+
+    public function shouldRegister(): bool
+    {
+        return !$this->cronJobAggregate->cronJobs->isEmpty();
+    }
 }

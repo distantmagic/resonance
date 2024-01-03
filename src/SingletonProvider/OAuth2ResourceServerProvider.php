@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\OAuth2Configuration;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
@@ -15,7 +16,10 @@ use League\OAuth2\Server\ResourceServer;
 /**
  * @template-extends SingletonProvider<ResourceServer>
  */
-#[Singleton(provides: ResourceServer::class)]
+#[Singleton(
+    grantsFeature: Feature::OAuth2,
+    provides: ResourceServer::class,
+)]
 final readonly class OAuth2ResourceServerProvider extends SingletonProvider
 {
     public function __construct(

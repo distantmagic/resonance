@@ -11,7 +11,10 @@ use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use RuntimeException;
 
-#[Singleton(provides: AuthCodeRepositoryInterface::class)]
+#[Singleton(
+    grantsFeature: Feature::OAuth2,
+    provides: AuthCodeRepositoryInterface::class,
+)]
 readonly class OAuth2AuthCodeRepository implements AuthCodeRepositoryInterface
 {
     public function __construct(

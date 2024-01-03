@@ -11,8 +11,8 @@ use Swoole\Http\Request;
 readonly class AuthenticatedUserProvider
 {
     public function __construct(
-        private OAuth2ClaimReader $oAuth2ClaimReader,
         private SessionAuthentication $sessionAuthentication,
+        private ?OAuth2ClaimReader $oAuth2ClaimReader = null,
     ) {}
 
     public function getAuthenticatedUser(Request $request): ?AuthenticatedUser
@@ -26,7 +26,7 @@ readonly class AuthenticatedUserProvider
             );
         }
 
-        if (!$this->oAuth2ClaimReader->hasClaim($request)) {
+        if (!$this->oAuth2ClaimReader?->hasClaim($request)) {
             return null;
         }
 

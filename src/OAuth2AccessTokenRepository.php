@@ -14,7 +14,10 @@ use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationExcep
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use RuntimeException;
 
-#[Singleton(provides: AccessTokenRepositoryInterface::class)]
+#[Singleton(
+    grantsFeature: Feature::OAuth2,
+    provides: AccessTokenRepositoryInterface::class,
+)]
 readonly class OAuth2AccessTokenRepository implements AccessTokenRepositoryInterface
 {
     public function __construct(

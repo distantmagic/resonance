@@ -9,7 +9,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 
-#[Singleton(provides: ClientRepositoryInterface::class)]
+#[Singleton(
+    grantsFeature: Feature::OAuth2,
+    provides: ClientRepositoryInterface::class,
+)]
 readonly class OAuth2ClientRepository implements ClientRepositoryInterface
 {
     public function __construct(

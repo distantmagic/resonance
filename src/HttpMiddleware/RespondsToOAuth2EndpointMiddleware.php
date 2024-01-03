@@ -8,6 +8,7 @@ use Distantmagic\Resonance\Attribute;
 use Distantmagic\Resonance\Attribute\HandlesMiddlewareAttribute;
 use Distantmagic\Resonance\Attribute\RespondsToOAuth2Endpoint;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpMiddleware;
 use Distantmagic\Resonance\HttpResponderInterface;
@@ -24,7 +25,10 @@ use Swoole\Http\Response;
     attribute: RespondsToOAuth2Endpoint::class,
     priority: 900,
 )]
-#[Singleton(collection: SingletonCollection::HttpMiddleware)]
+#[Singleton(
+    collection: SingletonCollection::HttpMiddleware,
+    grantsFeature: Feature::OAuth2,
+)]
 readonly class RespondsToOAuth2EndpointMiddleware extends HttpMiddleware
 {
     public function __construct(

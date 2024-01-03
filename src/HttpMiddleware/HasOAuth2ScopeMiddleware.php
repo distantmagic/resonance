@@ -10,6 +10,7 @@ use Distantmagic\Resonance\Attribute\HasOAuth2Scope;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\AuthenticatedUserProvider;
 use Distantmagic\Resonance\AuthenticatedUserSource;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpMiddleware;
 use Distantmagic\Resonance\HttpResponder\Error\Forbidden;
@@ -31,7 +32,10 @@ use Swoole\Http\Response;
     attribute: HasOAuth2Scope::class,
     priority: 1000,
 )]
-#[Singleton(collection: SingletonCollection::HttpMiddleware)]
+#[Singleton(
+    collection: SingletonCollection::HttpMiddleware,
+    grantsFeature: Feature::OAuth2,
+)]
 readonly class HasOAuth2ScopeMiddleware extends HttpMiddleware
 {
     public function __construct(

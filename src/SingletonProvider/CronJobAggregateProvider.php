@@ -28,12 +28,14 @@ final readonly class CronJobAggregateProvider extends SingletonProvider
         $cronJobAggregate = new CronJobAggregate();
 
         foreach ($this->collectCronJobs($singletons) as $cronJobAttribute) {
-            $cronRegisteredJob = new CronRegisteredJob(
-                $cronJobAttribute->singleton,
-                $cronJobAttribute->attribute->expression,
-                $cronJobAttribute->attribute->name ?? $cronJobAttribute->singleton::class,
-            );
-            $cronJobAggregate->cronJobs->add($cronRegisteredJob);
+            if ($cronJobAttribute->singleton->shouldRegister()) {
+                $cronRegisteredJob = new CronRegisteredJob(
+                    $cronJobAttribute->singleton,
+                    $cronJobAttribute->attribute->expression,
+                    $cronJobAttribute->attribute->name ?? $cronJobAttribute->singleton::class,
+                );
+                $cronJobAggregate->cronJobs->add($cronRegisteredJob);
+            }
         }
 
         return $cronJobAggregate;

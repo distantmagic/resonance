@@ -9,7 +9,10 @@ use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 
-#[Singleton(provides: ScopeRepositoryInterface::class)]
+#[Singleton(
+    grantsFeature: Feature::OAuth2,
+    provides: ScopeRepositoryInterface::class,
+)]
 readonly class OAuth2ScopeRepository implements ScopeRepositoryInterface
 {
     public function __construct(

@@ -28,11 +28,13 @@ final readonly class TickTimerJobAggregateProvider extends SingletonProvider
         $tickTimerJobAggregate = new TickTimerJobAggregate();
 
         foreach ($this->collectTickTimerJobs($singletons) as $tickTimerJobAttribute) {
-            $tickTimerRegisteredJob = new TickTimerRegisteredJob(
-                $tickTimerJobAttribute->singleton,
-                $tickTimerJobAttribute->attribute->interval,
-            );
-            $tickTimerJobAggregate->tickTimerJobs->add($tickTimerRegisteredJob);
+            if ($tickTimerJobAttribute->singleton->shouldRegister()) {
+                $tickTimerRegisteredJob = new TickTimerRegisteredJob(
+                    $tickTimerJobAttribute->singleton,
+                    $tickTimerJobAttribute->attribute->interval,
+                );
+                $tickTimerJobAggregate->tickTimerJobs->add($tickTimerRegisteredJob);
+            }
         }
 
         return $tickTimerJobAggregate;

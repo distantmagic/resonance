@@ -16,9 +16,7 @@ final readonly class DoctrineConsoleRunner
     {
         Runtime::enableCoroutine(SWOOLE_HOOK_ALL);
 
-        $container->call(static function (
-            DoctrineConsoleEntityManagerProvider $entityManagerProvider,
-        ) {
+        $container->call(static function (DoctrineConsoleEntityManagerProvider $entityManagerProvider) {
             $cli = new Application('Doctrine Command Line Interface');
 
             $cli->setAutoExit(false);

@@ -10,7 +10,7 @@ use LogicException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
-#[Singleton]
+#[Singleton(grantsFeature: Feature::OAuth2)]
 readonly class OAuth2AuthorizationRequestSessionStore
 {
     public function __construct(

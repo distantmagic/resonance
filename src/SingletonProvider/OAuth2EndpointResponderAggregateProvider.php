@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance\SingletonProvider;
 use Distantmagic\Resonance\Attribute\RespondsToHttp;
 use Distantmagic\Resonance\Attribute\RespondsToOAuth2Endpoint;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\HttpResponderCollection;
 use Distantmagic\Resonance\OAuth2EndpointResponderAggregate;
 use Distantmagic\Resonance\PHPProjectFiles;
@@ -18,7 +19,10 @@ use ReflectionAttribute;
 /**
  * @template-extends SingletonProvider<HttpResponderCollection>
  */
-#[Singleton(provides: OAuth2EndpointResponderAggregate::class)]
+#[Singleton(
+    grantsFeature: Feature::OAuth2,
+    provides: OAuth2EndpointResponderAggregate::class,
+)]
 final readonly class OAuth2EndpointResponderAggregateProvider extends SingletonProvider
 {
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): OAuth2EndpointResponderAggregate
