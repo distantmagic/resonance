@@ -8,6 +8,7 @@ use Distantmagic\Resonance\Attribute\ConsoleCommand;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\CoroutineCommand;
 use Distantmagic\Resonance\StaticPageProcessor;
+use Distantmagic\Resonance\SwooleConfiguration;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -17,9 +18,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 final class StaticPagesBuild extends CoroutineCommand
 {
-    public function __construct(private StaticPageProcessor $staticPageProcessor)
-    {
-        parent::__construct();
+    public function __construct(
+        private StaticPageProcessor $staticPageProcessor,
+        SwooleConfiguration $swooleConfiguration,
+    ) {
+        parent::__construct($swooleConfiguration);
     }
 
     protected function executeInCoroutine(InputInterface $input, OutputInterface $output): int

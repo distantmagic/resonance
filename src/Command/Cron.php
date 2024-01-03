@@ -6,6 +6,8 @@ namespace Distantmagic\Resonance\Command;
 
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
 use Distantmagic\Resonance\Command;
+use Distantmagic\Resonance\CoroutineCommand;
+use Distantmagic\Resonance\CronJobAggregate;
 use Distantmagic\Resonance\SwooleConfiguration;
 use Distantmagic\Resonance\TickTimerScheduler;
 use Psr\Log\LoggerInterface;
@@ -17,24 +19,24 @@ use Symfony\Component\Console\Output\OutputInterface;
     name: 'cron',
     description: 'Start CRON scheduler'
 )]
-final class Cron extends Command
+final class Cron extends CoroutineCommand
 {
     public function __construct(
+        private CronJobAggregate $cronJobAggregate,
         private LoggerInterface $logger,
-        private SwooleConfiguration $swooleConfiguration,
+        SwooleConfiguration $swooleConfiguration,
         private TickTimerScheduler $tickTimerScheduler,
     ) {
-        parent::__construct();
+        parent::__construct($swooleConfiguration);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function executeInCoroutine(InputInterface $input, OutputInterface $output): int
     {
-        swoole_async_set([
-            'enable_coroutine' => false,
-            'log_level' => $this->swooleConfiguration->logLevel,
-        ]);
-
         $this->logger->info('cron_scheduler_start()');
+
+        foreach ($this->cronJobAggregate->cronJobs as $cronJob) {
+            $this->logger->debug(sprintf('cron_register_job(%s)', $cronJob->name));
+        }
 
         $this->tickTimerScheduler->start();
 

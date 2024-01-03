@@ -19,13 +19,19 @@ abstract class CoroutineCommand extends SymfonyCommand
      * Do not use Symfony's command constructor arguments to make it easier on
      * the DI.
      */
-    public function __construct()
-    {
+    public function __construct(
+        private SwooleConfiguration $swooleConfiguration,
+    ) {
         parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        swoole_async_set([
+            'enable_coroutine' => true,
+            'log_level' => $this->swooleConfiguration->logLevel,
+        ]);
+
         /**
          * @var null|Throwable
          */

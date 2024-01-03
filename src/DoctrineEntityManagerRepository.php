@@ -103,18 +103,24 @@ readonly class DoctrineEntityManagerRepository
 
     /**
      * @template TEntityClass of object
+     * @template TEntityRepository of EntityRepository<TEntityClass>
      * @template TCallbackReturn
      *
-     * @param class-string<TEntityClass>                                                      $className
-     * @param callable(EntityRepository<TEntityClass>,EntityManagerInterface):TCallbackReturn $callback
+     * @param class-string<TEntityClass>                                         $className
+     * @param callable(EntityManagerInterface,TEntityRepository):TCallbackReturn $callback
      *
      * @return TCallbackReturn
      */
-    public function withRepository(string $className, callable $callback, string $name = 'default'): mixed
+    public function withRepository(string $className, callable $callback, string $name = 'default', bool $flush = true): mixed
     {
         return $this->withEntityManager(static function (EntityManagerInterface $entityManager) use ($className, $callback) {
-            return $callback($entityManager->getRepository($className), $entityManager);
-        }, $name);
+            /**
+             * @var TEntityRepository
+             */
+            $repository = $entityManager->getRepository($className);
+
+            return $callback($entityManager, $repository);
+        }, $name, $flush);
     }
 
     private function getWeakReference(string $name = 'default'): EntityManagerWeakReference

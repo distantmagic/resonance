@@ -12,6 +12,10 @@ description: >
 
 # Usage
 
+:::tip
+You can use {{docs/features/timers/cron/index}} jobs to delete expired tokens.
+:::
+
 Instead of implementing several repositories, you can implement just the 
 `OAuth2EntityRepositoryInterface` that is compatible with all the grant types.
 
