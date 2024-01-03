@@ -21,6 +21,74 @@ However, they cannot share the same port if they are separated.
 
 # Usage
 
+## Enabling the Server
+
+To enable WebSocket server you need to provide the 
+`RPCMethodValidatorInterface`. For example:
+
+```php file:app\RPCMethod.php
+<?php
+
+namespace App;
+
+use Distantmagic\Resonance\EnumValuesTrait;
+use Distantmagic\Resonance\NameableEnumTrait;
+use Distantmagic\Resonance\RPCMethodInterface;
+
+enum RPCMethod: string implements RPCMethodInterface
+{
+    use EnumValuesTrait;
+    use NameableEnumTrait;
+
+    case Echo = 'echo';
+}
+```
+
+:::note
+Do not forget about `wantsFeature: Feature::WebSocket` in the `Singleton`
+annotation. If added to any singleton, it tells Resonance to enable the 
+WebSocket server.
+:::
+
+```php file:app\RPCMethodValidator.php
+<?php
+
+namespace App;
+
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Feature;
+use Distantmagic\Resonance\RPCMethodInterface;
+use Distantmagic\Resonance\RPCMethodValidatorInterface;
+
+#[Singleton(
+    wantsFeature: Feature::WebSocket,
+    provides: RPCMethodValidatorInterface::class,
+)]
+readonly class RPCMethodValidator implements RPCMethodValidatorInterface
+{
+    public function cases(): array
+    {
+        return RPCMethod::cases();
+    }
+
+    public function castToRPCMethod(string $methodName): RPCMethodInterface
+    {
+        return RPCMethod::from($methodName);
+    }
+
+    public function names(): array
+    {
+        $ret = [];
+
+        foreach ($this->cases() as $case) {
+            array_push($ret, $case->getName());
+        }
+
+        return $ret;
+    }
+}
+```
+
 ## Setting up the Bootstrap
 
 ```graphviz render

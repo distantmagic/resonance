@@ -8,6 +8,7 @@ use Distantmagic\Resonance\Attribute\ControlsWebSocketProtocol;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\AuthenticatedUserProvider;
 use Distantmagic\Resonance\CSRFManager;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\Gatekeeper;
 use Distantmagic\Resonance\InputValidator\RPCMessageValidator;
 use Distantmagic\Resonance\SingletonCollection;
@@ -29,7 +30,10 @@ use Swoole\WebSocket\Server;
 use Throwable;
 
 #[ControlsWebSocketProtocol(WebSocketProtocol::RPC)]
-#[Singleton(collection: SingletonCollection::WebSocketProtocolController)]
+#[Singleton(
+    collection: SingletonCollection::WebSocketProtocolController,
+    grantsFeature: Feature::WebSocket,
+)]
 final readonly class RPCProtocolController extends WebSocketProtocolController
 {
     /**

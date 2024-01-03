@@ -13,7 +13,7 @@ use Swoole\Http\Response;
 use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server;
 
-#[Singleton]
+#[Singleton(grantsFeature: Feature::WebSocket)]
 final readonly class WebSocketServerController
 {
     /**

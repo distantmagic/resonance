@@ -17,7 +17,8 @@ use Distantmagic\Resonance\WebSocketServerController;
 use Psr\Log\LoggerInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
-use Swoole\WebSocket\Server;
+use Swoole\Http\Server as HttpServer;
+use Swoole\WebSocket\Server as WebSocketServer;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -27,7 +28,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 final class Serve extends Command
 {
-    private Server $server;
+    private HttpServer|WebSocketServer $server;
 
     public function __construct(
         private ApplicationConfiguration $applicationConfiguration,
@@ -35,9 +36,13 @@ final class Serve extends Command
         private HttpResponderAggregate $httpResponderAggregate,
         private LoggerInterface $logger,
         private SwooleConfiguration $swooleConfiguration,
-        private WebSocketServerController $webSocketServerController,
+        private ?WebSocketServerController $webSocketServerController = null,
     ) {
         parent::__construct();
+
+        $serverClass = $webSocketServerController
+            ? WebSocketServer::class
+            : HttpServer::class;
 
         /**
          * SWOOLE_SSL might not be defined in test environment.
@@ -46,7 +51,7 @@ final class Serve extends Command
          * @psalm-suppress UnusedPsalmSuppress
          * @psalm-suppress UndefinedConstant
          */
-        $this->server = new Server(
+        $this->server = new $serverClass(
             $this->swooleConfiguration->host,
             $this->swooleConfiguration->port,
             SWOOLE_PROCESS,
@@ -69,12 +74,15 @@ final class Serve extends Command
         ]);
 
         $this->server->on('beforeShutdown', $this->onBeforeShutdown(...));
-        $this->server->on('close', $this->webSocketServerController->onClose(...));
-        $this->server->on('message', $this->webSocketServerController->onMessage(...));
-        $this->server->on('open', $this->webSocketServerController->onOpen(...));
         $this->server->on('request', $this->httpResponderAggregate->respond(...));
-        $this->server->on('handshake', $this->onHandshake(...));
         $this->server->on('start', $this->onStart(...));
+
+        if ($this->webSocketServerController) {
+            $this->server->on('close', $this->webSocketServerController->onClose(...));
+            $this->server->on('handshake', $this->onHandshake(...));
+            $this->server->on('message', $this->webSocketServerController->onMessage(...));
+            $this->server->on('open', $this->webSocketServerController->onOpen(...));
+        }
 
         return (int) !$this->server->start();
     }
@@ -86,7 +94,7 @@ final class Serve extends Command
 
     private function onHandshake(Request $request, Response $response): void
     {
-        $this->webSocketServerController->onHandshake($this->server, $request, $response);
+        $this->webSocketServerController?->onHandshake($this->server, $request, $response);
     }
 
     private function onStart(): void
@@ -98,6 +106,11 @@ final class Serve extends Command
             $this->swooleConfiguration->host,
             $this->swooleConfiguration->port,
         ));
+
+        if (!$this->webSocketServerController) {
+            return;
+        }
+
         $this->logger->info(sprintf(
             'websocket_server_start(wss://%s:%s)',
             $this->swooleConfiguration->host,
