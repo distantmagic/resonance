@@ -6,6 +6,7 @@ namespace Distantmagic\Resonance;
 
 use Ds\Map;
 use Generator;
+use Throwable;
 
 readonly class StaticPageLayoutAggregate
 {
@@ -24,10 +25,17 @@ readonly class StaticPageLayoutAggregate
      */
     public function render(StaticPage $staticPage): Generator
     {
-        yield from $this
-            ->selectLayout($staticPage)
-            ->renderStaticPage($staticPage)
-        ;
+        try {
+            yield from $this
+                ->selectLayout($staticPage)
+                ->renderStaticPage($staticPage)
+            ;
+        } catch (Throwable $throwable) {
+            throw new StaticPageRenderingException(sprintf(
+                'Error while rendering static page: %s',
+                $staticPage->getBasename(),
+            ), 0, $throwable);
+        }
     }
 
     public function selectLayout(StaticPage $staticPage): StaticPageLayoutInterface

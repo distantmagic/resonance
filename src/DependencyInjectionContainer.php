@@ -198,10 +198,13 @@ readonly class DependencyInjectionContainer
         foreach ($this->dependencyProviders as $providedClassName => $dependencyProvider) {
             if ($dependencyProvider->grantsFeature && !$this->wantedFeatures->contains($dependencyProvider->grantsFeature)) {
                 $this->disabledFeatureProviders->put($providedClassName, $dependencyProvider->grantsFeature);
-                $this->dependencyProviders->remove($providedClassName);
             } elseif ($dependencyProvider->collection) {
                 $this->addToCollection($dependencyProvider->collection, $dependencyProvider);
             }
+        }
+
+        foreach ($this->disabledFeatureProviders->keys() as $providedClassName) {
+            $this->dependencyProviders->remove($providedClassName);
         }
     }
 

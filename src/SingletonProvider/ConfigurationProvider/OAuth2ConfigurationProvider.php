@@ -6,11 +6,14 @@ namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Defuse\Crypto\Key;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\OAuth2Configuration;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use League\OAuth2\Server\CryptKey;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
+use RuntimeException;
+use Swoole\Coroutine;
 
 /**
  * @template-extends ConfigurationProvider<OAuth2Configuration, object{
@@ -23,7 +26,10 @@ use Nette\Schema\Schema;
  *     session_key_state: string,
  * }>
  */
-#[Singleton(provides: OAuth2Configuration::class)]
+#[Singleton(
+    grantsFeature: Feature::OAuth2,
+    provides: OAuth2Configuration::class,
+)]
 final readonly class OAuth2ConfigurationProvider extends ConfigurationProvider
 {
     protected function getConfigurationKey(): string
@@ -46,8 +52,14 @@ final readonly class OAuth2ConfigurationProvider extends ConfigurationProvider
 
     protected function provideConfiguration($validatedData): OAuth2Configuration
     {
+        $encryptionKeyContent = Coroutine::readFile($validatedData->encryption_key);
+
+        if (!is_string($encryptionKeyContent)) {
+            throw new RuntimeException('Unable to read encrpytion key file: '.$validatedData->encryption_key);
+        }
+
         return new OAuth2Configuration(
-            encryptionKey: Key::loadFromAsciiSafeString(file_get_contents($validatedData->encryption_key)),
+            encryptionKey: Key::loadFromAsciiSafeString($encryptionKeyContent),
             jwtSigningKeyPrivate: new CryptKey(
                 DM_ROOT.'/'.$validatedData->jwt_signing_key_private,
                 $validatedData->jwt_signing_key_passphrase,

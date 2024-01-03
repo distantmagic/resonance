@@ -181,7 +181,7 @@ ssg.watch: node_modules
 		--signal SIGTERM \
 		--watch ./app \
 		--watch ./docs/pages \
-		--watch ./resonance \
+		--watch ./src \
 		--watch ./resources \
 		--exec '$(MAKE) ssg || exit 1'
 

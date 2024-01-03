@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 use function Swoole\Coroutine\run;
 
@@ -25,14 +26,27 @@ abstract class CoroutineCommand extends SymfonyCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        /**
+         * @var null|Throwable
+         */
+        $exception = null;
+
         $result = 0;
 
         /**
          * @var bool
          */
-        $coroutineResult = run(function () use ($input, $output, &$result) {
-            $result = $this->executeInCoroutine($input, $output);
+        $coroutineResult = run(function () use (&$exception, $input, $output, &$result) {
+            try {
+                $result = $this->executeInCoroutine($input, $output);
+            } catch (Throwable $throwable) {
+                $exception = $throwable;
+            }
         });
+
+        if ($exception) {
+            throw $exception;
+        }
 
         if (!$coroutineResult) {
             return Command::FAILURE;
