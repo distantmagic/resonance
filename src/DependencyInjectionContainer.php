@@ -13,6 +13,7 @@ use Ds\Set;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionFunctionAbstract;
+use Swoole\Event;
 use Throwable;
 
 use function Swoole\Coroutine\run;
@@ -104,7 +105,11 @@ readonly class DependencyInjectionContainer
             throw new DependencyInjectionContainerException('Unable to build function parameters');
         }
 
-        return $function(...$parameters);
+        $ret = $function(...$parameters);
+
+        Event::wait();
+
+        return $ret;
     }
 
     /**

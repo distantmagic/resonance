@@ -46,7 +46,8 @@
         "twig/cache-extra": "^3.7",
         "twig/twig": "^3.7",
         "webonyx/graphql-php": "^15.6",
-        "dragonmantank/cron-expression": "^3.3"
+        "dragonmantank/cron-expression": "^3.3",
+        "league/oauth2-client": "^2.7"
     },
     "require-dev": {
         "mockery/mockery": "^1.6",
