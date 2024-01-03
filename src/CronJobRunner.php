@@ -32,5 +32,7 @@ readonly class CronJobRunner
         if (!$process->start()) {
             throw new RuntimeException('Unable to start CRON job: '.$cronRegisteredJob->name);
         }
+
+        $process->wait(false);
     }
 }
