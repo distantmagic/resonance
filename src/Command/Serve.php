@@ -94,7 +94,9 @@ final class Serve extends Command
 
     private function onHandshake(Request $request, Response $response): void
     {
-        $this->webSocketServerController?->onHandshake($this->server, $request, $response);
+        if ($this->webSocketServerController && $this->server instanceof WebSocketServer) {
+            $this->webSocketServerController->onHandshake($this->server, $request, $response);
+        }
     }
 
     private function onStart(): void
