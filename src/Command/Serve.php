@@ -39,6 +39,13 @@ final class Serve extends Command
     ) {
         parent::__construct();
 
+        /**
+         * SWOOLE_SSL might not be defined in test environment.
+         *
+         * @psalm-suppress MixedArgument
+         * @psalm-suppress UnusedPsalmSuppress
+         * @psalm-suppress UndefinedConstant
+         */
         $this->server = new Server(
             $this->swooleConfiguration->host,
             $this->swooleConfiguration->port,
