@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Distantmagic\Resonance\ApplicationConfiguration;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Environment;
+use Distantmagic\Resonance\ExpectUrl;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
@@ -33,7 +34,7 @@ final readonly class ApplicationConfigurationProvider extends ConfigurationProvi
             'env' => Expect::anyOf(...Environment::values())->required(),
             'esbuild_metafile' => Expect::string()->min(1)->default('esbuild-meta.json'),
             'scheme' => Expect::anyOf('http', 'https')->default('https'),
-            'url' => Expect::string()->required()->assert($this->isUrl(...)),
+            'url' => Expect::string()->required()->assert(new ExpectUrl()),
         ]);
     }
 
@@ -45,11 +46,5 @@ final readonly class ApplicationConfigurationProvider extends ConfigurationProvi
             scheme: $validatedData->scheme,
             url: rtrim($validatedData->url, '/'),
         );
-    }
-
-    private function isUrl(string $pattern): bool
-    {
-        // if a user puts here something like gopher://abc it's on them
-        return false !== filter_var($pattern, FILTER_VALIDATE_URL);
     }
 }

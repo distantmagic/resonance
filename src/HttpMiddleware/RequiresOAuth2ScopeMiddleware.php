@@ -6,7 +6,7 @@ namespace Distantmagic\Resonance\HttpMiddleware;
 
 use Distantmagic\Resonance\Attribute;
 use Distantmagic\Resonance\Attribute\HandlesMiddlewareAttribute;
-use Distantmagic\Resonance\Attribute\HasOAuth2Scope;
+use Distantmagic\Resonance\Attribute\RequiresOAuth2Scope;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\AuthenticatedUserProvider;
 use Distantmagic\Resonance\AuthenticatedUserSource;
@@ -26,17 +26,17 @@ use Swoole\Http\Request;
 use Swoole\Http\Response;
 
 /**
- * @template-extends HttpMiddleware<HasOAuth2Scope>
+ * @template-extends HttpMiddleware<RequiresOAuth2Scope>
  */
 #[HandlesMiddlewareAttribute(
-    attribute: HasOAuth2Scope::class,
+    attribute: RequiresOAuth2Scope::class,
     priority: 1000,
 )]
 #[Singleton(
     collection: SingletonCollection::HttpMiddleware,
     grantsFeature: Feature::OAuth2,
 )]
-readonly class HasOAuth2ScopeMiddleware extends HttpMiddleware
+readonly class RequiresOAuth2ScopeMiddleware extends HttpMiddleware
 {
     public function __construct(
         private AuthenticatedUserProvider $authenticatedUserProvider,

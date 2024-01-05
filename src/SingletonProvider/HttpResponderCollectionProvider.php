@@ -28,7 +28,6 @@ final readonly class HttpResponderCollectionProvider extends SingletonProvider
 
         foreach ($this->collectResponders($singletons) as $httpResponderAttribute) {
             $httpResponderCollection->httpResponders->put(
-                // $httpResponderAttribute->attribute->routeSymbol,
                 $httpResponderAttribute->singleton::class,
                 $httpResponderAttribute->singleton,
             );

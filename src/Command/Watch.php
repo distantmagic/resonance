@@ -15,7 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[ConsoleCommand(
-    name: 'watch',
+    name: 'watch:command',
     description: 'Watch project files for changes (needs inotify)'
 )]
 final class Watch extends Command
@@ -64,7 +64,7 @@ final class Watch extends Command
 
     private function restartChildCommand(string $childCommandName): void
     {
-        $this->logger->info(sprintf('watch_run(%s)', $childCommandName));
+        $this->logger->info(sprintf('watch_restart(%s)', $childCommandName));
 
         /**
          * @var null|int $pid
@@ -72,6 +72,9 @@ final class Watch extends Command
         $pid = $this->process?->pid;
 
         if (is_int($pid)) {
+            /**
+             * @psalm-suppress InvalidArgument false positive
+             */
             Process::kill($pid, SIGTERM);
             $this->process = null;
         }
@@ -82,7 +85,7 @@ final class Watch extends Command
              * @psalm-suppress InvalidCast false positive
              */
             $worker->exec(PHP_BINARY, [
-                DM_APP_ROOT.'/../bin/resonance.php',
+                realpath(DM_APP_ROOT.'/../bin/resonance.php'),
                 $childCommandName,
             ]);
         });

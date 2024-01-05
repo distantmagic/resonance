@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
-use Distantmagic\Resonance\Attribute\ProvidesOAuth2Grant;
-use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\OAuth2Configuration;
-use Distantmagic\Resonance\OAuth2GrantProviderInterface;
+use Distantmagic\Resonance\OAuth2GrantCollection;
 use Distantmagic\Resonance\PHPProjectFiles;
-use Distantmagic\Resonance\SingletonAttribute;
-use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
 use League\OAuth2\Server\AuthorizationServer;
@@ -23,7 +19,6 @@ use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 /**
  * @template-extends SingletonProvider<AuthorizationServer>
  */
-#[RequiresSingletonCollection(SingletonCollection::OAuth2Grant)]
 #[Singleton(
     grantsFeature: Feature::OAuth2,
     provides: AuthorizationServer::class,
@@ -34,6 +29,7 @@ final readonly class OAuth2AuthorizationServerProvider extends SingletonProvider
         private AccessTokenRepositoryInterface $accessTokenRepository,
         private ClientRepositoryInterface $clientRepository,
         private OAuth2Configuration $oAuth2Configuration,
+        private OAuth2GrantCollection $oAuth2GrantCollection,
         private ScopeRepositoryInterface $scopeRepository,
     ) {}
 
@@ -47,25 +43,13 @@ final readonly class OAuth2AuthorizationServerProvider extends SingletonProvider
             $this->oAuth2Configuration->encryptionKey,
         );
 
-        foreach ($this->collectGrants($singletons) as $grantAttribute) {
+        foreach ($this->oAuth2GrantCollection->oauth2Grants as $oauth2Grant) {
             $authorizationServer->enableGrantType(
-                $grantAttribute->singleton->provideGrant(),
-                $grantAttribute->singleton->getAccessTokenTTL(),
+                $oauth2Grant->grantType,
+                $oauth2Grant->accessTokenTtl,
             );
         }
 
         return $authorizationServer;
-    }
-
-    /**
-     * @return iterable<SingletonAttribute<OAuth2GrantProviderInterface,ProvidesOAuth2Grant>>
-     */
-    private function collectGrants(SingletonContainer $singletons): iterable
-    {
-        return $this->collectAttributes(
-            $singletons,
-            OAuth2GrantProviderInterface::class,
-            ProvidesOAuth2Grant::class,
-        );
     }
 }

@@ -36,7 +36,7 @@ readonly class JsonTemplateInterceptor extends HttpInterceptor
             value: $intercepted->data,
             flags: Environment::Production === $this->applicationConfiguration->environment
                 ? JSON_THROW_ON_ERROR
-                : JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT,
+                : JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES,
         ));
 
         return null;
