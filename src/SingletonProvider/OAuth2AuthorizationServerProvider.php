@@ -43,10 +43,10 @@ final readonly class OAuth2AuthorizationServerProvider extends SingletonProvider
             $this->oAuth2Configuration->encryptionKey,
         );
 
-        foreach ($this->oAuth2GrantCollection->oauth2Grants as $oauth2Grant) {
+        foreach ($this->oAuth2GrantCollection->oAuth2Grants as $oAuth2Grant) {
             $authorizationServer->enableGrantType(
-                $oauth2Grant->grantType,
-                $oauth2Grant->accessTokenTtl,
+                $oAuth2Grant->grantType,
+                $oAuth2Grant->accessTokenTtl,
             );
         }
 

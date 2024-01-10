@@ -6,12 +6,12 @@ namespace Distantmagic\Resonance\Attribute;
 
 use Attribute;
 use Distantmagic\Resonance\Attribute as BaseAttribute;
-use Distantmagic\Resonance\OpenAPICollectionSymbolInterface;
+use Distantmagic\Resonance\OpenAPISchemaSymbolInterface;
 
 #[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_CLASS)]
-final readonly class BelongsToOpenAPICollection extends BaseAttribute
+final readonly class BelongsToOpenAPISchema extends BaseAttribute
 {
     public function __construct(
-        public OpenAPICollectionSymbolInterface $collectionSymbol,
+        public OpenAPISchemaSymbolInterface $schemaSymbol,
     ) {}
 }

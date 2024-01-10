@@ -9,12 +9,14 @@ use Distantmagic\Resonance\Attribute\RespondsToOAuth2Endpoint;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\HttpResponderCollection;
+use Distantmagic\Resonance\OAuth2Endpoint;
 use Distantmagic\Resonance\OAuth2EndpointResponderAggregate;
 use Distantmagic\Resonance\PHPProjectFiles;
+use Distantmagic\Resonance\ReflectionClassAttributeManager;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
 use LogicException;
-use ReflectionAttribute;
+use RuntimeException;
 
 /**
  * @template-extends SingletonProvider<HttpResponderCollection>
@@ -30,17 +32,18 @@ final readonly class OAuth2EndpointResponderAggregateProvider extends SingletonP
         $oAuth2EndpointResponderAggregate = new OAuth2EndpointResponderAggregate();
 
         foreach ($phpProjectFiles->findByAttribute(RespondsToOAuth2Endpoint::class) as $oAuth2EndpointResponderFile) {
-            $respondsToHttpAttributes = $oAuth2EndpointResponderFile->reflectionClass->getAttributes(
-                RespondsToHttp::class,
-                ReflectionAttribute::IS_INSTANCEOF,
-            );
+            $reflectionClassAttributeManager = new ReflectionClassAttributeManager($oAuth2EndpointResponderFile->reflectionClass);
+            $respondsToHttpAttribute = $reflectionClassAttributeManager->findAttribute(RespondsToHttp::class);
 
-            if (1 !== count($respondsToHttpAttributes) || !isset($respondsToHttpAttributes[0])) {
-                throw new LogicException('Responds to OAuth2Endpoint requres Responds to HTTP attribute');
+            if (!$respondsToHttpAttribute) {
+                throw new LogicException(sprintf(
+                    '"%s" attribute also requires "%s" attribute',
+                    RespondsToOAuth2Endpoint::class,
+                    RespondsToHttp::class,
+                ));
             }
 
-            $respondsToHttpAttribute = $respondsToHttpAttributes[0];
-            $routeSymbol = $respondsToHttpAttribute->newInstance()->routeSymbol;
+            $routeSymbol = $respondsToHttpAttribute->routeSymbol;
 
             if (!$routeSymbol) {
                 throw new LogicException(sprintf(
@@ -49,10 +52,28 @@ final readonly class OAuth2EndpointResponderAggregateProvider extends SingletonP
                 ));
             }
 
-            $oAuth2EndpointResponderAggregate->endpointResponderRouteSymbol->put(
+            $oAuth2EndpointResponderAggregate->registerEndpoint(
                 $oAuth2EndpointResponderFile->attribute->endpoint,
                 $routeSymbol,
             );
+        }
+
+        $registeredEndpoints = $oAuth2EndpointResponderAggregate->getRegisteredEndpoints();
+        $allEndpoints = OAuth2Endpoint::cases();
+
+        if (count($registeredEndpoints) !== count($allEndpoints)) {
+            $missingEndpoints = [];
+
+            foreach ($allEndpoints as $endpoint) {
+                if (!$registeredEndpoints->contains($endpoint)) {
+                    $missingEndpoints[] = $endpoint->name;
+                }
+            }
+
+            throw new RuntimeException(sprintf(
+                'Some OAuth2 endpoints are not registered: "%s"',
+                implode('", "', $missingEndpoints),
+            ));
         }
 
         return $oAuth2EndpointResponderAggregate;

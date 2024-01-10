@@ -7,7 +7,6 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Attribute as BaseAttribute;
 use Generator;
 use IteratorAggregate;
-use ReflectionAttribute;
 use ReflectionClass;
 
 /**
@@ -33,29 +32,14 @@ class PHPFileReflectionClassAttributeIterator implements IteratorAggregate
     public function getIterator(): Generator
     {
         foreach ($this->reflectionClassIterator as $reflectionClass) {
-            foreach ($this->findAttributes($reflectionClass) as $attribute) {
+            $reflectionClassAttributeManager = new ReflectionClassAttributeManager($reflectionClass);
+
+            foreach ($reflectionClassAttributeManager->findAttributes($this->attributeClass) as $attribute) {
                 yield new PHPFileReflectionClassAttribute(
                     $reflectionClass,
                     $attribute,
                 );
             }
-        }
-    }
-
-    /**
-     * @param ReflectionClass<TClass> $reflectionClass
-     *
-     * @return Generator<TAttribute>
-     */
-    private function findAttributes(ReflectionClass $reflectionClass): Generator
-    {
-        $reflectionAttributes = $reflectionClass->getAttributes(
-            $this->attributeClass,
-            ReflectionAttribute::IS_INSTANCEOF,
-        );
-
-        foreach ($reflectionAttributes as $reflectionAttribute) {
-            yield $reflectionAttribute->newInstance();
         }
     }
 }

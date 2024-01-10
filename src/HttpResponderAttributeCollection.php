@@ -10,7 +10,7 @@ use Ds\Set;
 readonly class HttpResponderAttributeCollection
 {
     /**
-     * @var Set<RespondsToHttp> $httpResponderAttributes
+     * @var Set<PHPFileReflectionClassAttribute<HttpResponderInterface,RespondsToHttp>> $httpResponderAttributes
      */
     public Set $httpResponderAttributes;
 

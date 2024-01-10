@@ -9,5 +9,6 @@ readonly class OpenAPIConfiguration
     public function __construct(
         public string $description,
         public string $title,
+        public string $version,
     ) {}
 }

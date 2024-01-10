@@ -95,7 +95,10 @@ readonly class OAuth2AuthorizationCodeFlowController implements OAuth2Authorizat
         Request $request,
         Response $response,
     ): HttpInterceptableInterface {
-        $routeSymbol = $this->oAuth2EndpointResponderAggregate->endpointResponderRouteSymbol->get(OAuth2Endpoint::AuthenticatedPage);
+        $routeSymbol = $this
+            ->oAuth2EndpointResponderAggregate
+            ->getHttpRouteSymbolForEndpoint(OAuth2Endpoint::AuthenticatedPage)
+        ;
 
         return new InternalRedirect($routeSymbol);
     }
@@ -105,7 +108,10 @@ readonly class OAuth2AuthorizationCodeFlowController implements OAuth2Authorizat
         Response $response,
         AuthorizationRequest $authorizationRequest,
     ): HttpInterceptableInterface {
-        $routeSymbol = $this->oAuth2EndpointResponderAggregate->endpointResponderRouteSymbol->get(OAuth2Endpoint::ClientScopeConsentForm);
+        $routeSymbol = $this
+            ->oAuth2EndpointResponderAggregate
+            ->getHttpRouteSymbolForEndpoint(OAuth2Endpoint::ClientScopeConsentForm)
+        ;
 
         return new InternalRedirect($routeSymbol);
     }
@@ -115,7 +121,10 @@ readonly class OAuth2AuthorizationCodeFlowController implements OAuth2Authorizat
         Response $response,
         AuthorizationRequest $authorizationRequest,
     ): HttpInterceptableInterface {
-        $routeSymbol = $this->oAuth2EndpointResponderAggregate->endpointResponderRouteSymbol->get(OAuth2Endpoint::LoginForm);
+        $routeSymbol = $this
+            ->oAuth2EndpointResponderAggregate
+            ->getHttpRouteSymbolForEndpoint(OAuth2Endpoint::LoginForm)
+        ;
 
         return new InternalRedirect($routeSymbol);
     }

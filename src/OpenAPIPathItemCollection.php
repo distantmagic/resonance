@@ -6,15 +6,15 @@ namespace Distantmagic\Resonance;
 
 use Ds\Set;
 
-readonly class OAuth2GrantCollection
+readonly class OpenAPIPathItemCollection
 {
     /**
-     * @var Set<OAuth2Grant>
+     * @var Set<OpenAPIPathItem>
      */
-    public Set $oAuth2Grants;
+    public Set $pathItems;
 
     public function __construct()
     {
-        $this->oAuth2Grants = new Set();
+        $this->pathItems = new Set();
     }
 }

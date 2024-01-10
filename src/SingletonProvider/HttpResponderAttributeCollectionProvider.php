@@ -8,6 +8,8 @@ use Distantmagic\Resonance\Attribute\RespondsToHttp;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpResponderAttributeCollection;
 use Distantmagic\Resonance\HttpResponderCollection;
+use Distantmagic\Resonance\HttpResponderInterface;
+use Distantmagic\Resonance\PHPFileReflectionClassAttribute;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
@@ -22,10 +24,11 @@ final readonly class HttpResponderAttributeCollectionProvider extends SingletonP
     {
         $httpResponderAttributeCollection = new HttpResponderAttributeCollection();
 
+        /**
+         * @var PHPFileReflectionClassAttribute<HttpResponderInterface,RespondsToHttp>
+         */
         foreach ($phpProjectFiles->findByAttribute(RespondsToHttp::class) as $responderAttribute) {
-            $httpResponderAttributeCollection->httpResponderAttributes->add(
-                $responderAttribute->attribute
-            );
+            $httpResponderAttributeCollection->httpResponderAttributes->add($responderAttribute);
         }
 
         return $httpResponderAttributeCollection;

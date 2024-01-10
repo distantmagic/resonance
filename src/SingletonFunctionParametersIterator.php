@@ -10,6 +10,7 @@ use LogicException;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
 use ReflectionNamedType;
+use ReflectionParameter;
 
 /**
  * @template-implements IteratorAggregate<string,SingletonFunctionParameter>
@@ -28,22 +29,24 @@ readonly class SingletonFunctionParametersIterator implements IteratorAggregate
 
             if (!$type) {
                 throw new LogicException(sprintf(
-                    'Constructor parameter has no type: %s@%s',
-                    $this->reflectionFunction instanceof ReflectionMethod
-                        ? $this->reflectionFunction->getDeclaringClass()->getName()
-                        : '',
-                    $reflectionParameter->getName(),
+                    'Constructor parameter has no type: %s',
+                    $this->getDebugParameterName($reflectionParameter),
                 ));
             }
 
             if (!($type instanceof ReflectionNamedType)) {
-                throw new LogicException('Not a named type: '.$type::class);
+                throw new LogicException(sprintf(
+                    'Not a named type: "%s" in "%s"',
+                    $type::class,
+                    $this->getDebugParameterName($reflectionParameter),
+                ));
             }
 
             if ($type->isBuiltin()) {
                 throw new LogicException(sprintf(
-                    'Parameter uses builtin type: %s in %s',
+                    'Parameter uses builtin type: "%s" in "%s" at "%s"',
                     $type->getName(),
+                    $this->getDebugParameterName($reflectionParameter),
                     $this->reflectionFunction->getFileName(),
                 ));
             }
@@ -51,7 +54,11 @@ readonly class SingletonFunctionParametersIterator implements IteratorAggregate
             $typeClassName = $type->getName();
 
             if (!class_exists($typeClassName) && !interface_exists($typeClassName)) {
-                throw new LogicException('Class does not exist: '.$typeClassName);
+                throw new LogicException(sprintf(
+                    'Class does not exist: "%s" in "%s"',
+                    $typeClassName,
+                    $this->getDebugParameterName($reflectionParameter),
+                ));
             }
 
             yield $reflectionParameter->getName() => new SingletonFunctionParameter(
@@ -59,5 +66,21 @@ readonly class SingletonFunctionParametersIterator implements IteratorAggregate
                 reflectionParameter: $reflectionParameter,
             );
         }
+    }
+
+    private function getDebugParameterName(ReflectionParameter $reflectionParameter): string
+    {
+        if ($this->reflectionFunction instanceof ReflectionMethod) {
+            return sprintf(
+                '%s($%s)',
+                $this->reflectionFunction->getDeclaringClass()->getName(),
+                $reflectionParameter->getName(),
+            );
+        }
+
+        return sprintf(
+            '$%s',
+            $reflectionParameter->getName(),
+        );
     }
 }

@@ -9,7 +9,6 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Ds\Set;
 use Generator;
 use IteratorAggregate;
-use ReflectionAttribute;
 
 /**
  * @template-implements IteratorAggregate<class-string,DependencyProvider>
@@ -44,18 +43,16 @@ readonly class DependencyProviderIterator implements IteratorAggregate
      */
     private function findRequiredCollections(PHPFileReflectionClassAttribute $reflectionAttribute): Set
     {
-        $requiredCollectionsReflections = $reflectionAttribute
-            ->reflectionClass
-            ->getAttributes(RequiresSingletonCollection::class, ReflectionAttribute::IS_INSTANCEOF)
-        ;
+        $reflectionAttributeManager = new ReflectionClassAttributeManager($reflectionAttribute->reflectionClass);
+        $requiredCollectionAttributes = $reflectionAttributeManager->findAttributes(RequiresSingletonCollection::class);
 
         /**
          * @var Set<SingletonCollectionInterface> $requiredCollections
          */
         $requiredCollections = new Set();
 
-        foreach ($requiredCollectionsReflections as $requiredCollectionReflection) {
-            $requiredCollections->add($requiredCollectionReflection->newInstance()->collection);
+        foreach ($requiredCollectionAttributes as $requiredCollectionReflection) {
+            $requiredCollections->add($requiredCollectionReflection->collection);
         }
 
         return $requiredCollections;

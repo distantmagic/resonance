@@ -33,7 +33,7 @@ final readonly class OAuth2GrantCollectionProvider extends SingletonProvider
         $oAuth2GrantCollection = new OAuth2GrantCollection();
 
         foreach ($this->collectGrants($singletons) as $grantAttribute) {
-            $oAuth2GrantCollection->oauth2Grants->add(new OAuth2Grant(
+            $oAuth2GrantCollection->oAuth2Grants->add(new OAuth2Grant(
                 $grantAttribute->singleton->provideGrant(),
                 $grantAttribute->singleton->getAccessTokenTTL(),
             ));
