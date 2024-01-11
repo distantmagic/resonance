@@ -10,7 +10,9 @@ use LogicException;
 readonly class OpenAPISchemaPaths implements JsonSerializable
 {
     public function __construct(
+        private HttpControllerReflectionMethodCollection $httpControllerReflectionMethodCollection,
         private OpenAPIPathItemCollection $openAPIPathItemCollection,
+        private OpenAPIRouteParameterExtractorAggregate $openAPIRouteParameterExtractorAggregate,
         private OpenAPISchemaSymbolInterface $openAPISchemaSymbol,
     ) {}
 
@@ -34,7 +36,11 @@ readonly class OpenAPISchemaPaths implements JsonSerializable
                     ));
                 }
 
-                $paths[$pathItem->respondsToHttp->pattern][$method] = new OpenAPISchemaOperation($pathItem);
+                $paths[$pathItem->respondsToHttp->pattern][$method] = new OpenAPISchemaOperation(
+                    $this->httpControllerReflectionMethodCollection,
+                    $pathItem,
+                    $this->openAPIRouteParameterExtractorAggregate,
+                );
             }
         }
 

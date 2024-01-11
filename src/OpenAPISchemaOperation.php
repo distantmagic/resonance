@@ -4,15 +4,23 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\HttpResponder\HttpController;
 use JsonSerializable;
+use LogicException;
 
 readonly class OpenAPISchemaOperation implements JsonSerializable
 {
-    public function __construct(private OpenAPIPathItem $openAPIPathItem) {}
+    public function __construct(
+        private HttpControllerReflectionMethodCollection $httpControllerReflectionMethodCollection,
+        private OpenAPIPathItem $openAPIPathItem,
+        private OpenAPIRouteParameterExtractorAggregate $openAPIRouteParameterExtractorAggregate,
+    ) {}
 
     public function jsonSerialize(): array
     {
         $operation = [];
+
+        $operation['operationId'] = $this->generateOperationId();
 
         if (isset($this->openAPIPathItem->respondsToHttp->description)) {
             $operation['description'] = $this->openAPIPathItem->respondsToHttp->description;
@@ -22,7 +30,11 @@ readonly class OpenAPISchemaOperation implements JsonSerializable
             $operation['summary'] = $this->openAPIPathItem->respondsToHttp->summary;
         }
 
-        $operation['operationId'] = $this->generateOperationId();
+        $parameters = $this->serializeParameters();
+
+        if (!empty($parameters)) {
+            $operation['parameters'] = $parameters;
+        }
 
         $security = $this->serializeSecurity();
 
@@ -52,6 +64,46 @@ readonly class OpenAPISchemaOperation implements JsonSerializable
 
     //     return $scopes;
     // }
+
+    private function serializeParameters(): array
+    {
+        $parameters = [];
+
+        $httpResponderClass = $this->openAPIPathItem->reflectionClass->getName();
+
+        if (!is_a($httpResponderClass, HttpController::class, true)) {
+            throw new LogicException(sprintf(
+                'OpenAPI parameters can only be inferred from "%s", got "%s"',
+                HttpController::class,
+                $httpResponderClass,
+            ));
+        }
+
+        $httpControllerReflectionMethod = $this
+            ->httpControllerReflectionMethodCollection
+            ->reflectionMethods
+            ->get($httpResponderClass)
+        ;
+
+        foreach ($httpControllerReflectionMethod->parameters as $reflectionMethodParameter) {
+            if ($reflectionMethodParameter->attribute) {
+                $extractedParameters = $this
+                    ->openAPIRouteParameterExtractorAggregate
+                    ->extractFromHttpControllerParameter(
+                        $reflectionMethodParameter->attribute,
+                        $reflectionMethodParameter->className,
+                        $reflectionMethodParameter->name,
+                    )
+                ;
+
+                foreach ($extractedParameters as $parameter) {
+                    $parameters[] = $parameter;
+                }
+            }
+        }
+
+        return $parameters;
+    }
 
     private function serializeSecurity(): array
     {

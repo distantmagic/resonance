@@ -12,8 +12,9 @@ use ReflectionParameter;
 readonly class HttpControllerParameter
 {
     /**
-     * @param TAttribute   $attribute
-     * @param class-string $className
+     * @param TAttribute       $attribute
+     * @param class-string     $className
+     * @param non-empty-string $name
      */
     public function __construct(
         public ReflectionParameter $reflectionParameter,

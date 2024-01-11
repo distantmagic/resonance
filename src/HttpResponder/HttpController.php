@@ -22,7 +22,6 @@ use Distantmagic\Resonance\HttpResponderInterface;
 use Ds\Map;
 use LogicException;
 use ReflectionClass;
-use ReflectionMethod;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
@@ -65,8 +64,11 @@ abstract readonly class HttpController extends HttpResponder
         $this->handleValidationErrorsCallback = $handleValidationErrorsCallback;
         $this->handleValidationErrorsReflection = $handleValidationErrorsReflection;
 
-        $reflectionMethod = new ReflectionMethod($this, 'handle');
-        $this->handleReflection = new HttpControllerReflectionMethod($reflectionMethod);
+        $this->handleReflection = $controllerDependencies
+            ->httpControllerReflectionMethodCollection
+            ->reflectionMethods
+            ->get($this::class)
+        ;
     }
 
     public function respond(Request $request, Response $response): null|HttpInterceptableInterface|HttpResponderInterface

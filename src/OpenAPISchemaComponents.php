@@ -6,6 +6,7 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use JsonSerializable;
+use stdClass;
 
 #[Singleton]
 readonly class OpenAPISchemaComponents implements JsonSerializable
@@ -17,6 +18,7 @@ readonly class OpenAPISchemaComponents implements JsonSerializable
     public function jsonSerialize(): array
     {
         return [
+            'schemas' => new stdClass(),
             'securitySchemes' => $this->openAPISchemaSecuritySchemes,
         ];
     }

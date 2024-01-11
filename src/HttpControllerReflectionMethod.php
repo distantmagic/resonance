@@ -8,7 +8,6 @@ use Distantmagic\Resonance\Attribute\CurrentRequest;
 use Distantmagic\Resonance\Attribute\CurrentResponse;
 use Ds\Map;
 use Generator;
-use LogicException;
 use ReflectionAttribute;
 use ReflectionIntersectionType;
 use ReflectionMethod;
@@ -41,49 +40,37 @@ readonly class HttpControllerReflectionMethod
     {
         foreach ($this->extractReturnTypes() as $returnType) {
             if (!($returnType instanceof ReflectionNamedType)) {
-                $this->reportError('Unsupported return type');
+                throw new HttpControllerMetadataException(
+                    'Unsupported return type',
+                    $this->reflectionMethod,
+                );
             }
 
             if ($returnType->isBuiltin() && 'void' !== $returnType->getName()) {
-                $this->reportError('Only supported return type');
+                throw new HttpControllerMetadataException(
+                    'Only supported return type',
+                    $this->reflectionMethod,
+                );
             }
 
+            $returnTypeClass = $returnType->getName();
+
             if (
-                is_a($returnType->getName(), HttpResponderInterface::class, true)
-                || is_a($returnType->getName(), HttpInterceptableInterface::class, true)
+                is_a($returnTypeClass, HttpResponderInterface::class, true)
+                || is_a($returnTypeClass, HttpInterceptableInterface::class, true)
             ) {
                 return;
             }
 
-            $this->reportError(sprintf(
-                'Controller handle can only return null or %s or %s',
-                HttpResponderInterface::class,
-                HttpInterceptableInterface::class,
-            ));
+            throw new HttpControllerMetadataException(
+                sprintf(
+                    'Controller handle can only return null or %s or %s',
+                    HttpResponderInterface::class,
+                    HttpInterceptableInterface::class,
+                ),
+                $this->reflectionMethod,
+            );
         }
-    }
-
-    private function errorPath(
-        ?ReflectionParameter $parameter = null,
-        ?ReflectionNamedType $type = null,
-    ): string {
-        $ret = sprintf(
-            '%s@%s',
-            $this->reflectionMethod->getDeclaringClass()->getName(),
-            $this->reflectionMethod->getName(),
-        );
-
-        if (!isset($parameter)) {
-            return $ret;
-        }
-
-        $ret .= sprintf(
-            '(%s$%s)',
-            isset($type) ? $type->getName().' ' : '',
-            $parameter->getName(),
-        );
-
-        return $ret;
     }
 
     private function extractParameterData(ReflectionParameter $reflectionParameter): void
@@ -92,17 +79,31 @@ readonly class HttpControllerReflectionMethod
         $type = $reflectionParameter->getType();
 
         if (!($type instanceof ReflectionNamedType)) {
-            $this->reportError('Unsupported parameter type', $reflectionParameter);
+            throw new HttpControllerMetadataException(
+                'Unsupported parameter type',
+                $this->reflectionMethod,
+                $reflectionParameter,
+            );
         }
 
         if ($type->isBuiltin()) {
-            $this->reportError('Cannot inject builtin type', $reflectionParameter, $type);
+            throw new HttpControllerMetadataException(
+                'Cannot inject builtin type',
+                $this->reflectionMethod,
+                $reflectionParameter,
+                $type,
+            );
         }
 
         $className = $type->getName();
 
         if (!class_exists($className) && !interface_exists($className)) {
-            $this->reportError('Class does not exist: '.$className, $reflectionParameter, $type);
+            throw new HttpControllerMetadataException(
+                'Class does not exist: '.$className,
+                $this->reflectionMethod,
+                $reflectionParameter,
+                $type,
+            );
         }
 
         $this->parameters->put($name, new HttpControllerParameter(
@@ -165,17 +166,5 @@ readonly class HttpControllerReflectionMethod
         }
 
         return null;
-    }
-
-    private function reportError(
-        string $message,
-        ?ReflectionParameter $parameter = null,
-        ?ReflectionNamedType $type = null,
-    ): never {
-        throw new LogicException(sprintf(
-            '%s in %s',
-            $message,
-            $this->errorPath($parameter, $type),
-        ));
     }
 }

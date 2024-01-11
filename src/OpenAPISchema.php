@@ -16,14 +16,18 @@ readonly class OpenAPISchema implements JsonSerializable
 
     public function __construct(
         ApplicationConfiguration $applicationConfiguration,
+        HttpControllerReflectionMethodCollection $httpControllerReflectionMethodCollection,
         OpenAPIConfiguration $openAPIConfiguration,
         OpenAPIPathItemCollection $openAPIPathItemCollection,
+        OpenAPIRouteParameterExtractorAggregate $openAPIRouteParameterExtractorAggregate,
         private OpenAPISchemaComponents $openAPISchemaComponents,
         OpenAPISchemaSymbolInterface $openAPISchemaSymbol,
     ) {
         $this->openAPISchemaInfo = new OpenAPISchemaInfo($openAPIConfiguration);
         $this->openAPISchemaPaths = new OpenAPISchemaPaths(
+            $httpControllerReflectionMethodCollection,
             $openAPIPathItemCollection,
+            $openAPIRouteParameterExtractorAggregate,
             $openAPISchemaSymbol,
         );
         $this->openAPISchemaServers = new OpenAPISchemaServers($applicationConfiguration);
