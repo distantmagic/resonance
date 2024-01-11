@@ -42,7 +42,7 @@ readonly class OpenAPISchemaOperation implements JsonSerializable
         );
     }
 
-    private function serializeRequiredOAuth2Scopes()
+    private function serializeRequiredOAuth2Scopes(): array
     {
         $scopes = [];
 

@@ -49,6 +49,9 @@ readonly class ReflectionClassAttributeManager
             ->getAttributes($attributeClassName, ReflectionAttribute::IS_INSTANCEOF)
         ;
 
+        /**
+         * @var Set<TAttribute> $ret
+         */
         $ret = new Set();
 
         foreach ($reflectionAttributes as $reflectionAttribute) {
