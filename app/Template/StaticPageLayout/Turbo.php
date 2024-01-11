@@ -122,7 +122,6 @@ abstract readonly class Turbo extends StaticPageLayout
      */
     protected function registerScripts(PriorityQueue $scripts): void
     {
-        $scripts->push('global_turbo.ts', 900);
         $scripts->push('global_stimulus.ts', 800);
     }
 
