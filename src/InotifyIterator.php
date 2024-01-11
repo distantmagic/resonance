@@ -24,9 +24,6 @@ readonly class InotifyIterator implements IteratorAggregate
      */
     public function __construct(
         private array $paths,
-        /**
-         * @psalm-suppress UndefinedConstant might not have inotify
-         */
         private int $flags = IN_ATTRIB | IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVE,
     ) {}
 

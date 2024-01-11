@@ -42,25 +42,23 @@ readonly class OpenAPISchemaOperation implements JsonSerializable
         );
     }
 
-    private function serializeRequiredOAuth2Scopes(): array
-    {
-        $scopes = [];
+    // private function serializeRequiredOAuth2Scopes(): array
+    // {
+    //     $scopes = [];
 
-        foreach ($this->openAPIPathItem->requiredOAuth2Scopes as $scope) {
-            $scopes[] = $scope->pattern->pattern;
-        }
+    //     // foreach ($this->openAPIPathItem->requiredOAuth2Scopes as $scope) {
+    //     //     $scopes[] = $scope->pattern->pattern;
+    //     // }
 
-        return $scopes;
-    }
+    //     return $scopes;
+    // }
 
     private function serializeSecurity(): array
     {
-        $security = [];
+        return [];
 
-        if (!$this->openAPIPathItem->requiredOAuth2Scopes->isEmpty()) {
-            $security[OpenAPISecuritySchema::OAuth2->name] = $this->serializeRequiredOAuth2Scopes();
-        }
-
-        return $security;
+        // if (!$this->openAPIPathItem->requiredOAuth2Scopes->isEmpty()) {
+        //     $security[OpenAPISecuritySchema::OAuth2->name] = $this->serializeRequiredOAuth2Scopes();
+        // }
     }
 }

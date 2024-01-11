@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\Attribute\BelongsToOpenAPISchema;
-use Distantmagic\Resonance\Attribute\RequiresOAuth2Scope;
 use Distantmagic\Resonance\Attribute\RespondsToHttp;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpResponderCollection;
@@ -53,19 +52,16 @@ final readonly class OpenAPIPathItemCollectionProvider extends SingletonProvider
              * @var ReflectionClass<HttpResponderInterface> $httpResponderReflectionClass
              */
             $httpResponderReflectionClass = $belongsToOpenAPISchemaFile->reflectionClass;
-            $httpResponderReflectionClassAttributeManager = new ReflectionClassAttributeManager($httpResponderReflectionClass);
-            $requiredOAuth2Scopes = $httpResponderReflectionClassAttributeManager->findAttributes(RequiresOAuth2Scope::class);
+            // $httpResponderReflectionClassAttributeManager = new ReflectionClassAttributeManager($httpResponderReflectionClass);
 
             $openAPIPathItemCollection->pathItems->add(new OpenAPIPathItem(
                 $belongsToOpenAPISchemaFile->attribute->schemaSymbol,
                 $httpResponderReflectionClass,
-                $requiredOAuth2Scopes,
                 $respondsToHttpAttribute,
             ));
             $openAPIPathItemCollection->pathItems->add(new OpenAPIPathItem(
                 OpenAPISchemaSymbol::All,
                 $httpResponderReflectionClass,
-                $requiredOAuth2Scopes,
                 $respondsToHttpAttribute,
             ));
         }
