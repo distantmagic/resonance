@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use JsonSerializable;
 use LogicException;
 
-readonly class OpenAPISchemaPaths implements JsonSerializable
+readonly class OpenAPISchemaPaths implements OpenAPISerializableFieldInterface
 {
     public function __construct(
         private HttpControllerReflectionMethodCollection $httpControllerReflectionMethodCollection,
         private OpenAPIPathItemCollection $openAPIPathItemCollection,
         private OpenAPIRouteParameterExtractorAggregate $openAPIRouteParameterExtractorAggregate,
+        private OpenAPIRouteRequestBodyContentExtractorAggregate $openAPIRouteRequestBodyContentExtractorAggregate,
         private OpenAPISchemaSymbolInterface $openAPISchemaSymbol,
     ) {}
 
-    public function jsonSerialize(): array
+    public function toArray(OpenAPIReusableSchemaCollection $openAPIReusableSchemaCollection): array
     {
         $paths = [];
 
@@ -36,11 +36,14 @@ readonly class OpenAPISchemaPaths implements JsonSerializable
                     ));
                 }
 
-                $paths[$pathItem->respondsToHttp->pattern][$method] = new OpenAPISchemaOperation(
+                $operation = new OpenAPISchemaOperation(
                     $this->httpControllerReflectionMethodCollection,
                     $pathItem,
                     $this->openAPIRouteParameterExtractorAggregate,
+                    $this->openAPIRouteRequestBodyContentExtractorAggregate,
                 );
+
+                $paths[$pathItem->respondsToHttp->pattern][$method] = $operation->toArray($openAPIReusableSchemaCollection);
             }
         }
 

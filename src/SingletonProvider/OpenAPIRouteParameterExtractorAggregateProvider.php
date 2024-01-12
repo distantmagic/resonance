@@ -7,7 +7,6 @@ namespace Distantmagic\Resonance\SingletonProvider;
 use Distantmagic\Resonance\Attribute\ExtractsOpenAPIRouteParameter;
 use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\HttpResponderCollection;
 use Distantmagic\Resonance\OpenAPIRouteParameterExtractorAggregate;
 use Distantmagic\Resonance\OpenAPIRouteParameterExtractorInterface;
 use Distantmagic\Resonance\PHPProjectFiles;
@@ -17,7 +16,7 @@ use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
 
 /**
- * @template-extends SingletonProvider<HttpResponderCollection>
+ * @template-extends SingletonProvider<OpenAPIRouteParameterExtractorAggregate>
  */
 #[RequiresSingletonCollection(SingletonCollection::OpenAPIRouteParameterExtractor)]
 #[Singleton(provides: OpenAPIRouteParameterExtractorAggregate::class)]

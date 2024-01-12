@@ -6,6 +6,7 @@ namespace Distantmagic\Resonance;
 
 enum OpenAPIParameterIn: string
 {
+    case Body = 'body';
     case Cookie = 'cookie';
     case Header = 'header';
     case Path = 'path';

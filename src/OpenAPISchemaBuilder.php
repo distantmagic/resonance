@@ -15,7 +15,8 @@ readonly class OpenAPISchemaBuilder
         private OpenAPIConfiguration $openAPIConfiguration,
         private OpenAPIPathItemCollection $openAPIPathItemCollection,
         private OpenAPIRouteParameterExtractorAggregate $openAPIRouteParameterExtractorAggregate,
-        private OpenAPISchemaComponents $openAPISchemaComponents,
+        private OpenAPIRouteRequestBodyContentExtractorAggregate $openAPIRouteRequestBodyContentExtractorAggregate,
+        private OpenAPISchemaComponentsSecuritySchemes $openAPISchemaComponentsSecuritySchemes,
     ) {}
 
     public function buildSchema(OpenAPISchemaSymbolInterface $schemaSymbol): OpenAPISchema
@@ -26,7 +27,8 @@ readonly class OpenAPISchemaBuilder
             $this->openAPIConfiguration,
             $this->openAPIPathItemCollection,
             $this->openAPIRouteParameterExtractorAggregate,
-            $this->openAPISchemaComponents,
+            $this->openAPIRouteRequestBodyContentExtractorAggregate,
+            $this->openAPISchemaComponentsSecuritySchemes,
             $schemaSymbol,
         );
     }

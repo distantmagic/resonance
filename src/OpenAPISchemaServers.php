@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use JsonSerializable;
-
-readonly class OpenAPISchemaServers implements JsonSerializable
+readonly class OpenAPISchemaServers implements OpenAPISerializableFieldInterface
 {
     public function __construct(
         private ApplicationConfiguration $applicationConfiguration,
     ) {}
 
-    public function jsonSerialize(): array
+    public function toArray(OpenAPIReusableSchemaCollection $openAPIReusableSchemaCollection): array
     {
         return [
             [

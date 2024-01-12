@@ -4,22 +4,28 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Distantmagic\Resonance\Attribute\Singleton;
-use JsonSerializable;
-use stdClass;
-
-#[Singleton]
-readonly class OpenAPISchemaComponents implements JsonSerializable
+readonly class OpenAPISchemaComponents implements OpenAPISerializableFieldInterface
 {
     public function __construct(
         private OpenAPISchemaComponentsSecuritySchemes $openAPISchemaSecuritySchemes,
     ) {}
 
-    public function jsonSerialize(): array
+    public function toArray(OpenAPIReusableSchemaCollection $openAPIReusableSchemaCollection): array
     {
         return [
-            'schemas' => new stdClass(),
+            'schemas' => $this->serializeSchemaCollection($openAPIReusableSchemaCollection),
             'securitySchemes' => $this->openAPISchemaSecuritySchemes,
         ];
+    }
+
+    private function serializeSchemaCollection(OpenAPIReusableSchemaCollection $openAPIReusableSchemaCollection): array
+    {
+        $schemas = [];
+
+        foreach ($openAPIReusableSchemaCollection->references as $jsonSchema => $referenceId) {
+            $schemas[$referenceId] = $jsonSchema;
+        }
+
+        return $schemas;
     }
 }

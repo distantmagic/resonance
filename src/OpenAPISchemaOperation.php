@@ -5,18 +5,35 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\HttpResponder\HttpController;
-use JsonSerializable;
 use LogicException;
 
-readonly class OpenAPISchemaOperation implements JsonSerializable
+readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterface
 {
+    private HttpControllerReflectionMethod $httpControllerReflectionMethod;
+
     public function __construct(
-        private HttpControllerReflectionMethodCollection $httpControllerReflectionMethodCollection,
+        HttpControllerReflectionMethodCollection $httpControllerReflectionMethodCollection,
         private OpenAPIPathItem $openAPIPathItem,
         private OpenAPIRouteParameterExtractorAggregate $openAPIRouteParameterExtractorAggregate,
-    ) {}
+        private OpenAPIRouteRequestBodyContentExtractorAggregate $openAPIRouteRequestBodyContentExtractorAggregate,
+    ) {
+        $httpResponderClass = $this->openAPIPathItem->reflectionClass->getName();
 
-    public function jsonSerialize(): array
+        if (!is_a($httpResponderClass, HttpController::class, true)) {
+            throw new LogicException(sprintf(
+                'OpenAPI parameters can only be inferred from "%s", got "%s"',
+                HttpController::class,
+                $httpResponderClass,
+            ));
+        }
+
+        $this->httpControllerReflectionMethod = $httpControllerReflectionMethodCollection
+            ->reflectionMethods
+            ->get($httpResponderClass)
+        ;
+    }
+
+    public function toArray(OpenAPIReusableSchemaCollection $openAPIReusableSchemaCollection): array
     {
         $operation = [];
 
@@ -34,6 +51,14 @@ readonly class OpenAPISchemaOperation implements JsonSerializable
 
         if (!empty($parameters)) {
             $operation['parameters'] = $parameters;
+        }
+
+        $requestBodyContents = $this->serializeRequestBodyContents($openAPIReusableSchemaCollection);
+
+        if (!empty($requestBodyContents)) {
+            $operation['requestBody'] = [
+                'content' => $requestBodyContents,
+            ];
         }
 
         $security = $this->serializeSecurity();
@@ -54,38 +79,11 @@ readonly class OpenAPISchemaOperation implements JsonSerializable
         );
     }
 
-    // private function serializeRequiredOAuth2Scopes(): array
-    // {
-    //     $scopes = [];
-
-    //     // foreach ($this->openAPIPathItem->requiredOAuth2Scopes as $scope) {
-    //     //     $scopes[] = $scope->pattern->pattern;
-    //     // }
-
-    //     return $scopes;
-    // }
-
     private function serializeParameters(): array
     {
         $parameters = [];
 
-        $httpResponderClass = $this->openAPIPathItem->reflectionClass->getName();
-
-        if (!is_a($httpResponderClass, HttpController::class, true)) {
-            throw new LogicException(sprintf(
-                'OpenAPI parameters can only be inferred from "%s", got "%s"',
-                HttpController::class,
-                $httpResponderClass,
-            ));
-        }
-
-        $httpControllerReflectionMethod = $this
-            ->httpControllerReflectionMethodCollection
-            ->reflectionMethods
-            ->get($httpResponderClass)
-        ;
-
-        foreach ($httpControllerReflectionMethod->parameters as $reflectionMethodParameter) {
+        foreach ($this->httpControllerReflectionMethod->parameters as $reflectionMethodParameter) {
             if ($reflectionMethodParameter->attribute) {
                 $extractedParameters = $this
                     ->openAPIRouteParameterExtractorAggregate
@@ -103,6 +101,49 @@ readonly class OpenAPISchemaOperation implements JsonSerializable
         }
 
         return $parameters;
+    }
+
+    // private function serializeRequiredOAuth2Scopes(): array
+    // {
+    //     $scopes = [];
+
+    //     // foreach ($this->openAPIPathItem->requiredOAuth2Scopes as $scope) {
+    //     //     $scopes[] = $scope->pattern->pattern;
+    //     // }
+
+    //     return $scopes;
+    // }
+
+    private function serializeRequestBodyContents(
+        OpenAPIReusableSchemaCollection $openAPIReusableSchemaCollection,
+    ): array {
+        $requestBodyContents = [];
+
+        foreach ($this->httpControllerReflectionMethod->parameters as $reflectionMethodParameter) {
+            if ($reflectionMethodParameter->attribute) {
+                $parameterResolvedValue = $this
+                    ->openAPIRouteRequestBodyContentExtractorAggregate
+                    ->extractFromHttpControllerParameter(
+                        $reflectionMethodParameter->attribute,
+                        $reflectionMethodParameter->className,
+                        $reflectionMethodParameter->name,
+                    )
+                ;
+
+                foreach ($parameterResolvedValue as $requestBodyContent) {
+                    if (isset($requestBodyContents[$requestBodyContent->mimeType])) {
+                        throw new LogicException(sprintf(
+                            'Ambiguous request body resolution in "%s"',
+                            $reflectionMethodParameter->className,
+                        ));
+                    }
+
+                    $requestBodyContents[$requestBodyContent->mimeType] = $requestBodyContent->toArray($openAPIReusableSchemaCollection);
+                }
+            }
+        }
+
+        return $requestBodyContents;
     }
 
     private function serializeSecurity(): array

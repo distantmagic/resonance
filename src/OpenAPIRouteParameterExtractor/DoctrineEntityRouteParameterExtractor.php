@@ -10,6 +10,7 @@ use Distantmagic\Resonance\Attribute\ExtractsOpenAPIRouteParameter;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\DoctrineAttributeDriver;
 use Distantmagic\Resonance\DoctrineEntityManagerRepository;
+use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\OpenAPIParameterIn;
 use Distantmagic\Resonance\OpenAPIRouteParameterExtractor;
 use Distantmagic\Resonance\OpenAPISchemaParameter;
@@ -25,11 +26,28 @@ use RuntimeException;
 #[Singleton(collection: SingletonCollection::OpenAPIRouteParameterExtractor)]
 readonly class DoctrineEntityRouteParameterExtractor extends OpenAPIRouteParameterExtractor
 {
+    private JsonSchema $jsonSchemaInteger;
+    private JsonSchema $jsonSchemaString;
+
     public function __construct(
         private DoctrineAttributeDriver $doctrineAttributeDriver,
         private DoctrineEntityManagerRepository $doctrineEntityManagerRepository,
-    ) {}
+    ) {
+        $this->jsonSchemaInteger = new JsonSchema([
+            'minimum' => 1,
+            'type' => 'integer',
+        ]);
+        $this->jsonSchemaString = new JsonSchema([
+            'minLength' => 1,
+            'type' => 'string',
+        ]);
+    }
 
+    /**
+     * Unfortunately to extract the metadata factory we need an instance of
+     * EntityManager, which in turn starts database connection, just to extract
+     * the metadata..
+     */
     public function extractFromHttpControllerParameter(
         Attribute $attribute,
         string $parameterClass,
@@ -75,17 +93,11 @@ readonly class DoctrineEntityRouteParameterExtractor extends OpenAPIRouteParamet
         ];
     }
 
-    private function jsonSchemaFromFieldType(string $fieldType): array
+    private function jsonSchemaFromFieldType(string $fieldType): JsonSchema
     {
         return match ($fieldType) {
-            'integer' => [
-                'minimum' => 1,
-                'type' => 'integer',
-            ],
-            'string' => [
-                'minLength' => 1,
-                'type' => 'string',
-            ],
+            'integer' => $this->jsonSchemaInteger,
+            'string' => $this->jsonSchemaString,
             default => throw new LogicException(sprintf(
                 'Unsupported Doctrine field type: "%s"',
                 $fieldType,

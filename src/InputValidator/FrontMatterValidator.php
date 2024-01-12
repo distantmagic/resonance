@@ -8,10 +8,10 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\FrontMatterCollectionReference;
 use Distantmagic\Resonance\InputValidatedData\FrontMatter;
 use Distantmagic\Resonance\InputValidator;
+use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\StaticPageContentType;
 use Generator;
 use Nette\Schema\Expect;
-use Nette\Schema\Schema;
 
 /**
  * @extends InputValidator<FrontMatter, object{
@@ -46,31 +46,32 @@ readonly class FrontMatterValidator extends InputValidator
         );
     }
 
-    protected function makeSchema(): Schema
+    protected function makeSchema(): JsonSchema
     {
-        $contentTypes = StaticPageContentType::values();
+        return new JsonSchema([]);
+        // $contentTypes = StaticPageContentType::values();
 
-        return Expect::structure([
-            'collections' => Expect::listOf(
-                Expect::anyOf(
-                    Expect::string()->min(1),
-                    Expect::structure([
-                        'name' => Expect::string()->min(1),
-                        'next' => Expect::string()->min(1),
-                    ]),
-                )
-            )->default([]),
-            'content_type' => Expect::anyOf(...$contentTypes)->default(StaticPageContentType::Markdown->value),
-            'description' => Expect::string()->min(1)->required(),
-            'draft' => Expect::bool()->default(false),
-            'layout' => Expect::string()->min(1)->required(),
-            'next' => Expect::string()->min(1),
-            'parent' => Expect::string()->min(1),
-            'register_stylesheets' => Expect::listOf(
-                Expect::string()->min(1),
-            )->default([]),
-            'title' => Expect::string()->min(1)->required(),
-        ]);
+        // return Expect::structure([
+        //     'collections' => Expect::listOf(
+        //         Expect::anyOf(
+        //             Expect::string()->min(1),
+        //             Expect::structure([
+        //                 'name' => Expect::string()->min(1),
+        //                 'next' => Expect::string()->min(1),
+        //             ]),
+        //         )
+        //     )->default([]),
+        //     'content_type' => Expect::anyOf(...$contentTypes)->default(StaticPageContentType::Markdown->value),
+        //     'description' => Expect::string()->min(1)->required(),
+        //     'draft' => Expect::bool()->default(false),
+        //     'layout' => Expect::string()->min(1)->required(),
+        //     'next' => Expect::string()->min(1),
+        //     'parent' => Expect::string()->min(1),
+        //     'register_stylesheets' => Expect::listOf(
+        //         Expect::string()->min(1),
+        //     )->default([]),
+        //     'title' => Expect::string()->min(1)->required(),
+        // ]);
     }
 
     /**

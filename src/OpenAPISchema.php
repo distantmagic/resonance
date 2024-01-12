@@ -20,7 +20,8 @@ readonly class OpenAPISchema implements JsonSerializable
         OpenAPIConfiguration $openAPIConfiguration,
         OpenAPIPathItemCollection $openAPIPathItemCollection,
         OpenAPIRouteParameterExtractorAggregate $openAPIRouteParameterExtractorAggregate,
-        private OpenAPISchemaComponents $openAPISchemaComponents,
+        OpenAPIRouteRequestBodyContentExtractorAggregate $openAPIRouteRequestBodyContentExtractorAggregate,
+        private OpenAPISchemaComponentsSecuritySchemes $openAPISchemaComponentsSecuritySchemes,
         OpenAPISchemaSymbolInterface $openAPISchemaSymbol,
     ) {
         $this->openAPISchemaInfo = new OpenAPISchemaInfo($openAPIConfiguration);
@@ -28,6 +29,7 @@ readonly class OpenAPISchema implements JsonSerializable
             $httpControllerReflectionMethodCollection,
             $openAPIPathItemCollection,
             $openAPIRouteParameterExtractorAggregate,
+            $openAPIRouteRequestBodyContentExtractorAggregate,
             $openAPISchemaSymbol,
         );
         $this->openAPISchemaServers = new OpenAPISchemaServers($applicationConfiguration);
@@ -35,12 +37,19 @@ readonly class OpenAPISchema implements JsonSerializable
 
     public function jsonSerialize(): array
     {
+        $openAPIReusableSchemaCollection = new OpenAPIReusableSchemaCollection();
+        $openAPISchemaComponents = new OpenAPISchemaComponents($this->openAPISchemaComponentsSecuritySchemes);
+
+        $infoSerialized = $this->openAPISchemaInfo->toArray($openAPIReusableSchemaCollection);
+        $pathsSerialized = $this->openAPISchemaPaths->toArray($openAPIReusableSchemaCollection);
+        $serversSerialized = $this->openAPISchemaServers->toArray($openAPIReusableSchemaCollection);
+
         return [
             'openapi' => self::VERSION,
-            'info' => $this->openAPISchemaInfo,
-            'servers' => $this->openAPISchemaServers,
-            'components' => $this->openAPISchemaComponents,
-            'paths' => $this->openAPISchemaPaths,
+            'info' => $infoSerialized,
+            'servers' => $serversSerialized,
+            'components' => $openAPISchemaComponents->toArray($openAPIReusableSchemaCollection),
+            'paths' => $pathsSerialized,
         ];
     }
 }

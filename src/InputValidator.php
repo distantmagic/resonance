@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Nette\Schema\Processor;
-use Nette\Schema\Schema;
-use Nette\Schema\ValidationException;
 use Swoole\Http\Request;
 
 /**
@@ -15,9 +12,7 @@ use Swoole\Http\Request;
  */
 abstract readonly class InputValidator
 {
-    public const REGEXP_SLUG = '^[a-z][-a-z0-9]{3,}$';
-
-    private Schema $schema;
+    public JsonSchema $jsonSchema;
 
     /**
      * @param TValidatedData $data
@@ -26,11 +21,11 @@ abstract readonly class InputValidator
      */
     abstract protected function castValidatedData(mixed $data): InputValidatedData;
 
-    abstract protected function makeSchema(): Schema;
+    abstract protected function makeSchema(): JsonSchema;
 
-    public function __construct(private Processor $processor)
+    public function __construct(private JsonSchemaValidator $jsonSchemaValidator)
     {
-        $this->schema = $this->makeSchema();
+        $this->jsonSchema = $this->makeSchema();
     }
 
     /**
@@ -38,33 +33,34 @@ abstract readonly class InputValidator
      */
     public function validateData(mixed $data): InputValidationResult
     {
-        try {
-            /**
-             * Nette schema validation library is trusted to do that (cast anything
-             * into the validated data)
-             *
-             * @var TValidatedData $validatedData
-             */
-            $validatedData = $this->processor->process($this->schema, $data);
-        } catch (ValidationException $validationException) {
-            /**
-             * @var InputValidationResult<TValidatedModel>
-             */
-            $validationResult = new InputValidationResult();
+        $validator = $this->jsonSchemaValidator->validate($this->jsonSchema, $data);
 
-            foreach ($validationException->getMessageObjects() as $message) {
-                $validationResult->errors->put(
-                    implode('.', $message->path),
-                    $message->toString(),
-                );
-            }
-
-            return $validationResult;
+        if ($validator->isValid()) {
+            /**
+             * @var TValidatedData $data
+             */
+            return new InputValidationResult($this->castValidatedData($data));
         }
 
-        return new InputValidationResult(
-            inputValidatedData: $this->castValidatedData($validatedData),
-        );
+        /**
+         * @var InputValidationResult<TValidatedModel>
+         */
+        $validationResult = new InputValidationResult();
+
+        /**
+         * @var array{
+         *   property: string,
+         *   message: string
+         * } $error
+         */
+        foreach ($validator->getErrors() as $error) {
+            $validationResult->errors->put(
+                $error['property'],
+                $error['message'],
+            );
+        }
+
+        return $validationResult;
     }
 
     /**
