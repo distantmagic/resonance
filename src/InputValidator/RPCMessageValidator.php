@@ -11,7 +11,6 @@ use Distantmagic\Resonance\InputValidator;
 use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\JsonSchemaValidator;
 use Distantmagic\Resonance\RPCMethodValidatorInterface;
-use Nette\Schema\Expect;
 
 /**
  * @extends InputValidator<RPCMessage, array{
@@ -42,23 +41,23 @@ readonly class RPCMessageValidator extends InputValidator
     protected function makeSchema(): JsonSchema
     {
         return new JsonSchema([
+            'type' => 'array',
+            'items' => [
+                [
+                    'type' => 'string',
+                    'enum' => $this->rpcMethodValidator->names(),
+                    'required' => true,
+                ],
+                [
+                    'required' => true,
+                ],
+                [
+                    'type' => 'string',
+                    'format' => 'uuid',
+                    'nullable' => true,
+                    'required' => true,
+                ],
+            ],
         ]);
-        // return Expect::structure([
-        //     0 => Expect::anyOf(...$this->rpcMethodValidator->names())->required(),
-        //     1 => Expect::mixed()->required(),
-        //     2 => Expect::string()
-        //         ->nullable()
-        //         ->assert($this->isUuidNullable(...), 'Expected uuid')
-        //         ->required(),
-        // ])->castTo('array');
     }
-
-    // private function isUuidNullable(?string $uuid): bool
-    // {
-    //     if (is_null($uuid)) {
-    //         return true;
-    //     }
-
-    //     return uuid_is_valid($uuid);
-    // }
 }

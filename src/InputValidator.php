@@ -33,13 +33,13 @@ abstract readonly class InputValidator
      */
     public function validateData(mixed $data): InputValidationResult
     {
-        $validator = $this->jsonSchemaValidator->validate($this->jsonSchema, $data);
+        /**
+         * @var JsonSchemaValidationResult<TValidatedData>
+         */
+        $jsonSchemaValidationResult = $this->jsonSchemaValidator->validate($this->jsonSchema, $data);
 
-        if ($validator->isValid()) {
-            /**
-             * @var TValidatedData $data
-             */
-            return new InputValidationResult($this->castValidatedData($data));
+        if ($jsonSchemaValidationResult->validator->isValid()) {
+            return new InputValidationResult($this->castValidatedData($jsonSchemaValidationResult->data));
         }
 
         /**
@@ -53,7 +53,7 @@ abstract readonly class InputValidator
          *   message: string
          * } $error
          */
-        foreach ($validator->getErrors() as $error) {
+        foreach ($jsonSchemaValidationResult->validator->getErrors() as $error) {
             $validationResult->errors->put(
                 $error['property'],
                 $error['message'],
