@@ -14,6 +14,7 @@ readonly class OAuth2ScopePattern
     private array $patternChunks;
 
     /**
+     * @param non-empty-string $pattern
      * @param non-empty-string $separator
      */
     public function __construct(

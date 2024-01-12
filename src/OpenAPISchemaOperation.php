@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\GivesHttpResponse;
 use Distantmagic\Resonance\HttpResponder\HttpController;
 use LogicException;
 use ReflectionAttribute;
@@ -14,6 +15,7 @@ readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterfa
 
     public function __construct(
         HttpControllerReflectionMethodCollection $httpControllerReflectionMethodCollection,
+        private OpenAPIMetadataResponseExtractorAggregate $openAPIMetadataResponseExtractorAggregate,
         private OpenAPIMetadataSecurityRequirementExtractorAggregate $openAPIMetadataSecurityRequirementExtractorAggregate,
         private OpenAPIPathItem $openAPIPathItem,
         private OpenAPIRouteParameterExtractorAggregate $openAPIRouteParameterExtractorAggregate,
@@ -69,6 +71,8 @@ readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterfa
         if (!empty($security)) {
             $operation['security'] = $security;
         }
+
+        $operation['responses'] = $this->serializeResponses($openAPIReusableSchemaCollection);
 
         return $operation;
     }
@@ -136,6 +140,34 @@ readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterfa
         }
 
         return $requestBodyContents;
+    }
+
+    private function serializeResponses(OpenAPIReusableSchemaCollection $openAPIReusableSchemaCollection): array
+    {
+        $httpControllerReflectionClass = $this->httpControllerReflectionMethod->reflectionClass;
+        $responses = [];
+
+        foreach ($httpControllerReflectionClass->getAttributes(Attribute::class, ReflectionAttribute::IS_INSTANCEOF) as $reflectionAttribute) {
+            $attribute = $reflectionAttribute->newInstance();
+            $extractedResponses = $this
+                ->openAPIMetadataResponseExtractorAggregate
+                ->extractFromHttpControllerMetadata($httpControllerReflectionClass, $attribute)
+            ;
+
+            foreach ($extractedResponses as $response) {
+                $responses[$response->status] = $response->toArray($openAPIReusableSchemaCollection);
+            }
+        }
+
+        if (empty($responses)) {
+            throw new LogicException(sprintf(
+                'Unable to infer response types from "%s". To resolve that you can add "%s" attributes',
+                $httpControllerReflectionClass->getName(),
+                GivesHttpResponse::class,
+            ));
+        }
+
+        return $responses;
     }
 
     private function serializeSecurity(OpenAPIReusableSchemaCollection $openAPIReusableSchemaCollection): array

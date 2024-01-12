@@ -10,6 +10,7 @@ readonly class OpenAPISchemaPaths implements OpenAPISerializableFieldInterface
 {
     public function __construct(
         private HttpControllerReflectionMethodCollection $httpControllerReflectionMethodCollection,
+        private OpenAPIMetadataResponseExtractorAggregate $openAPIMetadataResponseExtractorAggregate,
         private OpenAPIMetadataSecurityRequirementExtractorAggregate $openAPIMetadataSecurityRequirementExtractorAggregate,
         private OpenAPIPathItemCollection $openAPIPathItemCollection,
         private OpenAPIRouteParameterExtractorAggregate $openAPIRouteParameterExtractorAggregate,
@@ -40,6 +41,7 @@ readonly class OpenAPISchemaPaths implements OpenAPISerializableFieldInterface
 
                 $operation = new OpenAPISchemaOperation(
                     $this->httpControllerReflectionMethodCollection,
+                    $this->openAPIMetadataResponseExtractorAggregate,
                     $this->openAPIMetadataSecurityRequirementExtractorAggregate,
                     $pathItem,
                     $this->openAPIRouteParameterExtractorAggregate,
