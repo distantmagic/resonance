@@ -6,6 +6,7 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\HttpResponder\HttpController;
 use LogicException;
+use ReflectionAttribute;
 
 readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterface
 {
@@ -13,9 +14,11 @@ readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterfa
 
     public function __construct(
         HttpControllerReflectionMethodCollection $httpControllerReflectionMethodCollection,
+        private OpenAPIMetadataSecurityRequirementExtractorAggregate $openAPIMetadataSecurityRequirementExtractorAggregate,
         private OpenAPIPathItem $openAPIPathItem,
         private OpenAPIRouteParameterExtractorAggregate $openAPIRouteParameterExtractorAggregate,
         private OpenAPIRouteRequestBodyContentExtractorAggregate $openAPIRouteRequestBodyContentExtractorAggregate,
+        private OpenAPIRouteSecurityRequirementExtractorAggregate $openAPIRouteSecurityRequirementExtractorAggregate,
     ) {
         $httpResponderClass = $this->openAPIPathItem->reflectionClass->getName();
 
@@ -61,7 +64,7 @@ readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterfa
             ];
         }
 
-        $security = $this->serializeSecurity();
+        $security = $this->serializeSecurity($openAPIReusableSchemaCollection);
 
         if (!empty($security)) {
             $operation['security'] = $security;
@@ -103,17 +106,6 @@ readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterfa
         return $parameters;
     }
 
-    // private function serializeRequiredOAuth2Scopes(): array
-    // {
-    //     $scopes = [];
-
-    //     // foreach ($this->openAPIPathItem->requiredOAuth2Scopes as $scope) {
-    //     //     $scopes[] = $scope->pattern->pattern;
-    //     // }
-
-    //     return $scopes;
-    // }
-
     private function serializeRequestBodyContents(
         OpenAPIReusableSchemaCollection $openAPIReusableSchemaCollection,
     ): array {
@@ -146,12 +138,58 @@ readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterfa
         return $requestBodyContents;
     }
 
-    private function serializeSecurity(): array
+    private function serializeSecurity(OpenAPIReusableSchemaCollection $openAPIReusableSchemaCollection): array
     {
-        return [];
+        $mergedSecurityRequirements = [];
 
-        // if (!$this->openAPIPathItem->requiredOAuth2Scopes->isEmpty()) {
-        //     $security[OpenAPISecuritySchema::OAuth2->name] = $this->serializeRequiredOAuth2Scopes();
-        // }
+        foreach ($this->httpControllerReflectionMethod->parameters as $reflectionMethodParameter) {
+            if ($reflectionMethodParameter->attribute) {
+                $extractedSecurityRequirements = $this
+                    ->openAPIRouteSecurityRequirementExtractorAggregate
+                    ->extractFromHttpControllerParameter(
+                        $reflectionMethodParameter->attribute,
+                        $reflectionMethodParameter->className,
+                        $reflectionMethodParameter->name,
+                    )
+                ;
+
+                foreach ($extractedSecurityRequirements as $securityRequirement) {
+                    $mergedSecurityRequirements = array_merge_recursive(
+                        $mergedSecurityRequirements,
+                        $securityRequirement->toArray($openAPIReusableSchemaCollection),
+                    );
+                }
+            }
+        }
+
+        $httpControllerReflectionClass = $this->httpControllerReflectionMethod->reflectionClass;
+
+        foreach ($httpControllerReflectionClass->getAttributes(Attribute::class, ReflectionAttribute::IS_INSTANCEOF) as $reflectionAttribute) {
+            $attribute = $reflectionAttribute->newInstance();
+            $extractedSecurityRequirements = $this
+                ->openAPIMetadataSecurityRequirementExtractorAggregate
+                ->extractFromHttpControllerMetadata($httpControllerReflectionClass, $attribute)
+            ;
+
+            foreach ($extractedSecurityRequirements as $securityRequirement) {
+                $mergedSecurityRequirements = array_merge_recursive(
+                    $mergedSecurityRequirements,
+                    $securityRequirement->toArray($openAPIReusableSchemaCollection),
+                );
+            }
+        }
+
+        $securityRequirements = [];
+
+        /**
+         * @var array<string> $mergedSecurityRequirement
+         */
+        foreach ($mergedSecurityRequirements as $securitySchemeName => $mergedSecurityRequirement) {
+            $securityRequirements[] = [
+                $securitySchemeName => $mergedSecurityRequirement,
+            ];
+        }
+
+        return $securityRequirements;
     }
 }

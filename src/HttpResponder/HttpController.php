@@ -56,7 +56,10 @@ abstract readonly class HttpController extends HttpResponder
 
         foreach ($reflectionClass->getMethods() as $validationErrorsReflectionMethod) {
             if (!empty($validationErrorsReflectionMethod->getAttributes(ValidationErrorsHandler::class))) {
-                $handleValidationErrorsReflection = new HttpControllerReflectionMethod($validationErrorsReflectionMethod);
+                $handleValidationErrorsReflection = new HttpControllerReflectionMethod(
+                    $reflectionClass,
+                    $validationErrorsReflectionMethod,
+                );
                 $handleValidationErrorsCallback = $validationErrorsReflectionMethod->getClosure($this);
             }
         }

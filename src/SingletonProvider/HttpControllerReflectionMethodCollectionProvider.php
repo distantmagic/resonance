@@ -12,6 +12,7 @@ use Distantmagic\Resonance\HttpResponderAttributeCollection;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
+use ReflectionClass;
 
 /**
  * @template-extends SingletonProvider<HttpControllerReflectionMethodCollection>
@@ -35,9 +36,16 @@ final readonly class HttpControllerReflectionMethodCollectionProvider extends Si
                     ->reflectionClass
                     ->getMethod('handle')
                 ;
+
+                /**
+                 * @var ReflectionClass<HttpController> $httpResponderAttribute->reflectionClass
+                 */
                 $httpControllerMetadataCollection->reflectionMethods->put(
                     $httpResponderClassName,
-                    new HttpControllerReflectionMethod($reflectionMethod),
+                    new HttpControllerReflectionMethod(
+                        $httpResponderAttribute->reflectionClass,
+                        $reflectionMethod,
+                    ),
                 );
             }
         }

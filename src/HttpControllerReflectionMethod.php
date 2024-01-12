@@ -6,9 +6,11 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\CurrentRequest;
 use Distantmagic\Resonance\Attribute\CurrentResponse;
+use Distantmagic\Resonance\HttpResponder\HttpController;
 use Ds\Map;
 use Generator;
 use ReflectionAttribute;
+use ReflectionClass;
 use ReflectionIntersectionType;
 use ReflectionMethod;
 use ReflectionNamedType;
@@ -25,8 +27,13 @@ readonly class HttpControllerReflectionMethod
      */
     public Map $parameters;
 
-    public function __construct(private ReflectionMethod $reflectionMethod)
-    {
+    /**
+     * @param ReflectionClass<HttpController> $reflectionClass
+     */
+    public function __construct(
+        public ReflectionClass $reflectionClass,
+        private ReflectionMethod $reflectionMethod,
+    ) {
         $this->parameters = new Map();
 
         $this->assertReturnTypes();

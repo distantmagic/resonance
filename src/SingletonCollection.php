@@ -17,8 +17,10 @@ enum SingletonCollection implements SingletonCollectionInterface
     case HttpResponder;
     case InputValidator;
     case OAuth2Grant;
+    case OpenAPIMetadataSecurityRequirementExtractor;
     case OpenAPIRouteParameterExtractor;
     case OpenAPIRouteRequestBodyContentExtractor;
+    case OpenAPIRouteSecurityRequirementExtractor;
     case SiteActionGate;
     case StaticPageLayout;
     case TickTimerJob;

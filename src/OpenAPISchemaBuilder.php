@@ -13,9 +13,11 @@ readonly class OpenAPISchemaBuilder
         private ApplicationConfiguration $applicationConfiguration,
         private HttpControllerReflectionMethodCollection $httpControllerReflectionMethodCollection,
         private OpenAPIConfiguration $openAPIConfiguration,
+        private OpenAPIMetadataSecurityRequirementExtractorAggregate $openAPIMetadataSecurityRequirementExtractorAggregate,
         private OpenAPIPathItemCollection $openAPIPathItemCollection,
         private OpenAPIRouteParameterExtractorAggregate $openAPIRouteParameterExtractorAggregate,
         private OpenAPIRouteRequestBodyContentExtractorAggregate $openAPIRouteRequestBodyContentExtractorAggregate,
+        private OpenAPIRouteSecurityRequirementExtractorAggregate $openAPIRouteSecurityRequirementExtractorAggregate,
         private OpenAPISchemaComponentsSecuritySchemes $openAPISchemaComponentsSecuritySchemes,
     ) {}
 
@@ -25,9 +27,11 @@ readonly class OpenAPISchemaBuilder
             $this->applicationConfiguration,
             $this->httpControllerReflectionMethodCollection,
             $this->openAPIConfiguration,
+            $this->openAPIMetadataSecurityRequirementExtractorAggregate,
             $this->openAPIPathItemCollection,
             $this->openAPIRouteParameterExtractorAggregate,
             $this->openAPIRouteRequestBodyContentExtractorAggregate,
+            $this->openAPIRouteSecurityRequirementExtractorAggregate,
             $this->openAPISchemaComponentsSecuritySchemes,
             $schemaSymbol,
         );

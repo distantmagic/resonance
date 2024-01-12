@@ -34,7 +34,6 @@ readonly class DoctrineEntityRouteParameterExtractor extends OpenAPIRouteParamet
         private DoctrineEntityManagerRepository $doctrineEntityManagerRepository,
     ) {
         $this->jsonSchemaInteger = new JsonSchema([
-            'minimum' => 1,
             'type' => 'integer',
         ]);
         $this->jsonSchemaString = new JsonSchema([

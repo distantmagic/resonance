@@ -18,18 +18,22 @@ readonly class OpenAPISchema implements JsonSerializable
         ApplicationConfiguration $applicationConfiguration,
         HttpControllerReflectionMethodCollection $httpControllerReflectionMethodCollection,
         OpenAPIConfiguration $openAPIConfiguration,
+        OpenAPIMetadataSecurityRequirementExtractorAggregate $openAPIMetadataSecurityRequirementExtractorAggregate,
         OpenAPIPathItemCollection $openAPIPathItemCollection,
         OpenAPIRouteParameterExtractorAggregate $openAPIRouteParameterExtractorAggregate,
         OpenAPIRouteRequestBodyContentExtractorAggregate $openAPIRouteRequestBodyContentExtractorAggregate,
+        OpenAPIRouteSecurityRequirementExtractorAggregate $openAPIRouteSecurityRequirementExtractorAggregate,
         private OpenAPISchemaComponentsSecuritySchemes $openAPISchemaComponentsSecuritySchemes,
         OpenAPISchemaSymbolInterface $openAPISchemaSymbol,
     ) {
         $this->openAPISchemaInfo = new OpenAPISchemaInfo($openAPIConfiguration);
         $this->openAPISchemaPaths = new OpenAPISchemaPaths(
             $httpControllerReflectionMethodCollection,
+            $openAPIMetadataSecurityRequirementExtractorAggregate,
             $openAPIPathItemCollection,
             $openAPIRouteParameterExtractorAggregate,
             $openAPIRouteRequestBodyContentExtractorAggregate,
+            $openAPIRouteSecurityRequirementExtractorAggregate,
             $openAPISchemaSymbol,
         );
         $this->openAPISchemaServers = new OpenAPISchemaServers($applicationConfiguration);

@@ -17,4 +17,6 @@ interface CrudActionGateInterface
         CrudActionSubjectInterface $subject,
         CrudAction $crudAction,
     ): bool;
+
+    public function requiresAuthenticatedUser(CrudAction $crudAction): bool;
 }
