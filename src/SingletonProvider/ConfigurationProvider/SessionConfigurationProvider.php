@@ -6,12 +6,11 @@ namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\ConfigurationFile;
+use Distantmagic\Resonance\JsonSchema;
+use Distantmagic\Resonance\JsonSchemaValidator;
 use Distantmagic\Resonance\RedisConfiguration;
 use Distantmagic\Resonance\SessionConfiguration;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
-use Nette\Schema\Expect;
-use Nette\Schema\Processor;
-use Nette\Schema\Schema;
 
 /**
  * @template-extends ConfigurationProvider<SessionConfiguration, object{
@@ -26,10 +25,10 @@ final readonly class SessionConfigurationProvider extends ConfigurationProvider
 {
     public function __construct(
         private ConfigurationFile $configurationFile,
-        private Processor $processor,
+        private JsonSchemaValidator $jsonSchemaValidator,
         private RedisConfiguration $redisConfiguration,
     ) {
-        parent::__construct($configurationFile, $processor);
+        parent::__construct($configurationFile, $jsonSchemaValidator);
     }
 
     protected function getConfigurationKey(): string
@@ -37,7 +36,7 @@ final readonly class SessionConfigurationProvider extends ConfigurationProvider
         return 'session';
     }
 
-    protected function getSchema(): Schema
+    protected function makeSchema(): JsonSchema
     {
         $redisConnectionPools = $this
             ->redisConfiguration
@@ -46,11 +45,28 @@ final readonly class SessionConfigurationProvider extends ConfigurationProvider
             ->toArray()
         ;
 
-        return Expect::structure([
-            'cookie_lifespan' => Expect::int()->min(1)->required(),
-            'cookie_name' => Expect::string()->min(1)->required(),
-            'cookie_samesite' => Expect::anyOf('lax', 'none', 'strict')->default('lax'),
-            'redis_connection_pool' => Expect::anyOf(...$redisConnectionPools),
+        return new JsonSchema([
+            'type' => 'object',
+            'properties' => [
+                'cookie_lifespan' => [
+                    'type' => 'integer',
+                    'minimum' => 1,
+                ],
+                'cookie_name' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+                'cookie_samesite' => [
+                    'type' => 'string',
+                    'enum' => ['lax', 'none', 'strict'],
+                    'default' => 'lax',
+                ],
+                'redis_connection_pool' => [
+                    'type' => 'string',
+                    'enum' => $redisConnectionPools,
+                ],
+            ],
+            'required' => ['cookie_lifespan', 'cookie_name'],
         ]);
     }
 

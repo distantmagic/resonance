@@ -342,7 +342,7 @@ readonly class UsernamePassword extends InputValidatedData
 ```
 
 We will use this input validator in the HTTP Responder. It uses
-[Nette's Data Validator](https://doc.nette.org/en/schema)
+[JSON Schema](https://json-schema.org/)
 to validate the incoming data:
 
 ```php file:app/InputValidator/UsernamePasswordValidator.php
@@ -353,9 +353,8 @@ namespace App\InputValidator;
 use App\InputValidatedData\UsernamePassword;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\InputValidator;
+use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\SingletonCollection;
-use Nette\Schema\Expect;
-use Nette\Schema\Schema;
 
 /**
  * @extends InputValidator<UsernamePassword, object{
@@ -374,10 +373,22 @@ readonly class UsernamePasswordValidator extends InputValidator
 
     protected function makeSchema(): Schema
     {
-        return Expect::structure([
-            'csrf' => Expect::string()->required(),
-            'username' => Expect::string()->min(1)->required(),
-            'password' => Expect::string()->min(1)->required(),
+        return new JsonSchema([
+            'type' => 'object',
+            'properties' => [
+                'csrf' => [
+                    'type' => 'string',
+                ],
+                'username' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+                'password' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ]
+            ],
+            'required' => ['csrf', 'username', 'password']
         ]);
     }
 }

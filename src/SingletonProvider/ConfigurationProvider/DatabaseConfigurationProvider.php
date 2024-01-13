@@ -8,9 +8,8 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\DatabaseConfiguration;
 use Distantmagic\Resonance\DatabaseConnectionPoolConfiguration;
 use Distantmagic\Resonance\DatabaseConnectionPoolDriverName;
+use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
-use Nette\Schema\Expect;
-use Nette\Schema\Schema;
 
 /**
  * @template-extends ConfigurationProvider<
@@ -37,24 +36,67 @@ final readonly class DatabaseConfigurationProvider extends ConfigurationProvider
         return 'database';
     }
 
-    protected function getSchema(): Schema
+    protected function makeSchema(): JsonSchema
     {
-        $keySchema = Expect::string()->min(1)->required();
+        $valueSchema = [
+            'type' => 'object',
+            'properties' => [
+                'database' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+                'driver' => [
+                    'type' => 'string',
+                    'enum' => DatabaseConnectionPoolDriverName::values(),
+                ],
+                'host' => [
+                    'type' => ['string', 'null'],
+                    'minLength' => 1,
+                    'default' => null,
+                ],
+                'log_queries' => [
+                    'type' => 'boolean',
+                ],
+                'password' => [
+                    'type' => 'string',
+                ],
+                'pool_prefill' => [
+                    'type' => 'boolean',
+                ],
+                'pool_size' => [
+                    'type' => 'integer',
+                    'minimum' => 1,
+                ],
+                'port' => [
+                    'type' => 'integer',
+                    'minimum' => 1,
+                    'maximum' => 65535,
+                    'default' => 3306,
+                ],
+                'unix_socket' => [
+                    'type' => ['string', 'null'],
+                    'default' => null,
+                ],
+                'username' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+            ],
+            'required' => [
+                'database',
+                'driver',
+                'log_queries',
+                'password',
+                'pool_prefill',
+                'pool_size',
+                'username',
+            ],
+        ];
 
-        $valueSchema = Expect::structure([
-            'database' => Expect::string()->min(1)->required(),
-            'driver' => Expect::anyOf(...DatabaseConnectionPoolDriverName::values())->required(),
-            'host' => Expect::string()->min(1)->nullable()->default(null),
-            'log_queries' => Expect::bool()->required(),
-            'password' => Expect::string()->required(),
-            'pool_prefill' => Expect::bool()->required(),
-            'pool_size' => Expect::int()->min(1)->required(),
-            'port' => Expect::int()->min(1)->max(65535)->default(3306),
-            'unix_socket' => Expect::string()->nullable()->default(null),
-            'username' => Expect::string()->min(1)->required(),
+        return new JsonSchema([
+            'type' => 'object',
+            'additionalProperties' => $valueSchema,
         ]);
-
-        return Expect::arrayOf($valueSchema, $keySchema);
     }
 
     protected function provideConfiguration($validatedData): DatabaseConfiguration

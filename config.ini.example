@@ -29,9 +29,6 @@ default[timeout] = 1
 default[pool_prefill] = false
 default[pool_size] = 8
 
-[sentry]
-dsn =
-
 [session]
 cookie_lifespan = 86400
 cookie_name = dmsession

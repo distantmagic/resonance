@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\ConfigurationFile;
+use Distantmagic\Resonance\JsonSchema;
+use Distantmagic\Resonance\JsonSchemaValidationResult;
+use Distantmagic\Resonance\JsonSchemaValidator;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
-use Nette\Schema\Processor;
-use Nette\Schema\Schema;
+use LogicException;
 
 /**
  * @template TObject of object
@@ -19,9 +21,11 @@ use Nette\Schema\Schema;
  */
 abstract readonly class ConfigurationProvider extends SingletonProvider
 {
+    private JsonSchema $jsonSchema;
+
     abstract protected function getConfigurationKey(): string;
 
-    abstract protected function getSchema(): Schema;
+    abstract protected function makeSchema(): JsonSchema;
 
     /**
      * @param TSchema $validatedData
@@ -32,8 +36,10 @@ abstract readonly class ConfigurationProvider extends SingletonProvider
 
     public function __construct(
         private ConfigurationFile $configurationFile,
-        private Processor $processor,
-    ) {}
+        private JsonSchemaValidator $jsonSchemaValidator,
+    ) {
+        $this->jsonSchema = $this->makeSchema();
+    }
 
     /**
      * @return TObject
@@ -41,14 +47,33 @@ abstract readonly class ConfigurationProvider extends SingletonProvider
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): object
     {
         /**
-         * @var TSchema $validatedData
+         * @var mixed $data explicitly mixed for typechecks
          */
-        $validatedData = $this->processor->process(
-            $this->getSchema(),
-            $this->configurationFile->config->get($this->getConfigurationKey()),
-        );
+        $data = $this->configurationFile->config->get($this->getConfigurationKey());
 
-        return $this->provideConfiguration($validatedData);
+        /**
+         * @var JsonSchemaValidationResult<TSchema>
+         */
+        $jsonSchemaValidationResult = $this->jsonSchemaValidator->validate($this->jsonSchema, $data);
+
+        $errors = $jsonSchemaValidationResult->errors;
+
+        if (empty($errors)) {
+            return $this->provideConfiguration($jsonSchemaValidationResult->data);
+        }
+
+        $messages = [];
+
+        foreach ($errors as $propertyName => $propertyErrors) {
+            foreach ($propertyErrors as $propertyError) {
+                $messages[] = sprintf('"%s": "%s"', $propertyName, $propertyError);
+            }
+        }
+
+        throw new LogicException(sprintf(
+            "Encountered validation errors:\n-> %s",
+            implode("\n-> ", $messages)
+        ));
     }
 
     public function shouldRegister(): bool

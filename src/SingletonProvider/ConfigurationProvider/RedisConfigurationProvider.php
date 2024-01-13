@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\RedisConfiguration;
 use Distantmagic\Resonance\RedisConnectionPoolConfiguration;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
-use Nette\Schema\Expect;
-use Nette\Schema\Schema;
 
 /**
  * @template-extends ConfigurationProvider<
@@ -34,22 +33,59 @@ final readonly class RedisConfigurationProvider extends ConfigurationProvider
         return 'redis';
     }
 
-    protected function getSchema(): Schema
+    protected function makeSchema(): JsonSchema
     {
-        $keySchema = Expect::string()->min(1)->required();
+        $valueSchema = [
+            'type' => 'object',
+            'properties' => [
+                'db_index' => [
+                    'type' => 'integer',
+                    'minimum' => 0,
+                ],
+                'host' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+                'password' => [
+                    'type' => 'string',
+                ],
+                'pool_prefill' => [
+                    'type' => 'boolean',
+                ],
+                'pool_size' => [
+                    'type' => 'integer',
+                    'minimum' => 1,
+                ],
+                'port' => [
+                    'type' => 'integer',
+                    'minimum' => 1,
+                    'maximum' => 65535,
+                ],
+                'prefix' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+                'timeout' => [
+                    'type' => 'integer',
+                    'minimum' => 0,
+                ],
+            ],
+            'required' => [
+                'db_index',
+                'host',
+                'password',
+                'pool_prefill',
+                'pool_size',
+                'port',
+                'prefix',
+                'timeout',
+            ],
+        ];
 
-        $valueSchema = Expect::structure([
-            'db_index' => Expect::int()->min(0)->required(),
-            'host' => Expect::string()->min(1)->required(),
-            'password' => Expect::string()->required(),
-            'pool_prefill' => Expect::bool()->required(),
-            'pool_size' => Expect::int()->min(1)->required(),
-            'port' => Expect::int()->min(1)->max(65535)->required(),
-            'prefix' => Expect::string()->min(1)->required(),
-            'timeout' => Expect::int()->min(0)->required(),
+        return new JsonSchema([
+            'type' => 'object',
+            'additionalProperties' => $valueSchema,
         ]);
-
-        return Expect::arrayOf($valueSchema, $keySchema);
     }
 
     protected function provideConfiguration($validatedData): RedisConfiguration

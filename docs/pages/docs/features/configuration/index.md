@@ -160,7 +160,7 @@ readonly class ManifestConfiguration
 ```
 
 Then you need to define the configuration provider. 
-[nette/schema](https://doc.nette.org/en/schema) is used for config validation:
+[JSON Schema](https://json-schema.org/) is used for config validation:
 
 ```php
 <?php
@@ -169,9 +169,8 @@ namespace App\SingletonProvider\ConfigurationProvider;
 
 use App\ManifestConfiguration;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
-use Nette\Schema\Expect;
-use Nette\Schema\Schema;
 
 /**
  * @template-extends ConfigurationProvider<ManifestConfiguration, object{
@@ -187,11 +186,21 @@ final readonly class ManifestConfigurationProvider extends ConfigurationProvider
         return 'manifest';
     }
 
-    protected function getSchema(): Schema
+    protected function getSchema(): JsonSchema
     {
-        return Expect::structure([
-            'background_color' => Expect::string()->min(1)->required(),
-            'theme_color' => Expect::string()->min(1)->required(),
+        return new JsonSchema([
+            'type' => 'object',
+            'properties' => [
+                'background_color' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+                'theme_color' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ]
+            ],
+            'required' => ['background_color', 'theme_color']
         ]);
     }
 

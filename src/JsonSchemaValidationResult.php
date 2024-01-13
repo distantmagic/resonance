@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use JsonSchema\Validator;
-
 /**
  * @template TValidatedData
  */
 readonly class JsonSchemaValidationResult
 {
     /**
-     * @param TValidatedData $data
+     * @param TValidatedData              $data
+     * @param array<string,array<string>> $errors
      */
     public function __construct(
-        public Validator $validator,
         public mixed $data,
+        public array $errors,
     ) {}
 }

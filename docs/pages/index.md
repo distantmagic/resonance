@@ -141,24 +141,14 @@ readonly class Homepage implements HttpResponderInterface
                         class="language-php"
                         data-controller="hljs"
                         data-hljs-language-value="php"
-                    >use function Sentry\init as sentryInit;
-
+                    >
 #[ListensTo(HttpServerStarted::class)]
 #[Singleton(collection: SingletonCollection::EventListener)]
-final readonly class InitializeSentry extends EventListener
+final readonly class InitializeErrorReporting extends EventListener
 {
-    public function __construct(
-        private ApplicationConfiguration $applicationContext,
-        private SentryConfiguration $sentryConfiguration,
-    ) {}
-
     public function handle(EventInterface $event): void
     {
-        sentryInit([
-            'default_integrations' => false,
-            'dsn' => $this->sentryConfiguration->dsn,
-            'environment' => $this->applicationContext->environment->value,
-        ]);
+        // ...
     }
 }
 </code></pre>

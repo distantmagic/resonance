@@ -5,34 +5,57 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
-use JsonSchema\Constraints\Constraint;
-use JsonSchema\Constraints\Factory;
-use JsonSchema\Validator;
+use Opis\JsonSchema\Errors\ErrorFormatter;
+use Opis\JsonSchema\Helper;
+use Opis\JsonSchema\ValidationResult;
+use Opis\JsonSchema\Validator;
 
 #[Singleton]
 readonly class JsonSchemaValidator
 {
-    private Factory $factory;
+    private ErrorFormatter $errorFormatter;
+    private Validator $validator;
 
-    public function __construct(ApplicationConfiguration $applicationConfiguration)
+    public function __construct()
     {
-        $productionFlags = Constraint::CHECK_MODE_TYPE_CAST | Constraint::CHECK_MODE_APPLY_DEFAULTS;
-
-        $this->factory = new Factory(
-            checkMode: Environment::Development === $applicationConfiguration->environment
-                ? $productionFlags | Constraint::CHECK_MODE_VALIDATE_SCHEMA
-                : $productionFlags,
-        );
+        $this->errorFormatter = new ErrorFormatter();
+        $this->validator = new Validator();
     }
 
     public function validate(JsonSchema $jsonSchema, mixed $data): JsonSchemaValidationResult
     {
-        $validator = new Validator($this->factory);
-        $validator->validate($data, $jsonSchema->schema);
+        /**
+         * @var bool|object|string $convertedSchema
+         */
+        $convertedSchema = Helper::toJSON($jsonSchema->schema);
+
+        /**
+         * @var bool|object|string $convertedData
+         */
+        $convertedData = Helper::toJSON($data);
+
+        $validationResult = $this->validator->validate($convertedData, $convertedSchema);
 
         return new JsonSchemaValidationResult(
-            validator: $validator,
-            data: $data,
+            data: $convertedData,
+            errors: $this->formatErrors($validationResult),
         );
+    }
+
+    /**
+     * @return array<string,array<string>>
+     */
+    private function formatErrors(ValidationResult $validationResult): array
+    {
+        $error = $validationResult->error();
+
+        if (empty($error)) {
+            return [];
+        }
+
+        /**
+         * @var array<string,array<string>>
+         */
+        return $this->errorFormatter->formatKeyed($error);
     }
 }

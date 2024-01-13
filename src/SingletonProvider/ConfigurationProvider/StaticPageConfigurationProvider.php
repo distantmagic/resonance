@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Distantmagic\Resonance\StaticPageConfiguration;
-use Nette\Schema\Expect;
-use Nette\Schema\Schema;
 
 /**
  * @template-extends ConfigurationProvider<StaticPageConfiguration, object{
@@ -27,14 +26,38 @@ final readonly class StaticPageConfigurationProvider extends ConfigurationProvid
         return 'static';
     }
 
-    protected function getSchema(): Schema
+    protected function makeSchema(): JsonSchema
     {
-        return Expect::structure([
-            'base_url' => Expect::string()->min(1)->required(),
-            'esbuild_metafile' => Expect::string()->min(1)->required(),
-            'input_directory' => Expect::string()->min(1)->required(),
-            'output_directory' => Expect::string()->min(1)->required(),
-            'sitemap' => Expect::string()->min(1)->required(),
+        return new JsonSchema([
+            'type' => 'object',
+            'properties' => [
+                'base_url' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                    'required' => true,
+                ],
+                'esbuild_metafile' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                    'required' => true,
+                ],
+                'input_directory' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                    'required' => true,
+                ],
+                'output_directory' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                    'required' => true,
+                ],
+                'sitemap' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                    'required' => true,
+                ],
+            ],
+            'required' => ['base_url', 'esbuild_metafile', 'input_directory', 'output_directory', 'sitemap'],
         ]);
     }
 

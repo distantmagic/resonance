@@ -48,9 +48,7 @@ readonly class BlogPostForm extends InputValidatedData
 
 Validators take in any data and check if it adheres to the configuration 
 schema. The `makeSchema()` method must return a 
-[nette/schema](https://doc.nette.org/en/schema) object. You can follow
-their documentation to learn how to create a validation schema (in concept,
-it's similar to the [json-schema](https://json-schema.org)).
+[JSON Schema](https://json-schema.org/) object.
 
 ```php
 <?php
@@ -60,12 +58,11 @@ namespace App\InputValidator;
 use App\InputValidatedData\BlogPostForm;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\InputValidator;
+use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\SingletonCollection;
-use Nette\Schema\Expect;
-use Nette\Schema\Schema;
 
 /**
- * @extends InputValidator<BlogPostForm, object{
+ * @extends InputValidator<BlogPostForm, array{
  *     content: string,
  *     title: string,
  * }>
@@ -76,16 +73,26 @@ readonly class BlogPostFormValidator extends InputValidator
     protected function castValidatedData(mixed $data): BlogPostForm
     {
         return new BlogPostForm(
-            $data->content,
-            $data->title,
+            $data['content'],
+            $data['title'],
         );
     }
 
     protected function makeSchema(): Schema
     {
-        return Expect::structure([
-            'content' => Expect::string()->min(1)->required(),
-            'title' => Expect::string()->min(1)->required(),
+        return new JsonSchema([
+            'type' => 'object',
+            'properties' => [
+                'content' => [
+                    'type' => 'string',
+                    'minLength' => 1
+                ],
+                'title' => [
+                    'type' => 'string',
+                    'minLength' => 1
+                ]
+            ],
+            'required' => ['content', 'title']
         ]);
     }
 }

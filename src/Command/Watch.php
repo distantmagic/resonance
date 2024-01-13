@@ -79,16 +79,19 @@ final class Watch extends Command
             $this->process = null;
         }
 
-        $this->process = new Process(static function (Process $worker) use ($childCommandName) {
-            /**
-             * @psalm-suppress InvalidArgument false positive
-             * @psalm-suppress InvalidCast false positive
-             */
-            $worker->exec(PHP_BINARY, [
-                realpath(DM_APP_ROOT.'/../bin/resonance.php'),
-                $childCommandName,
-            ]);
-        });
+        $this->process = new Process(
+            callback: static function (Process $worker) use ($childCommandName) {
+                /**
+                 * @psalm-suppress InvalidArgument false positive
+                 * @psalm-suppress InvalidCast false positive
+                 */
+                $worker->exec(PHP_BINARY, [
+                    realpath(DM_APP_ROOT.'/../bin/resonance.php'),
+                    $childCommandName,
+                ]);
+            },
+            redirect_stdin_and_stdout: false,
+        );
 
         $this->process->start();
         $this->process->wait(false);

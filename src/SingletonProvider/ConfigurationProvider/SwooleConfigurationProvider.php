@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Distantmagic\Resonance\SwooleConfiguration;
-use Nette\Schema\Expect;
-use Nette\Schema\Schema;
 
 /**
  * @template-extends ConfigurationProvider<SwooleConfiguration, object{
@@ -28,15 +27,38 @@ final readonly class SwooleConfigurationProvider extends ConfigurationProvider
         return 'swoole';
     }
 
-    protected function getSchema(): Schema
+    protected function makeSchema(): JsonSchema
     {
-        return Expect::structure([
-            'host' => Expect::string()->min(1)->required(),
-            'log_level' => Expect::string()->min(1)->required(),
-            'log_requests' => Expect::bool()->default(false),
-            'port' => Expect::int()->min(1)->max(65535)->required(),
-            'ssl_cert_file' => Expect::string()->min(1)->required(),
-            'ssl_key_file' => Expect::string()->min(1)->required(),
+        return new JsonSchema([
+            'type' => 'object',
+            'properties' => [
+                'host' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+                'log_level' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+                'log_requests' => [
+                    'type' => 'boolean',
+                    'default' => false,
+                ],
+                'port' => [
+                    'type' => 'integer',
+                    'minimum' => 1,
+                    'maximum' => 65535,
+                ],
+                'ssl_cert_file' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+                'ssl_key_file' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+            ],
+            'required' => ['host', 'log_level', 'port', 'ssl_cert_file', 'ssl_key_file'],
         ]);
     }
 

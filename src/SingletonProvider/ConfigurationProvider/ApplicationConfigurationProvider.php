@@ -7,10 +7,8 @@ namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Distantmagic\Resonance\ApplicationConfiguration;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Environment;
-use Distantmagic\Resonance\ExpectUrl;
+use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
-use Nette\Schema\Expect;
-use Nette\Schema\Schema;
 
 /**
  * @template-extends ConfigurationProvider<ApplicationConfiguration, object{
@@ -28,13 +26,32 @@ final readonly class ApplicationConfigurationProvider extends ConfigurationProvi
         return 'app';
     }
 
-    protected function getSchema(): Schema
+    protected function makeSchema(): JsonSchema
     {
-        return Expect::structure([
-            'env' => Expect::anyOf(...Environment::values())->required(),
-            'esbuild_metafile' => Expect::string()->min(1)->default('esbuild-meta.json'),
-            'scheme' => Expect::anyOf('http', 'https')->default('https'),
-            'url' => Expect::string()->required()->assert(new ExpectUrl()),
+        return new JsonSchema([
+            'type' => 'object',
+            'properties' => [
+                'env' => [
+                    'type' => 'string',
+                    'enum' => Environment::values(),
+                ],
+                'esbuild_metafile' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                    'default' => 'esbuild-meta.json',
+                ],
+                'scheme' => [
+                    'type' => 'string',
+                    'enum' => ['http', 'https'],
+                    'default' => 'https',
+                ],
+                'url' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                    'format' => 'uri',
+                ],
+            ],
+            'required' => ['env', 'url'],
         ]);
     }
 

@@ -7,11 +7,10 @@ namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Defuse\Crypto\Key;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Feature;
+use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\OAuth2Configuration;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use League\OAuth2\Server\CryptKey;
-use Nette\Schema\Expect;
-use Nette\Schema\Schema;
 use RuntimeException;
 use Swoole\Coroutine;
 
@@ -37,16 +36,44 @@ final readonly class OAuth2ConfigurationProvider extends ConfigurationProvider
         return 'oauth2';
     }
 
-    protected function getSchema(): Schema
+    protected function makeSchema(): JsonSchema
     {
-        return Expect::structure([
-            'encryption_key' => Expect::string()->min(1)->required(),
-            'jwt_signing_key_passphrase' => Expect::string()->default(null),
-            'jwt_signing_key_private' => Expect::string()->min(1)->required(),
-            'jwt_signing_key_public' => Expect::string()->min(1)->required(),
-            'session_key_authorization_request' => Expect::string()->min(1)->default('oauth2.authorization_request'),
-            'session_key_pkce' => Expect::string()->min(1)->default('oauth2.pkce'),
-            'session_key_state' => Expect::string()->min(1)->default('oauth2.state'),
+        return new JsonSchema([
+            'type' => 'object',
+            'properties' => [
+                'encryption_key' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+                'jwt_signing_key_passphrase' => [
+                    'type' => 'string',
+                    'default' => null,
+                ],
+                'jwt_signing_key_private' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+                'jwt_signing_key_public' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+                'session_key_authorization_request' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                    'default' => 'oauth2.authorization_request',
+                ],
+                'session_key_pkce' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                    'default' => 'oauth2.pkce',
+                ],
+                'session_key_state' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                    'default' => 'oauth2.state',
+                ],
+            ],
+            'required' => ['encryption_key', 'jwt_signing_key_private', 'jwt_signing_key_public'],
         ]);
     }
 

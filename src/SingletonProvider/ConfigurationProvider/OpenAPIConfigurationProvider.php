@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\OpenAPIConfiguration;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
-use Nette\Schema\Expect;
-use Nette\Schema\Schema;
 
 /**
  * @template-extends ConfigurationProvider<OpenAPIConfiguration, object{
@@ -25,12 +24,25 @@ final readonly class OpenAPIConfigurationProvider extends ConfigurationProvider
         return 'openapi';
     }
 
-    protected function getSchema(): Schema
+    protected function makeSchema(): JsonSchema
     {
-        return Expect::structure([
-            'description' => Expect::string()->min(1)->required(),
-            'title' => Expect::string()->min(1)->required(),
-            'version' => Expect::string()->min(1)->required(),
+        return new JsonSchema([
+            'type' => 'object',
+            'properties' => [
+                'description' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+                'title' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+                'version' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+            ],
+            'required' => ['description', 'title', 'version'],
         ]);
     }
 

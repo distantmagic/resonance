@@ -114,12 +114,10 @@ h2.homepage__example__title {
 }
 
 .homepage__title h1 {
-  font-family: var(--font-family-lora);
   line-height: 1;
 
   @media screen and (max-width: 1023px) {
     font-size: 3.5em;
-    letter-spacing: -5px;
   }
   @media screen and (min-width: 1024px) {
     font-size: 6em;

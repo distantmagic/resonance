@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Distantmagic\Resonance\TranslatorConfiguration;
-use Nette\Schema\Expect;
-use Nette\Schema\Schema;
 
 /**
  * @template-extends ConfigurationProvider<TranslatorConfiguration, object{
@@ -24,11 +23,21 @@ final readonly class TranslatorConfigurationProvider extends ConfigurationProvid
         return 'translator';
     }
 
-    protected function getSchema(): Schema
+    protected function makeSchema(): JsonSchema
     {
-        return Expect::structure([
-            'base_directory' => Expect::string()->min(1)->required(),
-            'default_primary_language' => Expect::string()->min(1)->required(),
+        return new JsonSchema([
+            'type' => 'object',
+            'properties' => [
+                'base_directory' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+                'default_primary_language' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                ],
+            ],
+            'required' => ['base_directory', 'default_primary_language'],
         ]);
     }
 

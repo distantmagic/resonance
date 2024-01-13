@@ -37,8 +37,9 @@ abstract readonly class InputValidator
          * @var JsonSchemaValidationResult<TValidatedData>
          */
         $jsonSchemaValidationResult = $this->jsonSchemaValidator->validate($this->jsonSchema, $data);
+        $errors = $jsonSchemaValidationResult->errors;
 
-        if ($jsonSchemaValidationResult->validator->isValid()) {
+        if (empty($errors)) {
             return new InputValidationResult($this->castValidatedData($jsonSchemaValidationResult->data));
         }
 
@@ -47,16 +48,10 @@ abstract readonly class InputValidator
          */
         $validationResult = new InputValidationResult();
 
-        /**
-         * @var array{
-         *   property: string,
-         *   message: string
-         * } $error
-         */
-        foreach ($jsonSchemaValidationResult->validator->getErrors() as $error) {
+        foreach ($errors as $propertyName => $propertyErrors) {
             $validationResult->errors->put(
-                $error['property'],
-                $error['message'],
+                $propertyName,
+                implode("\n", $propertyErrors),
             );
         }
 
