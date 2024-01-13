@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use LogicException;
+use Opis\JsonSchema\Exceptions\ParseException;
 use Swoole\Http\Request;
 
 /**
@@ -28,15 +30,28 @@ abstract readonly class InputValidator
         $this->jsonSchema = $this->makeSchema();
     }
 
+    public function getSchema(): JsonSchema
+    {
+        return $this->jsonSchema;
+    }
+
     /**
      * @return InputValidationResult<TValidatedModel>
      */
     public function validateData(mixed $data): InputValidationResult
     {
-        /**
-         * @var JsonSchemaValidationResult<TValidatedData>
-         */
-        $jsonSchemaValidationResult = $this->jsonSchemaValidator->validate($this->jsonSchema, $data);
+        try {
+            /**
+             * @var JsonSchemaValidationResult<TValidatedData>
+             */
+            $jsonSchemaValidationResult = $this->jsonSchemaValidator->validate($this->jsonSchema, $data);
+        } catch (ParseException $parseException) {
+            throw new LogicException(sprintf(
+                'JSON schema is invalid in: "%s" "%s"',
+                $this::class,
+            ), 0, $parseException);
+        }
+
         $errors = $jsonSchemaValidationResult->errors;
 
         if (empty($errors)) {

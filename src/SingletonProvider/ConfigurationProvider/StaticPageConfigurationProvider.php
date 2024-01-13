@@ -34,27 +34,22 @@ final readonly class StaticPageConfigurationProvider extends ConfigurationProvid
                 'base_url' => [
                     'type' => 'string',
                     'minLength' => 1,
-                    'required' => true,
                 ],
                 'esbuild_metafile' => [
                     'type' => 'string',
                     'minLength' => 1,
-                    'required' => true,
                 ],
                 'input_directory' => [
                     'type' => 'string',
                     'minLength' => 1,
-                    'required' => true,
                 ],
                 'output_directory' => [
                     'type' => 'string',
                     'minLength' => 1,
-                    'required' => true,
                 ],
                 'sitemap' => [
                     'type' => 'string',
                     'minLength' => 1,
-                    'required' => true,
                 ],
             ],
             'required' => ['base_url', 'esbuild_metafile', 'input_directory', 'output_directory', 'sitemap'],

@@ -13,8 +13,8 @@ use Distantmagic\Resonance\StaticPageContentType;
 use Generator;
 
 /**
- * @extends InputValidator<FrontMatter, array{
- *     collections: array<string|array{ name: string, next: string }>,
+ * @extends InputValidator<FrontMatter, object{
+ *     collections: array<string|object{ name: string, next: string }>,
  *     content_type: string,
  *     description: string,
  *     draft: bool,
@@ -30,18 +30,18 @@ readonly class FrontMatterValidator extends InputValidator
 {
     protected function castValidatedData(mixed $data): FrontMatter
     {
-        $collections = iterator_to_array($this->normalizeDataCollections($data['collections']));
+        $collections = iterator_to_array($this->normalizeDataCollections($data->collections));
 
         return new FrontMatter(
             collections: $collections,
-            contentType: StaticPageContentType::from($data['content_type']),
-            description: trim($data['description']),
-            isDraft: $data['draft'],
-            layout: $data['layout'],
-            next: $data['next'] ?? null,
-            parent: $data['parent'] ?? null,
-            registerStylesheets: $data['register_stylesheets'],
-            title: trim($data['title']),
+            contentType: StaticPageContentType::from($data->content_type),
+            description: trim($data->description),
+            isDraft: $data->draft,
+            layout: $data->layout,
+            next: $data->next ?? null,
+            parent: $data->parent ?? null,
+            registerStylesheets: $data->register_stylesheets,
+            title: trim($data->title),
         );
     }
 
@@ -106,10 +106,8 @@ readonly class FrontMatterValidator extends InputValidator
                 'register_stylesheets' => [
                     'type' => 'array',
                     'items' => [
-                        [
-                            'type' => 'string',
-                            'minLength' => 1,
-                        ],
+                        'type' => 'string',
+                        'minLength' => 1,
                     ],
                     'default' => [],
                 ],
@@ -134,8 +132,8 @@ readonly class FrontMatterValidator extends InputValidator
                 yield new FrontMatterCollectionReference($collection, null);
             } else {
                 yield new FrontMatterCollectionReference(
-                    $collection['name'],
-                    $collection['next'],
+                    $collection->name,
+                    $collection->next,
                 );
             }
         }

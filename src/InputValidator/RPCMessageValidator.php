@@ -46,16 +46,13 @@ readonly class RPCMessageValidator extends InputValidator
                 [
                     'type' => 'string',
                     'enum' => $this->rpcMethodValidator->names(),
-                    'required' => true,
                 ],
                 [
-                    'required' => true,
                 ],
                 [
                     'type' => 'string',
                     'format' => 'uuid',
                     'nullable' => true,
-                    'required' => true,
                 ],
             ],
         ]);
