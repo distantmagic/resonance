@@ -7,7 +7,6 @@ namespace Distantmagic\Resonance;
 readonly class OpenAPISchemaRequestBodyContent implements OpenAPISerializableFieldInterface
 {
     public function __construct(
-        public string $jsonSchemaName,
         public string $mimeType,
         public JsonSchema $jsonSchema,
     ) {}
@@ -15,7 +14,7 @@ readonly class OpenAPISchemaRequestBodyContent implements OpenAPISerializableFie
     public function toArray(OpenAPIReusableSchemaCollection $openAPIReusableSchemaCollection): array
     {
         return [
-            'schema' => $openAPIReusableSchemaCollection->reuse($this->jsonSchema, $this->jsonSchemaName),
+            'schema' => $openAPIReusableSchemaCollection->reuse($this->jsonSchema),
         ];
     }
 }

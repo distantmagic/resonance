@@ -30,10 +30,6 @@ readonly class GivesHttpResponseExtractor extends OpenAPIMetadataResponseExtract
                 description: $attribute->description,
                 status: $attribute->status,
                 jsonSchema: $attribute->jsonSchema,
-                jsonSchemaName: sprintf(
-                    'Response_%s',
-                    str_replace('\\', '', $reflectionClass->getName()),
-                ),
             ),
         ];
     }

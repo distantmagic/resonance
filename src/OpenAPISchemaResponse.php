@@ -9,7 +9,6 @@ readonly class OpenAPISchemaResponse implements OpenAPISerializableFieldInterfac
     public function __construct(
         public ContentType $contentType,
         public JsonSchema $jsonSchema,
-        public string $jsonSchemaName,
         public int $status,
         public ?string $description = null,
     ) {}
@@ -24,7 +23,7 @@ readonly class OpenAPISchemaResponse implements OpenAPISerializableFieldInterfac
 
         $response['content'] = [
             $this->contentType->value => [
-                'schema' => $openAPIReusableSchemaCollection->reuse($this->jsonSchema, $this->jsonSchemaName),
+                'schema' => $openAPIReusableSchemaCollection->reuse($this->jsonSchema),
             ],
         ];
 

@@ -37,10 +37,6 @@ readonly class ValidatedRequestExtractor extends OpenAPIRouteRequestBodyContentE
                     ->inputValidators
                     ->get($attribute->validator)
                     ->jsonSchema,
-                jsonSchemaName: sprintf(
-                    'Request_%s',
-                    str_replace('\\', '', $attribute->validator),
-                ),
             ),
         ];
     }
