@@ -121,7 +121,7 @@ readonly class FrontMatterValidator extends InputValidator
     }
 
     /**
-     * @param array<array{ name: string, next: string }|string> $collections
+     * @param array<object{ name: string, next: string }|string> $collections
      *
      * @return Generator<FrontMatterCollectionReference>
      */

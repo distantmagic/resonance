@@ -47,7 +47,7 @@ abstract readonly class InputValidator
             $jsonSchemaValidationResult = $this->jsonSchemaValidator->validate($this->jsonSchema, $data);
         } catch (ParseException $parseException) {
             throw new LogicException(sprintf(
-                'JSON schema is invalid in: "%s" "%s"',
+                'JSON schema is invalid in: "%s"',
                 $this::class,
             ), 0, $parseException);
         }
