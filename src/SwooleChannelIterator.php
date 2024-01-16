@@ -24,6 +24,9 @@ readonly class SwooleChannelIterator implements IteratorAggregate
     public function getIterator(): Generator
     {
         do {
+            /**
+             * @var mixed $data explicitly mixed for typechecks
+             */
             $data = $this->channel->pop();
 
             if (false === $data) {
@@ -31,9 +34,7 @@ readonly class SwooleChannelIterator implements IteratorAggregate
                     case SWOOLE_CHANNEL_CLOSED:
                         return;
                     case SWOOLE_CHANNEL_OK:
-                        yield $data;
-
-                        break;
+                        throw new RuntimeException('Using "false" is ambiguous in channels');
                     case SWOOLE_CHANNEL_TIMEOUT:
                         throw new RuntimeException('Swoole channel timed out');
                 }

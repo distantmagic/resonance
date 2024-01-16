@@ -55,8 +55,8 @@ final class OllamaCompletion extends CoroutineCommand
             prompt: $prompt,
         );
 
-        foreach ($this->ollamaClient->generateCompletion($completionRequest) as $chunk) {
-            $output->write($chunk);
+        foreach ($this->ollamaClient->generateCompletion($completionRequest) as $token) {
+            $output->write($token);
         }
 
         return Command::SUCCESS;

@@ -38,12 +38,12 @@ readonly class OllamaClient
     public function generateCompletion(OllamaCompletionRequest $request): Generator
     {
         $channel = new Channel(1);
-        $data = json_encode($request);
+        $requestData = json_encode($request);
 
-        $cid = go(function () use ($channel, $data) {
+        $cid = go(function () use ($channel, $requestData) {
             try {
                 curl_setopt($this->ch, CURLOPT_URL, $this->ollamaLinkBuilder->build('/api/generate'));
-                curl_setopt($this->ch, CURLOPT_POSTFIELDS, $data);
+                curl_setopt($this->ch, CURLOPT_POSTFIELDS, $requestData);
                 curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, false);
                 curl_setopt($this->ch, CURLOPT_WRITEFUNCTION, function (CurlHandle $ch, string $data) use ($channel) {
                     if (!empty($data)) {
@@ -73,21 +73,27 @@ readonly class OllamaClient
             throw new RuntimeException('Unable to start a coroutine');
         }
 
-        foreach (new SwooleChannelIterator($channel) as $data) {
-            if ($data) {
-                yield $data->response;
-            }
+        /**
+         * @var SwooleChannelIterator<object{ response: string }>
+         */
+        $swooleChannelIterator = new SwooleChannelIterator($channel);
+
+        foreach ($swooleChannelIterator as $token) {
+            yield $token->response;
         }
     }
 
     public function generateEmbedding(OllamaEmbeddingRequest $request): OllamaEmbeddingResponse
     {
-        $data = json_encode($request);
+        $requestData = json_encode($request);
 
         curl_setopt($this->ch, CURLOPT_URL, $this->ollamaLinkBuilder->build('/api/embeddings'));
-        curl_setopt($this->ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($this->ch, CURLOPT_POSTFIELDS, $requestData);
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
 
+        /**
+         * @var false|string $responseContent
+         */
         $responseContent = curl_exec($this->ch);
 
         if (false === $responseContent) {
@@ -96,12 +102,15 @@ readonly class OllamaClient
 
         $this->assertStatusCode(200);
 
-        $data = $this
+        /**
+         * @var object{ embedding: array<float> } $responseData
+         */
+        $responseData = $this
             ->jsonSerializer
             ->unserialize($responseContent)
         ;
 
-        return new OllamaEmbeddingResponse($data->embedding);
+        return new OllamaEmbeddingResponse($responseData->embedding);
     }
 
     private function assertStatusCode(int $expectedStatusCode): void

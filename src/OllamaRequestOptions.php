@@ -17,10 +17,7 @@ readonly class OllamaRequestOptions implements JsonSerializable
     {
         $ret = [];
 
-        if (isset($this->stopDelimiter)) {
-            $ret['stop'] = $this->stopDelimiter;
-        }
-
+        $ret['stop'] = $this->stopDelimiter;
         $ret['temperature'] = $this->temperature;
 
         return $ret;
