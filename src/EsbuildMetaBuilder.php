@@ -19,7 +19,7 @@ readonly class EsbuildMetaBuilder
      */
     private Map $esbuildMetaCache;
 
-    public function __construct()
+    public function __construct(private JsonSerializer $jsonSerializer)
     {
         $this->esbuildMetaCache = new Map();
     }
@@ -148,10 +148,10 @@ readonly class EsbuildMetaBuilder
 
     private function getEsbuildMetaDecoded(string $esbuildMetafile): object
     {
-        $ret = json_decode(
-            json: $this->getEsbuildMetaContents($esbuildMetafile),
-            flags: JSON_THROW_ON_ERROR,
-        );
+        $ret = $this
+            ->jsonSerializer
+            ->unserialize($this->getEsbuildMetaContents($esbuildMetafile))
+        ;
 
         if (!is_object($ret)) {
             throw new LogicException('Expected manifest to be a JSON object.');

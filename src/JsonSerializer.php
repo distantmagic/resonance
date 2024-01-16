@@ -20,4 +20,12 @@ readonly class JsonSerializer
                 : JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES,
         );
     }
+
+    public function unserialize(string $data): mixed
+    {
+        return json_decode(
+            json: $data,
+            flags: JSON_THROW_ON_ERROR,
+        );
+    }
 }

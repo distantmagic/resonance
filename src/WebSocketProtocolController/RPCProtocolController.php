@@ -11,6 +11,7 @@ use Distantmagic\Resonance\CSRFManager;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\Gatekeeper;
 use Distantmagic\Resonance\InputValidator\RPCMessageValidator;
+use Distantmagic\Resonance\JsonSerializer;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SiteAction;
 use Distantmagic\Resonance\WebSocketAuthResolution;
@@ -45,6 +46,7 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
         private CSRFManager $csrfManager,
         private AuthenticatedUserProvider $authenticatedUserProvider,
         private Gatekeeper $gatekeeper,
+        private JsonSerializer $jsonSerializer,
         private LoggerInterface $logger,
         private RPCMessageValidator $rpcMessageValidator,
         private WebSocketRPCResponderAggregate $webSocketRPCResponderAggregate,
@@ -87,10 +89,7 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
             /**
              * @var mixed $decodedRpcMessage explicitly mixed for typechecks
              */
-            $decodedRpcMessage = json_decode(
-                json: $frame->data,
-                flags: JSON_THROW_ON_ERROR,
-            );
+            $decodedRpcMessage = $this->jsonSerializer->unserialize($frame->data);
 
             $this->onJsonMessage($server, $frame, $decodedRpcMessage);
         } catch (JsonException $exception) {

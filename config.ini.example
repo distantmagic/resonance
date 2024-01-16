@@ -19,6 +19,10 @@ default[pool_size] = 8
 background_color = "#ffffff"
 theme_color = "#ffffff"
 
+[ollama]
+host = 127.0.0.1
+port = 11434
+
 [redis]
 default[db_index] = 0
 default[host] = 127.0.0.1
