@@ -9,7 +9,8 @@ use JsonSerializable;
 readonly class OllamaRequestOptions implements JsonSerializable
 {
     public function __construct(
-        public float $temperature = 0.8,
+        public float $numPredict = -1,
+        public float $temperature = 0.5,
         public OllamaRequestStopDelimiter $stopDelimiter = new OllamaRequestStopDelimiter(),
     ) {}
 
@@ -17,6 +18,7 @@ readonly class OllamaRequestOptions implements JsonSerializable
     {
         $ret = [];
 
+        $ret['num_predict'] = $this->numPredict;
         $ret['stop'] = $this->stopDelimiter;
         $ret['temperature'] = $this->temperature;
 

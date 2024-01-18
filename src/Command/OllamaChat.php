@@ -5,24 +5,25 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\Command;
 
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
-use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\CoroutineCommand;
+use Distantmagic\Resonance\OllamaChatSession;
 use Distantmagic\Resonance\OllamaClient;
-use Distantmagic\Resonance\OllamaCompletionRequest;
 use Distantmagic\Resonance\SwooleConfiguration;
-use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
 
 #[ConsoleCommand(
-    name: 'ollama:completion',
-    description: 'Generate LLM completion'
+    name: 'ollama:chat',
+    description: 'Chat with LLM model through Ollama'
 )]
-final class OllamaCompletion extends CoroutineCommand
+final class OllamaChat extends CoroutineCommand
 {
     public function __construct(
-        private OllamaClient $ollamaClient,
+        protected OllamaClient $ollamaClient,
         SwooleConfiguration $swooleConfiguration,
     ) {
         parent::__construct($swooleConfiguration);
@@ -30,7 +31,6 @@ final class OllamaCompletion extends CoroutineCommand
 
     protected function configure(): void
     {
-        $this->addArgument('prompt', InputArgument::REQUIRED);
         $this->addOption(
             default: 'mistral',
             mode: InputOption::VALUE_REQUIRED,
@@ -46,17 +46,24 @@ final class OllamaCompletion extends CoroutineCommand
         $model = $input->getOption('model');
 
         /**
-         * @var string $prompt
+         * @var QuestionHelper $helper
          */
-        $prompt = $input->getArgument('prompt');
+        $helper = $this->getHelper('question');
+        $userInputQuestion = new Question('> ');
 
-        $completionRequest = new OllamaCompletionRequest(
+        $chatSession = new OllamaChatSession(
             model: $model,
-            prompt: $prompt,
+            ollamaClient: $this->ollamaClient,
         );
 
-        foreach ($this->ollamaClient->generateCompletion($completionRequest) as $token) {
-            $output->write($token);
+        while (true) {
+            $userMessageContent = $helper->ask($input, $output, $userInputQuestion);
+
+            foreach ($chatSession->respond($userMessageContent) as $value) {
+                $output->write((string) $value);
+            }
+
+            $output->writeln('');
         }
 
         return Command::SUCCESS;
