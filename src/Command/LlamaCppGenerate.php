@@ -5,19 +5,18 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\Command;
 
 use Distantmagic\Resonance\CoroutineCommand;
-use Distantmagic\Resonance\OllamaClient;
+use Distantmagic\Resonance\LlamaCppClient;
 use Distantmagic\Resonance\SwooleConfiguration;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-abstract class OllamaGenerate extends CoroutineCommand
+abstract class LlamaCppGenerate extends CoroutineCommand
 {
-    abstract protected function executeOllamaCommand(InputInterface $input, OutputInterface $output, string $model, string $prompt): int;
+    abstract protected function executeLlamaCppCommand(InputInterface $input, OutputInterface $output, string $prompt): int;
 
     public function __construct(
-        protected OllamaClient $ollamaClient,
+        protected LlamaCppClient $llamaCppClient,
         SwooleConfiguration $swooleConfiguration,
     ) {
         parent::__construct($swooleConfiguration);
@@ -25,26 +24,20 @@ abstract class OllamaGenerate extends CoroutineCommand
 
     protected function configure(): void
     {
-        $this->addArgument('prompt', InputArgument::REQUIRED);
-        $this->addOption(
-            default: 'mistral',
-            mode: InputOption::VALUE_REQUIRED,
-            name: 'model',
+        $this->addArgument(
+            name: 'prompt',
+            mode: InputArgument::OPTIONAL,
+            default: 'How to make a cat happy? Be brief, respond in 1 sentence.',
         );
     }
 
     protected function executeInCoroutine(InputInterface $input, OutputInterface $output): int
     {
         /**
-         * @var string $model
-         */
-        $model = $input->getOption('model');
-
-        /**
          * @var string $prompt
          */
         $prompt = $input->getArgument('prompt');
 
-        return $this->executeOllamaCommand($input, $output, $model, $prompt);
+        return $this->executeLlamaCppCommand($input, $output, $prompt);
     }
 }

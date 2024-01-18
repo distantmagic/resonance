@@ -15,13 +15,13 @@ default[log_queries] = false
 default[pool_prefill] = false
 default[pool_size] = 8
 
+[llamacpp]
+host = 127.0.0.1
+port = 8081
+
 [manifest]
 background_color = "#ffffff"
 theme_color = "#ffffff"
-
-[ollama]
-host = 127.0.0.1
-port = 11434
 
 [redis]
 default[db_index] = 0

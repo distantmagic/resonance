@@ -3,7 +3,7 @@ collections:
   - tutorials
 layout: dm:tutorial
 parent: tutorials/index
-title: Hello, World!
+title: "'Hello, World' with Resonance"
 description: >
     Let's walk step by step through the basic Resonance project.
 ---

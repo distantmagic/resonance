@@ -3,7 +3,7 @@ collections:
   - tutorials
 layout: dm:tutorial
 parent: tutorials/index
-title: Basic GraphQL Schema
+title: Building a Basic GraphQL Schema
 description: >
     Learn How to Build a Basic GraphQL Schema
 ---

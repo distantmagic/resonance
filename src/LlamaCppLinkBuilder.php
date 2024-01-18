@@ -7,10 +7,10 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Attribute\Singleton;
 
 #[Singleton]
-readonly class OllamaLinkBuilder
+readonly class LlamaCppLinkBuilder
 {
     public function __construct(
-        private OllamaConfiguration $ollamaConfiguration,
+        private LlamaCppConfiguration $ollamaConfiguration,
     ) {}
 
     public function build(string $path): string

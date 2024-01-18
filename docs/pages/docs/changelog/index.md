@@ -10,6 +10,10 @@ title: Changelog
 
 # Changelog
 
+## v0.14.0
+
+- Feature: added {{docs/features/ai/llama-cpp/index}} to integrate with LLMs 
+
 ## v0.11.1
 
 - Fix: translation files were incorrectly loaded

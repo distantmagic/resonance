@@ -6,22 +6,23 @@ namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\JsonSchema;
-use Distantmagic\Resonance\OllamaConfiguration;
+use Distantmagic\Resonance\LlamaCppConfiguration;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 /**
- * @template-extends ConfigurationProvider<OllamaConfiguration, object{
+ * @template-extends ConfigurationProvider<LlamaCppConfiguration, object{
+ *     apiKey: null|string,
  *     host: string,
  *     port: int,
  *     scheme: string,
  * }>
  */
-#[Singleton(provides: OllamaConfiguration::class)]
-final readonly class OllamaConfigurationProvider extends ConfigurationProvider
+#[Singleton(provides: LlamaCppConfiguration::class)]
+final readonly class LlamaCppConfigurationProvider extends ConfigurationProvider
 {
     protected function getConfigurationKey(): string
     {
-        return 'ollama';
+        return 'llamacpp';
     }
 
     protected function makeSchema(): JsonSchema
@@ -29,6 +30,12 @@ final readonly class OllamaConfigurationProvider extends ConfigurationProvider
         return new JsonSchema([
             'type' => 'object',
             'properties' => [
+                'apiKey' => [
+                    'type' => 'string',
+                    'minLength' => 1,
+                    'nullable' => true,
+                    'default' => null,
+                ],
                 'host' => [
                     'type' => 'string',
                     'minLength' => 1,
@@ -48,9 +55,10 @@ final readonly class OllamaConfigurationProvider extends ConfigurationProvider
         ]);
     }
 
-    protected function provideConfiguration($validatedData): OllamaConfiguration
+    protected function provideConfiguration($validatedData): LlamaCppConfiguration
     {
-        return new OllamaConfiguration(
+        return new LlamaCppConfiguration(
+            apiKey: $validatedData->apiKey,
             host: $validatedData->host,
             port: $validatedData->port,
             scheme: $validatedData->scheme,
