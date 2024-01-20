@@ -7,11 +7,13 @@ namespace Distantmagic\Resonance;
 use Stringable;
 use Swoole\WebSocket\Server;
 
-readonly class WebSocketConnection
+class WebSocketConnection
 {
+    public WebSocketConnectionStatus $status = WebSocketConnectionStatus::Open;
+
     public function __construct(
-        public Server $server,
-        public int $fd,
+        public readonly Server $server,
+        public readonly int $fd,
     ) {}
 
     public function push(string|Stringable $response): void

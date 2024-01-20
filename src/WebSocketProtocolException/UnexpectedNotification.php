@@ -11,6 +11,6 @@ class UnexpectedNotification extends WebSocketProtocolException
 {
     public function __construct(RPCMethodInterface $rpcMethod)
     {
-        parent::__construct('RPC method must expect a response: '.$rpcMethod->getName());
+        parent::__construct('RPC method must expect a notification: '.$rpcMethod->getValue());
     }
 }

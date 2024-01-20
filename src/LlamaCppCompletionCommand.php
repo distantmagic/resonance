@@ -4,4 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-abstract readonly class WebSocketConnectionController {}
+enum LlamaCppCompletionCommand
+{
+    case Stop;
+}

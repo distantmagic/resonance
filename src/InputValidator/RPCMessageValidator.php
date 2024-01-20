@@ -11,6 +11,7 @@ use Distantmagic\Resonance\InputValidator;
 use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\JsonSchemaValidator;
 use Distantmagic\Resonance\RPCMethodValidatorInterface;
+use stdClass;
 
 /**
  * @extends InputValidator<RPCMessage, array{
@@ -42,17 +43,16 @@ readonly class RPCMessageValidator extends InputValidator
     {
         return new JsonSchema([
             'type' => 'array',
-            'items' => [
+            'items' => false,
+            'prefixItems' => [
                 [
                     'type' => 'string',
-                    'enum' => $this->rpcMethodValidator->names(),
+                    'enum' => $this->rpcMethodValidator->values(),
                 ],
+                new stdClass(),
                 [
-                ],
-                [
-                    'type' => 'string',
+                    'type' => ['null', 'string'],
                     'format' => 'uuid',
-                    'nullable' => true,
                 ],
             ],
         ]);

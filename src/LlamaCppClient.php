@@ -8,6 +8,7 @@ use CurlHandle;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Generator;
 use JsonSerializable;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Swoole\Coroutine\Channel;
 
@@ -15,24 +16,21 @@ use Swoole\Coroutine\Channel;
 readonly class LlamaCppClient
 {
     // strlen('data: ')
-    public const COMPLETION_CHUNKED_DATA_PREFIX_LENGTH = 6;
+    private const COMPLETION_CHUNKED_DATA_PREFIX_LENGTH = 6;
 
     public function __construct(
         private JsonSerializer $jsonSerializer,
+        private LoggerInterface $logger,
         private LlamaCppConfiguration $llamaCppConfiguration,
         private LlamaCppLinkBuilder $llamaCppLinkBuilder,
     ) {}
 
     /**
-     * @return Generator<LlamaCppCompletionToken>
+     * @return Generator<int,LlamaCppCompletionToken,null|LlamaCppCompletionCommand>
      */
     public function generateCompletion(LlamaCppCompletionRequest $request): Generator
     {
-        $curlHandle = $this->createCurlHandle();
-
-        curl_setopt($curlHandle, CURLOPT_POST, true);
-
-        $responseChunks = $this->streamResponse($curlHandle, $request, '/completion');
+        $responseChunks = $this->streamResponse($request, '/completion');
 
         /**
          * @var null|string
@@ -52,10 +50,18 @@ readonly class LlamaCppClient
             );
 
             if (is_string($previousContent)) {
-                yield new LlamaCppCompletionToken(
+                $shouldContinue = yield new LlamaCppCompletionToken(
                     content: $previousContent,
                     isLast: $unserializedToken->stop,
                 );
+
+                if (LlamaCppCompletionCommand::Stop === $shouldContinue) {
+                    if (!$responseChunks->channel->close()) {
+                        throw new RuntimeException('Unable to close coroutine channel');
+                    }
+
+                    break;
+                }
 
                 $previousContent = null;
             }
@@ -104,11 +110,7 @@ readonly class LlamaCppClient
      */
     public function generateInfill(LlamaCppInfillRequest $request): Generator
     {
-        $curlHandle = $this->createCurlHandle();
-
-        curl_setopt($curlHandle, CURLOPT_POST, true);
-
-        $responseChunks = $this->streamResponse($curlHandle, $request, '/infill');
+        $responseChunks = $this->streamResponse($request, '/infill');
 
         foreach ($responseChunks as $responseChunk) {
             /**
@@ -185,6 +187,8 @@ readonly class LlamaCppClient
             $headers[] = sprintf('Authorization: Bearer %s', $this->llamaCppConfiguration->apiKey);
         }
 
+        curl_setopt($curlHandle, CURLOPT_FORBID_REUSE, true);
+        curl_setopt($curlHandle, CURLOPT_FRESH_CONNECT, true);
         curl_setopt($curlHandle, CURLOPT_HTTPHEADER, $headers);
 
         return $curlHandle;
@@ -193,29 +197,37 @@ readonly class LlamaCppClient
     /**
      * @return SwooleChannelIterator<string>
      */
-    private function streamResponse(CurlHandle $curlHandle, JsonSerializable $request, string $path): SwooleChannelIterator
+    private function streamResponse(JsonSerializable $request, string $path): SwooleChannelIterator
     {
         $channel = new Channel(1);
         $requestData = json_encode($request);
 
-        $cid = go(function () use ($channel, $curlHandle, $path, $requestData) {
+        $cid = go(function () use ($channel, $path, $requestData) {
+            $curlHandle = $this->createCurlHandle();
+
             try {
+                curl_setopt($curlHandle, CURLOPT_POST, true);
                 curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $requestData);
                 curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, false);
                 curl_setopt($curlHandle, CURLOPT_URL, $this->llamaCppLinkBuilder->build($path));
                 curl_setopt($curlHandle, CURLOPT_WRITEFUNCTION, static function (CurlHandle $curlHandle, string $data) use ($channel) {
-                    $channel->push($data);
+                    if ($channel->push($data, DM_POOL_CONNECTION_TIMEOUT)) {
+                        return strlen($data);
+                    }
 
-                    return strlen($data);
+                    return 0;
                 });
-
                 if (!curl_exec($curlHandle)) {
-                    throw new CurlException($curlHandle);
-                }
+                    $curlErrno = curl_errno($curlHandle);
 
-                $this->assertStatusCode($curlHandle, 200);
+                    if (CURLE_WRITE_ERROR !== $curlErrno) {
+                        throw new CurlException($curlHandle);
+                    }
+                } else {
+                    $this->assertStatusCode($curlHandle, 200);
+                }
             } finally {
-                curl_setopt($curlHandle, CURLOPT_WRITEFUNCTION, null);
+                curl_close($curlHandle);
 
                 $channel->close();
             }

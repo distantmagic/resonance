@@ -11,6 +11,6 @@ class UnexpectedRequest extends WebSocketProtocolException
 {
     public function __construct(RPCMethodInterface $rpcMethod)
     {
-        parent::__construct('RPC method must not expect a response: '.$rpcMethod->getName());
+        parent::__construct('RPC method must not expect a response: '.$rpcMethod->getValue());
     }
 }

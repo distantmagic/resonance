@@ -10,14 +10,14 @@ readonly class RPCResponse implements Stringable
 {
     public function __construct(
         private string $requestId,
-        private string|Stringable $content,
+        private mixed $content,
     ) {}
 
     public function __toString(): string
     {
         return json_encode([
             $this->requestId,
-            (string) $this->content,
+            $this->content,
         ]);
     }
 }

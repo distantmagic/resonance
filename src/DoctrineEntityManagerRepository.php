@@ -40,6 +40,11 @@ readonly class DoctrineEntityManagerRepository
         );
     }
 
+    public function createContextKey(string $name): string
+    {
+        return sprintf('%s.%s', __CLASS__, $name);
+    }
+
     public function getEntityManager(Request $request, string $name = 'default'): EntityManagerInterface
     {
         if (!$this->entityManagers->offsetExists($request)) {
@@ -52,8 +57,22 @@ readonly class DoctrineEntityManagerRepository
             return $entityManagers->get($name);
         }
 
+        /**
+         * @var null|Context $context
+         */
+        $context = Coroutine::getContext();
+        $contextKey = $this->createContextKey($name);
+
+        if ($context && isset($context[$contextKey]) && $context[$contextKey] instanceof EntityManagerWeakReference) {
+            return $context[$contextKey]->getEntityManager();
+        }
+
         $conn = $this->doctrineConnectionRepository->getConnection($request, $name);
         $entityManager = new EntityManager($conn, $this->configuration);
+
+        if ($context) {
+            $context[$contextKey] = new EntityManagerWeakReference($entityManager);
+        }
 
         $entityManagers->put($name, $entityManager);
 
@@ -73,8 +92,7 @@ readonly class DoctrineEntityManagerRepository
          * @var null|Context $context
          */
         $context = Coroutine::getContext();
-
-        $contextKey = sprintf('%s.entityManager.%s', __METHOD__, $name);
+        $contextKey = $this->createContextKey($name);
 
         if ($context && isset($context[$contextKey])) {
             $entityManagerWeakReference = $context[$contextKey];

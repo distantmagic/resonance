@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\Command;
 
+use Distantmagic\Resonance\ApplicationConfiguration;
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\InotifyIterator;
@@ -20,9 +21,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 final class Watch extends Command
 {
+    private const THROTTLE_TIME_MS = 10;
+
     private ?Process $process = null;
 
     public function __construct(
+        private ApplicationConfiguration $applicationConfiguration,
         private LoggerInterface $logger,
     ) {
         parent::__construct();
@@ -47,7 +51,7 @@ final class Watch extends Command
         $directories = [
             DM_APP_ROOT,
             DM_APP_ROOT.'/../config.ini',
-            DM_PUBLIC_ROOT,
+            $this->applicationConfiguration->esbuildMetafile,
             DM_RESONANCE_ROOT,
         ];
 

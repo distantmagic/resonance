@@ -63,7 +63,7 @@ readonly class OAuth2ClaimReader
 
         return $this
             ->doctrineEntityManagerRepository
-            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($request, $serverRequest) {
+            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($serverRequest) {
                 $accessTokenId = $serverRequest->getAttribute('oauth_access_token_id');
 
                 if (!is_string($accessTokenId)) {
@@ -100,7 +100,7 @@ readonly class OAuth2ClaimReader
                     throw OAuthServerException::invalidRequest('oauth_user_id');
                 }
 
-                $user = $this->userRepository->findUserById($request, $userId);
+                $user = $this->userRepository->findUserById($userId);
 
                 if (!$user) {
                     throw OAuthServerException::invalidRequest('oauth_user_id');

@@ -17,7 +17,7 @@ description: >
     <div class="homepage__content">
         <hgroup class="homepage__title">
             <h1>Resonance</h1>
-            <h2>PHP SaaS Framework</h2>
+            <h2>SaaS Framework That Solves Real-Life Issues</h2>
             <p>
                 Designed from the ground up to facilitate interoperability
                 and messaging between services in your infrastructure and 
@@ -37,6 +37,47 @@ description: >
             </a>
         </hgroup>
         <ul class="homepage__examples">
+            <li class="formatted-content homepage__example">
+                <h2 class="homepage__example__title">
+                    Artificial Intelligence
+                </h2>
+                <div class="homepage__example__description">
+                    <p>
+                        Integrate your application with self-hosted open-source 
+                        LLMs.
+                    </p>
+                    <p>
+                        Use your own Machine Learning models in production.
+                    </p>
+                    <a 
+                        class="homepage__cta homepage__cta--example"
+                        href="/docs/features/ai/"
+                    >
+                        Learn More
+                    </a>
+                </div>
+                <pre class="homepage__example__code fenced-code"><code 
+                        class="language-php"
+                        data-controller="hljs"
+                        data-hljs-language-value="php"
+                    >class LlamaCppGenerate 
+{
+    public function __construct(protected LlamaCppClient $llamaCppClient) 
+    {
+    }
+
+    public function doSomething(): void
+    {
+        $request = new LlamaCppCompletionRequest('How to make a cat happy?');
+
+        $completion = $this->llamaCppClient->generateCompletion($request);
+
+        foreach ($completion as $token) {
+            // ...
+        }
+    }
+}</code></pre>
+            </li>
             <li class="formatted-content homepage__example">
                 <h2 class="homepage__example__title">
                     Asynchronous Where it Matters
@@ -141,8 +182,7 @@ readonly class Homepage implements HttpResponderInterface
                         class="language-php"
                         data-controller="hljs"
                         data-hljs-language-value="php"
-                    >
-#[ListensTo(HttpServerStarted::class)]
+                    >#[ListensTo(HttpServerStarted::class)]
 #[Singleton(collection: SingletonCollection::EventListener)]
 final readonly class InitializeErrorReporting extends EventListener
 {

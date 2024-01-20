@@ -16,18 +16,27 @@ use Swoole\Coroutine\Channel;
  */
 readonly class SwooleChannelIterator implements IteratorAggregate
 {
-    public function __construct(private Channel $channel) {}
+    public function __construct(public Channel $channel) {}
+
+    public function close(): void
+    {
+        $this->channel->close();
+    }
 
     /**
-     * @return Generator<TData>
+     * @return Generator<int,TData,bool>
      */
     public function getIterator(): Generator
     {
         do {
+            if (SWOOLE_CHANNEL_CLOSED === $this->channel->errCode) {
+                return;
+            }
+
             /**
              * @var mixed $data explicitly mixed for typechecks
              */
-            $data = $this->channel->pop();
+            $data = $this->channel->pop(DM_POOL_CONNECTION_TIMEOUT);
 
             if (false === $data) {
                 switch ($this->channel->errCode) {

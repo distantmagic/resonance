@@ -16,5 +16,5 @@ interface RPCMethodValidatorInterface
     /**
      * @return array<string>
      */
-    public function names(): array;
+    public function values(): array;
 }

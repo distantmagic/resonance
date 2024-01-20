@@ -16,10 +16,12 @@ use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SiteAction;
 use Distantmagic\Resonance\WebSocketAuthResolution;
 use Distantmagic\Resonance\WebSocketConnection;
-use Distantmagic\Resonance\WebSocketConnectionController\RPCConnectionController;
+use Distantmagic\Resonance\WebSocketConnectionStatus;
 use Distantmagic\Resonance\WebSocketProtocol;
 use Distantmagic\Resonance\WebSocketProtocolController;
 use Distantmagic\Resonance\WebSocketProtocolException;
+use Distantmagic\Resonance\WebSocketRPCConnectionControllerInterface;
+use Distantmagic\Resonance\WebSocketRPCConnectionHandle;
 use Distantmagic\Resonance\WebSocketRPCResponderAggregate;
 use Ds\Map;
 use JsonException;
@@ -38,9 +40,9 @@ use Throwable;
 final readonly class RPCProtocolController extends WebSocketProtocolController
 {
     /**
-     * @var Map<int, RPCConnectionController>
+     * @var Map<int, WebSocketRPCConnectionHandle>
      */
-    private Map $connectionControllers;
+    private Map $connectionHandles;
 
     public function __construct(
         private CSRFManager $csrfManager,
@@ -50,16 +52,19 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
         private LoggerInterface $logger,
         private RPCMessageValidator $rpcMessageValidator,
         private WebSocketRPCResponderAggregate $webSocketRPCResponderAggregate,
+        private ?WebSocketRPCConnectionControllerInterface $webSocketRPCConnectionController = null,
     ) {
         /**
-         * @var Map<int, RPCConnectionController>
+         * @var Map<int, WebSocketRPCConnectionHandle>
          */
-        $this->connectionControllers = new Map();
+        $this->connectionHandles = new Map();
     }
 
     public function isAuthorizedToConnect(Request $request): WebSocketAuthResolution
     {
         if (!is_array($request->get) || !$this->csrfManager->checkToken($request, $request->get)) {
+            $this->logger->debug('WebSocket: Invalid CSRF token');
+
             return new WebSocketAuthResolution(false);
         }
 
@@ -73,14 +78,23 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
 
     public function onClose(Server $server, int $fd): void
     {
-        if (!$this->connectionControllers->hasKey($fd)) {
+        $connectionHandle = $this->connectionHandles->get($fd, null);
+
+        if (!$connectionHandle) {
             throw new RuntimeException(sprintf(
                 'RPC connection controller is not set and therefore it cannot be removed: %s',
                 $fd,
             ));
         }
 
-        $this->connectionControllers->remove($fd);
+        $connectionHandle->webSocketConnection->status = WebSocketConnectionStatus::Closed;
+
+        $this->webSocketRPCConnectionController?->onClose(
+            $connectionHandle->webSocketAuthResolution,
+            $connectionHandle->webSocketConnection,
+        );
+
+        $this->connectionHandles->remove($fd);
     }
 
     public function onMessage(Server $server, Frame $frame): void
@@ -103,25 +117,31 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
 
     public function onOpen(Server $server, int $fd, WebSocketAuthResolution $webSocketAuthResolution): void
     {
-        $connectionController = new RPCConnectionController(
+        $webSocketConnection = new WebSocketConnection($server, $fd);
+        $connectionHandle = new WebSocketRPCConnectionHandle(
             $this->webSocketRPCResponderAggregate,
             $webSocketAuthResolution,
-            new WebSocketConnection($server, $fd),
+            $webSocketConnection,
         );
 
-        $this->connectionControllers->put($fd, $connectionController);
+        $this->webSocketRPCConnectionController?->onOpen(
+            $webSocketAuthResolution,
+            $webSocketConnection,
+        );
+
+        $this->connectionHandles->put($fd, $connectionHandle);
     }
 
-    private function getFrameController(Frame $frame): RPCConnectionController
+    private function getFrameController(Frame $frame): WebSocketRPCConnectionHandle
     {
-        if (!$this->connectionControllers->hasKey($frame->fd)) {
+        if (!$this->connectionHandles->hasKey($frame->fd)) {
             throw new RuntimeException(sprintf(
                 'RPC connection controller is not set and therefore it cannot handle a message: %s',
                 $frame->fd,
             ));
         }
 
-        return $this->connectionControllers->get($frame->fd);
+        return $this->connectionHandles->get($frame->fd);
     }
 
     private function onException(Server $server, Frame $frame, Throwable $exception): void
@@ -145,6 +165,7 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
 
     private function onProtocolError(Server $server, Frame $frame, string $reason): void
     {
+        $this->logger->debug(sprintf('WebSocket Protocol Error: %s', $reason));
         $server->disconnect($frame->fd, SWOOLE_WEBSOCKET_CLOSE_PROTOCOL_ERROR, $reason);
     }
 }

@@ -71,6 +71,6 @@ final readonly class SessionAuthentication
             return null;
         }
 
-        return $this->userRepository->findUserById($request, $userId);
+        return $this->userRepository->findUserById($userId);
     }
 }

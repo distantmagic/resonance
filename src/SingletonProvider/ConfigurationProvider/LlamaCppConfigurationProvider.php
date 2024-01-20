@@ -31,9 +31,8 @@ final readonly class LlamaCppConfigurationProvider extends ConfigurationProvider
             'type' => 'object',
             'properties' => [
                 'apiKey' => [
-                    'type' => 'string',
+                    'type' => ['null', 'string'],
                     'minLength' => 1,
-                    'nullable' => true,
                     'default' => null,
                 ],
                 'host' => [

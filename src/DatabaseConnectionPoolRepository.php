@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance;
 use Ds\Map;
 use OutOfBoundsException;
 use PDO;
+use RuntimeException;
 use Swoole\Database\PDOPool;
 use Swoole\Database\PDOProxy;
 
@@ -33,9 +34,15 @@ readonly class DatabaseConnectionPoolRepository
         }
 
         /**
-         * @var PDO|PDOProxy
+         * @var false|PDO|PDOProxy
          */
-        return $this->databaseConnectionPool->get($name)->get();
+        $pdo = $this->databaseConnectionPool->get($name)->get(DM_POOL_CONNECTION_TIMEOUT);
+
+        if (!$pdo) {
+            throw new RuntimeException('Database connection timed out');
+        }
+
+        return $pdo;
     }
 
     public function putConnection(string $name, PDO|PDOProxy $pdo): void

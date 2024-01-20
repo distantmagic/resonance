@@ -37,6 +37,7 @@ define('DM_ROOT', __DIR__);
 // Coroutine timeouts
 define('DM_BATCH_PROMISE_TIMEOUT', 0.3);
 define('DM_GRAPHQL_PROMISE_TIMEOUT', 0.2);
+define('DM_POOL_CONNECTION_TIMEOUT', 0.1);
 ```
 
 ```json file:composer.json

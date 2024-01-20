@@ -153,11 +153,9 @@ declare(strict_types=1);
 namespace App;
 
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\DatabaseConnectionPoolRepository;
 use Distantmagic\Resonance\DoctrineEntityManagerRepository;
 use Distantmagic\Resonance\UserInterface;
 use Distantmagic\Resonance\UserRepositoryInterface;
-use LogicException;
 use Swoole\Http\Request;
 
 #[Singleton(provides: UserRepositoryInterface::class)]
@@ -167,13 +165,19 @@ readonly class UserRepository implements UserRepositoryInterface
         private DoctrineEntityManagerRepository $doctrineEntityManagerRepository,
     ) {}
 
-    public function findUserById(Request $request, int|string $userId): ?UserInterface
+    public function findUserById(int|string $userId): ?UserInterface
     {
         return $this
             ->doctrineEntityManagerRepository
-            ->getEntityManager($request)
-            ->getRepository(User::class)
-            ->find($userId)
+            ->withRepository(User::class, function (
+                EntityManagerInterface $entityManager,
+                EntityRepository $entityRepository,
+            ) use ($userId) {
+                /**
+                 * @var null|UserInterface
+                 */
+                return $entityRepository->find($userId);
+            })
         ;
     }
 }

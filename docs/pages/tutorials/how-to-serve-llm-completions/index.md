@@ -3,7 +3,7 @@ collections:
   - tutorials
 layout: dm:tutorial
 parent: tutorials/index
-title: How to Serve LLM Completions (With llama.cpp)
+title: How to Serve LLM Completions (With llama.cpp)?
 description: >
     How to connect with llama.cpp and issue parallel requests for LLM 
     completions and embeddings with Resonance.

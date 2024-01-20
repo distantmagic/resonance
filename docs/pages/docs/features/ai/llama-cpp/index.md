@@ -20,7 +20,7 @@ You can use Resonance to connect with it and process LLM responses.
 
 # Usage
 
-You can also check the tutorial: {{tutorials/connect-to-llama-cpp/index}}
+You can also check the tutorial: {{tutorials/how-to-serve-llm-completions/index}}
 
 ## Configuration
 
@@ -68,6 +68,33 @@ class LlamaCppGenerate
                 // ...do something else
             }
         }
+    }
+}
+```
+
+## Stopping Completion Generator
+
+:::danger
+Using just the `break` keyword does not stop the completion request. You need
+to use `$completion->send(...)`. 
+
+See also: [Generator::send(...)](https://www.php.net/manual/en/generator.send.php)
+:::
+
+For example, stops after generating 10 tokens:
+
+```php
+use Distantmagic\Resonance\LlamaCppCompletionCommand;
+
+$i = 0;
+
+foreach ($completion as $token) {
+    if ($i > 9) {
+        $completion->send(LlamaCppCompletionCommand::Stop);
+    } else {
+        // do something
+
+        $i += 1;
     }
 }
 ```

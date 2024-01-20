@@ -7,7 +7,6 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Ds\Map;
 use Psr\Log\LoggerInterface;
-use Swoole\Event;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\WebSocket\Frame;
@@ -23,6 +22,14 @@ final readonly class WebSocketServerController
      */
     private const HANDSHAKE_MAGIC_GUID = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
 
+    private const MESSAGE_INVALID_HANDSHAKE = 'WebSocket invalid handshake';
+    private const MESSAGE_INVALID_SEC_WEBSOCKET = 'Invalid sec-websocket-key';
+    private const MESSAGE_NO_REQUEST_HEADERS = 'No request headers';
+    private const MESSAGE_NO_SEC_WEBSOCKET = 'Missing sec-websocket-key';
+    private const MESSAGE_NO_WEBSOCKET_CONTROLLER = 'WebSocket controller is not set for connection';
+    private const MESSAGE_NOT_AUTHORIZED = 'Not authorized to open WebSocket connection';
+    private const MESSAGE_PROTOCOL_NOT_SUPPORTED = 'None of the requested protocols is supported';
+    private const MESSAGE_UNEXPECTED_ONOPEN = 'Websocket open event fired despite implementing custom handshake';
     private const SEC_WEBSOCKET_KEY_BASE64_DECODED_BYTES_STRLEN = 16;
     private const SEC_WEBSOCKET_KEY_BASE64_STRLEN = 24;
 
@@ -51,13 +58,13 @@ final readonly class WebSocketServerController
     public function onHandshake(Server $server, Request $request, Response $response): void
     {
         if (!is_array($request->header)) {
-            $this->onInvalidHandshake($response, 'No request headers');
+            $this->onInvalidHandshake($response, self::MESSAGE_NO_REQUEST_HEADERS);
 
             return;
         }
 
         if (!isset($request->header['sec-websocket-key'])) {
-            $this->onInvalidHandshake($response, 'Missing sec-websocket-key');
+            $this->onInvalidHandshake($response, self::MESSAGE_NO_SEC_WEBSOCKET);
 
             return;
         }
@@ -68,7 +75,7 @@ final readonly class WebSocketServerController
         $secWebSocketKey = $request->header['sec-websocket-key'];
 
         if (!$this->isSecWebSocketKeyValid($secWebSocketKey)) {
-            $this->onInvalidHandshake($response, 'Invalid sec-websocket-key');
+            $this->onInvalidHandshake($response, self::MESSAGE_INVALID_SEC_WEBSOCKET);
 
             return;
         }
@@ -76,7 +83,7 @@ final readonly class WebSocketServerController
         $controllerResolution = $this->protocolControllerAggregate->resolveController($request);
 
         if (!$controllerResolution) {
-            $this->onInvalidHandshake($response, 'None of the requested protocols is supported');
+            $this->onInvalidHandshake($response, self::MESSAGE_PROTOCOL_NOT_SUPPORTED);
 
             return;
         }
@@ -84,7 +91,8 @@ final readonly class WebSocketServerController
         $authResolution = $controllerResolution->controller->isAuthorizedToConnect($request);
 
         if (!$authResolution->isAuthorizedToConnect) {
-            $response->status(403, 'Not authorized to open connection');
+            $this->logger->debug(self::MESSAGE_NOT_AUTHORIZED);
+            $response->status(403, self::MESSAGE_NOT_AUTHORIZED);
             $response->end();
 
             return;
@@ -92,10 +100,6 @@ final readonly class WebSocketServerController
 
         $fd = $request->fd;
         $this->protocolControllerAssignments->put($fd, $controllerResolution->controller);
-
-        Event::defer(static function () use ($authResolution, $controllerResolution, $fd, $server) {
-            $controllerResolution->controller->onOpen($server, $fd, $authResolution);
-        });
 
         $secWebSocketAccept = base64_encode(sha1($secWebSocketKey.self::HANDSHAKE_MAGIC_GUID, true));
 
@@ -107,12 +111,14 @@ final readonly class WebSocketServerController
 
         $response->status(101);
         $response->end();
+
+        $controllerResolution->controller->onOpen($server, $fd, $authResolution);
     }
 
     public function onMessage(Server $server, Frame $frame): void
     {
         if (!$this->protocolControllerAssignments->hasKey($frame->fd)) {
-            $this->logger->error('websocket controller is not set for connection: '.(string) $frame->fd);
+            $this->logger->error(self::MESSAGE_NO_WEBSOCKET_CONTROLLER);
             $server->disconnect($frame->fd, SWOOLE_WEBSOCKET_CLOSE_SERVER_ERROR);
 
             return;
@@ -123,7 +129,7 @@ final readonly class WebSocketServerController
 
     public function onOpen(Server $server, Request $request): void
     {
-        $this->logger->error('websocket open event fired despite implementing custom handshake');
+        $this->logger->error(self::MESSAGE_UNEXPECTED_ONOPEN);
         $server->disconnect($request->fd, SWOOLE_WEBSOCKET_CLOSE_SERVER_ERROR);
     }
 
@@ -144,7 +150,7 @@ final readonly class WebSocketServerController
 
     private function onInvalidHandshake(Response $response, string $reason): void
     {
-        $this->logger->debug('websocket invalid handshake: '.$reason);
+        $this->logger->debug(sprintf('%s: %s', self::MESSAGE_INVALID_HANDSHAKE, $reason));
 
         $response->status(400, $reason);
         $response->end();

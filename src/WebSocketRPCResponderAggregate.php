@@ -34,7 +34,7 @@ readonly class WebSocketRPCResponderAggregate
     private function selectResponder(RPCMessage $rpcMessage): WebSocketRPCResponderInterface
     {
         if (!$this->rpcResponders->hasKey($rpcMessage->method)) {
-            throw new DomainException('Unsupported RPC method: '.$rpcMessage->method->getName());
+            throw new DomainException('Unsupported RPC method: '.$rpcMessage->method->getValue());
         }
 
         return $this->rpcResponders->get($rpcMessage->method);

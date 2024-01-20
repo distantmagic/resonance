@@ -4,4 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-interface RPCMethodInterface extends NameableInterface {}
+interface RPCMethodInterface
+{
+    public function getValue(): string;
+}

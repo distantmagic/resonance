@@ -108,8 +108,11 @@ h2.homepage__example__title {
     background-repeat: no-repeat;
     background-size: cover;
   }
-  @media screen and (min-width: 1024px) {
+  @media screen and (min-width: 1024px) and (max-width: 1649px) {
     padding: 160px 0;
+  }
+  @media screen and (min-width: 1650px) {
+    padding: 210px 0;
   }
 }
 
@@ -126,7 +129,7 @@ h2.homepage__example__title {
 }
 
 .homepage__title h2 {
-  margin: 0px 0 100px 0;
+  margin: 0px 0 40px 0;
   text-align: center;
 
   @media screen and (max-width: 1023px) {
