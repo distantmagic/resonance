@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\ProvidesAuthenticatedUser;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Doctrine\ORM\EntityManagerInterface;
 use Ds\Set;
@@ -13,8 +14,12 @@ use League\OAuth2\Server\ResourceServer;
 use Swoole\Http\Request;
 use WeakMap;
 
-#[Singleton(grantsFeature: Feature::OAuth2)]
-readonly class OAuth2ClaimReader
+#[ProvidesAuthenticatedUser(1100)]
+#[Singleton(
+    collection: SingletonCollection::AuthenticatedUserStore,
+    grantsFeature: Feature::OAuth2,
+)]
+readonly class OAuth2ClaimReader implements AuthenticatedUserStoreInterface
 {
     /**
      * @var WeakMap<Request,OAuth2Claim>
@@ -33,6 +38,18 @@ readonly class OAuth2ClaimReader
          * @var WeakMap<Request,OAuth2Claim>
          */
         $this->claims = new WeakMap();
+    }
+
+    public function getAuthenticatedUser(Request $request): ?AuthenticatedUser
+    {
+        if (!$this->hasClaim($request)) {
+            return null;
+        }
+
+        return new AuthenticatedUser(
+            AuthenticatedUserSource::OAuth2,
+            $this->readClaim($request)->user,
+        );
     }
 
     public function hasClaim(Request $request): bool

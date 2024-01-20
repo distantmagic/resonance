@@ -16,7 +16,10 @@ use Swoole\Coroutine\Channel;
  */
 readonly class SwooleChannelIterator implements IteratorAggregate
 {
-    public function __construct(public Channel $channel) {}
+    public function __construct(
+        public Channel $channel,
+        private float $timeout = DM_POOL_CONNECTION_TIMEOUT,
+    ) {}
 
     public function close(): void
     {
@@ -36,7 +39,7 @@ readonly class SwooleChannelIterator implements IteratorAggregate
             /**
              * @var mixed $data explicitly mixed for typechecks
              */
-            $data = $this->channel->pop(DM_POOL_CONNECTION_TIMEOUT);
+            $data = $this->channel->pop($this->timeout);
 
             if (false === $data) {
                 switch ($this->channel->errCode) {

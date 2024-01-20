@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\ProvidesAuthenticatedUser;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use WeakMap;
 
-#[Singleton]
-final readonly class SessionAuthentication
+#[ProvidesAuthenticatedUser(1000)]
+#[Singleton(collection: SingletonCollection::AuthenticatedUserStore)]
+final readonly class SessionAuthentication implements AuthenticatedUserStoreInterface
 {
     /**
      * @var WeakMap<Request, ?UserInterface>
@@ -32,17 +34,24 @@ final readonly class SessionAuthentication
         $this->sessionManager->restoreFromRequest($request)?->data->clear();
     }
 
-    public function getAuthenticatedUser(Request $request): ?UserInterface
+    public function getAuthenticatedUser(Request $request): ?AuthenticatedUser
     {
         if ($this->authenticatedUsers->offsetExists($request)) {
-            return $this->authenticatedUsers->offsetGet($request);
+            return new AuthenticatedUser(
+                AuthenticatedUserSource::Session,
+                $this->authenticatedUsers->offsetGet($request),
+            );
         }
 
         $user = $this->doGetAuthenticatedUser($request);
 
         $this->authenticatedUsers->offsetSet($request, $user);
 
-        return $user;
+        if (is_null($user)) {
+            return null;
+        }
+
+        return new AuthenticatedUser(AuthenticatedUserSource::Session, $user);
     }
 
     public function setAuthenticatedUser(Request $request, Response $response, UserInterface $user): void

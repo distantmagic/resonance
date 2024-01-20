@@ -8,8 +8,8 @@ use Distantmagic\Resonance\Attribute;
 use Distantmagic\Resonance\Attribute\HandlesMiddlewareAttribute;
 use Distantmagic\Resonance\Attribute\RequiresOAuth2Scope;
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\AuthenticatedUserProvider;
 use Distantmagic\Resonance\AuthenticatedUserSource;
+use Distantmagic\Resonance\AuthenticatedUserStoreAggregate;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpMiddleware;
@@ -39,7 +39,7 @@ use Swoole\Http\Response;
 readonly class RequiresOAuth2ScopeMiddleware extends HttpMiddleware
 {
     public function __construct(
-        private AuthenticatedUserProvider $authenticatedUserProvider,
+        private AuthenticatedUserStoreAggregate $authenticatedUserSourceAggregate,
         private Forbidden $forbidden,
         private HttpRouteMatchRegistry $routeMatchRegistry,
         private OAuth2ClaimReader $oAuth2ClaimReader,
@@ -53,7 +53,10 @@ readonly class RequiresOAuth2ScopeMiddleware extends HttpMiddleware
         Attribute $attribute,
         HttpInterceptableInterface|HttpResponderInterface $next,
     ): HttpInterceptableInterface|HttpResponderInterface {
-        $authenticatedUser = $this->authenticatedUserProvider->getAuthenticatedUser($request);
+        $authenticatedUser = $this
+            ->authenticatedUserSourceAggregate
+            ->getAuthenticatedUser($request)
+        ;
 
         if (!$authenticatedUser) {
             return $this->forbidden;

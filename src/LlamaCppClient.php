@@ -8,7 +8,6 @@ use CurlHandle;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Generator;
 use JsonSerializable;
-use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Swoole\Coroutine\Channel;
 
@@ -209,8 +208,8 @@ readonly class LlamaCppClient
                 curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $requestData);
                 curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, false);
                 curl_setopt($curlHandle, CURLOPT_URL, $this->llamaCppLinkBuilder->build($path));
-                curl_setopt($curlHandle, CURLOPT_WRITEFUNCTION, static function (CurlHandle $curlHandle, string $data) use ($channel) {
-                    if ($channel->push($data, DM_POOL_CONNECTION_TIMEOUT)) {
+                curl_setopt($curlHandle, CURLOPT_WRITEFUNCTION, function (CurlHandle $curlHandle, string $data) use ($channel) {
+                    if ($channel->push($data, $this->llamaCppConfiguration->completionTokenTimeout)) {
                         return strlen($data);
                     }
 
@@ -239,6 +238,9 @@ readonly class LlamaCppClient
         /**
          * @var SwooleChannelIterator<string>
          */
-        return new SwooleChannelIterator($channel);
+        return new SwooleChannelIterator(
+            channel: $channel,
+            timeout: $this->llamaCppConfiguration->completionTokenTimeout,
+        );
     }
 }

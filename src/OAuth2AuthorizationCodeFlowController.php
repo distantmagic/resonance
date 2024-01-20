@@ -58,7 +58,7 @@ readonly class OAuth2AuthorizationCodeFlowController implements OAuth2Authorizat
         $authenticatedUser = $this->sessionAuthentication->getAuthenticatedUser($request);
 
         if ($authenticatedUser) {
-            $authorizationRequest->setUser(new OAuth2AuthorizedUser($authenticatedUser->getIdentifier()));
+            $authorizationRequest->setUser(new OAuth2AuthorizedUser($authenticatedUser->user->getIdentifier()));
 
             return null;
         }

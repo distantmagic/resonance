@@ -32,9 +32,9 @@ final readonly class PostSessionAuthentication extends HttpResponder
             return $this->authorizationCodeFlowController->redirectToAuthenticatedPage($request, $response);
         }
 
-        $user = $this->sessionAuthentication->getAuthenticatedUser($request);
+        $authenticatedUser = $this->sessionAuthentication->getAuthenticatedUser($request);
 
-        if (!$user) {
+        if (!$authenticatedUser) {
             throw new RuntimeException('Expected authenticated user to be stored in session');
         }
 
@@ -43,7 +43,7 @@ final readonly class PostSessionAuthentication extends HttpResponder
             ->get($request, $response)
         ;
 
-        $authRequest->setUser(new OAuth2AuthorizedUser($user->getIdentifier()));
+        $authRequest->setUser(new OAuth2AuthorizedUser($authenticatedUser->user->getIdentifier()));
 
         return $this
             ->authorizationCodeFlowController

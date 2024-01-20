@@ -12,7 +12,7 @@ title: Changelog
 
 ## v0.14.0
 
-- Feature: added {{docs/features/ai/llama-cpp/index}} to integrate with LLMs 
+- Feature: added {{docs/features/ai/server/llama-cpp/index}} to integrate with LLMs 
 
 ## v0.11.1
 

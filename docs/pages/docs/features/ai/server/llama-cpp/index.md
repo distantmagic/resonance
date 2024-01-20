@@ -2,7 +2,7 @@
 collections: 
     - documents
 layout: dm:document
-parent: docs/features/ai/index
+parent: docs/features/ai/server/index
 title: llama.cpp
 description: >
     Use Resonance to connect with llama.cpp server.

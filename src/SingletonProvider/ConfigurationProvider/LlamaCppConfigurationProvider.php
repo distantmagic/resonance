@@ -11,7 +11,8 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 /**
  * @template-extends ConfigurationProvider<LlamaCppConfiguration, object{
- *     apiKey: null|string,
+ *     api_key: null|string,
+ *     completion_token_timeout: float,
  *     host: string,
  *     port: int,
  *     scheme: string,
@@ -30,7 +31,7 @@ final readonly class LlamaCppConfigurationProvider extends ConfigurationProvider
         return new JsonSchema([
             'type' => 'object',
             'properties' => [
-                'apiKey' => [
+                'api_key' => [
                     'type' => ['null', 'string'],
                     'minLength' => 1,
                     'default' => null,
@@ -38,6 +39,10 @@ final readonly class LlamaCppConfigurationProvider extends ConfigurationProvider
                 'host' => [
                     'type' => 'string',
                     'minLength' => 1,
+                ],
+                'completion_token_timeout' => [
+                    'type' => 'number',
+                    'default' => 1.0,
                 ],
                 'port' => [
                     'type' => 'integer',
@@ -57,7 +62,8 @@ final readonly class LlamaCppConfigurationProvider extends ConfigurationProvider
     protected function provideConfiguration($validatedData): LlamaCppConfiguration
     {
         return new LlamaCppConfiguration(
-            apiKey: $validatedData->apiKey,
+            apiKey: $validatedData->api_key,
+            completionTokenTimeout: $validatedData->completion_token_timeout,
             host: $validatedData->host,
             port: $validatedData->port,
             scheme: $validatedData->scheme,

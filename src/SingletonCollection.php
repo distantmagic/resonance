@@ -6,6 +6,7 @@ namespace Distantmagic\Resonance;
 
 enum SingletonCollection implements SingletonCollectionInterface
 {
+    case AuthenticatedUserStore;
     case CronJob;
     case CrudActionGate;
     case EventListener;
