@@ -23,6 +23,11 @@
   }
 }
 
+.tutorial__breadcrumbs {
+  overflow-x: auto;
+  max-width: 100vw;
+}
+
 .tutorial__content {
   display: grid;
   padding-bottom: 60px;
