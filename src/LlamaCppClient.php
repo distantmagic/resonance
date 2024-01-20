@@ -20,7 +20,6 @@ readonly class LlamaCppClient
 
     public function __construct(
         private JsonSerializer $jsonSerializer,
-        private LoggerInterface $logger,
         private LlamaCppConfiguration $llamaCppConfiguration,
         private LlamaCppLinkBuilder $llamaCppLinkBuilder,
     ) {}
