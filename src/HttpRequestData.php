@@ -8,6 +8,9 @@ use RuntimeException;
 
 readonly class HttpRequestData
 {
+    /**
+     * @psalm-taint-source user_data $data
+     */
     public function __construct(private mixed $data) {}
 
     public function get(string $name, ?string $default = null): ?string

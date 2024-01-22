@@ -11,6 +11,9 @@ use Swoole\Http\Response;
 #[ContentSecurityPolicy(ContentSecurityPolicyType::Html)]
 final readonly class TwigTemplate implements HttpInterceptableInterface
 {
+    /**
+     * @psalm-taint-source file $templatePath
+     */
     public function __construct(
         private string $templatePath,
         private array $templateData = [],

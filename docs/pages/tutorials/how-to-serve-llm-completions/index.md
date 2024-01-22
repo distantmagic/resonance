@@ -128,10 +128,6 @@ class LlamaCppGenerate
         // from the model you are using
         foreach ($completion as $token) {
             swoole_error_log(SWOOLE_LOG_DEBUG, (string) $token);
-
-            if ($token->isLast) {
-                // ...do something else
-            }
         }
     }
 }

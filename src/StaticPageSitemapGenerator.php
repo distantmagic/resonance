@@ -14,6 +14,9 @@ readonly class StaticPageSitemapGenerator
         private StaticPageConfiguration $staticPageConfiguration,
     ) {}
 
+    /**
+     * @psalm-taint-sink file $filename
+     */
     public function writeTo(string $filename): void
     {
         $baseUrl = $this->staticPageConfiguration->baseUrl;

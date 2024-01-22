@@ -14,60 +14,20 @@ use Swoole\Coroutine\Channel;
 #[Singleton]
 readonly class LlamaCppClient
 {
-    // strlen('data: ')
-    private const COMPLETION_CHUNKED_DATA_PREFIX_LENGTH = 6;
-
     public function __construct(
         private JsonSerializer $jsonSerializer,
         private LlamaCppConfiguration $llamaCppConfiguration,
         private LlamaCppLinkBuilder $llamaCppLinkBuilder,
     ) {}
 
-    /**
-     * @return Generator<int,LlamaCppCompletionToken,null|LlamaCppCompletionCommand>
-     */
-    public function generateCompletion(LlamaCppCompletionRequest $request): Generator
+    public function generateCompletion(LlamaCppCompletionRequest $request): LlamaCppCompletionIterator
     {
         $responseChunks = $this->streamResponse($request, '/completion');
 
-        /**
-         * @var null|string
-         */
-        $previousContent = null;
-
-        foreach ($responseChunks as $responseChunk) {
-            /**
-             * @var object{
-             *   content: string,
-             *   stop: boolean,
-             * }
-             */
-            $unserializedToken = $this->jsonSerializer->unserialize(
-                json: $responseChunk,
-                offset: self::COMPLETION_CHUNKED_DATA_PREFIX_LENGTH,
-            );
-
-            if (is_string($previousContent)) {
-                $shouldContinue = yield new LlamaCppCompletionToken(
-                    content: $previousContent,
-                    isLast: $unserializedToken->stop,
-                );
-
-                if (LlamaCppCompletionCommand::Stop === $shouldContinue) {
-                    if (!$responseChunks->channel->close()) {
-                        throw new RuntimeException('Unable to close coroutine channel');
-                    }
-
-                    break;
-                }
-
-                $previousContent = null;
-            }
-
-            if (!$unserializedToken->stop) {
-                $previousContent = $unserializedToken->content;
-            }
-        }
+        return new LlamaCppCompletionIterator(
+            $this->jsonSerializer,
+            $responseChunks,
+        );
     }
 
     public function generateEmbedding(LlamaCppEmbeddingRequest $request): LlamaCppEmbedding

@@ -10,6 +10,8 @@ use RuntimeException;
 readonly class TranslationsLoader
 {
     /**
+     * @psalm-taint-sink file $filename
+     *
      * @return Map<string, string>
      */
     public static function load(string $filename): Map
@@ -17,6 +19,9 @@ readonly class TranslationsLoader
         return (new self($filename))->getTranslations();
     }
 
+    /**
+     * @psalm-taint-sink file $filename
+     */
     public function __construct(private string $filename) {}
 
     /**

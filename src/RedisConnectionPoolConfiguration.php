@@ -8,6 +8,16 @@ use SensitiveParameter;
 
 readonly class RedisConnectionPoolConfiguration
 {
+    /**
+     * @psalm-taint-source system_secret $dbIndex
+     * @psalm-taint-source system_secret $host
+     * @psalm-taint-source system_secret $password
+     * @psalm-taint-source system_secret $poolPrefill
+     * @psalm-taint-source system_secret $poolSize
+     * @psalm-taint-source system_secret $port
+     * @psalm-taint-source system_secret $prefix
+     * @psalm-taint-source system_secret $timeout
+     */
     public function __construct(
         #[SensitiveParameter]
         public int $dbIndex,

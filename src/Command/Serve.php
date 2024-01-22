@@ -13,11 +13,14 @@ use Distantmagic\Resonance\Event\HttpServerStarted;
 use Distantmagic\Resonance\EventDispatcherInterface;
 use Distantmagic\Resonance\HttpResponderAggregate;
 use Distantmagic\Resonance\SwooleConfiguration;
+use Distantmagic\Resonance\WebSocketConnectionShutdownCommand;
 use Distantmagic\Resonance\WebSocketServerController;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Http\Server as HttpServer;
+use Swoole\Server;
 use Swoole\WebSocket\Server as WebSocketServer;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -74,6 +77,7 @@ final class Serve extends Command
         ]);
 
         $this->server->on('beforeShutdown', $this->onBeforeShutdown(...));
+        $this->server->on('pipeMessage', $this->onPipeMessage(...));
         $this->server->on('request', $this->httpResponderAggregate->respond(...));
         $this->server->on('start', $this->onStart(...));
 
@@ -89,13 +93,27 @@ final class Serve extends Command
 
     private function onBeforeShutdown(): void
     {
-        $this->eventDispatcher->dispatch(new HttpServerBeforeStop());
+        $this->eventDispatcher->dispatch(new HttpServerBeforeStop($this->server));
     }
 
     private function onHandshake(Request $request, Response $response): void
     {
         if ($this->webSocketServerController && $this->server instanceof WebSocketServer) {
             $this->webSocketServerController->onHandshake($this->server, $request, $response);
+        }
+    }
+
+    private function onPipeMessage(Server $server, int $srcWorkerId, mixed $data): void
+    {
+        if ($data instanceof WebSocketConnectionShutdownCommand) {
+            if (!($server instanceof WebSocketServer)) {
+                throw new RuntimeException(sprintf(
+                    'Only works with WebSocket server: "%s"',
+                    WebSocketConnectionShutdownCommand::class,
+                ));
+            }
+
+            $this->webSocketServerController?->onClose($data->fd);
         }
     }
 

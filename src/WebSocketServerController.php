@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Ds\Map;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\WebSocket\Frame;
@@ -34,25 +35,28 @@ final readonly class WebSocketServerController
     private const SEC_WEBSOCKET_KEY_BASE64_STRLEN = 24;
 
     /**
-     * @var Map<int, WebSocketProtocolControllerInterface>
+     * @var Map<int,WebSocketProtocolControllerInterface>
      */
-    private Map $protocolControllerAssignments;
+    private Map $protocolControllers;
 
     public function __construct(
         private LoggerInterface $logger,
         private WebSocketProtocolControllerAggregate $protocolControllerAggregate,
+        private WebSocketServerConnectionTable $webSocketServerConnectionTable,
     ) {
-        $this->protocolControllerAssignments = new Map();
+        $this->protocolControllers = new Map();
     }
 
-    public function onClose(Server $server, int $fd): void
+    public function onClose(int $fd): void
     {
-        if (!$this->protocolControllerAssignments->hasKey($fd)) {
-            return;
+        $this->webSocketServerConnectionTable->unregisterConnection($fd);
+
+        if (!$this->protocolControllers->hasKey($fd)) {
+            throw new RuntimeException('WebSocket connection is already closed');
         }
 
-        $this->protocolControllerAssignments->get($fd)->onClose($server, $fd);
-        $this->protocolControllerAssignments->remove($fd);
+        $this->protocolControllers->get($fd)->onClose($fd);
+        $this->protocolControllers->remove($fd);
     }
 
     public function onHandshake(Server $server, Request $request, Response $response): void
@@ -99,7 +103,19 @@ final readonly class WebSocketServerController
         }
 
         $fd = $request->fd;
-        $this->protocolControllerAssignments->put($fd, $controllerResolution->controller);
+
+        $this->protocolControllers->put($fd, $controllerResolution->controller);
+
+        $currentWorkerId = $server->getWorkerId();
+
+        if (!is_int($currentWorkerId)) {
+            throw new RuntimeException('WebSocket server needs to be run in a worker');
+        }
+
+        $this
+            ->webSocketServerConnectionTable
+            ->registerConnection($fd, $currentWorkerId)
+        ;
 
         $secWebSocketAccept = base64_encode(sha1($secWebSocketKey.self::HANDSHAKE_MAGIC_GUID, true));
 
@@ -117,14 +133,14 @@ final readonly class WebSocketServerController
 
     public function onMessage(Server $server, Frame $frame): void
     {
-        if (!$this->protocolControllerAssignments->hasKey($frame->fd)) {
+        $protocolController = $this->protocolControllers->get($frame->fd, null);
+
+        if ($protocolController) {
+            $protocolController->onMessage($server, $frame);
+        } else {
             $this->logger->error(self::MESSAGE_NO_WEBSOCKET_CONTROLLER);
             $server->disconnect($frame->fd, SWOOLE_WEBSOCKET_CLOSE_SERVER_ERROR);
-
-            return;
         }
-
-        $this->protocolControllerAssignments->get($frame->fd)->onMessage($server, $frame);
     }
 
     public function onOpen(Server $server, Request $request): void

@@ -63,10 +63,6 @@ class LlamaCppGenerate
         // from the model you are using
         foreach ($completion as $token) {
             swoole_error_log(SWOOLE_LOG_DEBUG, (string) $token);
-
-            if ($token->isLast) {
-                // ...do something else
-            }
         }
     }
 }
@@ -76,21 +72,17 @@ class LlamaCppGenerate
 
 :::danger
 Using just the `break` keyword does not stop the completion request. You need
-to use `$completion->send(...)`. 
-
-See also: [Generator::send(...)](https://www.php.net/manual/en/generator.send.php)
+to use `$completion->stop()`. 
 :::
 
 For example, stops after generating 10 tokens:
 
 ```php
-use Distantmagic\Resonance\LlamaCppCompletionCommand;
-
 $i = 0;
 
 foreach ($completion as $token) {
     if ($i > 9) {
-        $completion->send(LlamaCppCompletionCommand::Stop);
+        $completion->stop();
     } else {
         // do something
 

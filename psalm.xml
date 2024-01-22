@@ -76,6 +76,7 @@
         <file name="vendor/swoole/ide-helper/src/swoole/Swoole/Http/Request.php" />
         <file name="vendor/swoole/ide-helper/src/swoole/Swoole/Http/Response.php" />
         <file name="vendor/swoole/ide-helper/src/swoole/Swoole/Http/Server.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole/Swoole/Table.php" />
         <file name="vendor/swoole/ide-helper/src/swoole/Swoole/WebSocket/Frame.php" />
         <file name="vendor/swoole/ide-helper/src/swoole/Swoole/WebSocket/Server.php" />
         <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/ConnectionPool.php" />

@@ -10,6 +10,11 @@ use Distantmagic\Resonance\WebSocketProtocolException\UnexpectedRequest;
 
 abstract readonly class WebSocketRPCResponder implements WebSocketRPCResponderInterface
 {
+    public function onClose(
+        WebSocketAuthResolution $webSocketAuthResolution,
+        WebSocketConnection $webSocketConnection,
+    ): void {}
+
     public function respond(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,

@@ -159,6 +159,14 @@ psalm: tools/psalm/vendor/bin/psalm vendor
 		--show-info=true \
 		--root=$(CURDIR)
 
+.PHONY: psalm.taint
+psalm.taint: node_modules vendor
+	./tools/psalm/vendor/bin/psalm \
+		--no-cache \
+		--show-info=true \
+		--root=$(CURDIR) \
+		--taint-analysis
+
 .PHONY: psalm.watch
 psalm.watch: node_modules vendor
 	./node_modules/.bin/nodemon \

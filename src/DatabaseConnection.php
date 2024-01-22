@@ -61,6 +61,9 @@ readonly class DatabaseConnection implements ServerInfoAwareConnection
         return true;
     }
 
+    /**
+     * @psalm-taint-sink sql $sql
+     */
     public function exec(string $sql): int
     {
         /**

@@ -12,7 +12,7 @@ interface WebSocketProtocolControllerInterface
 {
     public function isAuthorizedToConnect(Request $request): WebSocketAuthResolution;
 
-    public function onClose(Server $server, int $fd): void;
+    public function onClose(int $fd): void;
 
     public function onMessage(Server $server, Frame $frame): void;
 

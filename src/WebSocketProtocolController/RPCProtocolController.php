@@ -76,7 +76,7 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
         );
     }
 
-    public function onClose(Server $server, int $fd): void
+    public function onClose(int $fd): void
     {
         $connectionHandle = $this->connectionHandles->get($fd, null);
 
@@ -88,6 +88,7 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
         }
 
         $connectionHandle->webSocketConnection->status = WebSocketConnectionStatus::Closed;
+        $connectionHandle->onClose();
 
         $this->webSocketRPCConnectionController?->onClose(
             $connectionHandle->webSocketAuthResolution,

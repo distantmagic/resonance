@@ -204,7 +204,6 @@ use Distantmagic\Resonance\Attribute\RespondsToWebSocketRPC;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\LlamaCppClient;
-use Distantmagic\Resonance\LlamaCppCompletionCommand;
 use Distantmagic\Resonance\LlamaCppCompletionRequest;
 use Distantmagic\Resonance\RPCNotification;
 use Distantmagic\Resonance\RPCRequest;
@@ -241,7 +240,7 @@ final readonly class LlmChatPromptResponder extends WebSocketRPCResponder
                     $token->content,
                 ));
             } else {
-                $completion->send(LlamaCppCompletionCommand::Stop);
+                $completion->stop();
             }
         }
     }
