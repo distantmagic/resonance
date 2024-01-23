@@ -64,6 +64,7 @@ use App\RPCMethod;
 use Distantmagic\Resonance\Attribute\RespondsToWebSocketRPC;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Feature;
+use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\RPCRequest;
 use Distantmagic\Resonance\RPCResponse;
 use Distantmagic\Resonance\SingletonCollection;
@@ -78,14 +79,21 @@ use Distantmagic\Resonance\WebSocketRPCResponder;
 )]
 final readonly class EchoResponder extends WebSocketRPCResponder
 {
-    protected function onRequest(
+    public function getSchema(): JsonSchema
+    {
+        return new JsonSchema([
+            'type' => 'string',
+        ]);
+    }
+
+    public function onRequest(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
         RPCRequest $rpcRequest,
     ): void {
         $webSocketConnection->push(new RPCResponse(
             $rpcRequest->requestId,
-            (string) $rpcRequest->payload,
+            $rpcRequest->payload,
         ));
     }
 }

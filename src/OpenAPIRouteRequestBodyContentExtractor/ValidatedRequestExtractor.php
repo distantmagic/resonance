@@ -36,7 +36,7 @@ readonly class ValidatedRequestExtractor extends OpenAPIRouteRequestBodyContentE
                     ->inputValidatorCollection
                     ->inputValidators
                     ->get($attribute->validator)
-                    ->jsonSchema,
+                    ->getSchema(),
             ),
         ];
     }

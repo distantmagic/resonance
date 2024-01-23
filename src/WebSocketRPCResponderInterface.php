@@ -4,18 +4,36 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Distantmagic\Resonance\InputValidatedData\RPCMessage;
-
-interface WebSocketRPCResponderInterface
+/**
+ * @template TPayload
+ */
+interface WebSocketRPCResponderInterface extends JsonSchemaSourceInterface
 {
+    public function onBeforeMessage(
+        WebSocketAuthResolution $webSocketAuthResolution,
+        WebSocketConnection $webSocketConnection,
+    ): void;
+
     public function onClose(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
     ): void;
 
-    public function respond(
+    /**
+     * @param RPCNotification<TPayload> $rpcNotification
+     */
+    public function onNotification(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
-        RPCMessage $rpcMessage,
+        RPCNotification $rpcNotification,
+    ): void;
+
+    /**
+     * @param RPCRequest<TPayload> $rpcRequest
+     */
+    public function onRequest(
+        WebSocketAuthResolution $webSocketAuthResolution,
+        WebSocketConnection $webSocketConnection,
+        RPCRequest $rpcRequest,
     ): void;
 }

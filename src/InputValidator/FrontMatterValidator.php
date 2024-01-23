@@ -28,7 +28,7 @@ use Generator;
 #[Singleton]
 readonly class FrontMatterValidator extends InputValidator
 {
-    protected function castValidatedData(mixed $data): FrontMatter
+    public function castValidatedData(mixed $data): FrontMatter
     {
         $collections = iterator_to_array($this->normalizeDataCollections($data->collections));
 
@@ -45,7 +45,7 @@ readonly class FrontMatterValidator extends InputValidator
         );
     }
 
-    protected function makeSchema(): JsonSchema
+    public function getSchema(): JsonSchema
     {
         $contentTypes = StaticPageContentType::values();
 

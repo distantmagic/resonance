@@ -22,12 +22,7 @@ use Distantmagic\Resonance\SwooleConfiguration;
 #[Singleton(provides: SwooleConfiguration::class)]
 final readonly class SwooleConfigurationProvider extends ConfigurationProvider
 {
-    protected function getConfigurationKey(): string
-    {
-        return 'swoole';
-    }
-
-    protected function makeSchema(): JsonSchema
+    public function getSchema(): JsonSchema
     {
         return new JsonSchema([
             'type' => 'object',
@@ -60,6 +55,11 @@ final readonly class SwooleConfigurationProvider extends ConfigurationProvider
             ],
             'required' => ['host', 'log_level', 'port', 'ssl_cert_file', 'ssl_key_file'],
         ]);
+    }
+
+    protected function getConfigurationKey(): string
+    {
+        return 'swoole';
     }
 
     protected function provideConfiguration($validatedData): SwooleConfiguration

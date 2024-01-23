@@ -21,12 +21,7 @@ use Distantmagic\Resonance\WebSocketConfiguration;
 )]
 final readonly class WebSocketConfigurationProvider extends ConfigurationProvider
 {
-    protected function getConfigurationKey(): string
-    {
-        return 'swoole';
-    }
-
-    protected function makeSchema(): JsonSchema
+    public function getSchema(): JsonSchema
     {
         return new JsonSchema([
             'type' => 'object',
@@ -39,6 +34,11 @@ final readonly class WebSocketConfigurationProvider extends ConfigurationProvide
                 ],
             ],
         ]);
+    }
+
+    protected function getConfigurationKey(): string
+    {
+        return 'swoole';
     }
 
     protected function provideConfiguration($validatedData): WebSocketConfiguration

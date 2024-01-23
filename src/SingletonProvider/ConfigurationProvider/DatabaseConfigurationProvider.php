@@ -31,12 +31,7 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 #[Singleton(provides: DatabaseConfiguration::class)]
 final readonly class DatabaseConfigurationProvider extends ConfigurationProvider
 {
-    protected function getConfigurationKey(): string
-    {
-        return 'database';
-    }
-
-    protected function makeSchema(): JsonSchema
+    public function getSchema(): JsonSchema
     {
         $valueSchema = [
             'type' => 'object',
@@ -97,6 +92,11 @@ final readonly class DatabaseConfigurationProvider extends ConfigurationProvider
             'type' => 'object',
             'additionalProperties' => $valueSchema,
         ]);
+    }
+
+    protected function getConfigurationKey(): string
+    {
+        return 'database';
     }
 
     protected function provideConfiguration($validatedData): DatabaseConfiguration

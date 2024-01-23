@@ -13,6 +13,9 @@ use Stringable;
  */
 readonly class RPCNotification implements Stringable
 {
+    /**
+     * @param TPayload $payload
+     */
     public function __construct(
         public RPCMethodInterface $method,
         public mixed $payload,

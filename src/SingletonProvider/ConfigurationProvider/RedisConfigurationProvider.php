@@ -28,12 +28,7 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 #[Singleton(provides: RedisConfiguration::class)]
 final readonly class RedisConfigurationProvider extends ConfigurationProvider
 {
-    protected function getConfigurationKey(): string
-    {
-        return 'redis';
-    }
-
-    protected function makeSchema(): JsonSchema
+    public function getSchema(): JsonSchema
     {
         $valueSchema = [
             'type' => 'object',
@@ -86,6 +81,11 @@ final readonly class RedisConfigurationProvider extends ConfigurationProvider
             'type' => 'object',
             'additionalProperties' => $valueSchema,
         ]);
+    }
+
+    protected function getConfigurationKey(): string
+    {
+        return 'redis';
     }
 
     protected function provideConfiguration($validatedData): RedisConfiguration

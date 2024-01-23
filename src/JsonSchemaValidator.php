@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Ds\Map;
 use Opis\JsonSchema\Errors\ErrorFormatter;
 use Opis\JsonSchema\Helper;
 use Opis\JsonSchema\ValidationResult;
@@ -13,21 +14,24 @@ use Opis\JsonSchema\Validator;
 #[Singleton]
 readonly class JsonSchemaValidator
 {
+    /**
+     * @var Map<JsonSchemaSourceInterface,bool|object|string>
+     */
+    private Map $convertedSchemas;
+
     private ErrorFormatter $errorFormatter;
     private Validator $validator;
 
     public function __construct()
     {
+        $this->convertedSchemas = new Map();
         $this->errorFormatter = new ErrorFormatter();
         $this->validator = new Validator();
     }
 
-    public function validate(JsonSchema $jsonSchema, mixed $data): JsonSchemaValidationResult
+    public function validate(JsonSchemaSourceInterface $jsonSchemaSource, mixed $data): JsonSchemaValidationResult
     {
-        /**
-         * @var bool|object|string $convertedSchema
-         */
-        $convertedSchema = Helper::toJSON($jsonSchema->schema);
+        $convertedSchema = $this->convertSchema($jsonSchemaSource);
 
         /**
          * @var bool|object|string $convertedData
@@ -40,6 +44,22 @@ readonly class JsonSchemaValidator
             data: $convertedData,
             errors: $this->formatErrors($validationResult),
         );
+    }
+
+    private function convertSchema(JsonSchemaSourceInterface $jsonSchemaSource): bool|object|string
+    {
+        if ($this->convertedSchemas->hasKey($jsonSchemaSource)) {
+            return $this->convertedSchemas->get($jsonSchemaSource);
+        }
+
+        /**
+         * @var bool|object|string $convertedSchema
+         */
+        $convertedSchema = Helper::toJSON($jsonSchemaSource->getSchema()->schema);
+
+        $this->convertedSchemas->put($jsonSchemaSource, $convertedSchema);
+
+        return $convertedSchema;
     }
 
     /**

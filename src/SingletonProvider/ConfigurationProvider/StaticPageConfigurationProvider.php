@@ -21,12 +21,7 @@ use Distantmagic\Resonance\StaticPageConfiguration;
 #[Singleton(provides: StaticPageConfiguration::class)]
 final readonly class StaticPageConfigurationProvider extends ConfigurationProvider
 {
-    protected function getConfigurationKey(): string
-    {
-        return 'static';
-    }
-
-    protected function makeSchema(): JsonSchema
+    public function getSchema(): JsonSchema
     {
         return new JsonSchema([
             'type' => 'object',
@@ -54,6 +49,11 @@ final readonly class StaticPageConfigurationProvider extends ConfigurationProvid
             ],
             'required' => ['base_url', 'esbuild_metafile', 'input_directory', 'output_directory', 'sitemap'],
         ]);
+    }
+
+    protected function getConfigurationKey(): string
+    {
+        return 'static';
     }
 
     protected function provideConfiguration($validatedData): StaticPageConfiguration

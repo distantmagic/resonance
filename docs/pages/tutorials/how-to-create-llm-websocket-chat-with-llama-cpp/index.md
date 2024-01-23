@@ -203,6 +203,7 @@ use App\RPCMethod;
 use Distantmagic\Resonance\Attribute\RespondsToWebSocketRPC;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Feature;
+use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\LlamaCppClient;
 use Distantmagic\Resonance\LlamaCppCompletionRequest;
 use Distantmagic\Resonance\RPCNotification;
@@ -224,7 +225,24 @@ final readonly class LlmChatPromptResponder extends WebSocketRPCResponder
         private LlamaCppClient $llamaCppClient,
     ) {}
 
-    protected function onNotification(
+    public function getSchema(): JsonSchema
+    {
+        return new JsonSchema([
+            'type' => 'object',
+            'properties' => [
+                'prompt' => [
+                    'minLength' => 1,
+                    'type' => 'string',
+                ],
+            ],
+            'required' => [
+                'prompt',
+            ],
+            'additionalProperties' => false,
+        ]);
+    }
+
+    public function onNotification(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
         RPCNotification $rpcNotification,

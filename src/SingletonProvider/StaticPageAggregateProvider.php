@@ -6,6 +6,7 @@ namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\InputValidator\FrontMatterValidator;
+use Distantmagic\Resonance\InputValidatorController;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
@@ -22,6 +23,7 @@ final readonly class StaticPageAggregateProvider extends SingletonProvider
 {
     public function __construct(
         private FrontMatterValidator $frontMatterValidator,
+        private InputValidatorController $inputValidatorController,
         private StaticPageConfiguration $staticPageConfiguration,
     ) {}
 
@@ -30,6 +32,7 @@ final readonly class StaticPageAggregateProvider extends SingletonProvider
         $fileIterator = new StaticPageFileIterator($this->staticPageConfiguration->inputDirectory);
         $staticPageIterator = new StaticPageIterator(
             $this->frontMatterValidator,
+            $this->inputValidatorController,
             $fileIterator,
             $this->staticPageConfiguration->outputDirectory,
         );

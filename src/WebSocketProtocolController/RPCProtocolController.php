@@ -11,6 +11,9 @@ use Distantmagic\Resonance\CSRFManager;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\Gatekeeper;
 use Distantmagic\Resonance\InputValidator\RPCMessageValidator;
+use Distantmagic\Resonance\InputValidatorController;
+use Distantmagic\Resonance\JsonSchemaValidationErrorMessage;
+use Distantmagic\Resonance\JsonSchemaValidator;
 use Distantmagic\Resonance\JsonSerializer;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SiteAction;
@@ -48,6 +51,8 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
         private CSRFManager $csrfManager,
         private AuthenticatedUserStoreAggregate $authenticatedUserSourceAggregate,
         private Gatekeeper $gatekeeper,
+        private InputValidatorController $inputValidatorController,
+        private JsonSchemaValidator $jsonSchemaValidator,
         private JsonSerializer $jsonSerializer,
         private LoggerInterface $logger,
         private RPCMessageValidator $rpcMessageValidator,
@@ -120,6 +125,7 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
     {
         $webSocketConnection = new WebSocketConnection($server, $fd);
         $connectionHandle = new WebSocketRPCConnectionHandle(
+            $this->jsonSchemaValidator,
             $this->webSocketRPCResponderAggregate,
             $webSocketAuthResolution,
             $webSocketConnection,
@@ -152,15 +158,28 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
 
     private function onJsonMessage(Server $server, Frame $frame, mixed $jsonMessage): void
     {
-        $inputValidationResult = $this->rpcMessageValidator->validateData($jsonMessage);
+        $inputValidationResult = $this->inputValidatorController->validateData(
+            $this->rpcMessageValidator,
+            $jsonMessage
+        );
 
-        if ($inputValidationResult->inputValidatedData) {
-            $this
-                ->getFrameController($frame)
-                ->onRPCMessage($inputValidationResult->inputValidatedData)
-            ;
-        } else {
+        if (!$inputValidationResult->inputValidatedData) {
             $this->onProtocolError($server, $frame, $inputValidationResult->getErrorMessage());
+
+            return;
+        }
+
+        $payloadValidationResult = $this
+            ->getFrameController($frame)
+            ->onRPCMessage($inputValidationResult->inputValidatedData)
+        ;
+
+        if (!empty($payloadValidationResult->errors)) {
+            $this->onProtocolError(
+                $server,
+                $frame,
+                (string) new JsonSchemaValidationErrorMessage($payloadValidationResult->errors),
+            );
         }
     }
 

@@ -47,7 +47,7 @@ readonly class BlogPostForm extends InputValidatedData
 ## Validators
 
 Validators take in any data and check if it adheres to the configuration 
-schema. The `makeSchema()` method must return a 
+schema. The `getSchema()` method must return a 
 [JSON Schema](https://json-schema.org/) object.
 
 ```php
@@ -70,7 +70,7 @@ use Distantmagic\Resonance\SingletonCollection;
 #[Singleton(collection: SingletonCollection::InputValidator)]
 readonly class BlogPostFormValidator extends InputValidator
 {
-    protected function castValidatedData(mixed $data): BlogPostForm
+    public function castValidatedData(mixed $data): BlogPostForm
     {
         return new BlogPostForm(
             $data['content'],
@@ -78,7 +78,7 @@ readonly class BlogPostFormValidator extends InputValidator
         );
     }
 
-    protected function makeSchema(): Schema
+    public function getSchema(): Schema
     {
         return new JsonSchema([
             'type' => 'object',
@@ -100,18 +100,22 @@ readonly class BlogPostFormValidator extends InputValidator
 
 Preferably validators should be injected somewhere by the 
 {{docs/features/dependency-injection/index}}, so you don't have to set up their 
-parameters manually. Then you can call their `validateData()` or
-`validateRequest()` methods.
+parameters manually. Then you can call their `validateData()` method.
 
 ```php
 <?php
 
+use Distantmagic\Resonance\InputValidatorController;
+use Distantmagic\Resonance\JsonSchemaValidator;
 use Distantmagic\Resonance\InputValidationResult;
+
+$jsonSchemaValidator = new JsonSchemaValidator();
+$inputValidatorController = new InputValidatorController($jsonSchemaValidator);
 
 /**
  * @var InputValidationResult $validationResult
  */
-$validationResult = $blogPostFormValidator->validateData([
+$validationResult = $inputValidatorController->validateData($blogPostFormValidator, [
     'content' => 'test',
     'title' => 'test',
 ]);

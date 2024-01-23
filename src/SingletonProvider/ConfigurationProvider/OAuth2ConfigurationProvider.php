@@ -31,12 +31,7 @@ use Swoole\Coroutine;
 )]
 final readonly class OAuth2ConfigurationProvider extends ConfigurationProvider
 {
-    protected function getConfigurationKey(): string
-    {
-        return 'oauth2';
-    }
-
-    protected function makeSchema(): JsonSchema
+    public function getSchema(): JsonSchema
     {
         return new JsonSchema([
             'type' => 'object',
@@ -75,6 +70,11 @@ final readonly class OAuth2ConfigurationProvider extends ConfigurationProvider
             ],
             'required' => ['encryption_key', 'jwt_signing_key_private', 'jwt_signing_key_public'],
         ]);
+    }
+
+    protected function getConfigurationKey(): string
+    {
+        return 'oauth2';
     }
 
     protected function provideConfiguration($validatedData): OAuth2Configuration

@@ -370,12 +370,12 @@ use Distantmagic\Resonance\SingletonCollection;
 #[Singleton(collection: SingletonCollection::InputValidator)]
 readonly class UsernamePasswordValidator extends InputValidator
 {
-    protected function castValidatedData(mixed $data): UsernamePassword
+    public function castValidatedData(mixed $data): UsernamePassword
     {
         return new UsernamePassword($data->username, $data->password);
     }
 
-    protected function makeSchema(): Schema
+    public function getSchema(): Schema
     {
         return new JsonSchema([
             'type' => 'object',

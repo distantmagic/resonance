@@ -21,12 +21,7 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 #[Singleton(provides: ApplicationConfiguration::class)]
 final readonly class ApplicationConfigurationProvider extends ConfigurationProvider
 {
-    protected function getConfigurationKey(): string
-    {
-        return 'app';
-    }
-
-    protected function makeSchema(): JsonSchema
+    public function getSchema(): JsonSchema
     {
         return new JsonSchema([
             'type' => 'object',
@@ -53,6 +48,11 @@ final readonly class ApplicationConfigurationProvider extends ConfigurationProvi
             ],
             'required' => ['env', 'url'],
         ]);
+    }
+
+    protected function getConfigurationKey(): string
+    {
+        return 'app';
     }
 
     protected function provideConfiguration($validatedData): ApplicationConfiguration

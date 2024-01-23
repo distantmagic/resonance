@@ -106,14 +106,21 @@ description: >
 #[Singleton(collection: SingletonCollection::WebSocketRPCResponder)]
 final readonly class EchoResponder extends WebSocketRPCResponder
 {
-    protected function onRequest(
+    public function getSchema(): JsonSchema
+    {
+        return new JsonSchema([
+            'type' => 'string',
+        ]);
+    }
+
+    public function onRequest(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
         RPCRequest $rpcRequest,
     ): void {
         $webSocketConnection->push(new RPCResponse(
             $rpcRequest->requestId,
-            (string) $rpcRequest->payload,
+            $rpcRequest->payload,
         ));
     }
 }</code></pre>

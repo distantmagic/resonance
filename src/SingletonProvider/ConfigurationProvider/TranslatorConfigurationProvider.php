@@ -18,12 +18,7 @@ use Distantmagic\Resonance\TranslatorConfiguration;
 #[Singleton(provides: TranslatorConfiguration::class)]
 final readonly class TranslatorConfigurationProvider extends ConfigurationProvider
 {
-    protected function getConfigurationKey(): string
-    {
-        return 'translator';
-    }
-
-    protected function makeSchema(): JsonSchema
+    public function getSchema(): JsonSchema
     {
         return new JsonSchema([
             'type' => 'object',
@@ -39,6 +34,11 @@ final readonly class TranslatorConfigurationProvider extends ConfigurationProvid
             ],
             'required' => ['base_directory', 'default_primary_language'],
         ]);
+    }
+
+    protected function getConfigurationKey(): string
+    {
+        return 'translator';
     }
 
     protected function provideConfiguration($validatedData): TranslatorConfiguration

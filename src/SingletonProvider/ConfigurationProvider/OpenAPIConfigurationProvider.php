@@ -19,12 +19,7 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 #[Singleton(provides: OpenAPIConfiguration::class)]
 final readonly class OpenAPIConfigurationProvider extends ConfigurationProvider
 {
-    protected function getConfigurationKey(): string
-    {
-        return 'openapi';
-    }
-
-    protected function makeSchema(): JsonSchema
+    public function getSchema(): JsonSchema
     {
         return new JsonSchema([
             'type' => 'object',
@@ -44,6 +39,11 @@ final readonly class OpenAPIConfigurationProvider extends ConfigurationProvider
             ],
             'required' => ['description', 'title', 'version'],
         ]);
+    }
+
+    protected function getConfigurationKey(): string
+    {
+        return 'openapi';
     }
 
     protected function provideConfiguration($validatedData): OpenAPIConfiguration

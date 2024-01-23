@@ -21,12 +21,7 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 #[Singleton(provides: LlamaCppConfiguration::class)]
 final readonly class LlamaCppConfigurationProvider extends ConfigurationProvider
 {
-    protected function getConfigurationKey(): string
-    {
-        return 'llamacpp';
-    }
-
-    protected function makeSchema(): JsonSchema
+    public function getSchema(): JsonSchema
     {
         return new JsonSchema([
             'type' => 'object',
@@ -57,6 +52,11 @@ final readonly class LlamaCppConfigurationProvider extends ConfigurationProvider
             ],
             'required' => ['host', 'port'],
         ]);
+    }
+
+    protected function getConfigurationKey(): string
+    {
+        return 'llamacpp';
     }
 
     protected function provideConfiguration($validatedData): LlamaCppConfiguration

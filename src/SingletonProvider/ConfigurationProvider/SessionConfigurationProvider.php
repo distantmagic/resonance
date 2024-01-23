@@ -31,12 +31,7 @@ final readonly class SessionConfigurationProvider extends ConfigurationProvider
         parent::__construct($configurationFile, $jsonSchemaValidator);
     }
 
-    protected function getConfigurationKey(): string
-    {
-        return 'session';
-    }
-
-    protected function makeSchema(): JsonSchema
+    public function getSchema(): JsonSchema
     {
         $redisConnectionPools = $this
             ->redisConfiguration
@@ -68,6 +63,11 @@ final readonly class SessionConfigurationProvider extends ConfigurationProvider
             ],
             'required' => ['cookie_lifespan', 'cookie_name'],
         ]);
+    }
+
+    protected function getConfigurationKey(): string
+    {
+        return 'session';
     }
 
     protected function provideConfiguration($validatedData): SessionConfiguration

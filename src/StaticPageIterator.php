@@ -24,6 +24,7 @@ readonly class StaticPageIterator implements IteratorAggregate
 
     public function __construct(
         private FrontMatterValidator $frontMatterValidator,
+        private InputValidatorController $inputValidatorController,
         private StaticPageFileIterator $fileIterator,
         private string $staticPagesOutputDirectory,
     ) {
@@ -75,7 +76,10 @@ readonly class StaticPageIterator implements IteratorAggregate
             throw new StaticPageFileException($file, 'File does not have a front matter');
         }
 
-        $inputValidationResult = $this->frontMatterValidator->validateData($frontMatter);
+        $inputValidationResult = $this->inputValidatorController->validateData(
+            $this->frontMatterValidator,
+            $frontMatter,
+        );
 
         if ($inputValidationResult->inputValidatedData) {
             return $inputValidationResult->inputValidatedData;

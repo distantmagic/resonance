@@ -9,7 +9,6 @@ use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\InputValidatedData\RPCMessage;
 use Distantmagic\Resonance\InputValidator;
 use Distantmagic\Resonance\JsonSchema;
-use Distantmagic\Resonance\JsonSchemaValidator;
 use Distantmagic\Resonance\RPCMethodValidatorInterface;
 use stdClass;
 
@@ -23,14 +22,9 @@ use stdClass;
 #[Singleton(grantsFeature: Feature::WebSocket)]
 readonly class RPCMessageValidator extends InputValidator
 {
-    public function __construct(
-        JsonSchemaValidator $jsonSchemaValidator,
-        private RPCMethodValidatorInterface $rpcMethodValidator,
-    ) {
-        parent::__construct($jsonSchemaValidator);
-    }
+    public function __construct(private RPCMethodValidatorInterface $rpcMethodValidator) {}
 
-    protected function castValidatedData(mixed $data): RPCMessage
+    public function castValidatedData(mixed $data): RPCMessage
     {
         return new RPCMessage(
             $this->rpcMethodValidator->castToRPCMethod($data[0]),
@@ -39,7 +33,7 @@ readonly class RPCMessageValidator extends InputValidator
         );
     }
 
-    protected function makeSchema(): JsonSchema
+    public function getSchema(): JsonSchema
     {
         return new JsonSchema([
             'type' => 'array',

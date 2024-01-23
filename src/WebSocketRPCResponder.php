@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Distantmagic\Resonance\InputValidatedData\RPCMessage;
 use Distantmagic\Resonance\WebSocketProtocolException\UnexpectedNotification;
 use Distantmagic\Resonance\WebSocketProtocolException\UnexpectedRequest;
 
+/**
+ * @template TPayload
+ *
+ * @template-implements WebSocketRPCResponderInterface<TPayload>
+ */
 abstract readonly class WebSocketRPCResponder implements WebSocketRPCResponderInterface
 {
     public function onClose(
@@ -15,29 +19,7 @@ abstract readonly class WebSocketRPCResponder implements WebSocketRPCResponderIn
         WebSocketConnection $webSocketConnection,
     ): void {}
 
-    public function respond(
-        WebSocketAuthResolution $webSocketAuthResolution,
-        WebSocketConnection $webSocketConnection,
-        RPCMessage $rpcMessage,
-    ): void {
-        if (is_string($rpcMessage->requestId)) {
-            $this->onRequest(
-                $webSocketAuthResolution,
-                $webSocketConnection,
-                new RPCRequest($rpcMessage->method, $rpcMessage->payload, $rpcMessage->requestId),
-            );
-
-            return;
-        }
-
-        $this->onNotification(
-            $webSocketAuthResolution,
-            $webSocketConnection,
-            new RPCNotification($rpcMessage->method, $rpcMessage->payload)
-        );
-    }
-
-    protected function onNotification(
+    public function onNotification(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
         RPCNotification $rpcNotification,
@@ -45,7 +27,7 @@ abstract readonly class WebSocketRPCResponder implements WebSocketRPCResponderIn
         throw new UnexpectedNotification($rpcNotification->method);
     }
 
-    protected function onRequest(
+    public function onRequest(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
         RPCRequest $rpcRequest,
