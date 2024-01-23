@@ -12,11 +12,10 @@ use Distantmagic\Resonance\Event\HttpServerBeforeStop;
 use Distantmagic\Resonance\Event\HttpServerStarted;
 use Distantmagic\Resonance\EventDispatcherInterface;
 use Distantmagic\Resonance\HttpResponderAggregate;
+use Distantmagic\Resonance\ServerPipeMessageDispatcher;
 use Distantmagic\Resonance\SwooleConfiguration;
-use Distantmagic\Resonance\WebSocketConnectionShutdownCommand;
 use Distantmagic\Resonance\WebSocketServerController;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Http\Server as HttpServer;
@@ -38,6 +37,7 @@ final class Serve extends Command
         private EventDispatcherInterface $eventDispatcher,
         private HttpResponderAggregate $httpResponderAggregate,
         private LoggerInterface $logger,
+        private ServerPipeMessageDispatcher $serverPipeMessageDispatcher,
         private SwooleConfiguration $swooleConfiguration,
         private ?WebSocketServerController $webSocketServerController = null,
     ) {
@@ -77,12 +77,12 @@ final class Serve extends Command
         ]);
 
         $this->server->on('beforeShutdown', $this->onBeforeShutdown(...));
-        $this->server->on('pipeMessage', $this->onPipeMessage(...));
+        $this->server->on('pipeMessage', $this->serverPipeMessageDispatcher->dispatchPipeMessage(...));
         $this->server->on('request', $this->httpResponderAggregate->respond(...));
         $this->server->on('start', $this->onStart(...));
 
         if ($this->webSocketServerController) {
-            $this->server->on('close', $this->webSocketServerController->onClose(...));
+            $this->server->on('close', $this->onClose(...));
             $this->server->on('handshake', $this->onHandshake(...));
             $this->server->on('message', $this->webSocketServerController->onMessage(...));
             $this->server->on('open', $this->webSocketServerController->onOpen(...));
@@ -96,6 +96,11 @@ final class Serve extends Command
         $this->eventDispatcher->dispatch(new HttpServerBeforeStop($this->server));
     }
 
+    private function onClose(Server $server, int $fd): void
+    {
+        $this->webSocketServerController?->onClose($fd);
+    }
+
     private function onHandshake(Request $request, Response $response): void
     {
         if ($this->webSocketServerController && $this->server instanceof WebSocketServer) {
@@ -103,26 +108,12 @@ final class Serve extends Command
         }
     }
 
-    private function onPipeMessage(Server $server, int $srcWorkerId, mixed $data): void
+    private function onStart(Server $server): void
     {
-        if ($data instanceof WebSocketConnectionShutdownCommand) {
-            if (!($server instanceof WebSocketServer)) {
-                throw new RuntimeException(sprintf(
-                    'Only works with WebSocket server: "%s"',
-                    WebSocketConnectionShutdownCommand::class,
-                ));
-            }
-
-            $this->webSocketServerController?->onClose($data->fd);
-        }
-    }
-
-    private function onStart(): void
-    {
-        $this->eventDispatcher->dispatch(new HttpServerStarted());
+        $this->eventDispatcher->dispatch(new HttpServerStarted($server));
 
         $this->logger->info(sprintf(
-            'http_server_start(https://%s:%s',
+            'http_server_start(https://%s:%s)',
             $this->swooleConfiguration->host,
             $this->swooleConfiguration->port,
         ));

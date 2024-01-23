@@ -1,9 +1,7 @@
 ---
 collections: 
-    - name: documents
-      next: docs/features/http/middleware
+    - documents
 layout: dm:document
-next: docs/features/http/middleware
 parent: docs/features/http/index
 title: Routing
 description: >

@@ -1,9 +1,7 @@
 ---
 collections: 
-    - name: documents
-      next: docs/features/http/routing
+    - documents
 layout: dm:document
-next: docs/features/http/routing
 parent: docs/features/http/index
 title: Controllers
 description: >

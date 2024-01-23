@@ -1,9 +1,7 @@
 ---
 collections: 
-    - name: documents
-      next: docs/features/http/controllers
+    - documents
 layout: dm:document
-next: docs/features/http/controllers
 parent: docs/features/http/index
 title: Responders
 description: >

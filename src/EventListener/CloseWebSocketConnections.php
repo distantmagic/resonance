@@ -10,8 +10,8 @@ use Distantmagic\Resonance\Event\HttpServerBeforeStop;
 use Distantmagic\Resonance\EventInterface;
 use Distantmagic\Resonance\EventListener;
 use Distantmagic\Resonance\Feature;
+use Distantmagic\Resonance\ServerPipeMessage\CloseWebSocketConnection;
 use Distantmagic\Resonance\SingletonCollection;
-use Distantmagic\Resonance\WebSocketConnectionShutdownCommand;
 use Distantmagic\Resonance\WebSocketServerConnectionTable;
 use RuntimeException;
 
@@ -39,13 +39,12 @@ final readonly class CloseWebSocketConnections extends EventListener
         }
 
         foreach ($this->webSocketServerConnectionTable as $fd => $workerId) {
+            $pipeMessage = new CloseWebSocketConnection($fd);
+
             /**
              * @psalm-suppress InvalidArgument `sendMessage` has type errors
              */
-            if (!$event->server->sendMessage(
-                new WebSocketConnectionShutdownCommand($fd),
-                $workerId,
-            )) {
+            if (!$event->server->sendMessage($pipeMessage, $workerId)) {
                 throw new RuntimeException('Unable to send server message');
             }
         }

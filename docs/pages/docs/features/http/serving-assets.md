@@ -1,9 +1,7 @@
 ---
 collections: 
-    - name: documents
-      next: docs/features/http/sessions
+    - documents
 layout: dm:document
-next: docs/features/http/sessions
 parent: docs/features/http/index
 title: Serving Assets
 description: >

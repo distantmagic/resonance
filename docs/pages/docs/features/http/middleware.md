@@ -1,9 +1,7 @@
 ---
 collections: 
-    - name: documents
-      next: docs/features/http/interceptors
+    - documents
 layout: dm:document
-next: docs/features/http/interceptors
 parent: docs/features/http/index
 title: Middleware
 description: >

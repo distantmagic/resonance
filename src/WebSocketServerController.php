@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\HandlesServerPipeMessage;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\ServerPipeMessage\CloseWebSocketConnection;
 use Ds\Map;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
@@ -13,8 +15,15 @@ use Swoole\Http\Response;
 use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server;
 
-#[Singleton(grantsFeature: Feature::WebSocket)]
-final readonly class WebSocketServerController
+/**
+ * @template-implements ServerPipeMessageHandlerInterface<CloseWebSocketConnection>
+ */
+#[HandlesServerPipeMessage(CloseWebSocketConnection::class)]
+#[Singleton(
+    collection: SingletonCollection::ServerPipeMessageHandler,
+    grantsFeature: Feature::WebSocket,
+)]
+final readonly class WebSocketServerController implements ServerPipeMessageHandlerInterface
 {
     /**
      * It is necessary to use this specific GUID.
@@ -45,6 +54,14 @@ final readonly class WebSocketServerController
         private WebSocketServerConnectionTable $webSocketServerConnectionTable,
     ) {
         $this->protocolControllers = new Map();
+    }
+
+    /**
+     * @param CloseWebSocketConnection $serverPipeMessage
+     */
+    public function handleServerPipeMessage(ServerPipeMessageInterface $serverPipeMessage): void
+    {
+        $this->onClose($serverPipeMessage->fd);
     }
 
     public function onClose(int $fd): void

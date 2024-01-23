@@ -10,6 +10,10 @@ title: Changelog
 
 # Changelog
 
+## v0.15.0
+
+- Feature: added {{docs/features/http/pipe-messages}}
+
 ## v0.14.0
 
 - Feature: added {{docs/features/ai/server/llama-cpp/index}} to integrate with LLMs 

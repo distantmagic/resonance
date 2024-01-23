@@ -36,7 +36,7 @@ readonly class StaticPageMarkdownParser
             'heading_permalink' => [
                 'aria_hidden' => false,
                 'insert' => 'before',
-                'symbol' => '»',
+                'symbol' => '',
             ],
         ]);
 

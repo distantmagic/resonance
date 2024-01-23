@@ -1,9 +1,7 @@
 ---
 collections: 
-    - name: documents
-      next: docs/features/http/index
+    - documents
 layout: dm:document
-next: docs/features/http/psr-http-messages
 parent: docs/features/http/index
 title: Sessions
 description: >
