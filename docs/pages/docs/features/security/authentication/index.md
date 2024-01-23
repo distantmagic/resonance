@@ -184,7 +184,7 @@ readonly class MyAuthentication implements AuthenticatedUserStoreInterface
                 public function getIdentifier(): int|string {
                     return $this->userData->id;
                 }
-            };
+            }
         );
     }
 }
