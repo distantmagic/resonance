@@ -8,25 +8,31 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Ds\Map;
 use Opis\JsonSchema\Errors\ErrorFormatter;
 use Opis\JsonSchema\Helper;
+use Opis\JsonSchema\Parsers\SchemaParser;
+use Opis\JsonSchema\Schema;
+use Opis\JsonSchema\SchemaLoader;
 use Opis\JsonSchema\ValidationResult;
 use Opis\JsonSchema\Validator;
+use RuntimeException;
 
 #[Singleton]
 readonly class JsonSchemaValidator
 {
     /**
-     * @var Map<JsonSchemaSourceInterface,bool|object|string>
+     * @var Map<JsonSchemaSourceInterface,Schema>
      */
     private Map $convertedSchemas;
 
     private ErrorFormatter $errorFormatter;
+    private SchemaLoader $schemaLoader;
     private Validator $validator;
 
     public function __construct()
     {
         $this->convertedSchemas = new Map();
         $this->errorFormatter = new ErrorFormatter();
-        $this->validator = new Validator();
+        $this->schemaLoader = new SchemaLoader(new SchemaParser(), null, false);
+        $this->validator = new Validator($this->schemaLoader);
     }
 
     public function validate(JsonSchemaSourceInterface $jsonSchemaSource, mixed $data): JsonSchemaValidationResult
@@ -46,20 +52,23 @@ readonly class JsonSchemaValidator
         );
     }
 
-    private function convertSchema(JsonSchemaSourceInterface $jsonSchemaSource): bool|object|string
+    private function convertSchema(JsonSchemaSourceInterface $jsonSchemaSource): Schema
     {
         if ($this->convertedSchemas->hasKey($jsonSchemaSource)) {
             return $this->convertedSchemas->get($jsonSchemaSource);
         }
 
-        /**
-         * @var bool|object|string $convertedSchema
-         */
         $convertedSchema = Helper::toJSON($jsonSchemaSource->getSchema()->schema);
 
-        $this->convertedSchemas->put($jsonSchemaSource, $convertedSchema);
+        if (!is_object($convertedSchema)) {
+            throw new RuntimeException('Json Schema must be an object');
+        }
 
-        return $convertedSchema;
+        $validatedSchema = $this->schemaLoader->loadObjectSchema($convertedSchema);
+
+        $this->convertedSchemas->put($jsonSchemaSource, $validatedSchema);
+
+        return $validatedSchema;
     }
 
     /**
