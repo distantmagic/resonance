@@ -121,3 +121,71 @@ final readonly class MyController extends HttpController
     }
 }
 ```
+
+## Custom Authentication Providers
+
+In your authentication class, you need to use `ProvidesAuthenticatedUser` 
+attribute, implement `AuthenticatedUserStoreInterface`, and add it to 
+`AuthenticatedUserStore` collection:
+
+```php
+use Distantmagic\Resonance\Attribute\ProvidesAuthenticatedUser;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\AuthenticatedUserStoreInterface;
+use Distantmagic\Resonance\SingletonCollection;
+use Swoole\Http\Request;
+
+#[ProvidesAuthenticatedUser(1200)]
+#[Singleton(collection: SingletonCollection::AuthenticatedUserStore)]
+readonly class MyAuthentication implements AuthenticatedUserStoreInterface
+{
+    public function getAuthenticatedUser(Request $request): ?AuthenticatedUser
+    {
+        // ...
+    }
+}
+```
+
+For example, if you want to use OAuth2 client to fetch authenticated users, you 
+can issue a request with access token:
+
+```php
+use Distantmagic\Resonance\Attribute\ProvidesAuthenticatedUser;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\AuthenticatedUser;
+use Distantmagic\Resonance\AuthenticatedUserSource;
+use Distantmagic\Resonance\AuthenticatedUserStoreInterface;
+use Distantmagic\Resonance\SingletonCollection;
+use Distantmagic\Resonance\UserInterface;
+use League\OAuth2\Client\Provider\GenericProvider;
+use Swoole\Http\Request;
+
+use function Swoole\Coroutine\Http\get;
+
+#[ProvidesAuthenticatedUser(1200)]
+#[Singleton(collection: SingletonCollection::AuthenticatedUserStore)]
+readonly class MyAuthentication implements AuthenticatedUserStoreInterface
+{
+    public function getAuthenticatedUser(Request $request): ?AuthenticatedUser
+    {
+        $userData = get('https://your-server.example.com/user', [], [
+            'Authorization' => sprintf('Bearer %s', $request->cookie['access_token']),
+        ]);
+        $userDataDecoded = json_decode($userData);
+
+        // Instead of anonymous class you should probably define a class 
+        // instead. This is just for the sake of an example:
+        return new AuthenticatedUser(
+            AuthenticatedUserSource::OAuth2,
+            new class($userDataDecoded) implements UserInterface {
+                public function __construct(private object $userData) {
+                }
+
+                public function getIdentifier(): int|string {
+                    return $this->userData->id;
+                }
+            };
+        );
+    }
+}
+```
