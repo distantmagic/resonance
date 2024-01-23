@@ -5,7 +5,7 @@ layout: dm:document
 parent: docs/features/http/index
 title: Pipe Messages
 description: >
-    Handle HTTP requests with asynchronous HTTP Responders. 
+    Handle server workers inter-process communication.
 ---
 
 # Pipe Messages
