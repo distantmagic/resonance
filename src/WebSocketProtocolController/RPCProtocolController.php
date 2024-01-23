@@ -158,20 +158,20 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
 
     private function onJsonMessage(Server $server, Frame $frame, mixed $jsonMessage): void
     {
-        $inputValidationResult = $this->inputValidatorController->validateData(
+        $rpcMessageValidationResult = $this->inputValidatorController->validateData(
             $this->rpcMessageValidator,
             $jsonMessage
         );
 
-        if (!$inputValidationResult->inputValidatedData) {
-            $this->onProtocolError($server, $frame, $inputValidationResult->getErrorMessage());
+        if (!$rpcMessageValidationResult->inputValidatedData) {
+            $this->onProtocolError($server, $frame, $rpcMessageValidationResult->getErrorMessage());
 
             return;
         }
 
         $payloadValidationResult = $this
             ->getFrameController($frame)
-            ->onRPCMessage($inputValidationResult->inputValidatedData)
+            ->onRPCMessage($rpcMessageValidationResult->inputValidatedData)
         ;
 
         if (!empty($payloadValidationResult->errors)) {
