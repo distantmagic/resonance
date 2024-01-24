@@ -10,6 +10,10 @@ title: Changelog
 
 # Changelog
 
+## v0.16.0
+
+- Feature: added {{docs/features/ai/prompt-engineering/index}} (basic prompt templates)
+
 ## v0.15.0
 
 - Feature: added {{docs/features/http/pipe-messages}}

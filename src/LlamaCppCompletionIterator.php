@@ -13,7 +13,7 @@ use RuntimeException;
  */
 readonly class LlamaCppCompletionIterator implements IteratorAggregate
 {
-    // strlen('data: ')
+    private const COMPLETION_CHUNKED_DATA_PREFIX = 'data: ';
     private const COMPLETION_CHUNKED_DATA_PREFIX_LENGTH = 6;
 
     /**
@@ -29,21 +29,40 @@ readonly class LlamaCppCompletionIterator implements IteratorAggregate
      */
     public function getIterator(): Generator
     {
+        /**
+         * Very long messages might be sent in chunks. That also means a JSON
+         * might be fragmented.
+         */
+        $previousChunk = '';
+
         foreach ($this->responseChunks as $responseChunk) {
+            $previousChunk .= $responseChunk;
+
             /**
-             * @var object{
+             * @var null|object{
              *   content: string,
              *   stop: boolean,
              * }
              */
             $unserializedToken = $this->jsonSerializer->unserialize(
-                json: $responseChunk,
+                json: $previousChunk,
                 offset: self::COMPLETION_CHUNKED_DATA_PREFIX_LENGTH,
+                throw: false,
             );
 
-            yield new LlamaCppCompletionToken(
-                content: $unserializedToken->content,
-            );
+            if (JSON_ERROR_NONE === json_last_error()) {
+                $previousChunk = '';
+            }
+
+            if ($unserializedToken) {
+                yield new LlamaCppCompletionToken(
+                    content: $unserializedToken->content,
+                );
+            }
+        }
+
+        if (!empty($previousChunk)) {
+            throw new RuntimeException('LlamaCppResponse left unprocessed chunks');
         }
     }
 

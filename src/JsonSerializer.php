@@ -30,9 +30,10 @@ readonly class JsonSerializer
     public function unserialize(
         string $json,
         int $offset = 0,
+        bool $throw = true,
     ): mixed {
         return swoole_substr_json_decode(
-            flags: JSON_THROW_ON_ERROR,
+            flags: $throw ? JSON_THROW_ON_ERROR : 0,
             offset: $offset,
             str: $json,
         );

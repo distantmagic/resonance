@@ -36,7 +36,10 @@ port = 8081
 ## Programmatic Use
 
 In your class, you need to use {{docs/features/dependency-injection/index}} to
-inject `LlamaCppClient`:
+inject `LlamaCppClient`. Then, you need to use the appropriate 
+{{docs/features/ai/prompt-engineering/index}} template adequate for the model 
+you are serving. In the following example we will use 
+[Mistral-Instruct](https://docs.mistral.ai/models/#chat-template) template:
 
 ```php
 <?php
@@ -45,6 +48,7 @@ namespace App;
 
 use Distantmagic\Resonance\LlamaCppClient;
 use Distantmagic\Resonance\LlamaCppCompletionRequest;
+use Distantmagic\Resonance\LlamaCppPromptTemplate\MistralInstructChat;
 
 #[Singleton]
 class LlamaCppGenerate 
@@ -55,7 +59,8 @@ class LlamaCppGenerate
 
     public function doSomething(): void
     {
-        $request = new LlamaCppCompletionRequest('How to make a cat happy?');
+        $template = new MistralInstructChat('How to make a cat happy?');
+        $request = new LlamaCppCompletionRequest($template);
 
         $completion = $this->llamaCppClient->generateCompletion($request);
 

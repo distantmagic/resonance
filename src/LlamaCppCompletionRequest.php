@@ -9,17 +9,13 @@ use JsonSerializable;
 readonly class LlamaCppCompletionRequest implements JsonSerializable
 {
     public function __construct(
-        public string $prompt,
+        public LlamaCppPromptTemplate $promptTemplate,
     ) {}
 
     public function jsonSerialize(): array
     {
         return [
-            'prompt' => sprintf('[INT]%s[SYST]', $this->prompt),
-            'stop' => [
-                '[INST]',
-                '[SYST]',
-            ],
+            'prompt' => $this->promptTemplate,
             'stream' => true,
         ];
     }
