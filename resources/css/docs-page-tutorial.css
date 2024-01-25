@@ -53,13 +53,12 @@
   flex-direction: column;
   grid-area: header;
   row-gap: 1em;
-  text-align: center;
   text-wrap: balance;
 }
 
 .tutorial__last-updated {
   font-size: var(--font-size-smaller);
-  text-align: center;
+  margin-bottom: 2em;
 }
 
 .tutorial__readme {
@@ -71,9 +70,7 @@
 }
 
 .tutorial__title {
-  font-family: var(--font-family-lora);
   hyphens: auto;
-  margin-top: 72px;
   max-width: calc(100vw - 40px);
 
   @media screen and (max-width: 1023px) {

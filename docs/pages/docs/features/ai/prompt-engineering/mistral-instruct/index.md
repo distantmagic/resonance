@@ -29,7 +29,7 @@ templates with llama.cpp server.
 
 namespace App;
 
-use Distantmagic\Resonance\LlamaCppPromptTemplate\MistralInstructChat;
+use Distantmagic\Resonance\LlmPromptTemplate\MistralInstructChat;
 
 $template = new MistralInstructChat('How to make a cat happy?');
 ```

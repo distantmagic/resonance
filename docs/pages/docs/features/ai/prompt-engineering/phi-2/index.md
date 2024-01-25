@@ -36,7 +36,7 @@ Answer:
 
 namespace App;
 
-use Distantmagic\Resonance\LlamaCppPromptTemplate\Phi2Question;
+use Distantmagic\Resonance\LlmPromptTemplate\Phi2Question;
 
 $template = new Phi2Question('How to make a cat happy?');
 ```
@@ -64,7 +64,7 @@ For example, Phi-2 is able to infill code based on comments:
 
 namespace App;
 
-use Distantmagic\Resonance\LlamaCppPromptTemplate\Plain;
+use Distantmagic\Resonance\LlmPromptTemplate\Plain;
 
 $template = new Plain(<<<'PYTHON'
 def print_prime(n):

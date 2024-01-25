@@ -14,7 +14,6 @@
   --color-primary-navigation-background: var(--color-body-background);
   --color-text-decoration-highlight: var(--color-body-font);
   --font-family-body: "Atkinson Hyperlegible", sans-serif;
-  --font-family-lora: "Lora", var(--font-family-body), serif;
   --font-family-monospace: "Sometype Mono", monospace;
   --height-primary-navigation: 70px;
   --height-scrollbar-horizontal: 8px;
@@ -106,7 +105,6 @@ a:active,
   .global-edit-on-github {
     background-color: var(--color-body-background);
     border: 1px solid var(--color-border);
-    border-radius: 10px;
     padding: 10px 20px;
     position: fixed;
     right: 15px;

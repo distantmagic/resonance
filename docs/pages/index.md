@@ -17,12 +17,7 @@ description: >
     <div class="homepage__content">
         <hgroup class="homepage__title">
             <h1>Resonance</h1>
-            <h2>SaaS Framework That Solves Real-Life Issues</h2>
-            <p>
-                Designed from the ground up to facilitate interoperability
-                and messaging between services in your infrastructure and 
-                beyond.
-            </p>
+            <h2>PHP SaaS Framework That Solves Real-Life Issues</h2>
             <p>
                 Takes full advantage of asynchronous PHP.
             </p>

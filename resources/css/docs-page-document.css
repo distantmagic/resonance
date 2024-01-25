@@ -173,7 +173,6 @@
 
 .documentation__related-pages a {
   border: 1px solid var(--color-border);
-  border-radius: 10px;
   display: flex;
   flex-direction: column;
   padding: 20px;

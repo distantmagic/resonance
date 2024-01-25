@@ -98,7 +98,6 @@
   h1,
   h2,
   h3 {
-    font-family: var(--font-family-lora);
     line-height: 1.5;
     position: relative;
     text-wrap: balance;

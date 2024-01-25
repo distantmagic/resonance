@@ -33,7 +33,7 @@ host = 127.0.0.1
 port = 8081
 ```
 
-## Programmatic Use
+## Completions
 
 In your class, you need to use {{docs/features/dependency-injection/index}} to
 inject `LlamaCppClient`. Then, you need to use the appropriate 
@@ -73,10 +73,11 @@ class LlamaCppGenerate
 }
 ```
 
-## Stopping Completion Generator
+### Stopping Generator
 
 :::danger
-Using just the `break` keyword does not stop the completion request. You need
+Using just the `break` keyword does not stop the completion request 
+(`llama.cpp` will keep going, even though the PHP loop is stopped). You need
 to use `$completion->stop()`. 
 :::
 
@@ -92,6 +93,37 @@ foreach ($completion as $token) {
         // do something
 
         $i += 1;
+    }
+}
+```
+
+## Embeddings
+
+```php
+<?php
+
+namespace App;
+
+use Distantmagic\Resonance\LlamaCppClient;
+use Distantmagic\Resonance\LlamaCppEmbeddingRequest;
+
+#[Singleton]
+class LlamaCppGenerate 
+{
+    public function __construct(protected LlamaCppClient $llamaCppClient) 
+    {
+    }
+
+    public function doSomething(): void
+    {
+        $request = new LlamaCppEmbeddingRequest('How to make a cat happy?');
+
+        $response = $this->llamaCppClient->generateEmbedding($request);
+
+        /**
+         * @var array<float>
+         */
+        $response->embedding;
     }
 }
 ```
