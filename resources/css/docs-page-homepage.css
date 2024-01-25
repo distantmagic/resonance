@@ -77,6 +77,8 @@ h2.homepage__example__title {
   display: flex;
   flex-direction: column;
   line-height: 1;
+  overflow: hidden;
+  position: relative;
   row-gap: 1em;
   width: 100%;
 
@@ -85,6 +87,35 @@ h2.homepage__example__title {
   }
   @media screen and (min-width: 1024px) {
     padding: 160px 0;
+  }
+}
+
+.homepage__title::before {
+  background-image: url('../images/resonance_cat.webp');
+  background-position: center;
+  background-size: cover;
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  user-select: none;
+  z-index: -1;
+}
+
+@media screen and (max-width: 1023px) {
+  .homepage__title::before {
+    height: 160px;
+    left: 0;
+    top: 15px;
+    width: 160px;
+  }
+}
+@media screen and (min-width: 1024px) {
+  .homepage__title::before {
+    height: 310px;
+    left: 0;
+    top: 0;
+    width: 310px;
   }
 }
 
