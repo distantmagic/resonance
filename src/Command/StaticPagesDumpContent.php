@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 #[ConsoleCommand(
     name: 'static-pages:dump-content',
-    description: 'Dumps static pages content. JSONL format by default.'
+    description: 'Dumps static pages content into JSONL'
 )]
 final class StaticPagesDumpContent extends Command
 {

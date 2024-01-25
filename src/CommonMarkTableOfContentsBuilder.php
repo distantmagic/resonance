@@ -19,9 +19,8 @@ readonly class CommonMarkTableOfContentsBuilder
      */
     public function getTableOfContentsLinks(Document $document): Generator
     {
-        foreach ($this->getHeadings($document) as $heading) {
+        foreach ($this->getHeadings($document) as $heading => $headingText) {
             $headingLevel = $heading->getLevel();
-            $headingText = $this->getHeadingText($heading);
 
             foreach ($this->getHeadingLinks($heading) as $headingPermalink) {
                 yield new CommonMarkTableOfContentsLink(
@@ -46,13 +45,13 @@ readonly class CommonMarkTableOfContentsBuilder
     }
 
     /**
-     * @return Generator<Heading>
+     * @return Generator<Heading,string>
      */
     private function getHeadings(Document $document): Generator
     {
         foreach ($document->iterator(NodeIterator::FLAG_BLOCKS_ONLY) as $node) {
             if ($node instanceof Heading) {
-                yield $node;
+                yield $node => $this->getHeadingText($node);
             }
         }
     }

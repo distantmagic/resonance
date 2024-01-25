@@ -7,12 +7,16 @@ namespace Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\CoroutineCommand;
 use Distantmagic\Resonance\LlamaCppClient;
 use Distantmagic\Resonance\SwooleConfiguration;
+use RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class LlamaCppGenerate extends CoroutineCommand
 {
+    /**
+     * @param non-empty-string $prompt
+     */
     abstract protected function executeLlamaCppCommand(InputInterface $input, OutputInterface $output, string $prompt): int;
 
     public function __construct(
@@ -37,6 +41,10 @@ abstract class LlamaCppGenerate extends CoroutineCommand
          * @var string $prompt
          */
         $prompt = $input->getArgument('prompt');
+
+        if (empty($prompt)) {
+            throw new RuntimeException('Prompt cannot be empty');
+        }
 
         return $this->executeLlamaCppCommand($input, $output, $prompt);
     }

@@ -3,12 +3,12 @@ collections:
     - documents
 layout: dm:document
 parent: docs/features/index
-title: Database
+title: SQL Database
 description: >
     Learn how Resonance uses connection pools. Create and reuse queries, 
     create database entities, and integrate with a migration tool.
 ---
 
-# Database
+# SQL Database
 
-{{docs/features/database/*/index!docs/features/database/index}}
+{{docs/features/database/*/index}}

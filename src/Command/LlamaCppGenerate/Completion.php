@@ -8,7 +8,7 @@ use Distantmagic\Resonance\Attribute\ConsoleCommand;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\Command\LlamaCppGenerate;
 use Distantmagic\Resonance\LlamaCppCompletionRequest;
-use Distantmagic\Resonance\LlamaCppPromptTemplate\MistralInstructChat;
+use Distantmagic\Resonance\LlmPromptTemplate\MistralInstructChat;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 

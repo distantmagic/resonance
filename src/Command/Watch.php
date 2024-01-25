@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 #[ConsoleCommand(
     name: 'watch:command',
-    description: 'Watch project files for changes (needs inotify)'
+    description: 'Watch project files for changes (requires inotify)'
 )]
 final class Watch extends Command
 {

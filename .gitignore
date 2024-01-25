@@ -1,5 +1,6 @@
 /config.ini
 /esbuild-meta-docs.json
 /node_modules
+/sqlite-vss
 /vendor
 /*.cache

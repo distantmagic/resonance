@@ -9,7 +9,7 @@ use Ds\Map;
 readonly class StaticPageAggregate
 {
     /**
-     * @var Map<string, StaticPage>
+     * @var Map<string,StaticPage>
      */
     public Map $staticPages;
 

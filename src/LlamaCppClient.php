@@ -53,14 +53,16 @@ readonly class LlamaCppClient
         $this->assertStatusCode($curlHandle, 200);
 
         /**
-         * @var object{ embedding: array<float> } $responseData
+         * @var object{ embedding: list<float> } $responseData
          */
         $responseData = $this
             ->jsonSerializer
             ->unserialize($responseContent)
         ;
 
-        return new LlamaCppEmbedding($responseData->embedding);
+        return new LlamaCppEmbedding(
+            embedding: $responseData->embedding,
+        );
     }
 
     /**

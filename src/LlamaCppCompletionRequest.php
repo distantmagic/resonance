@@ -9,7 +9,7 @@ use JsonSerializable;
 readonly class LlamaCppCompletionRequest implements JsonSerializable
 {
     public function __construct(
-        public LlamaCppPromptTemplate $promptTemplate,
+        public LlmPromptTemplate $promptTemplate,
     ) {}
 
     public function jsonSerialize(): array
