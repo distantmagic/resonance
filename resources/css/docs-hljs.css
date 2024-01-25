@@ -70,8 +70,6 @@ code[class] {
 }
 
 .fenced-code {
-  border-radius: 4px;
-
   @media screen and (min-width: 1024px) {
     position: relative;
   }
@@ -92,7 +90,6 @@ code[class] {
   }
 
   .fenced-code__filename {
-    background-color: var(--color-border);
     font-size: var(--font-size-code);
     border-bottom: 1px solid var(--color-border);
     overflow-x: auto;
@@ -113,7 +110,9 @@ code[class] {
   .fenced-code__language-name {
     content: attr(data-language-name);
     font-size: var(--font-size-code-smaller);
-    background-color: var(--color-border);
+    border-color: var(--color-border);
+    border-style: solid;
+    border-width: 0 0 1px 1px;
     padding: 6px 10px;
     pointer-events: none;
     user-select: none;

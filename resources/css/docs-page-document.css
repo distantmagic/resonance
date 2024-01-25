@@ -22,24 +22,26 @@
   }
   @media screen and (min-width: 1024px) and (max-width: 1479px) {
     grid-template-areas:
+      "aside_filter breadcrumbs"
       "aside breadcrumbs"
       "aside toc"
       "aside article"
       "aside lastupdated"
       "aside relatedpages"
       "aside filler";
-    grid-template-columns: minmax(240px, auto) 1fr;
+    grid-template-columns: minmax(380px, auto) 1fr;
     grid-template-rows: auto auto auto auto auto 1fr;
   }
   @media screen and (min-width: 1480px) {
     grid-template-areas:
+      "aside_filter breadcrumbs toc"
       "aside breadcrumbs toc"
       "aside article toc"
       "aside lastupdated toc"
       "aside relatedpages toc"
       "aside filler toc";
-    grid-template-columns: minmax(240px, auto) 1fr minmax(18vw, 360px);
-    grid-template-rows: auto auto auto auto 1fr;
+    grid-template-columns: minmax(380px, auto) 1fr minmax(18vw, 360px);
+    grid-template-rows: auto auto auto auto auto 1fr;
   }
 }
 
@@ -78,12 +80,9 @@
 }
 
 .documentation__aside {
-  padding: 20px 20px 40px 20px;
-
   @media screen and (max-width: 1023px) {
     display: none;
   }
-
   @media screen and (min-width: 1024px) {
     background: var(--color-aside-background);
     border-right: 1px solid var(--color-border);
@@ -91,11 +90,43 @@
     flex-direction: column;
     grid-area: aside;
     height: 100%;
-    max-height: calc(100vh - var(--height-primary-navigation));
+    max-height: calc(100vh - var(--height-aside-filter) - var(--height-primary-navigation));
     overflow-y: auto;
     position: sticky;
-    top: var(--height-primary-navigation);
+    top: calc(var(--height-aside-filter) + var(--height-primary-navigation));
     width: 100%;
+  }
+}
+
+.documentation__aside-filter {
+  @media screen and (max-width: 1023px) {
+    display: none;
+  }
+  @media screen and (min-width: 1024px) {
+    align-items: stretch;
+    background-color: var(--color-aside-background);
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    border-color: var(--color-border);
+    column-gap: 10px;
+    display: flex;
+    flex-direction: row;
+    grid-area: aside_filter;
+    height: var(--height-aside-filter);
+    position: sticky;
+    top: var(--height-primary-navigation);
+    z-index: var(--z-index-documentation-aside-filter);
+  }
+}
+
+.documentation__aside-filter__input {
+  background-color: transparent;
+  border: none;
+  flex-grow: 1;
+  padding: 15px 20px;
+
+  &:focus {
+    outline: none;
   }
 }
 
@@ -114,6 +145,10 @@
   row-gap: 15px;
 }
 
+.documentation__aside__links {
+  padding: 20px 20px 40px 20px;
+}
+
 .documentation__aside__links a,
 .documentation__toc__links a {
   hyphens: auto;
@@ -124,12 +159,30 @@
   color: var(--color-link-active);
 }
 
+.documentation__aside__links a.hidden {
+  display: none;
+}
+
 .documentation__aside__links-group > .documentation__aside__links-group {
   padding-left: 2ch;
 }
 
-.documentation__aside__links-group.level-1 > a {
+.documentation__aside__links-group:has(a.hidden) > .documentation__aside__links-group {
+  padding-left: 0;
+}
+
+.documentation__aside__links-group.level-1,
+.documentation__aside__links-group.level-2 {
+  padding-top: 1em;
+}
+
+.documentation__aside__links-group.level-1 > a,
+.documentation__aside__links-group.level-2 > a {
   font-weight: bold;
+}
+
+.documentation__aside__links-group:not(:has(a:not(.hidden))) {
+  display: none;
 }
 
 .documentation__breadcrumbs {
@@ -140,6 +193,11 @@
   }
   @media screen and (min-width: 1024px) and (max-width: 1479px) {
     padding: 20px 20px 20px 30px;
+  }
+  @media screen and (max-width: 1479px) {
+    border-color: var(--color-border);
+    border-style: solid;
+    border-width: 0 0 1px 0;
   }
   @media screen and (min-width: 1480px) {
     padding: 20px 20px 20px 40px;
@@ -192,7 +250,6 @@
 
 .documentation__related-pages__link.documentation__related-pages__link--next {
   align-items: flex-end;
-  border-right-width: 2px;
 
   &:only-child {
     grid-column: 2;
@@ -201,10 +258,6 @@
   .documentation__related-pages__description {
     text-align: right;
   }
-}
-
-.documentation__related-pages__link.documentation__related-pages__link--prev {
-  border-left-width: 2px;
 }
 
 .documentation__related-pages__label {
@@ -225,7 +278,7 @@
   @media screen and (max-width: 1479px) {
     border-color: var(--color-border);
     border-style: solid;
-    border-width: 1px 0 1px 0;
+    border-width: 0 0 1px 0;
   }
   @media screen and (min-width: 1024px) and (max-width: 1479px) {
     padding: 40px 20px 40px 40px;

@@ -13,14 +13,16 @@
   --color-primary-footer-background: var(--color-body-background);
   --color-primary-navigation-background: var(--color-body-background);
   --color-text-decoration-highlight: var(--color-body-font);
-  --font-family-body: "Atkinson Hyperlegible", sans-serif;
-  --font-family-monospace: "Sometype Mono", monospace;
+  --font-family-body: sans-serif;
+  --font-family-monospace: monospace;
   --height-primary-navigation: 70px;
+  --height-aside-filter: 70px;
   --height-scrollbar-horizontal: 8px;
   --width-scrollbar-vertical: 8px;
   --z-index-documentation-aside: 1;
-  --z-index-primary-navigation: 2;
-  --z-index-edit-on-github: 3;
+  --z-index-documentation-aside-filter: 2;
+  --z-index-primary-navigation: 3;
+  --z-index-edit-on-github: 4;
 }
 
 @media screen and (max-width: 1023px) {

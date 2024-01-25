@@ -1,7 +1,6 @@
 ---
 collections:
     - documents
-draft: true
 layout: dm:document
 parent: docs/features/vector-store/index
 title: SQLite-VSS

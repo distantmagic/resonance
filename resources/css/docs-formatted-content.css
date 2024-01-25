@@ -98,6 +98,7 @@
   h1,
   h2,
   h3 {
+    font-weight: bold;
     line-height: 1.5;
     position: relative;
     text-wrap: balance;
@@ -105,7 +106,7 @@
 
   h1 {
     font-size: 2.25em;
-    margin-top: 72px;
+    margin-top: 1em;
   }
 
   h2 {
@@ -119,8 +120,9 @@
 
   h1 + h1,
   h1 + h2,
-  h2 + h2 {
-    margin-top: 12px;
+  h2 + h2,
+  h2 + h3 {
+    margin-top: 0;
   }
 
   img {
