@@ -4,13 +4,8 @@ import { stimulus } from "../stimulus";
 
 @stimulus("aside-filter")
 export class controller_aside_filter extends Controller<HTMLElement> {
-  public static classes = [
-    "filteredOutLink",
-  ];
-  public static targets = [
-    "filterableLink",
-    "searchInput",
-  ];
+  public static classes = ["filteredOutLink"];
+  public static targets = ["filterableLink", "searchInput"];
 
   private declare readonly filterableLinkTargets: Array<HTMLAnchorElement>;
   private declare readonly filteredOutLinkClass: string;

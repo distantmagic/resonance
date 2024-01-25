@@ -33,13 +33,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: setup pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v4
 
       - name: create static pages artifact
         run: BUILD_ID=$GITHUB_SHA make docs/artifact.tar
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: github-pages
           path: docs/artifact.tar

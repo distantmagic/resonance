@@ -40,7 +40,7 @@
       "aside lastupdated toc"
       "aside relatedpages toc"
       "aside filler toc";
-    grid-template-columns: minmax(380px, auto) 1fr minmax(18vw, 360px);
+    grid-template-columns: minmax(440px, auto) 1fr minmax(18vw, 360px);
     grid-template-rows: auto auto auto auto auto 1fr;
   }
 }
@@ -90,7 +90,9 @@
     flex-direction: column;
     grid-area: aside;
     height: 100%;
-    max-height: calc(100vh - var(--height-aside-filter) - var(--height-primary-navigation));
+    max-height: calc(
+      100vh - var(--height-aside-filter) - var(--height-primary-navigation)
+    );
     overflow-y: auto;
     position: sticky;
     top: calc(var(--height-aside-filter) + var(--height-primary-navigation));
@@ -167,7 +169,8 @@
   padding-left: 2ch;
 }
 
-.documentation__aside__links-group:has(a.hidden) > .documentation__aside__links-group {
+.documentation__aside__links-group:has(a.hidden)
+  > .documentation__aside__links-group {
   padding-left: 0;
 }
 
