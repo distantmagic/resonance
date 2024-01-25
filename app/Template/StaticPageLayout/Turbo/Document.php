@@ -75,6 +75,7 @@ readonly class Document extends Turbo
 
         $scripts->push('controller_article.ts', 0);
         $scripts->push('controller_aside.ts', 0);
+        $scripts->push('controller_aside-filter.ts', 0);
         $scripts->push('controller_graphviz.ts', 0);
         $scripts->push('controller_hljs.ts', 0);
     }
@@ -107,9 +108,26 @@ readonly class Document extends Turbo
         $lastUpdatedDatetime = date(DATE_W3C, $lastUpdatedMTime);
 
         yield <<<'HTML'
-        <div class="documentation">
+        <div
+            class="documentation"
+            data-aside-filter-filtered-out-link-class="hidden"
+            data-controller="aside-filter"
+        >
+            <form class="documentation__aside-filter">
+                <input
+                    autofocus
+                    class="documentation__aside-filter__input"
+                    data-action="input->aside-filter#onInputChange"
+                    data-aside-filter-target="searchInput"
+                    placeholder="Filter pages..."
+                    type="search"
+                >
+            </form>
             <nav class="documentation__aside">
-                <div class="documentation__aside__links" data-controller="aside">
+                <div
+                    class="documentation__aside__links"
+                    data-controller="aside"
+                >
         HTML;
         yield from $this->documentsMenu->render($staticPage);
         yield <<<HTML

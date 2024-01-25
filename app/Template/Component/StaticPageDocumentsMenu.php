@@ -79,7 +79,13 @@ readonly class StaticPageDocumentsMenu extends Component
         $activeClass = $currentPage->is($staticPage) ? 'active' : '';
 
         yield sprintf(
-            '<a class="%s" href="%s">%s</a>',
+            <<<HTML
+            <a
+                class="%s"
+                data-aside-filter-target="filterableLink"
+                href="%s"
+            >%s</a>
+            HTML,
             $activeClass,
             $staticPage->getHref(),
             $staticPage->frontMatter->title,
