@@ -21,7 +21,7 @@
   flex-direction: column;
   max-width: 1480px;
   padding: 0 20px 160px 20px;
-  row-gap: 160px;
+  row-gap: 120px;
   width: 100%;
 }
 
@@ -40,11 +40,11 @@
     row-gap: 40px;
   }
   @media screen and (min-width: 1280px) {
-    column-gap: 80px;
+    column-gap: 60px;
     grid-template-areas:
       "title code"
       "description code";
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 2fr 3fr;
     grid-template-rows: auto 1fr;
     row-gap: 40px;
   }
@@ -83,11 +83,8 @@ h2.homepage__example__title {
   @media screen and (max-width: 1023px) {
     padding: 120px 0 60px 0;
   }
-  @media screen and (min-width: 1024px) and (max-width: 1649px) {
+  @media screen and (min-width: 1024px) {
     padding: 160px 0;
-  }
-  @media screen and (min-width: 1650px) {
-    padding: 210px 0;
   }
 }
 
