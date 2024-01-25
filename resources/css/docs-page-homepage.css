@@ -91,7 +91,7 @@ h2.homepage__example__title {
 }
 
 .homepage__title::before {
-  background-image: url('../images/resonance_cat.webp');
+  background-image: url("../images/resonance_cat.webp");
   background-position: center;
   background-size: cover;
   border-radius: 50%;

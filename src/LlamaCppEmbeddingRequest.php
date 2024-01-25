@@ -13,8 +13,7 @@ readonly class LlamaCppEmbeddingRequest implements JsonSerializable
      */
     public function __construct(
         public string $content,
-    ) {
-    }
+    ) {}
 
     public function jsonSerialize(): array
     {
