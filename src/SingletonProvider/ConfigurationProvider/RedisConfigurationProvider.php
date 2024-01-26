@@ -15,12 +15,12 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
  *     RedisConfiguration,
  *     array<string, object{
  *         db_index: int,
- *         host: string,
+ *         host: non-empty-string,
  *         password: string,
  *         pool_prefill: bool,
  *         pool_size: int,
  *         port: int,
- *         prefix: string,
+ *         prefix: non-empty-string,
  *         timeout: int,
  *     }>
  * >

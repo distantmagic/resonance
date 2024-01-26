@@ -47,8 +47,7 @@
         "webonyx/graphql-php": "^15.6",
         "dragonmantank/cron-expression": "^3.3",
         "league/oauth2-client": "^2.7",
-        "opis/json-schema": "^2.3",
-        "rubix/ml": "^2.4"
+        "opis/json-schema": "^2.3"
     },
     "require-dev": {
         "mockery/mockery": "^1.6",

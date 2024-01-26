@@ -6,6 +6,9 @@ namespace Distantmagic\Resonance;
 
 readonly class SessionConfiguration
 {
+    /**
+     * @param non-empty-string $cookieName
+     */
     public function __construct(
         public string $cookieName,
         public int $cookieLifespan,

@@ -11,12 +11,12 @@ use Distantmagic\Resonance\SwooleConfiguration;
 
 /**
  * @template-extends ConfigurationProvider<SwooleConfiguration, object{
- *     host: string,
- *     log_level: string,
+ *     host: non-empty-string,
+ *     log_level: non-empty-string,
  *     log_requests: boolean,
  *     port: int,
- *     ssl_cert_file: string,
- *     ssl_key_file: string,
+ *     ssl_cert_file: non-empty-string,
+ *     ssl_key_file: non-empty-string,
  * }>
  */
 #[Singleton(provides: SwooleConfiguration::class)]

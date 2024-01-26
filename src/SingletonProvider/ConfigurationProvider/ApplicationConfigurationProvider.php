@@ -9,13 +9,14 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Environment;
 use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
+use RuntimeException;
 
 /**
  * @template-extends ConfigurationProvider<ApplicationConfiguration, object{
  *     env: string,
- *     esbuild_metafile: string,
- *     scheme: string,
- *     url: string,
+ *     esbuild_metafile: non-empty-string,
+ *     scheme: non-empty-string,
+ *     url: non-empty-string,
  * }>
  */
 #[Singleton(provides: ApplicationConfiguration::class)]
@@ -57,11 +58,17 @@ final readonly class ApplicationConfigurationProvider extends ConfigurationProvi
 
     protected function provideConfiguration($validatedData): ApplicationConfiguration
     {
+        $url = rtrim($validatedData->url, '/');
+
+        if (empty($url)) {
+            throw new RuntimeException('URL cannot be an empty string');
+        }
+
         return new ApplicationConfiguration(
             environment: Environment::from($validatedData->env),
             esbuildMetafile: DM_ROOT.'/'.$validatedData->esbuild_metafile,
             scheme: $validatedData->scheme,
-            url: rtrim($validatedData->url, '/'),
+            url: $url,
         );
     }
 }

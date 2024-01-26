@@ -14,6 +14,10 @@ readonly class LlamaCppConfiguration
      * @psalm-taint-source system_secret $host
      * @psalm-taint-source system_secret $port
      * @psalm-taint-source system_secret $scheme
+     *
+     * @param null|non-empty-string $apiKey
+     * @param non-empty-string      $host
+     * @param non-empty-string      $scheme
      */
     public function __construct(
         #[SensitiveParameter]

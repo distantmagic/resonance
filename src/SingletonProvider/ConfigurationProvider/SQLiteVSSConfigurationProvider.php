@@ -11,8 +11,8 @@ use Distantmagic\Resonance\SQLiteVSSConfiguration;
 
 /**
  * @template-extends ConfigurationProvider<SQLiteVSSConfiguration, object{
- *     extension_vector0: string,
- *     extension_vss0: string,
+ *     extension_vector0: non-empty-string,
+ *     extension_vss0: non-empty-string,
  * }>
  */
 #[Singleton(provides: SQLiteVSSConfiguration::class)]

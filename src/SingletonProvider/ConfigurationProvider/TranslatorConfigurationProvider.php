@@ -11,8 +11,8 @@ use Distantmagic\Resonance\TranslatorConfiguration;
 
 /**
  * @template-extends ConfigurationProvider<TranslatorConfiguration, object{
- *     base_directory: string,
- *     default_primary_language: string,
+ *     base_directory: non-empty-string,
+ *     default_primary_language: non-empty-string,
  * }>
  */
 #[Singleton(provides: TranslatorConfiguration::class)]

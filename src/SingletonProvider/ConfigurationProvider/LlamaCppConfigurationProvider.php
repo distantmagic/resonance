@@ -11,11 +11,11 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 /**
  * @template-extends ConfigurationProvider<LlamaCppConfiguration, object{
- *     api_key: null|string,
+ *     api_key: null|non-empty-string,
  *     completion_token_timeout: float,
- *     host: string,
+ *     host: non-empty-string,
  *     port: int,
- *     scheme: string,
+ *     scheme: non-empty-string,
  * }>
  */
 #[Singleton(provides: LlamaCppConfiguration::class)]

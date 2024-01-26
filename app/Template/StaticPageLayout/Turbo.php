@@ -55,6 +55,8 @@ abstract readonly class Turbo extends StaticPageLayout
         $renderedStylesheets = $this->renderStylesheets($staticPage, $esbuildMetaEntryPoints);
         $renderedPreloads = $esbuildPreloadsRenderer->render();
 
+        $currentYear = date('Y');
+
         yield <<<HTML
         <!DOCTYPE html>
         <html lang="en">
@@ -96,7 +98,7 @@ abstract readonly class Turbo extends StaticPageLayout
         yield <<<HTML
                 <footer class="primary-footer">
                     <div class="primary-footer__copyright">
-                        Copyright &copy; 2023 Distantmagic.
+                        Copyright &copy; {$currentYear} Distantmagic.
                         Built with Resonance.
                     </div>
                 </footer>

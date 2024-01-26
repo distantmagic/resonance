@@ -17,14 +17,14 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
  *     array<string, object{
  *         database: string,
  *         driver: string,
- *         host: string,
+ *         host: non-empty-string,
  *         log_queries: bool,
  *         password: string,
  *         pool_prefill: bool,
  *         pool_size: int,
  *         port: int,
  *         unix_socket: string,
- *         username: string,
+ *         username: non-empty-string,
  *     }>
  * >
  */

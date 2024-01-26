@@ -13,6 +13,10 @@ readonly class SwooleConfiguration
      * @psalm-taint-source file $sslKeyFile
      * @psalm-taint-source system_secret $host
      * @psalm-taint-source system_secret $port
+     *
+     * @param non-empty-string $host
+     * @param non-empty-string $sslCertFile
+     * @param non-empty-string $sslKeyFile
      */
     public function __construct(
         #[SensitiveParameter]

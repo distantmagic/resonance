@@ -11,11 +11,11 @@ use Distantmagic\Resonance\StaticPageConfiguration;
 
 /**
  * @template-extends ConfigurationProvider<StaticPageConfiguration, object{
- *     base_url: string,
- *     esbuild_metafile: string,
- *     input_directory: string,
- *     output_directory: string,
- *     sitemap: string,
+ *     base_url: non-empty-string,
+ *     esbuild_metafile: non-empty-string,
+ *     input_directory: non-empty-string,
+ *     output_directory: non-empty-string,
+ *     sitemap: non-empty-string,
  * }>
  */
 #[Singleton(provides: StaticPageConfiguration::class)]

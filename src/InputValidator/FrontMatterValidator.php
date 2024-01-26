@@ -14,15 +14,15 @@ use Generator;
 
 /**
  * @extends InputValidator<FrontMatter, object{
- *     collections: array<string|object{ name: string, next: string }>,
- *     content_type: string,
- *     description: string,
+ *     collections: array<non-empty-string|object{ name: non-empty-string, next: non-empty-string }>,
+ *     content_type: non-empty-string,
+ *     description: non-empty-string,
  *     draft: bool,
- *     next: null|string,
- *     layout: string,
- *     parent: null|string,
- *     register_stylesheets: array<string>,
- *     title: string,
+ *     next: null|non-empty-string,
+ *     layout: non-empty-string,
+ *     parent: null|non-empty-string,
+ *     register_stylesheets: array<non-empty-string>,
+ *     title: non-empty-string,
  * }>
  */
 #[Singleton]
@@ -121,7 +121,7 @@ readonly class FrontMatterValidator extends InputValidator
     }
 
     /**
-     * @param array<object{ name: string, next: string }|string> $collections
+     * @param array<non-empty-string|object{ name: non-empty-string, next: non-empty-string }> $collections
      *
      * @return Generator<FrontMatterCollectionReference>
      */

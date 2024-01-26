@@ -9,6 +9,11 @@ use League\OAuth2\Server\CryptKey;
 
 readonly class OAuth2Configuration
 {
+    /**
+     * @param non-empty-string $sessionKeyAuthorizationRequest
+     * @param non-empty-string $sessionKeyPkce
+     * @param non-empty-string $sessionKeyState
+     */
     public function __construct(
         public Key $encryptionKey,
         public CryptKey $jwtSigningKeyPrivate,

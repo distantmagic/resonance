@@ -11,9 +11,9 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 /**
  * @template-extends ConfigurationProvider<OpenAPIConfiguration, object{
- *     description: string,
- *     title: string,
- *     version: string,
+ *     description: non-empty-string,
+ *     title: non-empty-string,
+ *     version: non-empty-string,
  * }>
  */
 #[Singleton(provides: OpenAPIConfiguration::class)]

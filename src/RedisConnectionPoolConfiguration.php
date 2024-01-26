@@ -17,6 +17,9 @@ readonly class RedisConnectionPoolConfiguration
      * @psalm-taint-source system_secret $port
      * @psalm-taint-source system_secret $prefix
      * @psalm-taint-source system_secret $timeout
+     *
+     * @param non-empty-string $host
+     * @param non-empty-string $prefix
      */
     public function __construct(
         #[SensitiveParameter]

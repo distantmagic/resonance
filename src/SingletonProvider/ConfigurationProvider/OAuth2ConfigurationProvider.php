@@ -16,13 +16,13 @@ use Swoole\Coroutine;
 
 /**
  * @template-extends ConfigurationProvider<OAuth2Configuration, object{
- *     encryption_key: string,
+ *     encryption_key: non-empty-string,
  *     jwt_signing_key_passphrase: null|string,
- *     jwt_signing_key_private: string,
- *     jwt_signing_key_public: string,
- *     session_key_authorization_request: string,
- *     session_key_pkce: string,
- *     session_key_state: string,
+ *     jwt_signing_key_private: non-empty-string,
+ *     jwt_signing_key_public: non-empty-string,
+ *     session_key_authorization_request: non-empty-string,
+ *     session_key_pkce: non-empty-string,
+ *     session_key_state: non-empty-string,
  * }>
  */
 #[Singleton(

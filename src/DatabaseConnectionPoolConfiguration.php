@@ -8,6 +8,10 @@ use SensitiveParameter;
 
 readonly class DatabaseConnectionPoolConfiguration
 {
+    /**
+     * @param non-empty-string $host
+     * @param non-empty-string $username
+     */
     public function __construct(
         #[SensitiveParameter]
         public string $database,
