@@ -5,7 +5,7 @@ layout: dm:document
 parent: docs/features/vector-store/index
 title: SQLite-VSS
 description: >
-    SQLite Extension for vector search
+    SQLite extension for vector search
 ---
 
 # SQLite-VSS

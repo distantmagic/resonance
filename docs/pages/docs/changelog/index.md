@@ -10,6 +10,10 @@ title: Changelog
 
 # Changelog
 
+## v0.17.0
+
+- Feature: added {{docs/features/vector-store/sqlite-vss/index}} (integration)
+
 ## v0.16.0
 
 - Feature: added {{docs/features/ai/prompt-engineering/index}} (basic prompt templates)
