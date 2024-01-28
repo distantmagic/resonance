@@ -6,6 +6,12 @@ namespace Distantmagic\Resonance;
 
 use stdClass;
 
+/**
+ * @template-implements OpenAPISerializableFieldInterface<array{
+ *     schemas: object|array<non-empty-string,JsonSchema>,
+ *     securitySchemes: OpenAPISchemaComponentsSecuritySchemes,
+ * }>
+ */
 readonly class OpenAPISchemaComponents implements OpenAPISerializableFieldInterface
 {
     public function __construct(
@@ -20,8 +26,14 @@ readonly class OpenAPISchemaComponents implements OpenAPISerializableFieldInterf
         ];
     }
 
+    /**
+     * @return array<non-empty-string,JsonSchema>|object
+     */
     private function serializeSchemaCollection(OpenAPIReusableSchemaCollection $openAPIReusableSchemaCollection): array|object
     {
+        /**
+         * @var array<non-empty-string,JsonSchema> $schemas
+         */
         $schemas = [];
 
         foreach ($openAPIReusableSchemaCollection->references as $jsonSchema => $referenceId) {

@@ -69,7 +69,7 @@ final readonly class WebSocketServerController implements ServerPipeMessageHandl
         $this->webSocketServerConnectionTable->unregisterConnection($fd);
 
         if (!$this->protocolControllers->hasKey($fd)) {
-            throw new RuntimeException('WebSocket connection is already closed');
+            return;
         }
 
         $this->protocolControllers->get($fd)->onClose($fd);

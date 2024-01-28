@@ -21,6 +21,12 @@ readonly class OpenAPIRouteRequestBodyContentExtractorAggregate implements OpenA
         $this->extractors = new Map();
     }
 
+    /**
+     * @param class-string     $parameterClass
+     * @param non-empty-string $parameterName
+     *
+     * @return list<OpenAPISchemaRequestBodyContent>
+     */
     public function extractFromHttpControllerParameter(
         Attribute $attribute,
         string $parameterClass,

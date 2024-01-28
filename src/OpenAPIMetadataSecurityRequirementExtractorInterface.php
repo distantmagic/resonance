@@ -16,7 +16,7 @@ interface OpenAPIMetadataSecurityRequirementExtractorInterface
      * @param ReflectionClass<HttpController> $reflectionClass
      * @param TAttribute                      $attribute
      *
-     * @return array<OpenAPISchemaSecurityRequirement>
+     * @return list<OpenAPISchemaSecurityRequirement>
      */
     public function extractFromHttpControllerMetadata(
         ReflectionClass $reflectionClass,

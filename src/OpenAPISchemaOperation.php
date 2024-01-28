@@ -8,7 +8,30 @@ use Distantmagic\Resonance\Attribute\GivesHttpResponse;
 use Distantmagic\Resonance\HttpResponder\HttpController;
 use LogicException;
 use ReflectionAttribute;
+use RuntimeException;
 
+/**
+ * @psalm-import-type PArraySerializedOpenAPISchemaRequestBodyContent from OpenAPISchemaRequestBodyContent
+ * @psalm-import-type PArraySerializedOpenAPISchemaResponse from OpenAPISchemaResponse
+ *
+ * @psalm-type PSerializedParameters = list<OpenAPISchemaParameter>
+ * @psalm-type PSerializedRequestBodyContents = array<non-empty-string,PArraySerializedOpenAPISchemaRequestBodyContent>
+ * @psalm-type PSerializedResponses = array<int,PArraySerializedOpenAPISchemaResponse>
+ * @psalm-type PSerializedSecurity = list<array<non-empty-string,array<non-empty-string>>>
+ * @psalm-type PArraySerializedOpenAPISchemaOperation = array{
+ *     operationId: non-empty-string,
+ *     description?: non-empty-string,
+ *     parameters?: PSerializedParameters,
+ *     requestBody?: array{
+ *         content: PSerializedRequestBodyContents,
+ *     },
+ *     responses?: PSerializedResponses,
+ *     security?: PSerializedSecurity,
+ *     summary?: non-empty-string,
+ * }
+ *
+ * @template-implements OpenAPISerializableFieldInterface<PArraySerializedOpenAPISchemaOperation>
+ */
 readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterface
 {
     private HttpControllerReflectionMethod $httpControllerReflectionMethod;
@@ -77,15 +100,27 @@ readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterfa
         return $operation;
     }
 
+    /**
+     * @return non-empty-string
+     */
     private function generateOperationId(): string
     {
-        return sprintf(
+        $operationId = sprintf(
             '%s%s',
             ucfirst(strtolower($this->openAPIPathItem->respondsToHttp->method->value)),
             str_replace('\\', '', $this->openAPIPathItem->reflectionClass->getName()),
         );
+
+        if (empty($operationId)) {
+            throw new RuntimeException('Unabel to generate operation id');
+        }
+
+        return $operationId;
     }
 
+    /**
+     * @return PSerializedParameters
+     */
     private function serializeParameters(): array
     {
         $parameters = [];
@@ -110,6 +145,9 @@ readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterfa
         return $parameters;
     }
 
+    /**
+     * @return PSerializedRequestBodyContents
+     */
     private function serializeRequestBodyContents(
         OpenAPIReusableSchemaCollection $openAPIReusableSchemaCollection,
     ): array {
@@ -142,6 +180,9 @@ readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterfa
         return $requestBodyContents;
     }
 
+    /**
+     * @return PSerializedResponses
+     */
     private function serializeResponses(OpenAPIReusableSchemaCollection $openAPIReusableSchemaCollection): array
     {
         $httpControllerReflectionClass = $this->httpControllerReflectionMethod->reflectionClass;
@@ -170,6 +211,9 @@ readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterfa
         return $responses;
     }
 
+    /**
+     * @return PSerializedSecurity
+     */
     private function serializeSecurity(OpenAPIReusableSchemaCollection $openAPIReusableSchemaCollection): array
     {
         $mergedSecurityRequirements = [];
@@ -213,9 +257,6 @@ readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterfa
 
         $securityRequirements = [];
 
-        /**
-         * @var array<string> $mergedSecurityRequirement
-         */
         foreach ($mergedSecurityRequirements as $securitySchemeName => $mergedSecurityRequirement) {
             $securityRequirements[] = [
                 $securitySchemeName => $mergedSecurityRequirement,

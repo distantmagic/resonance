@@ -14,7 +14,7 @@ interface OpenAPIRouteSecurityRequirementExtractorInterface
      * @param class-string     $parameterClass
      * @param non-empty-string $parameterName
      *
-     * @return array<OpenAPISchemaSecurityRequirement>
+     * @return list<OpenAPISchemaSecurityRequirement>
      */
     public function extractFromHttpControllerParameter(
         Attribute $attribute,

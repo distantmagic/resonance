@@ -14,7 +14,7 @@ interface OpenAPIRouteParameterExtractorInterface
      * @param class-string     $parameterClass
      * @param non-empty-string $parameterName
      *
-     * @return array<OpenAPISchemaParameter>
+     * @return list<OpenAPISchemaParameter>
      */
     public function extractFromHttpControllerParameter(
         Attribute $attribute,

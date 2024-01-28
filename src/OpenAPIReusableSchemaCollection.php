@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Ds\Map;
+use RuntimeException;
 
 readonly class OpenAPIReusableSchemaCollection
 {
     /**
-     * @var Map<string,string>
+     * @var Map<non-empty-string,non-empty-string>
      */
     public Map $hashes;
 
     /**
-     * @var Map<JsonSchema,string>
+     * @var Map<JsonSchema,non-empty-string>
      */
     public Map $references;
 
@@ -44,8 +45,17 @@ readonly class OpenAPIReusableSchemaCollection
         ]);
     }
 
+    /**
+     * @return non-empty-string
+     */
     private function makeHash(JsonSchema $jsonSchema): string
     {
-        return serialize($jsonSchema->schema);
+        $serialized = serialize($jsonSchema->schema);
+
+        if (empty($serialized)) {
+            throw new RuntimeException('Unable to serialize JsonSchema');
+        }
+
+        return $serialized;
     }
 }

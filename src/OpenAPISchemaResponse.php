@@ -4,8 +4,19 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+/**
+ * @psalm-type PArraySerializedOpenAPISchemaResponse = array{
+ *     description?: non-empty-string,
+ *     content: array<string, array{ schema: JsonSchema }>
+ * }
+ *
+ * @template-implements OpenAPISerializableFieldInterface<PArraySerializedOpenAPISchemaResponse>
+ */
 readonly class OpenAPISchemaResponse implements OpenAPISerializableFieldInterface
 {
+    /**
+     * @param null|non-empty-string $description
+     */
     public function __construct(
         public ContentType $contentType,
         public JsonSchema $jsonSchema,

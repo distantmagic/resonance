@@ -14,7 +14,7 @@ interface OpenAPIRouteRequestBodyContentExtractorInterface
      * @param class-string     $parameterClass
      * @param non-empty-string $parameterName
      *
-     * @return array<OpenAPISchemaRequestBodyContent>
+     * @return list<OpenAPISchemaRequestBodyContent>
      */
     public function extractFromHttpControllerParameter(
         Attribute $attribute,

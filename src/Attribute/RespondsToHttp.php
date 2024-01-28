@@ -13,7 +13,9 @@ use Distantmagic\Resonance\RequestMethod;
 final readonly class RespondsToHttp extends BaseAttribute
 {
     /**
-     * @param non-empty-string $pattern
+     * @param non-empty-string      $pattern
+     * @param null|non-empty-string $description
+     * @param null|non-empty-string $summary
      */
     public function __construct(
         public RequestMethod $method,

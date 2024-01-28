@@ -12,6 +12,9 @@ use Distantmagic\Resonance\JsonSchema;
 #[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_CLASS)]
 final readonly class GivesHttpResponse extends BaseAttribute
 {
+    /**
+     * @param null|non-empty-string $description
+     */
     public function __construct(
         public ContentType $contentType,
         public JsonSchema $jsonSchema,

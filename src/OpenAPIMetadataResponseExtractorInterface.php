@@ -16,7 +16,7 @@ interface OpenAPIMetadataResponseExtractorInterface
      * @param ReflectionClass<HttpController> $reflectionClass
      * @param TAttribute                      $attribute
      *
-     * @return array<OpenAPISchemaResponse>
+     * @return list<OpenAPISchemaResponse>
      */
     public function extractFromHttpControllerMetadata(
         ReflectionClass $reflectionClass,

@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+/**
+ * @template-implements OpenAPISerializableFieldInterface<
+ *     array<
+ *         non-empty-string,
+ *         array<non-empty-string>
+ *     >
+ * >
+ */
 readonly class OpenAPISchemaSecurityRequirement implements OpenAPISerializableFieldInterface
 {
     /**

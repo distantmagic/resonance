@@ -6,6 +6,16 @@ namespace Distantmagic\Resonance;
 
 use LogicException;
 
+/**
+ * @psalm-import-type PArraySerializedOpenAPISchemaOperation from OpenAPISchemaOperation
+ *
+ * @psalm-type PArraySerializedOpenAPISchemaPaths = array<
+ *     non-empty-string,
+ *     array<non-empty-string, PArraySerializedOpenAPISchemaOperation>
+ * >
+ *
+ * @template-implements OpenAPISerializableFieldInterface<PArraySerializedOpenAPISchemaPaths>
+ */
 readonly class OpenAPISchemaPaths implements OpenAPISerializableFieldInterface
 {
     public function __construct(

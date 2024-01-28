@@ -21,6 +21,12 @@ readonly class OpenAPIRouteParameterExtractorAggregate implements OpenAPIRoutePa
         $this->extractors = new Map();
     }
 
+    /**
+     * @param class-string     $parameterClass
+     * @param non-empty-string $parameterName
+     *
+     * @return list<OpenAPISchemaParameter>
+     */
     public function extractFromHttpControllerParameter(
         Attribute $attribute,
         string $parameterClass,

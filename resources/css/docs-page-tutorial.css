@@ -70,6 +70,7 @@
 }
 
 .tutorial__title {
+  font-weight: bold;
   hyphens: auto;
   max-width: calc(100vw - 40px);
 
