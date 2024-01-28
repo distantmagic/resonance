@@ -75,18 +75,12 @@ code[class] {
   }
 
   code {
-    transition: opacity 0.3s ease;
-
     @media screen and (max-width: 1023px) {
       padding: 10px 10ch 10px 10px;
     }
     @media screen and (min-width: 1024px) {
       padding: 20px 10ch 20px 20px;
     }
-  }
-
-  code:not(.hljs, .language-unknown) {
-    opacity: 0;
   }
 
   .fenced-code__filename {
