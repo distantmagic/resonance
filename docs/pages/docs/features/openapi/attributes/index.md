@@ -25,15 +25,15 @@ All attributes start with `Distantmagic\Resonance\Attribute\` namespace:
 Attribute | Description
 -|-
 `BelongsToOpenAPISchema` (repeatable) | Optionally accepts `schemaSymbol` argument (implements `OpenAPISchemaSymbolInterface`) to denote to which schema the given endpoint belongs. You can repeat it if it belongs to multiple schemas.
-`Can` (repeatable) | Used to build [Security Requirement Object](https://swagger.io/specification/#security-requirement-object)
+`Can` (repeatable) | Used to build [Security Requirement Object](https://swagger.io/specification/#security-requirement-object). See more at: {{docs/features/security/authentication/index}}.
 `GivesHttpResponse` (repeatable) | Used to annotate the type of the response. Resonance uses it to build [Response Object](https://swagger.io/specification/#response-object). You need to define one for each status code your responder can return.
-`RequiresOAuth2Scope` (repeatable) | Used to build [Security Requirement Object](https://swagger.io/specification/#security-requirement-object)
-`RespondsToHttp` | Used to build [Operation Object](https://swagger.io/specification/#operation-object)
+`RequiresOAuth2Scope` (repeatable) | Used to build [Security Requirement Object](https://swagger.io/specification/#security-requirement-object). See more at: {{docs/features/security/oauth2/index}}.
+`RespondsToHttp` | Used to build [Operation Object](https://swagger.io/specification/#operation-object). See more at: {{docs/features/http/responders}}.
 
 ## Controller Parameter Attributes
 
 Attribute | Description
 -|-
-`DoctrineEntityRouteParameter` | Used to build [Parameter Object](https://swagger.io/specification/#operation-object)
-`SessionAuthenticated` | Used to build [Security Requirement Object](https://swagger.io/specification/#security-requirement-object)
-`ValidatedRequest` | Used to build [Parameter Object](https://swagger.io/specification/#operation-object)
+`DoctrineEntityRouteParameter` | Used to build [Parameter Object](https://swagger.io/specification/#operation-object). See more at: {{docs/features/http/controllers}}.
+`SessionAuthenticated` | Used to build [Security Requirement Object](https://swagger.io/specification/#security-requirement-object). See more at: {{docs/features/http/controllers}}.
+`ValidatedRequest` | Used to build [Parameter Object](https://swagger.io/specification/#operation-object). See more at: {{docs/features/validation/index}}.
