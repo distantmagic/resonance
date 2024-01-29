@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class StaticPagesDumpContent extends Command
 {
     public function __construct(
-        private StaticPageAggregate $staticPageAggregate,
+        private readonly StaticPageAggregate $staticPageAggregate,
     ) {
         parent::__construct();
     }

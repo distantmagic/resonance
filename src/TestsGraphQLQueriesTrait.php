@@ -18,7 +18,7 @@ trait TestsGraphQLQueriesTrait
         $result = self::$container->call(static function (
             CrudActionGateAggregate $crudActionGateAggregate,
             GraphQLAdapter $graphQLAdapter,
-        ) use ($query) {
+        ) use ($query): array {
             $swoolePromiseAdapter = new SwoolePromiseAdapter();
 
             return $graphQLAdapter

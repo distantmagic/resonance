@@ -34,7 +34,7 @@ readonly class DatabaseConnection implements ServerInfoAwareConnection
 
     public function __destruct()
     {
-        Event::defer(function () {
+        Event::defer(function (): void {
             $this->databaseConnectionPoolRepository->putConnection($this->connectionPoolName, $this->pdo);
         });
     }

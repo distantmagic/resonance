@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class LlamaCppHealth extends CoroutineCommand
 {
     public function __construct(
-        private LlamaCppClient $llamaCppClient,
+        private readonly LlamaCppClient $llamaCppClient,
         SwooleConfiguration $swooleConfiguration,
     ) {
         parent::__construct($swooleConfiguration);

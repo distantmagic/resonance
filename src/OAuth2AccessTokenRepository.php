@@ -60,7 +60,7 @@ readonly class OAuth2AccessTokenRepository implements AccessTokenRepositoryInter
     {
         return $this
             ->doctrineEntityManagerRepository
-            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($tokenId) {
+            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($tokenId): bool {
                 return is_null($this->entityRepository->findAccessToken($entityManager, $tokenId));
             })
         ;
@@ -73,7 +73,7 @@ readonly class OAuth2AccessTokenRepository implements AccessTokenRepositoryInter
     {
         $this
             ->doctrineEntityManagerRepository
-            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($accessTokenEntity) {
+            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($accessTokenEntity): void {
                 $client = $this->entityRepository->findClient(
                     $entityManager,
                     $accessTokenEntity->getClient()->getIdentifier(),
@@ -116,7 +116,7 @@ readonly class OAuth2AccessTokenRepository implements AccessTokenRepositoryInter
     {
         $this
             ->doctrineEntityManagerRepository
-            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($tokenId) {
+            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($tokenId): void {
                 $accessToken = $this->entityRepository->findAccessToken($entityManager, $tokenId);
 
                 if ($accessToken) {

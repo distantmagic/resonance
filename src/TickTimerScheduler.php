@@ -14,7 +14,7 @@ class TickTimerScheduler
     private int $currentTick = 0;
     private ?int $tickTimerId = null;
 
-    public function __construct(private TickTimerJobAggregate $tickTimerJobAggregate) {}
+    public function __construct(private readonly TickTimerJobAggregate $tickTimerJobAggregate) {}
 
     public function shouldRegister(): bool
     {

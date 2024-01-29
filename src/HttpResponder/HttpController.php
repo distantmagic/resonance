@@ -70,7 +70,7 @@ abstract readonly class HttpController extends HttpResponder
         $this->handleReflection = $controllerDependencies
             ->httpControllerReflectionMethodCollection
             ->reflectionMethods
-            ->get($this::class)
+            ->get(static::class)
         ;
     }
 

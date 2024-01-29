@@ -61,7 +61,7 @@ readonly class StaticPageInternalLinkDelimiterProcessor implements DelimiterProc
     {
         $tmp = $opener->next();
 
-        while (null !== $tmp && $tmp !== $closer) {
+        while ($tmp instanceof Node && $tmp !== $closer) {
             $next = $tmp->next();
             yield $tmp;
             $tmp = $next;

@@ -79,26 +79,29 @@ readonly class EsbuildMetaBuilder
             $entryPointBasename = basename($output->entryPoint);
 
             $esbuildMeta->registerEntryPoint($entryPointBasename, $filename);
-
-            if (isset($output->imports) && is_array($output->imports)) {
-                /**
-                 * @var mixed $import explicitly mixed for typechecks
-                 */
-                foreach ($output->imports as $import) {
-                    if (!is_object($import)) {
-                        throw new LogicException('Expected entrypoint import defintion to be an object.');
-                    }
-
-                    if (
-                        !isset($import->kind, $import->path)
-                        || !is_string($import->kind)
-                        || !is_string($import->path)
-                    ) {
-                        throw new LogicException('Expected "kind" and "path" import fields to be set.');
-                    }
-
-                    yield $filename => $this->stripBaseDirectory($stripOutputPrefix, $import->path);
+            if (!isset($output->imports)) {
+                continue;
+            }
+            if (!is_array($output->imports)) {
+                continue;
+            }
+            /**
+             * @var mixed $import explicitly mixed for typechecks
+             */
+            foreach ($output->imports as $import) {
+                if (!is_object($import)) {
+                    throw new LogicException('Expected entrypoint import defintion to be an object.');
                 }
+
+                if (
+                    !isset($import->kind, $import->path)
+                    || !is_string($import->kind)
+                    || !is_string($import->path)
+                ) {
+                    throw new LogicException('Expected "kind" and "path" import fields to be set.');
+                }
+
+                yield $filename => $this->stripBaseDirectory($stripOutputPrefix, $import->path);
             }
         }
     }
@@ -120,10 +123,13 @@ readonly class EsbuildMetaBuilder
             if (!is_object($output)) {
                 throw new LogicException('Manifest output is not an object.');
             }
-
-            if (isset($output->entryPoint) && is_string($output->entryPoint)) {
-                yield $this->stripBaseDirectory($stripOutputPrefix, $filename) => $output;
+            if (!isset($output->entryPoint)) {
+                continue;
             }
+            if (!is_string($output->entryPoint)) {
+                continue;
+            }
+            yield $this->stripBaseDirectory($stripOutputPrefix, $filename) => $output;
         }
     }
 

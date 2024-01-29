@@ -56,7 +56,7 @@ readonly class StaticPageInternalLinkNodeRenderer implements NodeRendererInterfa
         $pageBasename = $this->getPageBasename($node, $childRenderer);
 
         if (str_contains($pageBasename, '*')) {
-            return $this->getStaticPagesByPattern($node, $pageBasename);
+            return $this->getStaticPagesByPattern($pageBasename);
         }
 
         if (!$this->staticPages->hasKey($pageBasename)) {
@@ -69,7 +69,7 @@ readonly class StaticPageInternalLinkNodeRenderer implements NodeRendererInterfa
     /**
      * @return Set<StaticPage>
      */
-    private function getStaticPagesByPattern(Node $node, string $pattern): Set
+    private function getStaticPagesByPattern(string $pattern): Set
     {
         /**
          * @var Set<StaticPage>
@@ -82,9 +82,13 @@ readonly class StaticPageInternalLinkNodeRenderer implements NodeRendererInterfa
         $skip = $chunks[1] ?? null;
 
         foreach ($this->staticPages as $baseUrl => $staticPage) {
-            if (fnmatch($pattern, $baseUrl, FNM_PATHNAME) && $baseUrl !== $skip) {
-                $ret->add($staticPage);
+            if (!fnmatch($pattern, $baseUrl, FNM_PATHNAME)) {
+                continue;
             }
+            if ($baseUrl === $skip) {
+                continue;
+            }
+            $ret->add($staticPage);
         }
 
         if ($ret->isEmpty()) {

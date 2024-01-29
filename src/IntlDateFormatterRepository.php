@@ -50,6 +50,6 @@ readonly class IntlDateFormatterRepository
         int $dateTimeFormat,
         int $timeTypeFormat,
     ): string {
-        return $language.(string) $dateTimeFormat.(string) $timeTypeFormat;
+        return $language.$dateTimeFormat.$timeTypeFormat;
     }
 }

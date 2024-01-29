@@ -52,7 +52,7 @@ final readonly class SwooleCoroutineHelper
         /**
          * @var bool
          */
-        $coroutineResult = run(static function () use ($callback, &$exception, &$ret) {
+        $coroutineResult = run(static function () use ($callback, &$exception, &$ret): void {
             try {
                 $ret = $callback();
             } catch (Throwable $throwable) {

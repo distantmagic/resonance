@@ -6,7 +6,6 @@ namespace Distantmagic\Resonance\Command;
 
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
 use Distantmagic\Resonance\Attribute\RespondsWith;
-use Distantmagic\Resonance\Attribute\TestableHttpResponse;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\HttpRecursiveResponder;
 use Distantmagic\Resonance\HttpResponderAggregate;
@@ -28,10 +27,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class TestHttpResponders extends Command
 {
     public function __construct(
-        private HttpRecursiveResponder $recursiveResponder,
-        private HttpResponderAggregate $httpResponderAggregate,
-        private JsonSchemaValidator $jsonSchemaValidator,
-        private TestableHttpResponseCollection $testableHttpResponseCollection,
+        private readonly HttpRecursiveResponder $recursiveResponder,
+        private readonly HttpResponderAggregate $httpResponderAggregate,
+        private readonly JsonSchemaValidator $jsonSchemaValidator,
+        private readonly TestableHttpResponseCollection $testableHttpResponseCollection,
     ) {
         parent::__construct();
     }
@@ -51,16 +50,14 @@ final class TestHttpResponders extends Command
                     ->get($testableHttpResponse)
                 ;
 
-                $isValid = $isValid and SwooleCoroutineHelper::mustRun(function () use (
+                ($isValid = $isValid) && SwooleCoroutineHelper::mustRun(function () use (
                     $output,
                     $httpResponder,
-                    $testableHttpResponse,
                     $potentialResponses
                 ): bool {
                     return $this->testResponses(
                         $output,
                         $httpResponder,
-                        $testableHttpResponse,
                         $potentialResponses,
                     );
                 });
@@ -80,7 +77,6 @@ final class TestHttpResponders extends Command
     private function testResponses(
         OutputInterface $output,
         HttpResponderInterface $httpResponder,
-        TestableHttpResponse $testableHttpResponse,
         Map $potentialResponses,
     ): bool {
         $output->write(sprintf('Testing <info>%s</info> ... ', $httpResponder::class));

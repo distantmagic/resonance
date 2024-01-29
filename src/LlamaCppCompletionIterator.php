@@ -13,7 +13,6 @@ use RuntimeException;
  */
 readonly class LlamaCppCompletionIterator implements IteratorAggregate
 {
-    private const COMPLETION_CHUNKED_DATA_PREFIX = 'data: ';
     private const COMPLETION_CHUNKED_DATA_PREFIX_LENGTH = 6;
 
     /**

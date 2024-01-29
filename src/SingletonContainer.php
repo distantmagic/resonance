@@ -22,13 +22,6 @@ final readonly class SingletonContainer implements SingletonContainerInterface
      */
     private Map $singletons;
 
-    private static function assertClassExists(string $class): void
-    {
-        if (!class_exists($class) && !interface_exists($class)) {
-            throw new SingletonContainerException('Class does not exist: '.$class);
-        }
-    }
-
     public function __construct()
     {
         $this->singletons = new Map();
@@ -43,7 +36,7 @@ final readonly class SingletonContainer implements SingletonContainerInterface
      */
     public function get(string $id): object
     {
-        self::assertClassExists($id);
+        $this->assertClassExists($id);
 
         if (!$this->has($id)) {
             throw new NotFoundException('Class is not set: '.$id);
@@ -57,14 +50,14 @@ final readonly class SingletonContainer implements SingletonContainerInterface
 
     public function has(string $id): bool
     {
-        self::assertClassExists($id);
+        $this->assertClassExists($id);
 
         return $this->singletons->hasKey($id);
     }
 
     public function set(string $id, object $object): void
     {
-        self::assertClassExists($id);
+        $this->assertClassExists($id);
 
         if ($this->has($id)) {
             throw new SingletonContainerException('Class is already set: '.$id);
@@ -96,5 +89,17 @@ final readonly class SingletonContainer implements SingletonContainerInterface
     public function values(): Sequence
     {
         return $this->singletons->values();
+    }
+
+    private function assertClassExists(string $class): void
+    {
+        if (class_exists($class)) {
+            return;
+        }
+        if (interface_exists($class)) {
+            return;
+        }
+
+        throw new SingletonContainerException('Class does not exist: '.$class);
     }
 }

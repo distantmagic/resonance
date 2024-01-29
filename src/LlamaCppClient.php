@@ -162,7 +162,7 @@ readonly class LlamaCppClient
         $channel = new Channel(1);
         $requestData = json_encode($request);
 
-        SwooleCoroutineHelper::mustGo(function () use ($channel, $path, $requestData) {
+        SwooleCoroutineHelper::mustGo(function () use ($channel, $path, $requestData): void {
             $curlHandle = $this->createCurlHandle();
 
             try {
@@ -170,7 +170,7 @@ readonly class LlamaCppClient
                 curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $requestData);
                 curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, false);
                 curl_setopt($curlHandle, CURLOPT_URL, $this->llamaCppLinkBuilder->build($path));
-                curl_setopt($curlHandle, CURLOPT_WRITEFUNCTION, function (CurlHandle $curlHandle, string $data) use ($channel) {
+                curl_setopt($curlHandle, CURLOPT_WRITEFUNCTION, function (CurlHandle $curlHandle, string $data) use ($channel): int {
                     if ($channel->push($data, $this->llamaCppConfiguration->completionTokenTimeout)) {
                         return strlen($data);
                     }

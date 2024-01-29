@@ -10,7 +10,7 @@ use Distantmagic\Resonance\StaticPageParentIterator;
 use Ds\Map;
 use Generator;
 
-readonly class StaticPageBreadcrumbs extends Component
+final readonly class StaticPageBreadcrumbs extends Component
 {
     /**
      * @param Map<string, StaticPage> $staticPages

@@ -29,7 +29,7 @@ readonly class OAuth2ClientRepository implements ClientRepositoryInterface
     {
         return $this
             ->doctrineEntityManagerRepository
-            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($clientIdentifier) {
+            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($clientIdentifier): ?ClientEntityInterface {
                 $doctrineClient = $this->entityRepository->findClient(
                     $entityManager,
                     $clientIdentifier,

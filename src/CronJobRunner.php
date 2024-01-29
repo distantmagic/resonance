@@ -14,7 +14,7 @@ readonly class CronJobRunner
 
     public function runCronJob(CronRegisteredJob $cronRegisteredJob): void
     {
-        SwooleCoroutineHelper::mustGo(function () use ($cronRegisteredJob) {
+        SwooleCoroutineHelper::mustGo(function () use ($cronRegisteredJob): void {
             $this->logger->info(sprintf('cron_job_start(%s)', $cronRegisteredJob->name));
             $cronRegisteredJob->cronJob->onCronTick();
         });

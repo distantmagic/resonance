@@ -21,8 +21,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class LlamaCppInfill extends CoroutineCommand
 {
     public function __construct(
-        private JsonSerializer $jsonSerializer,
-        private LlamaCppClient $llamaCppClient,
+        private readonly JsonSerializer $jsonSerializer,
+        private readonly LlamaCppClient $llamaCppClient,
         SwooleConfiguration $swooleConfiguration,
     ) {
         parent::__construct($swooleConfiguration);

@@ -22,13 +22,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 final class StaticPagesMakeEmbeddings extends Command
 {
-    private SQLite3 $embeddingsDatabase;
+    private readonly SQLite3 $embeddingsDatabase;
 
     public function __construct(
-        private JsonSerializer $jsonSerializer,
-        private LlamaCppClient $llamaCppClient,
-        private SQLiteVSSConnectionBuilder $sqliteVSSConnectionBuilder,
-        private StaticPageChunkIterator $staticPageChunkIterator,
+        private readonly JsonSerializer $jsonSerializer,
+        private readonly LlamaCppClient $llamaCppClient,
+        private readonly SQLiteVSSConnectionBuilder $sqliteVSSConnectionBuilder,
+        private readonly StaticPageChunkIterator $staticPageChunkIterator,
     ) {
         parent::__construct();
 

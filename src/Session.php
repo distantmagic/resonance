@@ -37,7 +37,7 @@ readonly class Session
 
     public function __destruct()
     {
-        Event::defer(function () {
+        Event::defer(function (): void {
             $this->redisConnectionPoolRepository->putConnection(
                 $this->sessionConfiguration->redisConnectionPool,
                 $this->redis,

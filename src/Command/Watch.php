@@ -21,13 +21,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 final class Watch extends Command
 {
-    private const THROTTLE_TIME_MS = 10;
-
     private ?Process $process = null;
 
     public function __construct(
-        private ApplicationConfiguration $applicationConfiguration,
-        private LoggerInterface $logger,
+        private readonly ApplicationConfiguration $applicationConfiguration,
+        private readonly LoggerInterface $logger,
     ) {
         parent::__construct();
     }
@@ -84,7 +82,7 @@ final class Watch extends Command
         }
 
         $this->process = new Process(
-            callback: static function (Process $worker) use ($childCommandName) {
+            callback: static function (Process $worker) use ($childCommandName): void {
                 /**
                  * @psalm-suppress InvalidArgument false positive
                  * @psalm-suppress InvalidCast false positive

@@ -25,7 +25,7 @@ use IntlDateFormatter;
 
 #[Singleton(collection: SingletonCollection::StaticPageLayout)]
 #[StaticPageLayout('dm:document')]
-readonly class Document extends Turbo
+final readonly class Document extends Turbo
 {
     private StaticPageBreadcrumbs $breadcrumbs;
     private StaticPageDocumentsMenu $documentsMenu;
@@ -162,7 +162,7 @@ readonly class Document extends Turbo
     /**
      * @return Generator<string>
      */
-    protected function renderRelatedPageReference(StaticPage $staticPage): Generator
+    private function renderRelatedPageReference(StaticPage $staticPage): Generator
     {
         $nextPage = $this->staticPageCollectionAggregate->pagesFollowers->get($staticPage, null);
         $prevPage = $this->staticPageCollectionAggregate->pagesPredecessors->get($staticPage, null);

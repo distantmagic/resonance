@@ -13,9 +13,9 @@ class HttpControllerMetadataException extends LogicException
 {
     public function __construct(
         string $message,
-        private ReflectionMethod $reflectionMethod,
-        private ?ReflectionParameter $parameter = null,
-        private ?ReflectionNamedType $type = null,
+        private readonly ReflectionMethod $reflectionMethod,
+        private readonly ?ReflectionParameter $parameter = null,
+        private readonly ?ReflectionNamedType $type = null,
     ) {
         parent::__construct(sprintf(
             '%s in %s',
@@ -36,12 +36,10 @@ class HttpControllerMetadataException extends LogicException
             return $ret;
         }
 
-        $ret .= sprintf(
+        return $ret.sprintf(
             '(%s$%s)',
             isset($this->type) ? $this->type->getName().' ' : '',
             $this->parameter->getName(),
         );
-
-        return $ret;
     }
 }

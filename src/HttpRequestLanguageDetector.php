@@ -9,7 +9,7 @@ use Swoole\Http\Request;
 use WeakMap;
 
 #[Singleton]
-final class HttpRequestLanguageDetector
+final readonly class HttpRequestLanguageDetector
 {
     /**
      * @var WeakMap<Request, string>

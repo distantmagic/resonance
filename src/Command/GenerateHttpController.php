@@ -26,7 +26,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 final class GenerateHttpController extends Command
 {
-    public function __construct(private Printer $printer)
+    public function __construct(private readonly Printer $printer)
     {
         parent::__construct();
     }

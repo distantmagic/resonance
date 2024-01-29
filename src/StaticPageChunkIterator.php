@@ -77,10 +77,13 @@ readonly class StaticPageChunkIterator implements IteratorAggregate
             }
 
             $textContent = $this->extractNodeTextContent($child);
-
-            if (!empty($textContent) && str_contains($textContent, ' ')) {
-                yield $textContent;
+            if (empty($textContent)) {
+                continue;
             }
+            if (!str_contains($textContent, ' ')) {
+                continue;
+            }
+            yield $textContent;
         }
     }
 }

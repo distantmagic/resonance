@@ -59,7 +59,7 @@ final readonly class SwooleLoggerBridge implements LoggerInterface
             LogLevel::INFO => $this->info($message, $context),
             LogLevel::NOTICE => $this->notice($message, $context),
             LogLevel::WARNING => $this->warning($message, $context),
-            default => throw new InvalidArgumentException('Invalid log level: '.(string) $level),
+            default => throw new InvalidArgumentException('Invalid log level'),
         };
     }
 

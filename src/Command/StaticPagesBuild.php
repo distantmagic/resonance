@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class StaticPagesBuild extends CoroutineCommand
 {
     public function __construct(
-        private StaticPageProcessor $staticPageProcessor,
+        private readonly StaticPageProcessor $staticPageProcessor,
         SwooleConfiguration $swooleConfiguration,
     ) {
         parent::__construct($swooleConfiguration);

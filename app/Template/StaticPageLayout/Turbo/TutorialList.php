@@ -21,7 +21,7 @@ use Generator;
 
 #[Singleton(collection: SingletonCollection::StaticPageLayout)]
 #[StaticPageLayout('dm:tutorial-list')]
-readonly class TutorialList extends Turbo
+final readonly class TutorialList extends Turbo
 {
     private StaticPageBreadcrumbs $breadcrumbs;
 

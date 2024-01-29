@@ -42,7 +42,7 @@ readonly class DoctrineEntityManagerRepository
 
     public function createContextKey(string $name): string
     {
-        return sprintf('%s.%s', __CLASS__, $name);
+        return sprintf('%s.%s', self::class, $name);
     }
 
     public function getEntityManager(Request $request, string $name = 'default'): EntityManagerInterface

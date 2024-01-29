@@ -50,7 +50,7 @@ readonly class DependencyInjectionContainer
         $this->wantedFeatures = new Set();
 
         $this->singletons = new SingletonContainer();
-        $this->singletons->set($this::class, $this);
+        $this->singletons->set(static::class, $this);
     }
 
     /**
@@ -67,7 +67,7 @@ readonly class DependencyInjectionContainer
         /**
          * @var null|array<string,mixed>
          */
-        $parameters = SwooleCoroutineHelper::mustRun(function () use ($function) {
+        $parameters = SwooleCoroutineHelper::mustRun(function () use ($function): array {
             $reflectionFunction = new ReflectionFunction($function);
 
             return $this->makeParameters($reflectionFunction, new DependencyStack());
@@ -154,7 +154,7 @@ readonly class DependencyInjectionContainer
             throw new DependencyInjectionContainerException(sprintf('Expected: %s, got %s', $className, gettype($providedObject)));
         }
 
-        if (is_a($providedObject, $className, true)) {
+        if ($providedObject instanceof $className) {
             return $providedObject;
         }
 

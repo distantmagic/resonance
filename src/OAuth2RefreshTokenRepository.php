@@ -53,7 +53,7 @@ readonly class OAuth2RefreshTokenRepository implements RefreshTokenRepositoryInt
     {
         $this
             ->doctrineEntityManagerRepository
-            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($refreshTokenEntity) {
+            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($refreshTokenEntity): void {
                 $accessToken = $this->entityRepository->findAccessToken(
                     $entityManager,
                     $refreshTokenEntity->getAccessToken()->getIdentifier(),
@@ -81,7 +81,7 @@ readonly class OAuth2RefreshTokenRepository implements RefreshTokenRepositoryInt
     {
         $this
             ->doctrineEntityManagerRepository
-            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($tokenId) {
+            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($tokenId): void {
                 $refreshToken = $this->entityRepository->findRefreshToken($entityManager, $tokenId);
 
                 if ($refreshToken) {

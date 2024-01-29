@@ -39,7 +39,7 @@ readonly class OAuth2AuthCodeRepository implements AuthCodeRepositoryInterface
     {
         return $this
             ->doctrineEntityManagerRepository
-            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($codeId) {
+            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($codeId): bool {
                 return is_null($this->entityRepository->findAuthCode($entityManager, $codeId));
             })
         ;
@@ -49,7 +49,7 @@ readonly class OAuth2AuthCodeRepository implements AuthCodeRepositoryInterface
     {
         $this
             ->doctrineEntityManagerRepository
-            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($authCodeEntity) {
+            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($authCodeEntity): void {
                 $client = $this->entityRepository->findClient(
                     $entityManager,
                     $authCodeEntity->getClient()->getIdentifier(),
@@ -92,7 +92,7 @@ readonly class OAuth2AuthCodeRepository implements AuthCodeRepositoryInterface
     {
         $this
             ->doctrineEntityManagerRepository
-            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($codeId) {
+            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($codeId): void {
                 $accessToken = $this->entityRepository->findAuthCode($entityManager, $codeId);
 
                 if ($accessToken) {

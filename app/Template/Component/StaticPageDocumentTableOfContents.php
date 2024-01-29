@@ -9,7 +9,7 @@ use Distantmagic\Resonance\CommonMarkTableOfContentsLink;
 use Ds\PriorityQueue;
 use Generator;
 
-readonly class StaticPageDocumentTableOfContents extends Component
+final readonly class StaticPageDocumentTableOfContents extends Component
 {
     public function __construct(
         private string $baseClassName,

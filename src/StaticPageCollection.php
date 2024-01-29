@@ -54,7 +54,7 @@ readonly class StaticPageCollection
             $this->assertPageExists($staticPages, $next);
         }
 
-        $this->staticPages->sort(function (StaticPage $a, StaticPage $b) {
+        $this->staticPages->sort(function (StaticPage $a, StaticPage $b): int {
             $aPriority = $this->getPriority($a->getBasename());
             $bPriority = $this->getPriority($b->getBasename());
 

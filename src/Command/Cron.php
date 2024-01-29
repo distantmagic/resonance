@@ -22,10 +22,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class Cron extends CoroutineCommand
 {
     public function __construct(
-        private CronJobAggregate $cronJobAggregate,
-        private LoggerInterface $logger,
+        private readonly CronJobAggregate $cronJobAggregate,
+        private readonly LoggerInterface $logger,
         SwooleConfiguration $swooleConfiguration,
-        private TickTimerScheduler $tickTimerScheduler,
+        private readonly TickTimerScheduler $tickTimerScheduler,
     ) {
         parent::__construct($swooleConfiguration);
     }

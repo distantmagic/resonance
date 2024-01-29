@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class Embedding extends LlamaCppGenerate
 {
     public function __construct(
-        private JsonSerializer $jsonSerializer,
+        private readonly JsonSerializer $jsonSerializer,
         LlamaCppClient $llamaCppClient,
         SwooleConfiguration $swooleConfiguration,
     ) {

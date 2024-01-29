@@ -20,7 +20,7 @@ readonly class EventDispatcher implements EventDispatcherInterface
 
     public function collect(EventInterface $event): SwooleFutureResult
     {
-        $future = new SwooleFuture(function (EventInterface $event) {
+        $future = new SwooleFuture(function (EventInterface $event): array {
             return $this->doDispatch($event);
         });
 
@@ -29,7 +29,7 @@ readonly class EventDispatcher implements EventDispatcherInterface
 
     public function dispatch(EventInterface $event): void
     {
-        Event::defer(function () use ($event) {
+        Event::defer(function () use ($event): void {
             $this->doDispatch($event);
         });
     }

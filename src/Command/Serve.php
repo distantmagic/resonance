@@ -30,16 +30,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 final class Serve extends Command
 {
-    private HttpServer|WebSocketServer $server;
+    private readonly HttpServer|WebSocketServer $server;
 
     public function __construct(
-        private ApplicationConfiguration $applicationConfiguration,
-        private EventDispatcherInterface $eventDispatcher,
-        private HttpResponderAggregate $httpResponderAggregate,
-        private LoggerInterface $logger,
-        private ServerPipeMessageDispatcher $serverPipeMessageDispatcher,
-        private SwooleConfiguration $swooleConfiguration,
-        private ?WebSocketServerController $webSocketServerController = null,
+        private readonly ApplicationConfiguration $applicationConfiguration,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly HttpResponderAggregate $httpResponderAggregate,
+        private readonly LoggerInterface $logger,
+        private readonly ServerPipeMessageDispatcher $serverPipeMessageDispatcher,
+        private readonly SwooleConfiguration $swooleConfiguration,
+        private readonly ?WebSocketServerController $webSocketServerController = null,
     ) {
         parent::__construct();
 
@@ -96,16 +96,20 @@ final class Serve extends Command
         $this->eventDispatcher->dispatch(new HttpServerBeforeStop($this->server));
     }
 
-    private function onClose(Server $server, int $fd): void
+    private function onClose(int $fd): void
     {
         $this->webSocketServerController?->onClose($fd);
     }
 
     private function onHandshake(Request $request, Response $response): void
     {
-        if ($this->webSocketServerController && $this->server instanceof WebSocketServer) {
-            $this->webSocketServerController->onHandshake($this->server, $request, $response);
+        if (!$this->webSocketServerController) {
+            return;
         }
+        if (!$this->server instanceof WebSocketServer) {
+            return;
+        }
+        $this->webSocketServerController->onHandshake($this->server, $request, $response);
     }
 
     private function onStart(Server $server): void

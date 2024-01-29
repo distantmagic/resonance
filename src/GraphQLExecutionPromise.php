@@ -15,13 +15,13 @@ class GraphQLExecutionPromise implements JsonSerializable
     private ?ExecutionResult $executionResult = null;
 
     public function __construct(
-        private ApplicationConfiguration $applicationConfiguration,
-        private Promise $promise,
+        private readonly ApplicationConfiguration $applicationConfiguration,
+        private readonly Promise $promise,
     ) {}
 
     public function getExecutionResult(): ExecutionResult
     {
-        $this->promise->then(function (ExecutionResult $executionResult) {
+        $this->promise->then(function (ExecutionResult $executionResult): void {
             $this->executionResult = $executionResult;
         });
 

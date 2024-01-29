@@ -17,7 +17,7 @@ abstract class CoroutineCommand extends SymfonyCommand
      * the DI.
      */
     public function __construct(
-        private SwooleConfiguration $swooleConfiguration,
+        private readonly SwooleConfiguration $swooleConfiguration,
     ) {
         parent::__construct();
     }

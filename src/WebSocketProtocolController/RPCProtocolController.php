@@ -114,10 +114,10 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
             $this->onJsonMessage($server, $frame, $decodedRpcMessage);
         } catch (JsonException $exception) {
             $this->onProtocolError($server, $frame, 'Invalid JSON');
-            $this->onException($server, $frame, $exception);
+            $this->onException($exception);
         } catch (WebSocketProtocolException $exception) {
             $this->onProtocolError($server, $frame, $exception->getMessage());
-            $this->onException($server, $frame, $exception);
+            $this->onException($exception);
         }
     }
 
@@ -151,7 +151,7 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
         return $this->connectionHandles->get($frame->fd);
     }
 
-    private function onException(Server $server, Frame $frame, Throwable $exception): void
+    private function onException(Throwable $exception): void
     {
         $this->logger->debug((string) $exception);
     }

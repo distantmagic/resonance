@@ -20,7 +20,7 @@ use Generator;
 
 #[Singleton(collection: SingletonCollection::StaticPageLayout)]
 #[StaticPageLayout('dm:page')]
-readonly class Page extends Turbo
+final readonly class Page extends Turbo
 {
     public function __construct(
         EsbuildMetaBuilder $esbuildMetaBuilder,

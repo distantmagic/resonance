@@ -24,7 +24,7 @@ use IntlDateFormatter;
 
 #[Singleton(collection: SingletonCollection::StaticPageLayout)]
 #[StaticPageLayout('dm:tutorial')]
-readonly class Tutorial extends Turbo
+final readonly class Tutorial extends Turbo
 {
     private StaticPageBreadcrumbs $breadcrumbs;
     private IntlDateFormatter $intlDateFormatter;

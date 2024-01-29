@@ -80,7 +80,7 @@ readonly class OAuth2ClaimReader implements AuthenticatedUserStoreInterface
 
         return $this
             ->doctrineEntityManagerRepository
-            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($serverRequest) {
+            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($serverRequest): OAuth2Claim {
                 $accessTokenId = $serverRequest->getAttribute('oauth_access_token_id');
 
                 if (!is_string($accessTokenId)) {

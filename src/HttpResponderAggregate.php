@@ -112,9 +112,9 @@ readonly class HttpResponderAggregate
                 routeVars: $routeMatch,
                 status: HttpRouteMatchStatus::Found,
             );
-        } catch (MethodNotAllowedException $methodNotAllowed) {
+        } catch (MethodNotAllowedException) {
             return new HttpRouteMatch(HttpRouteMatchStatus::MethodNotAllowed);
-        } catch (ResourceNotFoundException $resourceNotFound) {
+        } catch (ResourceNotFoundException) {
             return new HttpRouteMatch(HttpRouteMatchStatus::NotFound);
         }
     }

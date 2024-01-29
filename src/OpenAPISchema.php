@@ -8,7 +8,7 @@ use JsonSerializable;
 
 readonly class OpenAPISchema implements JsonSerializable
 {
-    public const VERSION = '3.1.0';
+    final public const VERSION = '3.1.0';
 
     public OpenAPISchemaInfo $openAPISchemaInfo;
     public OpenAPISchemaPaths $openAPISchemaPaths;

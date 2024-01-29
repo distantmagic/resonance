@@ -54,7 +54,7 @@ readonly class DoctrineEntityRouteParameterExtractor extends OpenAPIRouteParamet
     ): array {
         return $this
             ->doctrineEntityManagerRepository
-            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($attribute, $parameterClass) {
+            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($attribute, $parameterClass): array {
                 return $this->extractWithEntityManager($attribute, $entityManager, $parameterClass);
             })
         ;

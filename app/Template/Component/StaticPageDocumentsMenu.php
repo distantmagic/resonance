@@ -12,7 +12,7 @@ use Ds\Map;
 use Generator;
 use Tree\Node\Node;
 
-readonly class StaticPageDocumentsMenu extends Component
+final readonly class StaticPageDocumentsMenu extends Component
 {
     /**
      * @param Map<string, StaticPage> $staticPages

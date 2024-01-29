@@ -22,8 +22,8 @@ class PHPFileReflectionClassAttributeIterator implements IteratorAggregate
      * @param class-string<TAttribute>          $attributeClass
      */
     public function __construct(
-        private iterable $reflectionClassIterator,
-        private string $attributeClass,
+        private readonly iterable $reflectionClassIterator,
+        private readonly string $attributeClass,
     ) {}
 
     /**

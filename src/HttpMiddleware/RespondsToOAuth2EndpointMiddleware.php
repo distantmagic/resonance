@@ -41,14 +41,11 @@ readonly class RespondsToOAuth2EndpointMiddleware extends HttpMiddleware
         Attribute $attribute,
         HttpInterceptableInterface|HttpResponderInterface $next,
     ): HttpInterceptableInterface|HttpResponderInterface {
-        switch ($attribute->endpoint) {
-            case OAuth2Endpoint::ClientScopeConsentForm:
-                $this
-                    ->authorizationCodeFlowController
-                    ->prepareConsentRequest($request, $response)
-                ;
-
-                break;
+        if (OAuth2Endpoint::ClientScopeConsentForm === $attribute->endpoint) {
+            $this
+                ->authorizationCodeFlowController
+                ->prepareConsentRequest($request, $response)
+            ;
         }
 
         return $next;
