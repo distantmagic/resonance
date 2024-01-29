@@ -55,12 +55,14 @@ abstract readonly class Turbo extends StaticPageLayout
         $renderedStylesheets = $this->renderStylesheets($staticPage, $esbuildMetaEntryPoints);
         $renderedPreloads = $esbuildPreloadsRenderer->render();
 
+        $canonicalUrl = $this->staticPageConfiguration->baseUrl.$staticPage->getHref();
         $currentYear = date('Y');
 
         yield <<<HTML
         <!DOCTYPE html>
         <html lang="en">
         <head>
+            <link rel="canonical" href="{$canonicalUrl}">
             <meta charset="utf-8">
             <meta name="description" content="{$this->filters->escape($staticPage->frontMatter->description)}">
             <meta name="viewport" content="width=device-width, initial-scale=1">

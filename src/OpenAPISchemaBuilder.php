@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\HttpResponder\Json;
 
 #[Singleton]
 readonly class OpenAPISchemaBuilder
@@ -12,6 +13,7 @@ readonly class OpenAPISchemaBuilder
     public function __construct(
         private ApplicationConfiguration $applicationConfiguration,
         private HttpControllerReflectionMethodCollection $httpControllerReflectionMethodCollection,
+        private JsonSerializer $jsonSerializer,
         private OpenAPIConfiguration $openAPIConfiguration,
         private OpenAPIMetadataResponseExtractorAggregate $openAPIMetadataResponseExtractorAggregate,
         private OpenAPIMetadataSecurityRequirementExtractorAggregate $openAPIMetadataSecurityRequirementExtractorAggregate,
@@ -37,5 +39,13 @@ readonly class OpenAPISchemaBuilder
             $this->openAPISchemaComponentsSecuritySchemes,
             $schemaSymbol,
         );
+    }
+
+    public function toJsonResponse(OpenAPISchemaSymbolInterface $schemaSymbol): Json
+    {
+        $schema = $this->buildSchema($schemaSymbol);
+        $serialized = $this->jsonSerializer->serialize($schema);
+
+        return new Json($serialized);
     }
 }

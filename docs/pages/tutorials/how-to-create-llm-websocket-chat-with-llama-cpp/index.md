@@ -188,7 +188,7 @@ The above means your application will support `llm_chat_prompt` and
 ### WebSocket Message Responder
 
 Now, we need to register a WebSocket responder that will run every time 
-someone sends 'llama_chat_prompt' message to the server. 
+someone sends `llama_chat_prompt` message to the server. 
 
 It will then use `LlamaCppClient` to fetch tokens from 
 [llama.cpp](https://github.com/ggerganov/llama.cpp) server and forward them
