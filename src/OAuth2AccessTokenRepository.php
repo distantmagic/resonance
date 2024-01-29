@@ -86,7 +86,7 @@ readonly class OAuth2AccessTokenRepository implements AccessTokenRepositoryInter
                 $userId = $accessTokenEntity->getUserIdentifier();
                 $user = null;
 
-                if ($userId) {
+                if (!is_null($userId)) {
                     $user = $this->entityRepository->findUser(
                         $entityManager,
                         $userId,

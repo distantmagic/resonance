@@ -51,7 +51,7 @@ readonly class PHPFileReflectionClassIterator implements IteratorAggregate
     {
         $namespace = $this->readNamespace($file);
 
-        if (!$namespace) {
+        if (is_null($namespace)) {
             return null;
         }
 

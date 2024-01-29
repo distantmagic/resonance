@@ -51,7 +51,7 @@ final class HttpRequestLanguageDetector
         foreach ($acceptHeader->sorted as $language) {
             $primaryLanguage = $this->extractPrimaryLanguageFromString($language);
 
-            if ($primaryLanguage) {
+            if (is_string($primaryLanguage)) {
                 return $primaryLanguage;
             }
         }

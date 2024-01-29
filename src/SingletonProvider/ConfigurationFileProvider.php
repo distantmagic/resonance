@@ -27,7 +27,7 @@ final readonly class ConfigurationFileProvider extends SingletonProvider
             scanner_mode: INI_SCANNER_TYPED,
         );
 
-        if (!$iniConfig) {
+        if (false === $iniConfig) {
             throw new RuntimeException('Unable to parse configuration file: '.$filename);
         }
 

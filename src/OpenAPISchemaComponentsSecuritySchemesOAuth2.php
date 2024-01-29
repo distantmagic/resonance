@@ -63,7 +63,7 @@ readonly class OpenAPISchemaComponentsSecuritySchemesOAuth2 implements JsonSeria
                 default => $grantIdentifier,
             };
 
-            if ($openAPIGrantIdentifier) {
+            if (is_string($openAPIGrantIdentifier)) {
                 $flows[$openAPIGrantIdentifier] = $serializedFlow;
             }
         }

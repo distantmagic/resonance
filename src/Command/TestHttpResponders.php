@@ -13,14 +13,13 @@ use Distantmagic\Resonance\HttpResponderAggregate;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\InspectableSwooleResponse;
 use Distantmagic\Resonance\JsonSchemaValidator;
+use Distantmagic\Resonance\SwooleCoroutineHelper;
 use Distantmagic\Resonance\TestableHttpResponseCollection;
 use Ds\Map;
 use RuntimeException;
 use Swoole\Http\Request;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use function Swoole\Coroutine\run;
 
 #[ConsoleCommand(
     name: 'test:http-responders',
@@ -52,27 +51,19 @@ final class TestHttpResponders extends Command
                     ->get($testableHttpResponse)
                 ;
 
-                /**
-                 * @var bool
-                 */
-                $coroutineResult = run(function () use (
-                    &$isValid,
+                $isValid = $isValid and SwooleCoroutineHelper::mustRun(function () use (
                     $output,
                     $httpResponder,
                     $testableHttpResponse,
                     $potentialResponses
-                ) {
-                    $isValid = $isValid and $this->testResponses(
+                ): bool {
+                    return $this->testResponses(
                         $output,
                         $httpResponder,
                         $testableHttpResponse,
                         $potentialResponses,
                     );
                 });
-
-                if (!$coroutineResult) {
-                    throw new RuntimeException('Unable to start coroutine loop');
-                }
             }
         }
 
@@ -103,7 +94,7 @@ final class TestHttpResponders extends Command
 
         if (!$respondsWith) {
             throw new RuntimeException(sprintf(
-                'Unexpected response status code: %d',
+                'Unhandled response status code: %d',
                 $response->mockStatus,
             ));
         }

@@ -12,7 +12,12 @@ readonly class FrontMatter extends InputValidatedData
 {
     /**
      * @param array<FrontMatterCollectionReference> $collections
+     * @param non-empty-string                      $description
+     * @param non-empty-string                      $layout
+     * @param null|non-empty-string                 $next
+     * @param null|non-empty-string                 $parent
      * @param array<string>                         $registerStylesheets
+     * @param non-empty-string                      $title
      */
     public function __construct(
         public array $collections,

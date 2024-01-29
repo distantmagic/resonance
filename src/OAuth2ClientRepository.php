@@ -60,7 +60,7 @@ readonly class OAuth2ClientRepository implements ClientRepositoryInterface
         }
 
         if (($client instanceof OAuth2SecretAwareClient)) {
-            if (!$clientSecret) {
+            if (is_null($clientSecret)) {
                 return $client->isSecretRequired();
             }
 
@@ -70,7 +70,7 @@ readonly class OAuth2ClientRepository implements ClientRepositoryInterface
         }
 
         if (($client instanceof OAuth2GrantAwareClient)) {
-            if (!$grantType) {
+            if (is_null($grantType)) {
                 return $client->isGrantTypeRequired();
             }
 

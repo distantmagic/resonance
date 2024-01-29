@@ -143,7 +143,7 @@ readonly class LlamaCppClient
             'Content-Type: application/json',
         ];
 
-        if ($this->llamaCppConfiguration->apiKey) {
+        if (is_string($this->llamaCppConfiguration->apiKey)) {
             $headers[] = sprintf('Authorization: Bearer %s', $this->llamaCppConfiguration->apiKey);
         }
 
@@ -162,7 +162,7 @@ readonly class LlamaCppClient
         $channel = new Channel(1);
         $requestData = json_encode($request);
 
-        $cid = go(function () use ($channel, $path, $requestData) {
+        SwooleCoroutineHelper::mustGo(function () use ($channel, $path, $requestData) {
             $curlHandle = $this->createCurlHandle();
 
             try {
@@ -177,7 +177,7 @@ readonly class LlamaCppClient
 
                     return 0;
                 });
-                if (!curl_exec($curlHandle)) {
+                if (false === curl_exec($curlHandle)) {
                     $curlErrno = curl_errno($curlHandle);
 
                     if (CURLE_WRITE_ERROR !== $curlErrno) {
@@ -192,10 +192,6 @@ readonly class LlamaCppClient
                 $channel->close();
             }
         });
-
-        if (!is_int($cid)) {
-            throw new RuntimeException('Unable to start a coroutine');
-        }
 
         /**
          * @var SwooleChannelIterator<string>

@@ -11,6 +11,7 @@ use Distantmagic\Resonance\InputValidator;
 use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\StaticPageContentType;
 use Generator;
+use RuntimeException;
 
 /**
  * @extends InputValidator<FrontMatter, object{
@@ -32,16 +33,28 @@ readonly class FrontMatterValidator extends InputValidator
     {
         $collections = iterator_to_array($this->normalizeDataCollections($data->collections));
 
+        $description = trim($data->description);
+
+        if (empty($description)) {
+            throw new RuntimeException('Description cannot be empty');
+        }
+
+        $title = trim($data->title);
+
+        if (empty($title)) {
+            throw new RuntimeException('Title cannot be empty');
+        }
+
         return new FrontMatter(
             collections: $collections,
             contentType: StaticPageContentType::from($data->content_type),
-            description: trim($data->description),
+            description: $description,
             isDraft: $data->draft,
             layout: $data->layout,
             next: $data->next ?? null,
             parent: $data->parent ?? null,
             registerStylesheets: $data->register_stylesheets,
-            title: trim($data->title),
+            title: $title,
         );
     }
 

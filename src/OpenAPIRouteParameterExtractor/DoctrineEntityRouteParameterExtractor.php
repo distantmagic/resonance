@@ -76,7 +76,7 @@ readonly class DoctrineEntityRouteParameterExtractor extends OpenAPIRouteParamet
             ->getTypeOfField($attribute->lookupField)
         ;
 
-        if (!$parameterFieldType) {
+        if (is_null($parameterFieldType)) {
             throw new RuntimeException('Unable do determine Doctrine parameter field type');
         }
 

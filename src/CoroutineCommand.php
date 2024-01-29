@@ -7,9 +7,6 @@ namespace Distantmagic\Resonance;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Throwable;
-
-use function Swoole\Coroutine\run;
 
 abstract class CoroutineCommand extends SymfonyCommand
 {
@@ -32,32 +29,8 @@ abstract class CoroutineCommand extends SymfonyCommand
             'log_level' => $this->swooleConfiguration->logLevel,
         ]);
 
-        /**
-         * @var null|Throwable
-         */
-        $exception = null;
-
-        $result = 0;
-
-        /**
-         * @var bool
-         */
-        $coroutineResult = run(function () use (&$exception, $input, $output, &$result) {
-            try {
-                $result = $this->executeInCoroutine($input, $output);
-            } catch (Throwable $throwable) {
-                $exception = $throwable;
-            }
+        return SwooleCoroutineHelper::mustRun(function () use ($input, $output): int {
+            return $this->executeInCoroutine($input, $output);
         });
-
-        if ($exception) {
-            throw $exception;
-        }
-
-        if (!$coroutineResult) {
-            return Command::FAILURE;
-        }
-
-        return $result;
     }
 }

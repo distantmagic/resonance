@@ -62,7 +62,7 @@ readonly class OAuth2AuthCodeRepository implements AuthCodeRepositoryInterface
                 $userId = $authCodeEntity->getUserIdentifier();
                 $user = null;
 
-                if ($userId) {
+                if (!is_null($userId)) {
                     $user = $this->entityRepository->findUser(
                         $entityManager,
                         $userId,

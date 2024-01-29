@@ -43,7 +43,7 @@ readonly class StaticPageForestGenerator implements IteratorAggregate
             $node = new Node($staticPage);
             $nodes->put($staticPage, $node);
 
-            if (empty($staticPage->frontMatter->parent)) {
+            if (is_null($staticPage->frontMatter->parent)) {
                 $heads->add($node);
             }
         }
@@ -51,7 +51,7 @@ readonly class StaticPageForestGenerator implements IteratorAggregate
         foreach ($this->staticPagesCollection as $staticPage) {
             $parentBasename = $staticPage->frontMatter->parent;
 
-            if (!empty($parentBasename)) {
+            if (!is_null($parentBasename)) {
                 $nodes
                     ->get($this->getStaticPage($parentBasename))
                     ->addChild($nodes->get($staticPage))

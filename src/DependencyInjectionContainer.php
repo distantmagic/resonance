@@ -14,9 +14,6 @@ use ReflectionClass;
 use ReflectionFunction;
 use ReflectionFunctionAbstract;
 use Swoole\Event;
-use Throwable;
-
-use function Swoole\Coroutine\run;
 
 readonly class DependencyInjectionContainer
 {
@@ -68,38 +65,13 @@ readonly class DependencyInjectionContainer
     public function call(Closure $function): mixed
     {
         /**
-         * Bringing this reference out of the coroutine event loops allows the
-         * console component to catch that exception and format it.
-         *
-         * @var null|Throwable
-         */
-        $exception = null;
-
-        /**
          * @var null|array<string,mixed>
          */
-        $parameters = null;
+        $parameters = SwooleCoroutineHelper::mustRun(function () use ($function) {
+            $reflectionFunction = new ReflectionFunction($function);
 
-        /**
-         * @var bool $coroutineResult
-         */
-        $coroutineResult = run(function () use (&$exception, $function, &$parameters) {
-            try {
-                $reflectionFunction = new ReflectionFunction($function);
-
-                $parameters = $this->makeParameters($reflectionFunction, new DependencyStack());
-            } catch (Throwable $throwable) {
-                $exception = $throwable;
-            }
+            return $this->makeParameters($reflectionFunction, new DependencyStack());
         });
-
-        if ($exception) {
-            throw $exception;
-        }
-
-        if (!$coroutineResult) {
-            throw new DependencyInjectionContainerException('Unable to start event loop');
-        }
 
         if (!is_array($parameters)) {
             throw new DependencyInjectionContainerException('Unable to build function parameters');
@@ -121,40 +93,15 @@ readonly class DependencyInjectionContainer
      */
     public function make(string $className): object
     {
-        /**
-         * @var null|Throwable
-         */
-        $exception = null;
-
-        /**
-         * @var null|TSingleton
-         */
-        $ret = null;
-
-        /**
-         * @var bool $coroutineResult
-         */
-        $coroutineResult = run(function () use ($className, &$exception, &$ret) {
+        $ret = SwooleCoroutineHelper::mustRun(function () use ($className): object {
             $stack = new DependencyStack();
 
-            try {
-                if ($this->dependencyProviders->hasKey($className)) {
-                    $ret = $this->makeSingleton($className, $stack);
-                } else {
-                    $ret = $this->makeClass($className, $stack);
-                }
-            } catch (Throwable $throwable) {
-                $exception = $throwable;
+            if ($this->dependencyProviders->hasKey($className)) {
+                return $this->makeSingleton($className, $stack);
             }
+
+            return $this->makeClass($className, $stack);
         });
-
-        if ($exception) {
-            throw $exception;
-        }
-
-        if (!$coroutineResult) {
-            throw new DependencyInjectionContainerException('Unable to start event loop');
-        }
 
         return $this->assertClass($className, $ret);
     }

@@ -8,8 +8,6 @@ use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use Swoole\Runtime;
 use Symfony\Component\Console\Application;
 
-use function Swoole\Coroutine\run;
-
 final readonly class DoctrineConsoleRunner
 {
     public static function run(DependencyInjectionContainer $container): never
@@ -24,14 +22,11 @@ final readonly class DoctrineConsoleRunner
 
             ConsoleRunner::addCommands($cli, $entityManagerProvider);
 
-            /**
-             * @var bool
-             */
-            $coroutineResult = run(static function () use ($cli) {
-                $cli->run();
+            $errorCode = SwooleCoroutineHelper::mustRun(static function () use ($cli): int {
+                return $cli->run();
             });
 
-            exit((int) !$coroutineResult);
+            exit($errorCode);
         });
     }
 

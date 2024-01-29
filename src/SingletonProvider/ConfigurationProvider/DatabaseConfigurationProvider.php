@@ -23,7 +23,7 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
  *         pool_prefill: bool,
  *         pool_size: int,
  *         port: int,
- *         unix_socket: string,
+ *         unix_socket: null|non-empty-string,
  *         username: non-empty-string,
  *     }>
  * >

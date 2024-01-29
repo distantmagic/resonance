@@ -32,12 +32,12 @@ final readonly class DatabaseConnectionPoolRepositoryProvider extends SingletonP
         foreach ($this->databaseConfiguration->connectionPoolConfiguration as $name => $connectionPoolConfiguration) {
             $pdoConfig = new PDOConfig();
 
-            if ($connectionPoolConfiguration->host) {
+            if (is_string($connectionPoolConfiguration->host)) {
                 $pdoConfig->withHost($connectionPoolConfiguration->host);
                 $pdoConfig->withPort($connectionPoolConfiguration->port);
             }
 
-            if ($connectionPoolConfiguration->unixSocket) {
+            if (is_string($connectionPoolConfiguration->unixSocket)) {
                 $pdoConfig->withUnixSocket($connectionPoolConfiguration->unixSocket);
             }
 

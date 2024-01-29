@@ -9,8 +9,11 @@ use SensitiveParameter;
 readonly class DatabaseConnectionPoolConfiguration
 {
     /**
-     * @param non-empty-string $host
-     * @param non-empty-string $username
+     * @psalm-taint-source file $unixSocket
+     *
+     * @param non-empty-string      $host
+     * @param null|non-empty-string $unixSocket
+     * @param non-empty-string      $username
      */
     public function __construct(
         #[SensitiveParameter]
