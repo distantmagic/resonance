@@ -119,6 +119,9 @@ final readonly class WebSocketServerController implements ServerPipeMessageHandl
             return;
         }
 
+        /**
+         * @var int $fd
+         */
         $fd = $request->fd;
 
         $this->protocolControllers->put($fd, $controllerResolution->controller);
@@ -163,7 +166,13 @@ final readonly class WebSocketServerController implements ServerPipeMessageHandl
     public function onOpen(Server $server, Request $request): void
     {
         $this->logger->error(self::MESSAGE_UNEXPECTED_ONOPEN);
-        $server->disconnect($request->fd, SWOOLE_WEBSOCKET_CLOSE_SERVER_ERROR);
+
+        /**
+         * @var int $fd
+         */
+        $fd = $request->fd;
+
+        $server->disconnect($fd, SWOOLE_WEBSOCKET_CLOSE_SERVER_ERROR);
     }
 
     private function isSecWebSocketKeyValid(string $secWebSocketKey): bool

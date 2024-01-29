@@ -229,6 +229,7 @@ final readonly class LlmChatPromptResponder extends WebSocketRPCResponder
     {
         return new JsonSchema([
             'type' => 'object',
+            'additionalProperties' => false,
             'properties' => [
                 'prompt' => [
                     'minLength' => 1,
@@ -238,7 +239,6 @@ final readonly class LlmChatPromptResponder extends WebSocketRPCResponder
             'required' => [
                 'prompt',
             ],
-            'additionalProperties' => false,
         ]);
     }
 

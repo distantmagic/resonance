@@ -55,6 +55,11 @@ readonly class PsrServerRequestConverter
             $serverUppercase[mb_strtoupper((string) $key)] = $value;
         }
 
+        /**
+         * @var false|string $requestContent
+         */
+        $requestContent = $request->getContent();
+
         $serverRequest = $this->serverRequestCreator->fromArrays(
             $serverUppercase,
             is_array($request->header) ? $request->header : [],
@@ -62,7 +67,7 @@ readonly class PsrServerRequestConverter
             is_array($request->get) ? $request->get : [],
             is_array($request->post) ? $request->post : [],
             is_array($request->files) ? $request->files : [],
-            $request->getContent() ?: null,
+            $requestContent ?: null,
         );
 
         $this->serverRequests->offsetSet($request, $serverRequest);

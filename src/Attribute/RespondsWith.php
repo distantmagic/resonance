@@ -10,7 +10,7 @@ use Distantmagic\Resonance\ContentType;
 use Distantmagic\Resonance\JsonSchema;
 
 #[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_CLASS)]
-final readonly class GivesHttpResponse extends BaseAttribute
+final readonly class RespondsWith extends BaseAttribute
 {
     /**
      * @param null|non-empty-string $description

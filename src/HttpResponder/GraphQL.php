@@ -29,6 +29,9 @@ final readonly class GraphQL extends HttpResponder
 
     public function respond(Request $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
     {
+        /**
+         * @var false|string $requestContent
+         */
         $requestContent = $request->getContent();
 
         if (empty($requestContent)) {

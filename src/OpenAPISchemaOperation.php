@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Distantmagic\Resonance\Attribute\GivesHttpResponse;
+use Distantmagic\Resonance\Attribute\RespondsWith;
 use Distantmagic\Resonance\HttpResponder\HttpController;
 use LogicException;
 use ReflectionAttribute;
@@ -204,7 +204,7 @@ readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterfa
             throw new LogicException(sprintf(
                 'Unable to infer response types from "%s". To resolve that you can add "%s" attributes',
                 $httpControllerReflectionClass->getName(),
-                GivesHttpResponse::class,
+                RespondsWith::class,
             ));
         }
 
