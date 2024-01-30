@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\WantsFeature;
 use Ds\Set;
 use Generator;
 use IteratorAggregate;
@@ -24,27 +26,25 @@ readonly class DependencyProviderIterator implements IteratorAggregate
     {
         foreach ($this->phpProjectFiles->findByAttribute(Singleton::class) as $reflectionAttribute) {
             $providedClassName = $reflectionAttribute->attribute->provides ?? $reflectionAttribute->reflectionClass->getName();
+            $reflectionClassAttributeManager = new ReflectionClassAttributeManager($reflectionAttribute->reflectionClass);
 
             yield $providedClassName => new DependencyProvider(
                 collection: $reflectionAttribute->attribute->collection,
-                grantsFeature: $reflectionAttribute->attribute->grantsFeature,
+                grantsFeature: $reflectionClassAttributeManager->findAttribute(GrantsFeature::class)?->feature,
                 providedClassName: $providedClassName,
                 providerReflectionClass: $reflectionAttribute->reflectionClass,
-                requiredCollections: $this->findRequiredCollections($reflectionAttribute),
-                wantsFeature: $reflectionAttribute->attribute->wantsFeature,
+                requiredCollections: $this->findRequiredCollections($reflectionClassAttributeManager),
+                wantsFeature: $reflectionClassAttributeManager->findAttribute(WantsFeature::class)?->feature,
             );
         }
     }
 
     /**
-     * @param PHPFileReflectionClassAttribute<object,Singleton> $reflectionAttribute
-     *
      * @return Set<SingletonCollectionInterface> $requiredCollections
      */
-    private function findRequiredCollections(PHPFileReflectionClassAttribute $reflectionAttribute): Set
+    private function findRequiredCollections(ReflectionClassAttributeManager $reflectionClassAttributeManager): Set
     {
-        $reflectionAttributeManager = new ReflectionClassAttributeManager($reflectionAttribute->reflectionClass);
-        $requiredCollectionAttributes = $reflectionAttributeManager->findAttributes(RequiresSingletonCollection::class);
+        $requiredCollectionAttributes = $reflectionClassAttributeManager->findAttributes(RequiresSingletonCollection::class);
 
         /**
          * @var Set<SingletonCollectionInterface> $requiredCollections

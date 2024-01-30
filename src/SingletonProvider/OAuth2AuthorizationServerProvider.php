@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\OAuth2Configuration;
@@ -19,10 +20,8 @@ use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 /**
  * @template-extends SingletonProvider<AuthorizationServer>
  */
-#[Singleton(
-    grantsFeature: Feature::OAuth2,
-    provides: AuthorizationServer::class,
-)]
+#[GrantsFeature(Feature::OAuth2)]
+#[Singleton(provides: AuthorizationServer::class)]
 final readonly class OAuth2AuthorizationServerProvider extends SingletonProvider
 {
     public function __construct(

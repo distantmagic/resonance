@@ -63,6 +63,7 @@ namespace App\WebSocketRPCResponder;
 use App\RPCMethod;
 use Distantmagic\Resonance\Attribute\RespondsToWebSocketRPC;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\RPCRequest;
@@ -73,10 +74,8 @@ use Distantmagic\Resonance\WebSocketConnection;
 use Distantmagic\Resonance\WebSocketRPCResponder;
 
 #[RespondsToWebSocketRPC(RPCMethod::Echo)]
-#[Singleton(
-    collection: SingletonCollection::WebSocketRPCResponder,
-    wantsFeature: Feature::WebSocket,
-)]
+#[Singleton(collection: SingletonCollection::WebSocketRPCResponder)]
+#[WantsFeature(Feature::WebSocket)]
 final readonly class EchoResponder extends WebSocketRPCResponder
 {
     public function getSchema(): JsonSchema
@@ -114,16 +113,15 @@ For example:
 namespace App;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\RPCNotification;
 use Distantmagic\Resonance\WebSocketAuthResolution;
 use Distantmagic\Resonance\WebSocketConnection;
 use Distantmagic\Resonance\WebSocketRPCConnectionControllerInterface;
 
-#[Singleton(
-    provides: WebSocketRPCConnectionControllerInterface::class,
-    wantsFeature: Feature::WebSocket,
-)]
+#[Singleton(provides: WebSocketRPCConnectionControllerInterface::class)]
+#[WantsFeature(Feature::WebSocket)]
 readonly class WebSocketRPCConnectionController implements WebSocketRPCConnectionControllerInterface
 {
     public function onClose(

@@ -101,7 +101,7 @@ readonly class DoctrineConnectionRepository extends EventListener
      *
      * @param HttpResponseReady $event
      */
-    public function handle(EventInterface $event): void
+    public function handle(object $event): void
     {
         if (!$this->connections->offsetExists($event->request)) {
             return;

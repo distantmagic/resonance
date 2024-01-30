@@ -8,7 +8,6 @@ use Distantmagic\Resonance\Attribute\ListensTo;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\DatabaseConfiguration;
 use Distantmagic\Resonance\Event\SQLQueryBeforeExecute;
-use Distantmagic\Resonance\EventInterface;
 use Distantmagic\Resonance\EventListener;
 use Distantmagic\Resonance\SingletonCollection;
 use Doctrine\SqlFormatter\SqlFormatter;
@@ -33,7 +32,7 @@ final readonly class SQLQueryLogger extends EventListener
     /**
      * @param SQLQueryBeforeExecute $event
      */
-    public function handle(EventInterface $event): void
+    public function handle(object $event): void
     {
         $this->logger->debug($this->sqlFormatter->format($event->sql));
     }

@@ -45,9 +45,8 @@ enum RPCMethod: string implements RPCMethodInterface
 ```
 
 :::note
-Do not forget about `wantsFeature: Feature::WebSocket` in the `Singleton`
-annotation. If added to any singleton, it tells Resonance to enable the 
-WebSocket server.
+Do not forget about `#[WantsFeature(Feature::WebSocket)` attribute. If added to 
+any singleton, it tells Resonance to enable the WebSocket server.
 :::
 
 ```php file:app\RPCMethodValidator.php
@@ -56,14 +55,13 @@ WebSocket server.
 namespace App;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\RPCMethodInterface;
 use Distantmagic\Resonance\RPCMethodValidatorInterface;
 
-#[Singleton(
-    wantsFeature: Feature::WebSocket,
-    provides: RPCMethodValidatorInterface::class,
-)]
+#[Singleton(provides: RPCMethodValidatorInterface::class)]
+#[WantsFeature(Feature::WebSocket)]
 readonly class RPCMethodValidator implements RPCMethodValidatorInterface
 {
     public function cases(): array

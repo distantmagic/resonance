@@ -10,7 +10,7 @@ use Ds\Set;
 readonly class EventListenerAggregate
 {
     /**
-     * @var Map<class-string<EventInterface>,Set<EventListenerInterface>> $listeners
+     * @var Map<class-string,Set<EventListenerInterface>> $listeners
      */
     private Map $listeners;
 
@@ -20,7 +20,7 @@ readonly class EventListenerAggregate
     }
 
     /**
-     * @param class-string<EventInterface> $eventClass
+     * @param class-string $eventClass
      */
     public function addListener(string $eventClass, EventListenerInterface $eventListener): void
     {
@@ -30,13 +30,13 @@ readonly class EventListenerAggregate
     /**
      * @return Set<EventListenerInterface>
      */
-    public function getListenersForEvent(EventInterface $event): Set
+    public function getListenersForEvent(object $event): Set
     {
         return $this->createGetListenersSet($event::class);
     }
 
     /**
-     * @param class-string<EventInterface> $eventClass
+     * @param class-string $eventClass
      */
     public function removeListener(string $eventClass, EventListenerInterface $eventListener): void
     {
@@ -44,7 +44,7 @@ readonly class EventListenerAggregate
     }
 
     /**
-     * @param class-string<EventInterface> $eventClass
+     * @param class-string $eventClass
      *
      * @return Set<EventListenerInterface>
      */

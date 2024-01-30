@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\HttpResponder\OAuth2;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\HttpResponder\OAuth2;
@@ -17,7 +18,8 @@ use Nyholm\Psr7\Factory\Psr17Factory;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
-#[Singleton(grantsFeature: Feature::OAuth2)]
+#[GrantsFeature(Feature::OAuth2)]
+#[Singleton]
 readonly class AccessToken extends OAuth2
 {
     public function __construct(

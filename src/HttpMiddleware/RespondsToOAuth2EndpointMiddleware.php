@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\HttpMiddleware;
 
 use Distantmagic\Resonance\Attribute;
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\HandlesMiddlewareAttribute;
 use Distantmagic\Resonance\Attribute\RespondsToOAuth2Endpoint;
 use Distantmagic\Resonance\Attribute\Singleton;
@@ -21,14 +22,12 @@ use Swoole\Http\Response;
 /**
  * @template-extends HttpMiddleware<RespondsToOAuth2Endpoint>
  */
+#[GrantsFeature(Feature::OAuth2)]
 #[HandlesMiddlewareAttribute(
     attribute: RespondsToOAuth2Endpoint::class,
     priority: 900,
 )]
-#[Singleton(
-    collection: SingletonCollection::HttpMiddleware,
-    grantsFeature: Feature::OAuth2,
-)]
+#[Singleton(collection: SingletonCollection::HttpMiddleware)]
 readonly class RespondsToOAuth2EndpointMiddleware extends HttpMiddleware
 {
     public function __construct(

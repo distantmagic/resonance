@@ -18,23 +18,23 @@ readonly class EventDispatcher implements EventDispatcherInterface
         private EventListenerAggregate $eventListenerAggregate,
     ) {}
 
-    public function collect(EventInterface $event): SwooleFutureResult
+    public function collect(object $event): SwooleFutureResult
     {
-        $future = new SwooleFuture(function (EventInterface $event): array {
+        $future = new SwooleFuture(function (object $event): array {
             return $this->doDispatch($event);
         });
 
         return $future->resolve($event);
     }
 
-    public function dispatch(EventInterface $event): void
+    public function dispatch(object $event): void
     {
         Event::defer(function () use ($event): void {
             $this->doDispatch($event);
         });
     }
 
-    private function doDispatch(EventInterface $event): array
+    private function doDispatch(object $event): array
     {
         $listeners = $this->eventListenerAggregate->getListenersForEvent($event);
 

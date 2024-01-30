@@ -53,7 +53,7 @@ final readonly class SessionManager extends EventListener
     /**
      * @param HttpResponseReady $event
      */
-    public function handle(EventInterface $event): void
+    public function handle(object $event): void
     {
         $this->persistSession($event->request);
     }

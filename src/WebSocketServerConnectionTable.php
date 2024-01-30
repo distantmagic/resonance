@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Generator;
 use IteratorAggregate;
@@ -13,7 +14,8 @@ use Swoole\Table;
 /**
  * @template-implements IteratorAggregate<int,int>
  */
-#[Singleton(grantsFeature: Feature::WebSocket)]
+#[GrantsFeature(Feature::WebSocket)]
+#[Singleton]
 readonly class WebSocketServerConnectionTable implements IteratorAggregate
 {
     private Table $table;

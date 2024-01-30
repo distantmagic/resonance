@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Doctrine\ORM\EntityManagerInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 
-#[Singleton(
-    grantsFeature: Feature::OAuth2,
-    provides: ClientRepositoryInterface::class,
-)]
+#[GrantsFeature(Feature::OAuth2)]
+#[Singleton(provides: ClientRepositoryInterface::class)]
 readonly class OAuth2ClientRepository implements ClientRepositoryInterface
 {
     public function __construct(

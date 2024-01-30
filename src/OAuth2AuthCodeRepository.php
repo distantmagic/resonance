@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\OAuth2Entity\Token\AuthCode;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,10 +12,8 @@ use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use RuntimeException;
 
-#[Singleton(
-    grantsFeature: Feature::OAuth2,
-    provides: AuthCodeRepositoryInterface::class,
-)]
+#[GrantsFeature(Feature::OAuth2)]
+#[Singleton(provides: AuthCodeRepositoryInterface::class)]
 readonly class OAuth2AuthCodeRepository implements AuthCodeRepositoryInterface
 {
     public function __construct(

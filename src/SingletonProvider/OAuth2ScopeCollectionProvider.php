@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\ProvidesOAuth2Scope;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Feature;
@@ -17,10 +18,8 @@ use LogicException;
 /**
  * @template-extends SingletonProvider<OAuth2ScopeCollection>
  */
-#[Singleton(
-    grantsFeature: Feature::OAuth2,
-    provides: OAuth2ScopeCollection::class,
-)]
+#[GrantsFeature(Feature::OAuth2)]
+#[Singleton(provides: OAuth2ScopeCollection::class)]
 final readonly class OAuth2ScopeCollectionProvider extends SingletonProvider
 {
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): OAuth2ScopeCollection

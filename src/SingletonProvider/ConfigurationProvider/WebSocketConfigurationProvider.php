@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\JsonSchema;
@@ -15,10 +16,8 @@ use Distantmagic\Resonance\WebSocketConfiguration;
  *     max_connections: int,
  * }>
  */
-#[Singleton(
-    grantsFeature: Feature::WebSocket,
-    provides: WebSocketConfiguration::class,
-)]
+#[GrantsFeature(Feature::WebSocket)]
+#[Singleton(provides: WebSocketConfiguration::class)]
 final readonly class WebSocketConfigurationProvider extends ConfigurationProvider
 {
     public function getSchema(): JsonSchema

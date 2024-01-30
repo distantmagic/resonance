@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Defuse\Crypto\Key;
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\JsonSchema;
@@ -25,10 +26,8 @@ use Swoole\Coroutine;
  *     session_key_state: non-empty-string,
  * }>
  */
-#[Singleton(
-    grantsFeature: Feature::OAuth2,
-    provides: OAuth2Configuration::class,
-)]
+#[GrantsFeature(Feature::OAuth2)]
+#[Singleton(provides: OAuth2Configuration::class)]
 final readonly class OAuth2ConfigurationProvider extends ConfigurationProvider
 {
     public function getSchema(): JsonSchema

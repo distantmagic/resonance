@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\WebSocketProtocolController;
 
 use Distantmagic\Resonance\Attribute\ControlsWebSocketProtocol;
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\AuthenticatedUserStoreAggregate;
 use Distantmagic\Resonance\CSRFManager;
@@ -36,10 +37,8 @@ use Swoole\WebSocket\Server;
 use Throwable;
 
 #[ControlsWebSocketProtocol(WebSocketProtocol::RPC)]
-#[Singleton(
-    collection: SingletonCollection::WebSocketProtocolController,
-    grantsFeature: Feature::WebSocket,
-)]
+#[GrantsFeature(Feature::WebSocket)]
+#[Singleton(collection: SingletonCollection::WebSocketProtocolController)]
 final readonly class RPCProtocolController extends WebSocketProtocolController
 {
     /**

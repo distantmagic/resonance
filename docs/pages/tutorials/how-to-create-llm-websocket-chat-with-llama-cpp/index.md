@@ -74,8 +74,8 @@ We are using a few attributes:
 2. `RespondsToHttp` - registers route
 3. `Singleton` - adds your `HttpResponder` to 
     {{docs/features/dependency-injection/index}} container. 
-    We added `wantsFeature: Feature::WebSocket` parameter to enable `WebSocket`
-    server.
+    We added `#[WantsFeature(Feature::WebSocket)` attribute to enable 
+    `WebSocket` server.
 
 ```php file:app/HttpResponder/LlmChat.php
 <?php
@@ -86,6 +86,7 @@ use App\HttpRouteSymbol;
 use Distantmagic\Resonance\Attribute\Can;
 use Distantmagic\Resonance\Attribute\RespondsToHttp;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpResponder;
@@ -102,10 +103,8 @@ use Swoole\Http\Response;
     pattern: '/chat',
     routeSymbol: HttpRouteSymbol::LlmChat,
 )]
-#[Singleton(
-    collection: SingletonCollection::HttpResponder,
-    wantsFeature: Feature::WebSocket,
-)]
+#[Singleton(collection: SingletonCollection::HttpResponder)]
+#[WantsFeature(Feature::WebSocket)]
 final readonly class LlmChat extends HttpResponder
 {
     public function respond(Request $request, Response $response): HttpInterceptableInterface
@@ -155,14 +154,13 @@ enum RPCMethod: string implements RPCMethodInterface
 namespace App;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\RPCMethodInterface;
 use Distantmagic\Resonance\RPCMethodValidatorInterface;
 
-#[Singleton(
-    provides: RPCMethodValidatorInterface::class,
-    wantsFeature: Feature::WebSocket,
-)]
+#[Singleton(provides: RPCMethodValidatorInterface::class)]
+#[WantsFeature(Feature::WebSocket)]
 readonly class RPCMethodValidator implements RPCMethodValidatorInterface
 {
     public function cases(): array
@@ -202,6 +200,7 @@ namespace App\WebSocketRPCResponder;
 use App\RPCMethod;
 use Distantmagic\Resonance\Attribute\RespondsToWebSocketRPC;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\LlamaCppClient;
@@ -215,10 +214,8 @@ use Distantmagic\Resonance\WebSocketConnection;
 use Distantmagic\Resonance\WebSocketRPCResponder;
 
 #[RespondsToWebSocketRPC(RPCMethod::LlmChatPrompt)]
-#[Singleton(
-    collection: SingletonCollection::WebSocketRPCResponder,
-    wantsFeature: Feature::WebSocket,
-)]
+#[Singleton(collection: SingletonCollection::WebSocketRPCResponder)]
+#[WantsFeature(Feature::WebSocket)]
 final readonly class LlmChatPromptResponder extends WebSocketRPCResponder
 {
     public function __construct(

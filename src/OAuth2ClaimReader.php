@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\ProvidesAuthenticatedUser;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,11 +15,9 @@ use League\OAuth2\Server\ResourceServer;
 use Swoole\Http\Request;
 use WeakMap;
 
+#[GrantsFeature(Feature::OAuth2)]
 #[ProvidesAuthenticatedUser(1100)]
-#[Singleton(
-    collection: SingletonCollection::AuthenticatedUserStore,
-    grantsFeature: Feature::OAuth2,
-)]
+#[Singleton(collection: SingletonCollection::AuthenticatedUserStore)]
 readonly class OAuth2ClaimReader implements AuthenticatedUserStoreInterface
 {
     /**

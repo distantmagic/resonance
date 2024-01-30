@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 /**
- * @template TEvent of EventInterface
+ * @template TEvent of object
  * @template TResult
  */
 interface EventListenerInterface extends RegisterableInterface
@@ -17,5 +17,5 @@ interface EventListenerInterface extends RegisterableInterface
      *
      * @return TResult
      */
-    public function handle(EventInterface $event);
+    public function handle(object $event);
 }

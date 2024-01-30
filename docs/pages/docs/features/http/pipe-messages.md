@@ -25,15 +25,14 @@ You need to add `HandlesServerPipeMessage` attribute and to implement
 `ServerPipeMessageHandlerInterface`:
 
 ```php
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\HandlesServerPipeMessage;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\ServerPipeMessageHandlerInterface;
 
+#[GrantsFeature(Feature::WebSocket)]
 #[HandlesServerPipeMessage(MyPipeMessage::class)]
-#[Singleton(
-    collection: SingletonCollection::ServerPipeMessageHandler,
-    grantsFeature: Feature::WebSocket,
-)]
+#[Singleton(collection: SingletonCollection::ServerPipeMessageHandler)]
 class MyServerPipeMessageHandler implements ServerPipeMessageHandlerInterface
 {
     /**

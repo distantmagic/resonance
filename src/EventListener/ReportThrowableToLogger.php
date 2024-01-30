@@ -9,7 +9,6 @@ use Distantmagic\Resonance\Attribute\ListensTo;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Environment;
 use Distantmagic\Resonance\Event\UnhandledException;
-use Distantmagic\Resonance\EventInterface;
 use Distantmagic\Resonance\EventListener;
 use Distantmagic\Resonance\SingletonCollection;
 use Psr\Log\LoggerInterface;
@@ -29,7 +28,7 @@ final readonly class ReportThrowableToLogger extends EventListener
     /**
      * @param UnhandledException $event
      */
-    public function handle(EventInterface $event): void
+    public function handle(object $event): void
     {
         $this->logger->error((string) $event->throwable);
     }

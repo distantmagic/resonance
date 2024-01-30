@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 
-#[Singleton(
-    grantsFeature: Feature::OAuth2,
-    provides: ScopeRepositoryInterface::class,
-)]
+#[GrantsFeature(Feature::OAuth2)]
+#[Singleton(provides: ScopeRepositoryInterface::class)]
 readonly class OAuth2ScopeRepository implements ScopeRepositoryInterface
 {
     public function __construct(

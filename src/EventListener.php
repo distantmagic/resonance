@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 /**
- * @template TEvent of EventInterface
+ * @template TEvent of object
  * @template TResult
  *
  * @template-implements EventListenerInterface<TEvent, TResult>

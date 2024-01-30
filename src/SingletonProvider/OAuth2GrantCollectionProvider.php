@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\ProvidesOAuth2Grant;
 use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
@@ -21,11 +22,9 @@ use League\OAuth2\Server\AuthorizationServer;
 /**
  * @template-extends SingletonProvider<AuthorizationServer>
  */
+#[GrantsFeature(Feature::OAuth2)]
 #[RequiresSingletonCollection(SingletonCollection::OAuth2Grant)]
-#[Singleton(
-    grantsFeature: Feature::OAuth2,
-    provides: OAuth2GrantCollection::class,
-)]
+#[Singleton(provides: OAuth2GrantCollection::class)]
 final readonly class OAuth2GrantCollectionProvider extends SingletonProvider
 {
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): OAuth2GrantCollection

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpResponder\PsrResponder;
 use League\OAuth2\Server\AuthorizationServer as LeagueAuthorizationServer;
@@ -14,10 +15,8 @@ use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
-#[Singleton(
-    grantsFeature: Feature::OAuth2,
-    provides: OAuth2AuthorizationCodeFlowControllerInterface::class,
-)]
+#[GrantsFeature(Feature::OAuth2)]
+#[Singleton(provides: OAuth2AuthorizationCodeFlowControllerInterface::class)]
 readonly class OAuth2AuthorizationCodeFlowController implements OAuth2AuthorizationCodeFlowControllerInterface
 {
     public function __construct(

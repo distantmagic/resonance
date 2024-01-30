@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\EventListener;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\ListensTo;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Event\HttpServerBeforeStop;
-use Distantmagic\Resonance\EventInterface;
 use Distantmagic\Resonance\EventListener;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\ServerPipeMessage\CloseWebSocketConnection;
@@ -18,11 +18,9 @@ use RuntimeException;
 /**
  * @template-extends EventListener<HttpServerBeforeStop,void>
  */
+#[GrantsFeature(Feature::WebSocket)]
 #[ListensTo(HttpServerBeforeStop::class)]
-#[Singleton(
-    collection: SingletonCollection::EventListener,
-    grantsFeature: Feature::WebSocket,
-)]
+#[Singleton(collection: SingletonCollection::EventListener)]
 final readonly class CloseWebSocketConnections extends EventListener
 {
     public function __construct(
@@ -32,7 +30,7 @@ final readonly class CloseWebSocketConnections extends EventListener
     /**
      * @param HttpServerBeforeStop $event
      */
-    public function handle(EventInterface $event): void
+    public function handle(object $event): void
     {
         if (!$this->webSocketServerConnectionTable) {
             throw new RuntimeException('WebSocket close connections listener should not have been registered');

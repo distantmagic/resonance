@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\HandlesServerPipeMessage;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\ServerPipeMessage\CloseWebSocketConnection;
@@ -18,11 +19,9 @@ use Swoole\WebSocket\Server;
 /**
  * @template-implements ServerPipeMessageHandlerInterface<CloseWebSocketConnection>
  */
+#[GrantsFeature(Feature::WebSocket)]
 #[HandlesServerPipeMessage(CloseWebSocketConnection::class)]
-#[Singleton(
-    collection: SingletonCollection::ServerPipeMessageHandler,
-    grantsFeature: Feature::WebSocket,
-)]
+#[Singleton(collection: SingletonCollection::ServerPipeMessageHandler)]
 final readonly class WebSocketServerController implements ServerPipeMessageHandlerInterface
 {
     /**

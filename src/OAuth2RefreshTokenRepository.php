@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\OAuth2Entity\RefreshToken;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,10 +13,8 @@ use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationExcep
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use RuntimeException;
 
-#[Singleton(
-    grantsFeature: Feature::OAuth2,
-    provides: RefreshTokenRepositoryInterface::class,
-)]
+#[GrantsFeature(Feature::OAuth2)]
+#[Singleton(provides: RefreshTokenRepositoryInterface::class)]
 readonly class OAuth2RefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
     public function __construct(

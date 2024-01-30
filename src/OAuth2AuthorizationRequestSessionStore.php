@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use LogicException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
-#[Singleton(grantsFeature: Feature::OAuth2)]
+#[GrantsFeature(Feature::OAuth2)]
+#[Singleton]
 readonly class OAuth2AuthorizationRequestSessionStore
 {
     public function __construct(

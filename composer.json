@@ -47,7 +47,9 @@
         "webonyx/graphql-php": "^15.6",
         "dragonmantank/cron-expression": "^3.3",
         "league/oauth2-client": "^2.7",
-        "opis/json-schema": "^2.3"
+        "opis/json-schema": "^2.3",
+        "symfony/mailer": "^7.0",
+        "symfony/messenger": "^7.0"
     },
     "require-dev": {
         "mockery/mockery": "^1.6",

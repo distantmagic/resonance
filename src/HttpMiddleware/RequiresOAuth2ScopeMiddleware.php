@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\HttpMiddleware;
 
 use Distantmagic\Resonance\Attribute;
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\HandlesMiddlewareAttribute;
 use Distantmagic\Resonance\Attribute\RequiresOAuth2Scope;
 use Distantmagic\Resonance\Attribute\Singleton;
@@ -28,14 +29,12 @@ use Swoole\Http\Response;
 /**
  * @template-extends HttpMiddleware<RequiresOAuth2Scope>
  */
+#[GrantsFeature(Feature::OAuth2)]
 #[HandlesMiddlewareAttribute(
     attribute: RequiresOAuth2Scope::class,
     priority: 1000,
 )]
-#[Singleton(
-    collection: SingletonCollection::HttpMiddleware,
-    grantsFeature: Feature::OAuth2,
-)]
+#[Singleton(collection: SingletonCollection::HttpMiddleware)]
 readonly class RequiresOAuth2ScopeMiddleware extends HttpMiddleware
 {
     public function __construct(

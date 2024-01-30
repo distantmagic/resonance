@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\HttpResponder\OAuth2;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\HttpInterceptableInterface;
@@ -17,7 +18,8 @@ use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
-#[Singleton(grantsFeature: Feature::OAuth2)]
+#[GrantsFeature(Feature::OAuth2)]
+#[Singleton]
 final readonly class PostSessionAuthentication extends HttpResponder
 {
     public function __construct(

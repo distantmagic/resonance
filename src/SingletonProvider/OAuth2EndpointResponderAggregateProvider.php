@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\RespondsToHttp;
 use Distantmagic\Resonance\Attribute\RespondsToOAuth2Endpoint;
 use Distantmagic\Resonance\Attribute\Singleton;
@@ -21,10 +22,8 @@ use RuntimeException;
 /**
  * @template-extends SingletonProvider<HttpResponderCollection>
  */
-#[Singleton(
-    grantsFeature: Feature::OAuth2,
-    provides: OAuth2EndpointResponderAggregate::class,
-)]
+#[GrantsFeature(Feature::OAuth2)]
+#[Singleton(provides: OAuth2EndpointResponderAggregate::class)]
 final readonly class OAuth2EndpointResponderAggregateProvider extends SingletonProvider
 {
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): OAuth2EndpointResponderAggregate

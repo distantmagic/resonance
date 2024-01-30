@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\OAuth2Configuration;
@@ -16,10 +17,8 @@ use League\OAuth2\Server\ResourceServer;
 /**
  * @template-extends SingletonProvider<ResourceServer>
  */
-#[Singleton(
-    grantsFeature: Feature::OAuth2,
-    provides: ResourceServer::class,
-)]
+#[GrantsFeature(Feature::OAuth2)]
+#[Singleton(provides: ResourceServer::class)]
 final readonly class OAuth2ResourceServerProvider extends SingletonProvider
 {
     public function __construct(
