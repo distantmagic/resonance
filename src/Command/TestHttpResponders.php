@@ -50,7 +50,7 @@ final class TestHttpResponders extends Command
                     ->get($testableHttpResponse)
                 ;
 
-                ($isValid = $isValid) && SwooleCoroutineHelper::mustRun(function () use (
+                $result = SwooleCoroutineHelper::mustRun(function () use (
                     $output,
                     $httpResponder,
                     $potentialResponses
@@ -61,6 +61,10 @@ final class TestHttpResponders extends Command
                         $potentialResponses,
                     );
                 });
+
+                if (!$result) {
+                    $isValid = false;
+                }
             }
         }
 
