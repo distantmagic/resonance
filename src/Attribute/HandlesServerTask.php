@@ -6,13 +6,12 @@ namespace Distantmagic\Resonance\Attribute;
 
 use Attribute;
 use Distantmagic\Resonance\Attribute as BaseAttribute;
-use Distantmagic\Resonance\ServerPipeMessageInterface;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-final readonly class HandlesServerPipeMessage extends BaseAttribute
+final readonly class HandlesServerTask extends BaseAttribute
 {
     /**
-     * @param class-string<ServerPipeMessageInterface> $className
+     * @param class-string $className
      */
     public function __construct(public string $className) {}
 }

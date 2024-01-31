@@ -8,7 +8,7 @@ register_stylesheets:
     - docs-page-homepage.css
 title: Resonance
 description: >
-    PHP SaaS Framework designed from the ground up to facilitate 
+    PHP Framework designed from the ground up to facilitate 
     interoperability and messaging between services in your infrastructure and
     beyond.
 ---
@@ -17,7 +17,11 @@ description: >
     <div class="homepage__content">
         <hgroup class="homepage__title">
             <h1>Resonance</h1>
-            <h2>PHP SaaS Framework That Solves Real-Life Issues</h2>
+            <h2>PHP Framework That Solves Real-Life Issues</h2>
+            <p>
+                Designed from the ground up to facilitate interoperability and 
+                messaging between services in your infrastructure and beyond.
+            </p>
             <p>
                 Takes full advantage of asynchronous PHP.
             </p>
@@ -126,13 +130,12 @@ final readonly class EchoResponder extends WebSocketRPCResponder
                 </h2>
                 <div class="homepage__example__description">
                     <p>
-                        Writing HTTP controllers is similar to how it's done 
-                        in the synchronous code.
+                        Writing HTTP controllers is similar to how it's done in 
+                        the synchronous code.
                     </p>
                     <p>
-                        Controllers have a new exciting features that take 
-                        advantage of the asynchronous environment, but you can 
-                        add them where they bring value.
+                        Controllers have new exciting features that take 
+                        advantage of the asynchronous environment.
                     </p>
                     <a 
                         class="homepage__cta homepage__cta--example"
@@ -165,13 +168,13 @@ readonly class Homepage implements HttpResponderInterface
                 </h2>
                 <div class="homepage__example__description">
                     <p>
-                        You can keep the same approach to writing software
+                        You can keep the same approach to writing software 
                         no matter the size of your project.
                     </p>
                     <p>
-                        There are no growing central configuration files, 
-                        services dependencies registries. Every relation 
-                        between code modules are local to those modules.
+                        There are no growing central configuration files 
+                        or service dependencies registries. Every relation 
+                        between code modules is local to those modules.
                     </p>
                     <a 
                         class="homepage__cta homepage__cta--example"
@@ -201,13 +204,13 @@ final readonly class InitializeErrorReporting extends EventListener
                 </h2>
                 <div class="homepage__example__description">
                     <p>
-                        Your project's files are indexed when the application
-                        starts. Relations between services are then set up
+                        Your project's files are indexed when the application 
+                        starts. Relations between services are then set up 
                         by using attributes.
                     </p>
                     <p>
-                        There is no need for elaborate services configuration.
-                        Everything is handled by the attributes.
+                        There is no need for an elaborate configuration of 
+                        services. Everything is handled by the attributes.
                     </p>
                     <a 
                         class="homepage__cta homepage__cta--example"
@@ -271,15 +274,15 @@ assert($future2->resolve(1)->result === 7);</code></pre>
                 </h2>
                 <div class="homepage__example__description">
                     <p>
-                        You can build elaborate GraphQL schemas by using just
+                        You can build elaborate GraphQL schemas by using just 
                         the PHP attributes.
                     </p>
                     <p>
                         Resonance takes care of reusing SQL queries and 
-                        optimizing the resources usage.
+                        optimizing the resources' usage.
                     </p>
                     <p>
-                        All fields can be resolved asnynchronously.
+                        All fields can be resolved asynchronously.
                     </p>
                     <a 
                         class="homepage__cta homepage__cta--example"

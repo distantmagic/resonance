@@ -15,7 +15,7 @@ readonly class ServerPipeMessageDispatcher
         private ServerPipeMessageHandlerCollection $serverPipeMessageHandlerCollection,
     ) {}
 
-    public function dispatchPipeMessage(Server $server, int $srcWorkerId, mixed $data): void
+    public function onPipeMessage(Server $server, int $srcWorkerId, mixed $data): void
     {
         if (!is_object($data)) {
             throw new RuntimeException('Only objects can be used as server pipe messages');

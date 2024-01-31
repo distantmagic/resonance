@@ -19,9 +19,26 @@ default[pool_size] = 8
 host = 127.0.0.1
 port = 8081
 
+[mailer]
+transport_dsn = smtp://localhost
+dkim_domain_name = example.com
+dkim_selector = selector
+dkim_signing_key_passphrase = yourpassphrase
+dkim_signing_key_private = dkim/private.key
+dkim_signing_key_public = dkim/public.key
+
 [manifest]
 background_color = "#ffffff"
 theme_color = "#ffffff"
+
+[oauth2]
+encryption_key = oauth2/defuse.key
+jwt_signing_key_passphrase = yourpassphrase
+jwt_signing_key_private = oauth2/private.key
+jwt_signing_key_public = oauth2/public.key
+session_key_authorization_request = oauth2.authorization_request
+session_key_pkce = oauth2.pkce
+session_key_state = oauth2.state
 
 [redis]
 default[db_index] = 0
@@ -37,6 +54,10 @@ default[pool_size] = 8
 cookie_lifespan = 86400
 cookie_name = dmsession
 redis_connection_pool = default
+
+[sqlite-vss]
+extension_vector0 = vector0.so
+extension_vss0 = vss0.so
 
 [static]
 base_url = https://resonance.distantmagic.com

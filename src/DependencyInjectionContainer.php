@@ -13,6 +13,7 @@ use Ds\Set;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionFunctionAbstract;
+use RuntimeException;
 use Swoole\Event;
 
 readonly class DependencyInjectionContainer
@@ -29,11 +30,6 @@ readonly class DependencyInjectionContainer
      */
     private Map $dependencyProviders;
 
-    /**
-     * @var Map<class-string,FeatureInterface>
-     */
-    private Map $disabledFeatureProviders;
-
     private SingletonContainer $singletons;
 
     /**
@@ -45,7 +41,6 @@ readonly class DependencyInjectionContainer
     {
         $this->collections = new Map();
         $this->dependencyProviders = new Map();
-        $this->disabledFeatureProviders = new Map();
         $this->phpProjectFiles = new PHPProjectFiles();
         $this->wantedFeatures = new Set();
 
@@ -84,6 +79,11 @@ readonly class DependencyInjectionContainer
         return $ret;
     }
 
+    public function enableFeature(FeatureInterface $feature): void
+    {
+        $this->wantedFeatures->add($feature);
+    }
+
     /**
      * @template TSingleton as object
      *
@@ -114,26 +114,18 @@ readonly class DependencyInjectionContainer
             }
 
             if ($dependencyProvider->wantsFeature) {
-                $this->wantedFeatures->add($dependencyProvider->wantsFeature);
+                $this->enableFeature($dependencyProvider->wantsFeature);
             }
 
             $this->dependencyProviders->put($providedClassName, $dependencyProvider);
-        }
 
-        foreach ($this->dependencyProviders as $providedClassName => $dependencyProvider) {
-            if ($dependencyProvider->grantsFeature && !$this->wantedFeatures->contains($dependencyProvider->grantsFeature)) {
-                $this->disabledFeatureProviders->put($providedClassName, $dependencyProvider->grantsFeature);
-            } elseif ($dependencyProvider->collection) {
+            if ($dependencyProvider->collection) {
                 if (!$this->collections->hasKey($dependencyProvider->collection)) {
                     $this->collections->put($dependencyProvider->collection, new Set());
                 }
 
                 $this->collections->get($dependencyProvider->collection)->add($dependencyProvider);
             }
-        }
-
-        foreach ($this->disabledFeatureProviders->keys() as $providedClassName) {
-            $this->dependencyProviders->remove($providedClassName);
         }
     }
 
@@ -174,11 +166,36 @@ readonly class DependencyInjectionContainer
         }
 
         foreach ($collection as $collectionMember) {
-            $this->makeSingleton(
-                $collectionMember->providedClassName,
-                $stack->branch($collectionMember->providedClassName),
-            );
+            if ($this->isClassWanted($collectionMember->providedClassName)) {
+                $this->makeSingleton(
+                    $collectionMember->providedClassName,
+                    $stack->branch($collectionMember->providedClassName),
+                );
+            }
         }
+    }
+
+    /**
+     * @param class-string $className
+     */
+    private function isClassWanted(string $className): bool
+    {
+        $dependencyProvider = $this->dependencyProviders->get($className, null);
+
+        if (is_null($dependencyProvider)) {
+            return false;
+        }
+
+        return $this->isDependencyProviderWanted($dependencyProvider);
+    }
+
+    private function isDependencyProviderWanted(DependencyProvider $dependencyProvider): bool
+    {
+        if (is_null($dependencyProvider->grantsFeature)) {
+            return true;
+        }
+
+        return $this->wantedFeatures->contains($dependencyProvider->grantsFeature);
     }
 
     /**
@@ -222,7 +239,7 @@ readonly class DependencyInjectionContainer
         $parameters = [];
 
         foreach (new SingletonFunctionParametersIterator($reflectionFunction) as $name => $singletonFunctionParameter) {
-            if ($singletonFunctionParameter->reflectionParameter->isOptional() && !$this->dependencyProviders->hasKey($singletonFunctionParameter->className)) {
+            if ($singletonFunctionParameter->reflectionParameter->isOptional() && !$this->isClassWanted($singletonFunctionParameter->className)) {
                 $parameters[$name] = null;
             } else {
                 $parameters[$name] = $this->makeSingleton(
@@ -251,15 +268,19 @@ readonly class DependencyInjectionContainer
         $dependencyProvider = $this->dependencyProviders->get($className, null);
 
         if (!$dependencyProvider) {
-            if ($this->disabledFeatureProviders->hasKey($className)) {
-                throw new DisabledFeatureProvider(
-                    $className,
-                    $this->disabledFeatureProviders->get($className),
-                    $stack,
-                );
+            throw new MissingProvider($className, $stack);
+        }
+
+        if (!$this->isDependencyProviderWanted($dependencyProvider)) {
+            if (!$dependencyProvider->grantsFeature) {
+                throw new RuntimeException('Classname with no provider, not wanted: '.$className);
             }
 
-            throw new MissingProvider($className, $stack);
+            throw new DisabledFeatureProvider(
+                $className,
+                $dependencyProvider->grantsFeature,
+                $stack,
+            );
         }
 
         foreach ($dependencyProvider->requiredCollections as $singletonCollection) {

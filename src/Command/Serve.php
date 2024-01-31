@@ -16,10 +16,13 @@ use Symfony\Component\Console\Output\OutputInterface;
     name: 'serve',
     description: 'Start combined HTTP and WebSocket server'
 )]
-#[WantsFeature(Feature::TaskServer)]
+#[WantsFeature(Feature::SwooleTaskServer)]
 final class Serve extends Command
 {
-    public function __construct(private SwooleServer $swooleServer) {}
+    public function __construct(private readonly SwooleServer $swooleServer)
+    {
+        parent::__construct();
+    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

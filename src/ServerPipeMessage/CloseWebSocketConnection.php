@@ -8,7 +8,5 @@ use Distantmagic\Resonance\ServerPipeMessage;
 
 readonly class CloseWebSocketConnection extends ServerPipeMessage
 {
-    public function __construct(
-        public int $fd,
-    ) {}
+    public function __construct(public int $fd) {}
 }

@@ -57,6 +57,7 @@ abstract readonly class Turbo extends StaticPageLayout
 
         $canonicalUrl = $this->staticPageConfiguration->baseUrl.$staticPage->getHref();
         $currentYear = date('Y');
+        $description = $this->filters->escape($staticPage->frontMatter->description);
 
         yield <<<HTML
         <!DOCTYPE html>
@@ -64,8 +65,11 @@ abstract readonly class Turbo extends StaticPageLayout
         <head>
             <link rel="canonical" href="{$canonicalUrl}">
             <meta charset="utf-8">
-            <meta name="description" content="{$this->filters->escape($staticPage->frontMatter->description)}">
+            <meta name="description" content="{$description}">
             <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta property="og:image" content="{$this->staticPageConfiguration->baseUrl}/ogimage.webp">
+            <meta property="og:url" content="{$canonicalUrl}">
+            <meta property="og:site_name" content="PHP Resonance Framework">
             <title>{$staticPage->frontMatter->title}</title>
         HTML;
         yield from $this->renderMeta($staticPage);

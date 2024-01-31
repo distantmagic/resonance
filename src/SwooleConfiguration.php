@@ -29,5 +29,6 @@ readonly class SwooleConfiguration
         public string $sslCertFile,
         #[SensitiveParameter]
         public string $sslKeyFile,
+        public int $taskWorkerNum,
     ) {}
 }

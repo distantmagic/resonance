@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
+use Distantmagic\Resonance\Attribute\WantsFeature;
 use Ds\Map;
+use ReflectionClass;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LazyCommand;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
@@ -53,7 +55,7 @@ readonly class CommandLoader implements CommandLoaderInterface
             isHidden: $attribute->isHidden,
             name: $attribute->name,
             commandFactory: function () use ($phpProjectFileAttribute): Command {
-                return $this->container->make($phpProjectFileAttribute->reflectionClass->getName());
+                return $this->makeCommand($phpProjectFileAttribute);
             },
         );
     }
@@ -66,5 +68,22 @@ readonly class CommandLoader implements CommandLoaderInterface
     public function has(string $name): bool
     {
         return $this->names->hasKey($name);
+    }
+
+    /**
+     * @param PHPFileReflectionClassAttribute<Command,ConsoleCommand> $phpProjectFileAttribute
+     */
+    private function makeCommand(PHPFileReflectionClassAttribute $phpProjectFileAttribute): Command
+    {
+        $className = $phpProjectFileAttribute->reflectionClass->getName();
+
+        $reflectionClass = new ReflectionClass($className);
+        $reflectionClassAttributeManager = new ReflectionClassAttributeManager($reflectionClass);
+
+        foreach ($reflectionClassAttributeManager->findAttributes(WantsFeature::class) as $wantedFeature) {
+            $this->container->enableFeature($wantedFeature->feature);
+        }
+
+        return $this->container->make($className);
     }
 }

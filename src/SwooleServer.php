@@ -15,20 +15,22 @@ use Swoole\Http\Server as HttpServer;
 use Swoole\Server;
 use Swoole\WebSocket\Server as WebSocketServer;
 
-#[GrantsFeature(Feature::TaskServer)]
+#[GrantsFeature(Feature::SwooleTaskServer)]
 #[Singleton]
 readonly class SwooleServer
 {
-    private readonly HttpServer|WebSocketServer $server;
+    private HttpServer|WebSocketServer $server;
 
     public function __construct(
-        private readonly ApplicationConfiguration $applicationConfiguration,
-        private readonly EventDispatcherInterface $eventDispatcher,
-        private readonly HttpResponderAggregate $httpResponderAggregate,
-        private readonly LoggerInterface $logger,
-        private readonly ServerPipeMessageDispatcher $serverPipeMessageDispatcher,
-        private readonly SwooleConfiguration $swooleConfiguration,
-        private readonly ?WebSocketServerController $webSocketServerController = null,
+        private ApplicationConfiguration $applicationConfiguration,
+        private EventDispatcherInterface $eventDispatcher,
+        private HttpResponderAggregate $httpResponderAggregate,
+        private LoggerInterface $logger,
+        private ServerPipeMessageDispatcher $serverPipeMessageDispatcher,
+        private ServerTaskHandlerDispatcher $serverTaskHandlerDispatcher,
+        private SwooleConfiguration $swooleConfiguration,
+        private SwooleTaskServerMessageBroker $swooleTaskServerMessageBroker,
+        private ?WebSocketServerController $webSocketServerController = null,
     ) {
         $serverClass = $webSocketServerController
             ? WebSocketServer::class
@@ -47,6 +49,13 @@ readonly class SwooleServer
             SWOOLE_PROCESS,
             SWOOLE_SOCK_TCP | SWOOLE_SSL,
         );
+
+        $this->swooleTaskServerMessageBroker->runningServers->add($this->server);
+    }
+
+    public function __destruct()
+    {
+        $this->swooleTaskServerMessageBroker->runningServers->remove($this->server);
     }
 
     public function start(): bool
@@ -61,12 +70,16 @@ readonly class SwooleServer
             'ssl_cert_file' => DM_ROOT.'/'.$this->swooleConfiguration->sslCertFile,
             'ssl_key_file' => DM_ROOT.'/'.$this->swooleConfiguration->sslKeyFile,
             'open_http2_protocol' => true,
+            'task_enable_coroutine' => true,
+            'task_worker_num' => $this->swooleConfiguration->taskWorkerNum,
         ]);
 
         $this->server->on('beforeShutdown', $this->onBeforeShutdown(...));
-        $this->server->on('pipeMessage', $this->serverPipeMessageDispatcher->dispatchPipeMessage(...));
+        $this->server->on('pipeMessage', $this->serverPipeMessageDispatcher->onPipeMessage(...));
+        $this->server->on('finish', $this->serverTaskHandlerDispatcher->onFinish(...));
         $this->server->on('request', $this->httpResponderAggregate->respond(...));
         $this->server->on('start', $this->onStart(...));
+        $this->server->on('task', $this->serverTaskHandlerDispatcher->onTask(...));
 
         if ($this->webSocketServerController) {
             $this->server->on('close', $this->onClose(...));
@@ -93,12 +106,10 @@ readonly class SwooleServer
 
     private function onHandshake(Request $request, Response $response): void
     {
-        if (!$this->webSocketServerController) {
+        if (!$this->webSocketServerController || !$this->server instanceof WebSocketServer) {
             return;
         }
-        if (!$this->server instanceof WebSocketServer) {
-            return;
-        }
+
         $this->webSocketServerController->onHandshake($this->server, $request, $response);
     }
 
@@ -112,14 +123,12 @@ readonly class SwooleServer
             $this->swooleConfiguration->port,
         ));
 
-        if (!$this->webSocketServerController) {
-            return;
+        if ($this->webSocketServerController) {
+            $this->logger->info(sprintf(
+                'websocket_server_start(wss://%s:%s)',
+                $this->swooleConfiguration->host,
+                $this->swooleConfiguration->port,
+            ));
         }
-
-        $this->logger->info(sprintf(
-            'websocket_server_start(wss://%s:%s)',
-            $this->swooleConfiguration->host,
-            $this->swooleConfiguration->port,
-        ));
     }
 }

@@ -17,6 +17,7 @@ use Distantmagic\Resonance\SwooleConfiguration;
  *     port: int,
  *     ssl_cert_file: non-empty-string,
  *     ssl_key_file: non-empty-string,
+ *     task_worker_num: int,
  * }>
  */
 #[Singleton(provides: SwooleConfiguration::class)]
@@ -52,8 +53,19 @@ final readonly class SwooleConfigurationProvider extends ConfigurationProvider
                     'type' => 'string',
                     'minLength' => 1,
                 ],
+                'task_worker_num' => [
+                    'type' => 'integer',
+                    'min' => 1,
+                    'default' => 4,
+                ],
             ],
-            'required' => ['host', 'log_level', 'port', 'ssl_cert_file', 'ssl_key_file'],
+            'required' => [
+                'host',
+                'log_level',
+                'port',
+                'ssl_cert_file',
+                'ssl_key_file',
+            ],
         ]);
     }
 
@@ -71,6 +83,7 @@ final readonly class SwooleConfigurationProvider extends ConfigurationProvider
             port: $validatedData->port,
             sslCertFile: $validatedData->ssl_cert_file,
             sslKeyFile: $validatedData->ssl_key_file,
+            taskWorkerNum: $validatedData->task_worker_num,
         );
     }
 }
