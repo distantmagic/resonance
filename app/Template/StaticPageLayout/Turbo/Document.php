@@ -159,6 +159,11 @@ final readonly class Document extends Turbo
         yield '</div>';
     }
 
+    protected function renderPrimaryBanner(StaticPage $staticPage): Generator
+    {
+        yield '';
+    }
+
     /**
      * @return Generator<string>
      */
@@ -202,6 +207,7 @@ final readonly class Document extends Turbo
                     documentation__related-pages__link
                     documentation__related-pages__link--next
                 "
+                data-turbo-preload
                 href="{$nextPage->getHref()}"
             >
                 <div class="documentation__related-pages__label">
