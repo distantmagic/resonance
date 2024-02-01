@@ -33,6 +33,12 @@ RabbitMQ, Kafka, or SQS.
 
 ## Dispatching Events
 
+:::note
+`Distantmagic\Resonance\EventDispatcher` implements 
+`Psr\EventDispatcher\EventDispatcherInterface`. It's compatible with
+[PSR-14](https://www.php-fig.org/psr/psr-14/).
+:::
+
 ### Asynchronously
 
 ```graphviz render
@@ -153,9 +159,7 @@ For more information about Futures, see: {{docs/features/swoole-futures/index}}.
 
 ### Custom Events
 
-Your event must implement the `Distantmagic\Resonance\EventInterface` 
-interface. Then, the Event Dispatcher can use it alongside its
-arbitrary data.
+Your event must be an `object`.
 
 :::caution
 If you want to dispatch events with either `Swoole\Http\Request` or 
@@ -170,11 +174,10 @@ only if there is no other way to handle your use case.
 
 ```php
 use Distantmagic\Resonance\Attribute\ListensTo;
-use Distantmagic\Resonance\EventInterface;
 use Distantmagic\Resonance\EventListener;
 
 // define the event
-readonly class MyEvent implements EventInterface 
+readonly class MyEvent 
 {
     public function __construct(public string $data) {}
 }
@@ -186,7 +189,7 @@ readonly class MyEventListener extends EventListener
     /**
      * @param MyEvent $event
      */
-    public function handle(EventInterface $event): void
+    public function handle(object $event): void
     {
         // ...
     }
@@ -207,7 +210,6 @@ namespace App\EventListener;
 use Distantmagic\Resonance\Attribute\ListensTo;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Event\SQLQueryBeforeExecute;
-use Distantmagic\Resonance\EventInterface;
 use Distantmagic\Resonance\EventListener;
 use Distantmagic\Resonance\SingletonCollection;
 
@@ -221,7 +223,7 @@ final readonly class SQLQueryLogger extends EventListener
     /**
      * @param SQLQueryBeforeExecute $event
      */
-    public function handle(EventInterface $event): void
+    public function handle(object $event): void
     {
         // (...)
     }
@@ -253,7 +255,7 @@ final readonly class MyListener extends EventListener
     /**
      * @param MyFirstEvent|MySecondEvent $event
      */
-    public function handle(EventInterface $event): void
+    public function handle(object $event): void
     {
         // (...)
     }
@@ -284,7 +286,7 @@ final readonly class MyListener extends EventListener
     /**
      * @param MyFirstEvent|MySecondEvent $event
      */
-    public function handle(EventInterface $event): SwooleFuture
+    public function handle(object $event): SwooleFuture
     {
         return new SwooleFuture(function () use ($event) {
             // (...)

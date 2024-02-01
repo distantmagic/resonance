@@ -4,7 +4,7 @@
 
 .admonition {
   background-image: url("../icons/circle-info-e3e3e3.svg");
-  background-position: 14px 28px;
+  background-position: 14px calc(var(--font-size-base) + 2px);
   background-repeat: no-repeat;
   background-size: 24px 24px;
   border-color: #555;

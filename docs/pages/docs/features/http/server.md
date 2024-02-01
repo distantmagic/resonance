@@ -12,8 +12,6 @@ description: >
 
 # Usage
 
-## Setting up the Command
-
 Resonance comes with the `serve` command by default. You can call
 `php ./bin/resonance.php serve` to start the http server.
 

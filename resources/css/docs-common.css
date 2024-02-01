@@ -126,7 +126,6 @@ a:active,
   display: inline-block;
   color: var(--color-link-active);
   font-size: 1em;
-  padding-right: 10px;
   text-decoration: none;
   user-select: none;
 

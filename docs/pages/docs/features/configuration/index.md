@@ -74,17 +74,43 @@ This is the default configuration file:
 env = development
 esbuild_metafile = esbuild-meta-app.json
 scheme = https
+url = https://resonance.distantmagic.com
 
 [database]
 default[driver] = mysql
 default[host] = 127.0.0.1
 default[port] = 3306
-default[database] = resonance
-default[username] = resonance
-default[password] = resonance
+default[database] = distantmagic
+default[username] = distantmagic
+default[password] = distantmagic
 default[log_queries] = false
-default[pool_prefill] = true
+default[pool_prefill] = false
 default[pool_size] = 8
+
+[llamacpp]
+host = 127.0.0.1
+port = 8081
+
+[mailer]
+default[transport_dsn] = smtp://localhost
+default[dkim_domain_name] = example.com
+default[dkim_selector] = resonance1
+default[dkim_signing_key_passphrase] = yourpassphrase
+default[dkim_signing_key_private] = dkim/private.key
+default[dkim_signing_key_public] = dkim/public.key
+
+[manifest]
+background_color = "#ffffff"
+theme_color = "#ffffff"
+
+[oauth2]
+encryption_key = oauth2/defuse.key
+jwt_signing_key_passphrase = yourpassphrase
+jwt_signing_key_private = oauth2/private.key
+jwt_signing_key_public = oauth2/public.key
+session_key_authorization_request = oauth2.authorization_request
+session_key_pkce = oauth2.pkce
+session_key_state = oauth2.state
 
 [redis]
 default[db_index] = 0
@@ -93,15 +119,24 @@ default[password] =
 default[port] = 6379
 default[prefix] = dm:
 default[timeout] = 1
-default[pool_prefill] = true
+default[pool_prefill] = false
 default[pool_size] = 8
+
+[session]
+cookie_lifespan = 86400
+cookie_name = dmsession
+redis_connection_pool = default
+
+[sqlite-vss]
+extension_vector0 = vector0.so
+extension_vss0 = vss0.so
 
 [static]
 base_url = https://resonance.distantmagic.com
 esbuild_metafile = esbuild-meta-docs.json
 input_directory = docs
 output_directory = docs/build
-sitemap = docs/sitemap.xml
+sitemap = docs/build/sitemap.xml
 
 [swoole]
 host = 127.0.0.1

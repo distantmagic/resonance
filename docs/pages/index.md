@@ -30,7 +30,7 @@ description: >
             </p>
             <a 
                 class="homepage__cta"
-                href="/docs/getting-started/"
+                href="/docs/features/"
             >
                 Get Started
             </a>
@@ -92,7 +92,7 @@ description: >
                     </p>
                     <a 
                         class="homepage__cta homepage__cta--example"
-                        href="/docs/getting-started/"
+                        href="/docs/features/"
                     >
                         Learn More
                     </a>
@@ -191,7 +191,7 @@ readonly class Homepage implements HttpResponderInterface
 #[Singleton(collection: SingletonCollection::EventListener)]
 final readonly class InitializeErrorReporting extends EventListener
 {
-    public function handle(EventInterface $event): void
+    public function handle(object $event): void
     {
         // ...
     }

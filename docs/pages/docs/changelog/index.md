@@ -10,21 +10,28 @@ title: Changelog
 
 # Changelog
 
+## v0.18.0
+
+- Feature: add {{docs/features/mail/index}}
+- Feature: add {{docs/features/swoole-server-tasks/index}}
+- Feature: make event dispatcher ({{docs/features/events/index}}) compatible 
+    with [PSR-14](https://www.php-fig.org/psr/psr-14/)
+
 ## v0.17.0
 
-- Feature: added {{docs/features/vector-store/sqlite-vss/index}} (integration)
+- Feature: add {{docs/features/vector-store/sqlite-vss/index}} (integration)
 
 ## v0.16.0
 
-- Feature: added {{docs/features/ai/prompt-engineering/index}} (basic prompt templates)
+- Feature: add {{docs/features/ai/prompt-engineering/index}} (basic prompt templates)
 
 ## v0.15.0
 
-- Feature: added {{docs/features/http/pipe-messages}}
+- Feature: add {{docs/features/http/pipe-messages}}
 
 ## v0.14.0
 
-- Feature: added {{docs/features/ai/server/llama-cpp/index}} to integrate with LLMs 
+- Feature: add {{docs/features/ai/server/llama-cpp/index}} to integrate with LLMs 
 
 ## v0.11.1
 

@@ -61,7 +61,7 @@ final readonly class StaticPageDocumentTableOfContents extends Component
                     href="#%s"
                     data-minimap-target="link"
                 >
-                    <div class="heading-permalink">»</div>%s
+                    <div class="heading-permalink"></div>%s
                 </a>
                 HTML,
                 $tableOfContentsLink->level,
