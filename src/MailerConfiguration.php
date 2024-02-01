@@ -4,25 +4,17 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use SensitiveParameter;
+use Ds\Map;
 
 readonly class MailerConfiguration
 {
     /**
-     * @param non-empty-string $transportDsn
+     * @var Map<non-empty-string,MailerTransportConfiguration>
      */
-    public function __construct(
-        #[SensitiveParameter]
-        public string $dkimDomainName,
-        #[SensitiveParameter]
-        public string $dkimSelector,
-        #[SensitiveParameter]
-        public string $dkimSigningKeyPassphrase,
-        #[SensitiveParameter]
-        public string $dkimSigningKeyPrivate,
-        #[SensitiveParameter]
-        public string $dkimSigningKeyPublic,
-        #[SensitiveParameter]
-        public string $transportDsn,
-    ) {}
+    public Map $transportConfiguration;
+
+    public function __construct()
+    {
+        $this->transportConfiguration = new Map();
+    }
 }

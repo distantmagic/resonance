@@ -9,6 +9,7 @@ use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Console\EntityManagerProvider;
+use RuntimeException;
 
 #[Singleton]
 readonly class DoctrineConsoleEntityManagerProvider implements EntityManagerProvider
@@ -25,6 +26,10 @@ readonly class DoctrineConsoleEntityManagerProvider implements EntityManagerProv
 
     public function getManager(string $name): EntityManagerInterface
     {
+        if (empty($name)) {
+            throw new RuntimeException('Connection pool name must be a non-empty string');
+        }
+
         return new EntityManager(
             $this->doctrineConnectionRepository->buildConnection($name),
             $this->configuration,

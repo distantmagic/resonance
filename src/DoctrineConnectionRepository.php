@@ -62,6 +62,9 @@ readonly class DoctrineConnectionRepository extends EventListener
         $this->eventListenerAggregate->removeListener(HttpResponseReady::class, $this);
     }
 
+    /**
+     * @param non-empty-string $name
+     */
     public function buildConnection(string $name = 'default'): Connection
     {
         return new Connection(
@@ -75,6 +78,9 @@ readonly class DoctrineConnectionRepository extends EventListener
         );
     }
 
+    /**
+     * @param non-empty-string $name
+     */
     public function getConnection(Request $request, string $name = 'default'): Connection
     {
         if (!$this->connections->offsetExists($request)) {
@@ -124,6 +130,9 @@ readonly class DoctrineConnectionRepository extends EventListener
         }
     }
 
+    /**
+     * @param non-empty-string $name
+     */
     private function getDriver(string $name): Driver
     {
         $poolConfiguration = $this->databaseConfiguration->connectionPoolConfiguration->get($name);

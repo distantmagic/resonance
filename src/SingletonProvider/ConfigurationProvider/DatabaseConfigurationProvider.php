@@ -14,7 +14,7 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 /**
  * @template-extends ConfigurationProvider<
  *     DatabaseConfiguration,
- *     array<string, object{
+ *     array<non-empty-string, object{
  *         database: string,
  *         driver: string,
  *         host: non-empty-string,

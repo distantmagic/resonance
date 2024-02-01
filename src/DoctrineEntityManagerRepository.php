@@ -32,6 +32,9 @@ readonly class DoctrineEntityManagerRepository
         $this->entityManagers = new WeakMap();
     }
 
+    /**
+     * @param non-empty-string $name
+     */
     public function buildEntityManager(string $name = 'default'): EntityManagerInterface
     {
         return new EntityManager(
@@ -40,11 +43,17 @@ readonly class DoctrineEntityManagerRepository
         );
     }
 
+    /**
+     * @param non-empty-string $name
+     */
     public function createContextKey(string $name): string
     {
         return sprintf('%s.%s', self::class, $name);
     }
 
+    /**
+     * @param non-empty-string $name
+     */
     public function getEntityManager(Request $request, string $name = 'default'): EntityManagerInterface
     {
         if (!$this->entityManagers->offsetExists($request)) {
@@ -83,6 +92,7 @@ readonly class DoctrineEntityManagerRepository
      * @template TCallbackReturn
      *
      * @param callable(EntityManagerInterface):TCallbackReturn $callback
+     * @param non-empty-string                                 $name
      *
      * @return TCallbackReturn
      */
@@ -126,6 +136,7 @@ readonly class DoctrineEntityManagerRepository
      *
      * @param class-string<TEntityClass>                                         $className
      * @param callable(EntityManagerInterface,TEntityRepository):TCallbackReturn $callback
+     * @param non-empty-string                                                   $name
      *
      * @return TCallbackReturn
      */
@@ -141,6 +152,9 @@ readonly class DoctrineEntityManagerRepository
         }, $name, $flush);
     }
 
+    /**
+     * @param non-empty-string $name
+     */
     private function getWeakReference(string $name = 'default'): EntityManagerWeakReference
     {
         return new EntityManagerWeakReference($this->buildEntityManager($name));

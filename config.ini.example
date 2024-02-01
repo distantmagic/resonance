@@ -20,12 +20,12 @@ host = 127.0.0.1
 port = 8081
 
 [mailer]
-transport_dsn = smtp://localhost
-dkim_domain_name = example.com
-dkim_selector = selector
-dkim_signing_key_passphrase = yourpassphrase
-dkim_signing_key_private = dkim/private.key
-dkim_signing_key_public = dkim/public.key
+default[transport_dsn] = smtp://localhost
+default[dkim_domain_name] = example.com
+default[dkim_selector] = resonance1
+default[dkim_signing_key_passphrase] = yourpassphrase
+default[dkim_signing_key_private] = dkim/private.key
+default[dkim_signing_key_public] = dkim/public.key
 
 [manifest]
 background_color = "#ffffff"
