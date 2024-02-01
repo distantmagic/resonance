@@ -64,6 +64,23 @@ for handling transports. You can also use all the 3rd party transports.
 
 ## Sending Emails
 
+### CLI
+
+Resonance has a built-in `mail:send` command. You can use it to send a single
+email at a time, using your configuration file:
+
+```shell
+$ php bin/resonance.php mail:send \
+    --from "me@example.com" \
+    --to "you@example.com" \
+    --subject "Hello!" \
+    --transport "postfix" \
+    "How is it going?"
+```
+
+
+### PHP
+
 :::note
 When email is enqueued in the {{docs/features/http/server}} is running, it 
 won't be immediately sent instead it will be scheduled by using 
