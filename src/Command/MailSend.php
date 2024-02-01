@@ -64,7 +64,18 @@ final class MailSend extends Command
         $to = $input->getOption('to');
         $transport = $input->getOption('transport');
 
-        if (!isset($content, $from, $subject, $to, $transport)) {
+        if (
+            !is_string($content)
+            || !is_string($from)
+            || !is_string($subject)
+            || !is_string($to)
+            || !is_string($transport)
+            || empty($content)
+            || empty($from)
+            || empty($subject)
+            || empty($to)
+            || empty($transport)
+        ) {
             throw new RuntimeException('You need to provide all the options and arguments');
         }
 
