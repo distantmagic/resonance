@@ -99,7 +99,7 @@ readonly class SwooleServer
         $this->eventDispatcher->dispatch(new HttpServerBeforeStop($this->server));
     }
 
-    private function onClose(int $fd): void
+    private function onClose(Server $server, int $fd): void
     {
         $this->webSocketServerController?->onClose($fd);
     }

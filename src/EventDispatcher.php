@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\SwooleFuture\SwooleFuture;
 use Distantmagic\SwooleFuture\SwooleFutureResult;
+use Psr\Log\LoggerInterface;
 use Swoole\Event;
 
 use function Swoole\Coroutine\batch;
@@ -16,6 +17,7 @@ readonly class EventDispatcher implements EventDispatcherInterface
 {
     public function __construct(
         private EventListenerAggregate $eventListenerAggregate,
+        private LoggerInterface $logger,
     ) {}
 
     public function collect(object $event): SwooleFutureResult
@@ -36,6 +38,8 @@ readonly class EventDispatcher implements EventDispatcherInterface
 
     private function doDispatch(object $event): array
     {
+        $this->logger->debug(sprintf('event_dispatch(%s)', $event::class));
+
         $listeners = $this->eventListenerAggregate->getListenersForEvent($event);
 
         if ($listeners->isEmpty()) {
