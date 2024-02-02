@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\Command;
 
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
+use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\CoroutineCommand;
 use Distantmagic\Resonance\Event\MailBounced;
 use Distantmagic\Resonance\EventDispatcherInterface;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\MailerRepository;
 use Distantmagic\Resonance\SwooleConfiguration;
 use Generator;
@@ -29,6 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
     name: 'mail:bounce',
     description: 'Handles email bounces (requires mailparse)'
 )]
+#[WantsFeature(Feature::Postfix)]
 final class MailBounce extends CoroutineCommand
 {
     public function __construct(

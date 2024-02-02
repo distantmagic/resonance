@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance;
 enum Feature implements FeatureInterface
 {
     case OAuth2;
+    case Postfix;
     case SwooleTaskServer;
     case WebSocket;
 
