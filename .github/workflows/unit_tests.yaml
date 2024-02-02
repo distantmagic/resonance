@@ -26,7 +26,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: ds,inotify,mailparse,uuid,swoole
+          extensions: ds,http,inotify,mailparse,uuid,swoole
 
       - name: checkout
         uses: actions/checkout@v4
@@ -44,7 +44,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: curl,ds,inotify,mailparse,uuid,swoole
+          extensions: curl,ds,http,inotify,mailparse,uuid,swoole
 
       - name: checkout
         uses: actions/checkout@v4

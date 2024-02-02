@@ -42,8 +42,8 @@ final class MailBounce extends CoroutineCommand
 
     protected function executeInCoroutine(InputInterface $input, OutputInterface $output): int
     {
-        if (!extension_loaded('mailparse')) {
-            throw new RuntimeException('You need to install "mailparse" extension');
+        if (!extension_loaded('mailparse') || !extension_loaded('http')) {
+            throw new RuntimeException('You need to install "http" and "mailparse" extensions');
         }
 
         $content = stream_get_contents(STDIN);
