@@ -80,7 +80,7 @@ abstract readonly class Turbo extends StaticPageLayout
         </head>
         <body>
             <main class="body-content website">
-                <nav class="primary-navigation">
+                <nav class="primary-navigation" id="primary-navigation">
         HTML;
         yield from $this->renderPrimaryNavigation($staticPage);
         yield <<<'HTML'
@@ -105,7 +105,7 @@ abstract readonly class Turbo extends StaticPageLayout
         yield from $this->renderPrimaryBanner($staticPage);
         yield from $this->renderBodyContent($staticPage);
         yield <<<HTML
-                <footer class="primary-footer">
+                <footer class="primary-footer" id="primary-footer">
                     <div class="primary-footer__copyright">
                         Copyright &copy; {$currentYear} Distantmagic.
                         Built with Resonance.
@@ -170,10 +170,11 @@ abstract readonly class Turbo extends StaticPageLayout
     protected function renderPrimaryBanner(StaticPage $currentPage): Generator
     {
         yield <<<'HTML'
-            <div class="primary-banner">
+            <div class="primary-banner" id="primary-banner">
                 <iframe
                     frameborder="0"
                     height="30"
+                    id="primary-banner__frame"
                     scrolling="0"
                     src="https://ghbtns.com/github-btn.html?user=distantmagic&repo=resonance&type=star&count=true&size=large"
                     title="GitHub"
