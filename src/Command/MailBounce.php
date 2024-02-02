@@ -9,7 +9,6 @@ use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\CoroutineCommand;
 use Distantmagic\Resonance\Event\MailBounced;
 use Distantmagic\Resonance\EventDispatcherInterface;
-use Distantmagic\Resonance\Mailer;
 use Distantmagic\Resonance\MailerRepository;
 use Distantmagic\Resonance\SwooleConfiguration;
 use Generator;
@@ -104,23 +103,6 @@ final class MailBounce extends CoroutineCommand
         }
 
         return Command::SUCCESS;
-    }
-
-    private function getMailer(InputInterface $input): Mailer
-    {
-        $transportName = $input->getOption('transport');
-
-        if (!is_string($transportName) || empty($transportName)) {
-            throw new RuntimeException('You need to provide all the options and arguments');
-        }
-
-        $transport = $this->mailerRepository->mailer->get($transportName, null);
-
-        if (!$transport) {
-            throw new RuntimeException(sprintf('Transport is not configured: "%s"', $transportName));
-        }
-
-        return $transport;
     }
 
     /**
