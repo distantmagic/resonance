@@ -18,11 +18,22 @@ readonly class ServerTaskHandlerDispatcher
         private ServerTaskHandlerCollection $serverTaskHandlerCollection,
     ) {}
 
+    /**
+     * Although it's unused, that param makes it compatbile with Swoole server
+     * event callbacks.
+     *
+     * @psalm-suppress PossiblyUnusedParam
+     */
     public function onFinish(Server $server, int $taskId): void
     {
         $this->logger->debug(sprintf('swoole_task_finish(%d)', $taskId));
     }
 
+    /**
+     * @psalm-suppress PossiblyUnusedParam
+     *
+     * @see onFinish
+     */
     public function onTask(Server $server, Task $task): void
     {
         /**

@@ -10,7 +10,6 @@ use Doctrine\DBAL\ParameterType;
 use LogicException;
 use PDO;
 use PDOStatement;
-use RuntimeException;
 use Swoole\Database\PDOProxy;
 use Swoole\Database\PDOStatementProxy;
 use Swoole\Event;
@@ -42,7 +41,7 @@ readonly class DatabaseConnection implements ServerInfoAwareConnection
     public function beginTransaction(): bool
     {
         /**
-         * @var bool $result
+         * @psalm-suppress UndefinedMagicMethod
          */
         $result = $this->pdo->beginTransaction();
         $this->assertNotFalse($result);
@@ -53,7 +52,7 @@ readonly class DatabaseConnection implements ServerInfoAwareConnection
     public function commit(): bool
     {
         /**
-         * @var bool $result
+         * @psalm-suppress UndefinedMagicMethod
          */
         $result = $this->pdo->commit();
         $this->assertNotFalse($result);
@@ -67,7 +66,7 @@ readonly class DatabaseConnection implements ServerInfoAwareConnection
     public function exec(string $sql): int
     {
         /**
-         * @var false|int
+         * @psalm-suppress UndefinedMagicMethod
          */
         $result = $this->pdo->exec($sql);
 
@@ -82,6 +81,8 @@ readonly class DatabaseConnection implements ServerInfoAwareConnection
     public function getServerVersion(): string
     {
         /**
+         * @psalm-suppress UndefinedMagicMethod
+         *
          * @var false|string
          */
         $version = $this->pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
@@ -91,14 +92,15 @@ readonly class DatabaseConnection implements ServerInfoAwareConnection
 
     public function lastInsertId($name = null): false|string
     {
+        /**
+         * @psalm-suppress UndefinedMagicMethod
+         *
+         * @var false|string $lastInsertId
+         */
         $lastInsertId = $this->pdo->lastInsertId($name);
 
         if (false === $lastInsertId) {
             return false;
-        }
-
-        if (!is_string($lastInsertId)) {
-            throw new RuntimeException('Last insert id is not a string');
         }
 
         return $lastInsertId;
@@ -107,6 +109,8 @@ readonly class DatabaseConnection implements ServerInfoAwareConnection
     public function prepare(string $sql): DatabasePreparedStatement
     {
         /**
+         * @psalm-suppress UndefinedMagicMethod
+         *
          * @var false|PDOStatement|PDOStatementProxy
          */
         $pdoPreparedStatement = $this->pdo->prepare($sql);
@@ -122,6 +126,8 @@ readonly class DatabaseConnection implements ServerInfoAwareConnection
     public function query(string $sql): DatabaseExecutedStatement
     {
         /**
+         * @psalm-suppress UndefinedMagicMethod
+         *
          * @var false|PDOStatement|PDOStatementProxy
          */
         $result = $this->pdo->query($sql);
@@ -142,13 +148,16 @@ readonly class DatabaseConnection implements ServerInfoAwareConnection
             throw new LogicException('Only string values can be quoted');
         }
 
+        /**
+         * @psalm-suppress UndefinedMagicMethod
+         */
         return $this->pdo->quote($value, ParameterTypeMap::convertParamType($type));
     }
 
     public function rollBack(): bool
     {
         /**
-         * @var bool $result
+         * @psalm-suppress UndefinedMagicMethod
          */
         $result = $this->pdo->rollBack();
         $this->assertNotFalse($result);
@@ -166,6 +175,9 @@ readonly class DatabaseConnection implements ServerInfoAwareConnection
     private function assertNotFalse(mixed $value): mixed
     {
         if (false === $value) {
+            /**
+             * @psalm-suppress UndefinedMagicMethod
+             */
             throw new PDOException($this->pdo->errorInfo());
         }
 

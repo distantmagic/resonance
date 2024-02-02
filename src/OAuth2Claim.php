@@ -8,6 +8,9 @@ use Ds\Set;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 
+/**
+ * @psalm-suppress PossiblyUnusedProperty used in applications
+ */
 readonly class OAuth2Claim
 {
     /**

@@ -68,7 +68,7 @@ final readonly class MailerRepositoryProvider extends SingletonProvider
             return new DkimSigner(
                 domainName: $transportConfiguration->dkimDomainName,
                 passphrase: $transportConfiguration->dkimSigningKeyPassphrase,
-                pk: 'file://'.$transportConfiguration->dkimSigningKeyPrivate,
+                pk: 'file://'.DM_ROOT.'/'.$transportConfiguration->dkimSigningKeyPrivate,
                 selector: $transportConfiguration->dkimSelector,
             );
         }

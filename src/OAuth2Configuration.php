@@ -7,6 +7,9 @@ namespace Distantmagic\Resonance;
 use Defuse\Crypto\Key;
 use League\OAuth2\Server\CryptKey;
 
+/**
+ * @psalm-suppress PossiblyUnusedProperty used in applications
+ */
 readonly class OAuth2Configuration
 {
     /**

@@ -8,6 +8,9 @@ use Distantmagic\Resonance\FrontMatterCollectionReference;
 use Distantmagic\Resonance\InputValidatedData;
 use Distantmagic\Resonance\StaticPageContentType;
 
+/**
+ * @psalm-suppress PossiblyUnusedProperty used in templates
+ */
 readonly class FrontMatter extends InputValidatedData
 {
     /**

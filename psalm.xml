@@ -31,16 +31,6 @@
                 <directory name="src"/>
             </errorLevel>
         </PossiblyUnusedMethod>
-        <PossiblyUnusedParam>
-            <errorLevel type="suppress">
-                <directory name="src"/>
-            </errorLevel>
-        </PossiblyUnusedParam>
-        <PossiblyUnusedProperty>
-            <errorLevel type="suppress">
-                <directory name="src"/>
-            </errorLevel>
-        </PossiblyUnusedProperty>
         <PossiblyUnusedReturnValue>
             <errorLevel type="suppress">
                 <directory name="src/HttpResponder"/>

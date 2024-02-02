@@ -6,6 +6,9 @@ namespace Distantmagic\Resonance;
 
 use Stringable;
 
+/**
+ * @psalm-suppress PossiblyUnusedProperty used in commands
+ */
 readonly class LlamaCppInfill implements Stringable
 {
     public function __construct(

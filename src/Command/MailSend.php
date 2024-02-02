@@ -48,7 +48,6 @@ final class MailSend extends Command
             name: 'transport',
             mode: InputOption::VALUE_REQUIRED,
             suggestedValues: $this->mailerRepository->mailer->keys()->toArray(),
-            default: 'default',
         );
         $this->addArgument(
             name: 'content',

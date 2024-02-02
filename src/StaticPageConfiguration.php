@@ -6,6 +6,9 @@ namespace Distantmagic\Resonance;
 
 use SensitiveParameter;
 
+/**
+ * @psalm-suppress PossiblyUnusedProperty used in applications
+ */
 readonly class StaticPageConfiguration
 {
     /**

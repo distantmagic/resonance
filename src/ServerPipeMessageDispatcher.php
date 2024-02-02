@@ -15,6 +15,12 @@ readonly class ServerPipeMessageDispatcher
         private ServerPipeMessageHandlerCollection $serverPipeMessageHandlerCollection,
     ) {}
 
+    /**
+     * Although it's unused, that param makes it compatbile with Swoole server
+     * event callbacks.
+     *
+     * @psalm-suppress PossiblyUnusedParam
+     */
     public function onPipeMessage(Server $server, int $srcWorkerId, mixed $data): void
     {
         if (!is_object($data)) {

@@ -6,6 +6,9 @@ namespace Distantmagic\Resonance;
 
 use SensitiveParameter;
 
+/**
+ * @psalm-suppress PossiblyUnusedProperty used in providers
+ */
 readonly class MailerTransportConfiguration
 {
     /**

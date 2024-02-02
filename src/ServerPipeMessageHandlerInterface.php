@@ -14,5 +14,7 @@ interface ServerPipeMessageHandlerInterface
      *
      * @param TPipeMessage $serverPipeMessage
      */
-    public function handleServerPipeMessage(ServerPipeMessageInterface $serverPipeMessage): void;
+    public function handleServerPipeMessage(
+        ServerPipeMessageInterface $serverPipeMessage,
+    ): void;
 }

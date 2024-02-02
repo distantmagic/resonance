@@ -61,6 +61,7 @@
         "ext-ds": "For better memory management",
         "ext-intl": "Date formatting",
         "ext-igbinary": "For better object serialization",
+        "ext-mailparse": "To integrate with Postfix",
         "ext-openssl": "To generate application keys",
         "ext-readline": "Unlocks some console features",
         "ext-redis": "HTTP Sessions driver",

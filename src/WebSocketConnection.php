@@ -7,6 +7,9 @@ namespace Distantmagic\Resonance;
 use Stringable;
 use Swoole\WebSocket\Server;
 
+/**
+ * @psalm-suppress PossiblyUnusedProperty used in applications
+ */
 class WebSocketConnection
 {
     public WebSocketConnectionStatus $status = WebSocketConnectionStatus::Open;
