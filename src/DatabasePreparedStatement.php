@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Distantmagic\Resonance\Event\SQLQueryBeforeExecute;
 use Doctrine\DBAL\Driver\PDO\ParameterTypeMap;
 use Doctrine\DBAL\Driver\Statement;
 use Doctrine\DBAL\ParameterType;
@@ -15,9 +14,7 @@ use Swoole\Database\PDOStatementProxy;
 readonly class DatabasePreparedStatement implements Statement
 {
     public function __construct(
-        private EventDispatcherInterface $eventDispatcher,
         private PDOStatement|PDOStatementProxy $pdoStatement,
-        private string $sql,
     ) {}
 
     /**
@@ -52,8 +49,6 @@ readonly class DatabasePreparedStatement implements Statement
 
     public function execute($params = null): DatabaseExecutedStatement
     {
-        $this->eventDispatcher->dispatch(new SQLQueryBeforeExecute($this->sql));
-
         /**
          * @var bool
          */

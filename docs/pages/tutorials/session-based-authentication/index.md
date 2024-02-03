@@ -260,7 +260,7 @@ final readonly class LoginForm extends HttpResponder
 
 ```twig file:app/views/auth/login_form.twig
 <form
-    action="{{ route(constant('App\\HttpRouteSymbol::LoginValidation')) }}"
+    action="{{ route('LoginValidation') }}"
     method="post"
 >
     <input
@@ -543,7 +543,7 @@ final readonly class LogoutForm extends HttpResponder
 ```
 ```twig file:app/views/auth/logout_form.twig
 <form
-    action="{{ route(constant('App\\HttpRouteSymbol::LogoutValidation')) }}"
+    action="{{ route('LogoutValidation') }}"
     method="post"
 >
     <input

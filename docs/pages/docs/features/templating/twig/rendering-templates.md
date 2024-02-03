@@ -166,3 +166,12 @@ Generates URL that points to the requested route:
     {{ 'pages.homepage'|trans(request) }}
 </a>
 ```
+
+If you use just a string, it will try to use your `App\HttpRouteSymbol` file 
+to match the route:
+
+```twig
+<a href="{{ route('Homepage') }}">
+    {{ 'pages.homepage'|trans(request) }}
+</a>
+```

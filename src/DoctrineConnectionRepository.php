@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\ListensTo;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Event\HttpResponseReady;
 use Doctrine\DBAL\Configuration;
@@ -22,7 +23,8 @@ use WeakMap;
  *
  * @template-extends EventListener<HttpResponseReady,void>
  */
-#[Singleton]
+#[ListensTo(HttpResponseReady::class)]
+#[Singleton(collection: SingletonCollection::EventListener)]
 readonly class DoctrineConnectionRepository extends EventListener
 {
     /**
@@ -36,30 +38,12 @@ readonly class DoctrineConnectionRepository extends EventListener
         private DoctrineMySQLDriver $doctrineMySQLDriver,
         private DoctrinePostgreSQLDriver $doctrinePostgreSQLDriver,
         private DoctrineSQLiteDriver $doctrineSQLiteDriver,
-        private EventListenerAggregate $eventListenerAggregate,
         private LoggerInterface $logger,
     ) {
         /**
          * @var WeakMap<Request,Map<string,Connection>>
          */
         $this->connections = new WeakMap();
-
-        /**
-         * False positive, $this IS an EventListenerInterface
-         *
-         * @psalm-suppress InvalidArgument
-         */
-        $this->eventListenerAggregate->addListener(HttpResponseReady::class, $this);
-    }
-
-    public function __destruct()
-    {
-        /**
-         * False positive, $this IS an EventListenerInterface
-         *
-         * @psalm-suppress InvalidArgument
-         */
-        $this->eventListenerAggregate->removeListener(HttpResponseReady::class, $this);
     }
 
     /**

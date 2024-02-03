@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\EventDispatcherInterface;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\RedisConfiguration;
 use Distantmagic\Resonance\RedisConnectionPoolRepository;
@@ -22,7 +21,6 @@ final readonly class RedisConnectionPoolRepositoryProvider extends SingletonProv
 {
     public function __construct(
         private RedisConfiguration $databaseConfiguration,
-        private EventDispatcherInterface $eventDispatcher,
     ) {}
 
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): RedisConnectionPoolRepository

@@ -7,7 +7,6 @@ namespace Distantmagic\Resonance\SingletonProvider;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\DatabaseConfiguration;
 use Distantmagic\Resonance\DatabaseConnectionPoolRepository;
-use Distantmagic\Resonance\EventDispatcherInterface;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
@@ -22,12 +21,11 @@ final readonly class DatabaseConnectionPoolRepositoryProvider extends SingletonP
 {
     public function __construct(
         private DatabaseConfiguration $databaseConfiguration,
-        private EventDispatcherInterface $eventDispatcher,
     ) {}
 
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): DatabaseConnectionPoolRepository
     {
-        $databaseConnectionPoolRepository = new DatabaseConnectionPoolRepository($this->eventDispatcher);
+        $databaseConnectionPoolRepository = new DatabaseConnectionPoolRepository();
 
         foreach ($this->databaseConfiguration->connectionPoolConfiguration as $name => $connectionPoolConfiguration) {
             $pdoConfig = new PDOConfig();

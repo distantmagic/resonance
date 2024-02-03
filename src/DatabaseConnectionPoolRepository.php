@@ -18,7 +18,7 @@ readonly class DatabaseConnectionPoolRepository
      */
     public Map $databaseConnectionPool;
 
-    public function __construct(public EventDispatcherInterface $eventDispatcher)
+    public function __construct()
     {
         $this->databaseConnectionPool = new Map();
     }

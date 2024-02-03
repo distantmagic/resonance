@@ -116,11 +116,7 @@ readonly class DatabaseConnection implements ServerInfoAwareConnection
         $pdoPreparedStatement = $this->pdo->prepare($sql);
         $pdoPreparedStatement = $this->assertNotFalse($pdoPreparedStatement);
 
-        return new DatabasePreparedStatement(
-            $this->databaseConnectionPoolRepository->eventDispatcher,
-            $pdoPreparedStatement,
-            $sql,
-        );
+        return new DatabasePreparedStatement($pdoPreparedStatement);
     }
 
     public function query(string $sql): DatabaseExecutedStatement
