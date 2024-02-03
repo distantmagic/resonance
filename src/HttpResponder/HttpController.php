@@ -74,7 +74,7 @@ abstract readonly class HttpController extends HttpResponder
         ;
     }
 
-    public function respond(Request $request, Response $response): null|HttpInterceptableInterface|HttpResponderInterface
+    final public function respond(Request $request, Response $response): null|HttpInterceptableInterface|HttpResponderInterface
     {
         /**
          * @var array <string,mixed>
