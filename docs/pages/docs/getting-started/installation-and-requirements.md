@@ -23,6 +23,7 @@ extension | symbol | why?
 [Data Structures](https://www.php.net/manual/en/book.ds.php) | `ext-ds` | Data Structures are not only fast, but they have better memory management than the base PHP arrays, which is essential to create stable long-running applications.<br><br>You can learn more in this article: [Efficient data structures for PHP 7](https://medium.com/@rtheunissen/efficient-data-structures-for-php-7-9dda7af674cd)
 [Sockets](https://www.php.net/manual/en/intro.sockets.php) | `ext-sockets` | Required by Swoole and other services.
 [Swoole](https://www.swoole.com/) | `ext-swoole` | Provides asynchronous features to PHP.<br><br>Can also be replaced by it's fork - [OpenSwoole](https://openswoole.com/).
+[uuid](https://pecl.php.net/package/uuid) | `ext-uuid` | UUID generation for session ids and such.
 
 :::note
 If you are using [Psalm](https://psalm.dev/) or [PHPStan](https://phpstan.org/) 
@@ -50,7 +51,6 @@ extension | symbol | why?
 [OpenSSL](https://datatracker.ietf.org/doc/html/rfc7519) | `ext-openssl` | Handles security keys, especially useful for {{docs/features/security/oauth2/index}}.
 [Readline](https://www.php.net/manual/en/book.readline.php) | `ext-readline` | Unlocks {{docs/features/console/index}} features, formatting, piping etc.
 [Redis](https://github.com/phpredis/phpredis) | `ext-redis` | Redis to handle {{docs/features/http/sessions}}
-[uuid](https://pecl.php.net/package/uuid) | `ext-uuid` | Faster UUID generation for session ids and such.
 
 # Installation
 
