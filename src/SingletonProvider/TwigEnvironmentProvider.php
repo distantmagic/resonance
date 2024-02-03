@@ -15,9 +15,12 @@ use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
 use Distantmagic\Resonance\TwigChainLoader;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 use Twig\Cache\FilesystemCache;
 use Twig\Environment as TwigEnvironment;
+use Twig\Error\Error;
 use Twig\Extension\ExtensionInterface;
 
 /**
@@ -29,6 +32,7 @@ final readonly class TwigEnvironmentProvider extends SingletonProvider
 {
     public function __construct(
         private ApplicationConfiguration $applicationConfiguration,
+        private LoggerInterface $logger,
         private TwigChainLoader $twigChainLoader,
     ) {}
 
@@ -42,6 +46,8 @@ final readonly class TwigEnvironmentProvider extends SingletonProvider
         foreach ($this->collectExtensions($singletons) as $twigExtensionAttribute) {
             $twigEnvironment->addExtension($twigExtensionAttribute->singleton);
         }
+
+        $this->warmupCache($twigEnvironment);
 
         return $twigEnvironment;
     }
@@ -70,5 +76,38 @@ final readonly class TwigEnvironmentProvider extends SingletonProvider
         $filesystem->remove($cacheDirectory);
 
         return new FilesystemCache($cacheDirectory, FilesystemCache::FORCE_BYTECODE_INVALIDATION);
+    }
+
+    private function warmupCache(TwigEnvironment $twigEnvironment): void
+    {
+        $viewsDirectory = DM_APP_ROOT.'/views';
+
+        if (!is_dir($viewsDirectory)) {
+            return;
+        }
+
+        $finder = new Finder();
+        $found = $finder
+            ->files()
+            ->ignoreDotFiles(true)
+            ->ignoreUnreadableDirs()
+            ->ignoreVCS(true)
+            ->in($viewsDirectory)
+        ;
+
+        foreach ($found as $file) {
+            $relativePathname = $file->getRelativePathname();
+
+            try {
+                $twigEnvironment->load($relativePathname);
+            } catch (Error $error) {
+                $this->logger->warning(sprintf(
+                    'twig_cache_warmup_error("%s", %d): %s',
+                    $relativePathname,
+                    $error->getTemplateLine(),
+                    $error->getMessage()
+                ));
+            }
+        }
     }
 }
