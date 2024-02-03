@@ -78,7 +78,7 @@ readonly class BlogPostFormValidator extends InputValidator
         );
     }
 
-    public function getSchema(): Schema
+    public function getSchema(): JsonSchema
     {
         return new JsonSchema([
             'type' => 'object',
