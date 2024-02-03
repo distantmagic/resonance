@@ -35,6 +35,7 @@ If you want to implement repositories by using
 <?php
 
 use Distantmagic\Resonance\DoctrineEntityManagerRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 #[Singleton(provides: AccessTokenRepositoryInterface::class)]
@@ -48,7 +49,7 @@ readonly class OAuth2AccessTokenRepository implements AccessTokenRepositoryInter
     {
         $this
             ->doctrineEntityManagerRepository
-            ->withRepository(MyDoctrineTokenRepository::class, function (EntityRepository $entityRepository) {
+            ->withRepository(MyDoctrineTokenRepository::class, function (EntityManagerInterface $entityManager, EntityRepository $entityRepository) {
                 // ...
             })
         ;

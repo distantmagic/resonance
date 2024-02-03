@@ -55,7 +55,7 @@ docs/artifact.tar: docs/build
 
 docs/build: config.ini esbuild vendor $(MD_SOURCES) $(PHP_SOURCES)
 	${PHP_BIN} ./bin/resonance.php static-pages:build;
-	cp resources/images/ogimage.webp docs/build/ogimage.webp
+# 	cp resources/images/ogimage.webp docs/build/ogimage.webp
 
 node_modules: yarn.lock
 	yarnpkg install --check-files --frozen-lockfile --non-interactive;

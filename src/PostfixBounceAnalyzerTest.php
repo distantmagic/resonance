@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @internal
  */
-final class PostfixBounceTest extends TestCase
+final class PostfixBounceAnalyzerTest extends TestCase
 {
     use TestsDependencyInectionContainerTrait;
 

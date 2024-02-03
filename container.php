@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__.'/vendor/autoload.php';
+require_once __DIR__.'/constants.php';
 
 defined('DM_ROOT') or exit('Configuration is not loaded.');
 
