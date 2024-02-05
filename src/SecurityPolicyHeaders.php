@@ -44,6 +44,7 @@ final readonly class SecurityPolicyHeaders
             "frame-ancestors 'none'",
             "manifest-src 'self'",
             "img-src 'self'",
+            "media-src 'self'",
             "object-src 'none'",
             "script-src 'self'",
             "style-src 'self' ".$this->getHeaderNonce($request),
