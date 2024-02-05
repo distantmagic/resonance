@@ -1,7 +1,7 @@
 ---
 collections: 
     - name: primary_navigation
-      next: community/index
+      next: use-cases/index
 description: docs
 layout: dm:tutorial-list
 title: Tutorials

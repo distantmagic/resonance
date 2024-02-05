@@ -157,7 +157,7 @@ a:active,
   background-color: var(--color-primary-banner-background);
   border-bottom: 1px solid var(--color-border);
   display: flex;
-  padding: 20px 20px;
+  padding: 20px;
   position: sticky;
   top: 0;
 }

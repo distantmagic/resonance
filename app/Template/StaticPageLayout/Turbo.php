@@ -178,7 +178,7 @@ abstract readonly class Turbo extends StaticPageLayout
                     scrolling="0"
                     src="https://ghbtns.com/github-btn.html?user=distantmagic&repo=resonance&type=star&count=true&size=large"
                     title="GitHub"
-                    width="170"
+                    width="130"
                 ></iframe>
             </div>
         HTML;
