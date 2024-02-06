@@ -11,7 +11,7 @@ use Ds\Map;
 readonly class WebSocketRPCResponderAggregate
 {
     /**
-     * @var Map<RPCMethodInterface,Constraint>
+     * @var Map<WebSocketRPCResponderInterface,Constraint>
      */
     public Map $cachedConstraints;
 
