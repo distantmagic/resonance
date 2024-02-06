@@ -52,6 +52,14 @@ final class StringConstraintTest extends TestCase
         self::assertTrue($constraint->validate('hi')->status->isValid());
     }
 
+    public function test_validates_mail(): void
+    {
+        $constraint = new StringConstraint(format: ConstraintStringFormat::Mail);
+
+        self::assertFalse($constraint->validate('hi')->status->isValid());
+        self::assertTrue($constraint->validate('test@example.com')->status->isValid());
+    }
+
     public function test_validates_uuid(): void
     {
         $constraint = new StringConstraint(format: ConstraintStringFormat::Uuid);

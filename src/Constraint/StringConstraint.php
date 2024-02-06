@@ -86,24 +86,26 @@ final readonly class StringConstraint extends Constraint
             );
         }
 
-        if (ConstraintStringFormat::Uuid === $this->format) {
-            if (uuid_is_valid($notValidatedData)) {
-                return new ConstraintResult(
-                    castedData: $notValidatedData,
-                    path: $path,
-                    reason: ConstraintReason::Ok,
-                    status: ConstraintResultStatus::Valid,
-                );
-            }
+        $isFormatValid = match ($this->format) {
+            ConstraintStringFormat::Mail => false !== filter_var($notValidatedData, FILTER_VALIDATE_EMAIL),
+            ConstraintStringFormat::Uuid => uuid_is_valid($notValidatedData),
+            default => throw new RuntimeException('Unknown string format'),
+        };
 
+        if ($isFormatValid) {
             return new ConstraintResult(
                 castedData: $notValidatedData,
                 path: $path,
-                reason: ConstraintReason::InvalidFormat,
-                status: ConstraintResultStatus::Invalid,
+                reason: ConstraintReason::Ok,
+                status: ConstraintResultStatus::Valid,
             );
         }
 
-        throw new RuntimeException('Unknown string format');
+        return new ConstraintResult(
+            castedData: $notValidatedData,
+            path: $path,
+            reason: ConstraintReason::InvalidFormat,
+            status: ConstraintResultStatus::Invalid,
+        );
     }
 }
