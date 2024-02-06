@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Generator;
 use IteratorAggregate;
@@ -16,6 +17,7 @@ use League\CommonMark\Node\StringContainerHelper;
 /**
  * @template-implements IteratorAggregate<non-empty-string>
  */
+#[GrantsFeature(Feature::StaticPages)]
 #[Singleton]
 readonly class StaticPageChunkIterator implements IteratorAggregate
 {

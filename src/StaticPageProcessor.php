@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
+#[GrantsFeature(Feature::StaticPages)]
 #[Singleton]
 readonly class StaticPageProcessor
 {

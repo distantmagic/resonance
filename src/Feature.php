@@ -8,6 +8,7 @@ enum Feature implements FeatureInterface
 {
     case OAuth2;
     case Postfix;
+    case StaticPages;
     case SwooleTaskServer;
     case WebSocket;
 

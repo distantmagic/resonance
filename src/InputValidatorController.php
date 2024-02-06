@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Distantmagic\Resonance\Attribute\Singleton;
 use Ds\Map;
 
-#[Singleton]
 readonly class InputValidatorController
 {
     /**

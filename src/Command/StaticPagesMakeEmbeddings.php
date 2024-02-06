@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\Command;
 
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
+use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Command;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\JsonSerializer;
 use Distantmagic\Resonance\LlamaCppClient;
 use Distantmagic\Resonance\LlamaCppEmbeddingRequest;
@@ -20,6 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
     name: 'static-pages:make-embeddings',
     description: 'Create embeddings from static pages contents (requires llama.cpp)'
 )]
+#[WantsFeature(Feature::StaticPages)]
 final class StaticPagesMakeEmbeddings extends Command
 {
     private readonly SQLite3 $embeddingsDatabase;

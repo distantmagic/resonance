@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\Command;
 
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
+use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Command;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\StaticPageAggregate;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,6 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
     name: 'static-pages:dump-content',
     description: 'Dumps static pages content into JSONL'
 )]
+#[WantsFeature(Feature::StaticPages)]
 final class StaticPagesDumpContent extends Command
 {
     public function __construct(

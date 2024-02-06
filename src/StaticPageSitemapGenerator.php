@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 
+#[GrantsFeature(Feature::StaticPages)]
 #[Singleton]
 readonly class StaticPageSitemapGenerator
 {
