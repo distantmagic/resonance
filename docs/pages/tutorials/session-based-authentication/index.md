@@ -376,7 +376,7 @@ readonly class UsernamePasswordValidator extends InputValidator
         return new UsernamePassword($data['username'], $data['password']);
     }
 
-    public function getSchema(): Constraint
+    public function getConstraint(): Constraint
     {
         return new ObjectConstraint([
             'csrf' => (new StringConstraint())->optional(),
