@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\JsonSchema;
+use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\ObjectConstraint;
+use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\OpenAPIConfiguration;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 /**
- * @template-extends ConfigurationProvider<OpenAPIConfiguration, object{
+ * @template-extends ConfigurationProvider<OpenAPIConfiguration, array{
  *     description: non-empty-string,
  *     title: non-empty-string,
  *     version: non-empty-string,
@@ -19,26 +21,15 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 #[Singleton(provides: OpenAPIConfiguration::class)]
 final readonly class OpenAPIConfigurationProvider extends ConfigurationProvider
 {
-    public function getSchema(): JsonSchema
+    public function getConstraint(): Constraint
     {
-        return new JsonSchema([
-            'type' => 'object',
-            'properties' => [
-                'description' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ],
-                'title' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ],
-                'version' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ],
+        return new ObjectConstraint(
+            properties: [
+                'description' => new StringConstraint(),
+                'title' => new StringConstraint(),
+                'version' => new StringConstraint(),
             ],
-            'required' => ['description', 'title', 'version'],
-        ]);
+        );
     }
 
     protected function getConfigurationKey(): string
@@ -49,9 +40,9 @@ final readonly class OpenAPIConfigurationProvider extends ConfigurationProvider
     protected function provideConfiguration($validatedData): OpenAPIConfiguration
     {
         return new OpenAPIConfiguration(
-            description: $validatedData->description,
-            title: $validatedData->title,
-            version: $validatedData->version,
+            description: $validatedData['description'],
+            title: $validatedData['title'],
+            version: $validatedData['version'],
         );
     }
 }

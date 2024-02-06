@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\JsonSchema;
+use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\ObjectConstraint;
+use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Distantmagic\Resonance\TranslatorConfiguration;
 
 /**
- * @template-extends ConfigurationProvider<TranslatorConfiguration, object{
+ * @template-extends ConfigurationProvider<TranslatorConfiguration, array{
  *     base_directory: non-empty-string,
  *     default_primary_language: non-empty-string,
  * }>
@@ -18,22 +20,14 @@ use Distantmagic\Resonance\TranslatorConfiguration;
 #[Singleton(provides: TranslatorConfiguration::class)]
 final readonly class TranslatorConfigurationProvider extends ConfigurationProvider
 {
-    public function getSchema(): JsonSchema
+    public function getConstraint(): Constraint
     {
-        return new JsonSchema([
-            'type' => 'object',
-            'properties' => [
-                'base_directory' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ],
-                'default_primary_language' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ],
+        return new ObjectConstraint(
+            properties: [
+                'base_directory' => new StringConstraint(),
+                'default_primary_language' => new StringConstraint(),
             ],
-            'required' => ['base_directory', 'default_primary_language'],
-        ]);
+        );
     }
 
     protected function getConfigurationKey(): string
@@ -44,8 +38,8 @@ final readonly class TranslatorConfigurationProvider extends ConfigurationProvid
     protected function provideConfiguration($validatedData): TranslatorConfiguration
     {
         return new TranslatorConfiguration(
-            baseDirectory: $validatedData->base_directory,
-            defaultPrimaryLanguage: $validatedData->default_primary_language,
+            baseDirectory: $validatedData['base_directory'],
+            defaultPrimaryLanguage: $validatedData['default_primary_language'],
         );
     }
 }

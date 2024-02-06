@@ -105,11 +105,9 @@ description: >
 #[Singleton(collection: SingletonCollection::WebSocketRPCResponder)]
 final readonly class EchoResponder extends WebSocketRPCResponder
 {
-    public function getSchema(): JsonSchema
+    public function getConstraint(): Constraint
     {
-        return new JsonSchema([
-            'type' => 'string',
-        ]);
+        return new StringConstraint();
     }
 
     public function onRequest(

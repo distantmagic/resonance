@@ -11,7 +11,7 @@ use Distantmagic\Resonance\ConstraintReason;
 use Distantmagic\Resonance\ConstraintResult;
 use Distantmagic\Resonance\ConstraintResultStatus;
 
-readonly class IntegerConstraint extends Constraint
+final readonly class IntegerConstraint extends Constraint
 {
     public function default(mixed $defaultValue): self
     {
@@ -49,7 +49,7 @@ readonly class IntegerConstraint extends Constraint
 
     protected function doValidate(mixed $notValidatedData, ConstraintPath $path): ConstraintResult
     {
-        if (!is_int($notValidatedData)) {
+        if (!is_numeric($notValidatedData) || (int) $notValidatedData != $notValidatedData) {
             return new ConstraintResult(
                 castedData: $notValidatedData,
                 path: $path,
@@ -59,7 +59,7 @@ readonly class IntegerConstraint extends Constraint
         }
 
         return new ConstraintResult(
-            castedData: $notValidatedData,
+            castedData: (int) $notValidatedData,
             path: $path,
             reason: ConstraintReason::Ok,
             status: ConstraintResultStatus::Valid,

@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\JsonSchema;
+use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\ObjectConstraint;
+use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Distantmagic\Resonance\SQLiteVSSConfiguration;
 
 /**
- * @template-extends ConfigurationProvider<SQLiteVSSConfiguration, object{
+ * @template-extends ConfigurationProvider<SQLiteVSSConfiguration, array{
  *     extension_vector0: non-empty-string,
  *     extension_vss0: non-empty-string,
  * }>
@@ -18,22 +20,14 @@ use Distantmagic\Resonance\SQLiteVSSConfiguration;
 #[Singleton(provides: SQLiteVSSConfiguration::class)]
 final readonly class SQLiteVSSConfigurationProvider extends ConfigurationProvider
 {
-    public function getSchema(): JsonSchema
+    public function getConstraint(): Constraint
     {
-        return new JsonSchema([
-            'type' => 'object',
-            'properties' => [
-                'extension_vector0' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ],
-                'extension_vss0' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ],
-            ],
-            'required' => ['extension_vector0', 'extension_vss0'],
-        ]);
+        return new ObjectConstraint(
+            properties: [
+                'extension_vector0' => new StringConstraint(),
+                'extension_vss0' => new StringConstraint(),
+            ]
+        );
     }
 
     protected function getConfigurationKey(): string
@@ -44,8 +38,8 @@ final readonly class SQLiteVSSConfigurationProvider extends ConfigurationProvide
     protected function provideConfiguration($validatedData): SQLiteVSSConfiguration
     {
         return new SQLiteVSSConfiguration(
-            extensionVector0: $validatedData->extension_vector0,
-            extensionVss0: $validatedData->extension_vss0,
+            extensionVector0: $validatedData['extension_vector0'],
+            extensionVss0: $validatedData['extension_vss0'],
         );
     }
 }

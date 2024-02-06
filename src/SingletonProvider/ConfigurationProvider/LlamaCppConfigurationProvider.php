@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\JsonSchema;
+use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\EnumConstraint;
+use Distantmagic\Resonance\Constraint\IntegerConstraint;
+use Distantmagic\Resonance\Constraint\NumberConstraint;
+use Distantmagic\Resonance\Constraint\ObjectConstraint;
+use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\LlamaCppConfiguration;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 /**
- * @template-extends ConfigurationProvider<LlamaCppConfiguration, object{
+ * @template-extends ConfigurationProvider<LlamaCppConfiguration, array{
  *     api_key: null|non-empty-string,
  *     completion_token_timeout: float,
  *     host: non-empty-string,
@@ -21,37 +26,17 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 #[Singleton(provides: LlamaCppConfiguration::class)]
 final readonly class LlamaCppConfigurationProvider extends ConfigurationProvider
 {
-    public function getSchema(): JsonSchema
+    public function getConstraint(): Constraint
     {
-        return new JsonSchema([
-            'type' => 'object',
-            'properties' => [
-                'api_key' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                    'default' => null,
-                ],
-                'host' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ],
-                'completion_token_timeout' => [
-                    'type' => 'number',
-                    'default' => 1.0,
-                ],
-                'port' => [
-                    'type' => 'integer',
-                    'minimum' => 1,
-                    'maximum' => 65535,
-                ],
-                'scheme' => [
-                    'type' => 'string',
-                    'enum' => ['http', 'https'],
-                    'default' => 'http',
-                ],
+        return new ObjectConstraint(
+            properties: [
+                'api_key' => (new StringConstraint())->default(null),
+                'completion_token_timeout' => (new NumberConstraint())->default(1.0),
+                'host' => new StringConstraint(),
+                'port' => new IntegerConstraint(),
+                'scheme' => (new EnumConstraint(['http', 'https']))->default('http'),
             ],
-            'required' => ['host', 'port'],
-        ]);
+        );
     }
 
     protected function getConfigurationKey(): string
@@ -62,11 +47,11 @@ final readonly class LlamaCppConfigurationProvider extends ConfigurationProvider
     protected function provideConfiguration($validatedData): LlamaCppConfiguration
     {
         return new LlamaCppConfiguration(
-            apiKey: $validatedData->api_key,
-            completionTokenTimeout: $validatedData->completion_token_timeout,
-            host: $validatedData->host,
-            port: $validatedData->port,
-            scheme: $validatedData->scheme,
+            apiKey: $validatedData['api_key'],
+            completionTokenTimeout: $validatedData['completion_token_timeout'],
+            host: $validatedData['host'],
+            port: $validatedData['port'],
+            scheme: $validatedData['scheme'],
         );
     }
 }

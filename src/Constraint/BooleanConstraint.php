@@ -11,7 +11,7 @@ use Distantmagic\Resonance\ConstraintReason;
 use Distantmagic\Resonance\ConstraintResult;
 use Distantmagic\Resonance\ConstraintResultStatus;
 
-final readonly class NumberConstraint extends Constraint
+final readonly class BooleanConstraint extends Constraint
 {
     public function default(mixed $defaultValue): self
     {
@@ -43,13 +43,13 @@ final readonly class NumberConstraint extends Constraint
     protected function doConvertToJsonSchema(): array
     {
         return [
-            'type' => 'number',
+            'type' => 'boolean',
         ];
     }
 
     protected function doValidate(mixed $notValidatedData, ConstraintPath $path): ConstraintResult
     {
-        if (!is_numeric($notValidatedData) || is_string($notValidatedData)) {
+        if (!is_bool($notValidatedData)) {
             return new ConstraintResult(
                 castedData: $notValidatedData,
                 path: $path,

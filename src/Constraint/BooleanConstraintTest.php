@@ -11,47 +11,41 @@ use PHPUnit\Framework\TestCase;
  *
  * @internal
  */
-final class IntegerConstraintTest extends TestCase
+final class BooleanConstraintTest extends TestCase
 {
     public function test_is_converted_optionally_to_json_schema(): void
     {
-        $constraint = new IntegerConstraint();
+        $constraint = new BooleanConstraint();
 
         self::assertEquals([
-            'type' => 'integer',
+            'type' => 'boolean',
         ], $constraint->optional()->toJsonSchema());
     }
 
     public function test_is_converted_to_json_schema(): void
     {
-        $constraint = new IntegerConstraint();
+        $constraint = new BooleanConstraint();
 
         self::assertEquals([
-            'type' => 'integer',
+            'type' => 'boolean',
         ], $constraint->toJsonSchema());
     }
 
     public function test_nullable_is_converted_to_json_schema(): void
     {
-        $constraint = new IntegerConstraint();
+        $constraint = new BooleanConstraint();
 
         self::assertEquals([
-            'type' => ['null', 'integer'],
+            'type' => ['null', 'boolean'],
             'default' => null,
         ], $constraint->nullable()->toJsonSchema());
     }
 
-    public function test_validates_failure(): void
+    public function test_validates(): void
     {
-        $constraint = new IntegerConstraint();
+        $constraint = new BooleanConstraint();
 
+        self::assertTrue($constraint->validate(false)->status->isValid());
         self::assertFalse($constraint->validate(5.5)->status->isValid());
-    }
-
-    public function test_validates_ok(): void
-    {
-        $constraint = new IntegerConstraint();
-
-        self::assertTrue($constraint->validate(5)->status->isValid());
     }
 }

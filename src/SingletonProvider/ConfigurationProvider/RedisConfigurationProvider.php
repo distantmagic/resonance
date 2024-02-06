@@ -5,7 +5,12 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\JsonSchema;
+use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\BooleanConstraint;
+use Distantmagic\Resonance\Constraint\IntegerConstraint;
+use Distantmagic\Resonance\Constraint\MapConstraint;
+use Distantmagic\Resonance\Constraint\ObjectConstraint;
+use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\RedisConfiguration;
 use Distantmagic\Resonance\RedisConnectionPoolConfiguration;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
@@ -13,10 +18,10 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 /**
  * @template-extends ConfigurationProvider<
  *     RedisConfiguration,
- *     array<string, object{
+ *     array<string, array{
  *         db_index: int,
  *         host: non-empty-string,
- *         password: string,
+ *         password: null|string,
  *         pool_prefill: bool,
  *         pool_size: int,
  *         port: int,
@@ -28,59 +33,22 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 #[Singleton(provides: RedisConfiguration::class)]
 final readonly class RedisConfigurationProvider extends ConfigurationProvider
 {
-    public function getSchema(): JsonSchema
+    public function getConstraint(): Constraint
     {
-        $valueSchema = [
-            'type' => 'object',
-            'properties' => [
-                'db_index' => [
-                    'type' => 'integer',
-                    'minimum' => 0,
-                ],
-                'host' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ],
-                'password' => [
-                    'type' => 'string',
-                ],
-                'pool_prefill' => [
-                    'type' => 'boolean',
-                ],
-                'pool_size' => [
-                    'type' => 'integer',
-                    'minimum' => 1,
-                ],
-                'port' => [
-                    'type' => 'integer',
-                    'minimum' => 1,
-                    'maximum' => 65535,
-                ],
-                'prefix' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ],
-                'timeout' => [
-                    'type' => 'integer',
-                    'minimum' => 0,
-                ],
+        $valueConstraint = new ObjectConstraint(
+            properties: [
+                'db_index' => new IntegerConstraint(),
+                'host' => new StringConstraint(),
+                'password' => (new StringConstraint())->nullable(),
+                'pool_prefill' => (new BooleanConstraint())->default(true),
+                'pool_size' => new IntegerConstraint(),
+                'port' => new IntegerConstraint(),
+                'prefix' => new StringConstraint(),
+                'timeout' => new IntegerConstraint(),
             ],
-            'required' => [
-                'db_index',
-                'host',
-                'password',
-                'pool_prefill',
-                'pool_size',
-                'port',
-                'prefix',
-                'timeout',
-            ],
-        ];
+        );
 
-        return new JsonSchema([
-            'type' => 'object',
-            'additionalProperties' => $valueSchema,
-        ]);
+        return new MapConstraint(valueConstraint: $valueConstraint);
     }
 
     protected function getConfigurationKey(): string
@@ -96,14 +64,14 @@ final readonly class RedisConfigurationProvider extends ConfigurationProvider
             $databaseconfiguration->connectionPoolConfiguration->put(
                 $name,
                 new RedisConnectionPoolConfiguration(
-                    dbIndex: $connectionPoolConfiguration->db_index,
-                    host: $connectionPoolConfiguration->host,
-                    password: $connectionPoolConfiguration->password,
-                    poolPrefill: $connectionPoolConfiguration->pool_prefill,
-                    poolSize: $connectionPoolConfiguration->pool_size,
-                    port: $connectionPoolConfiguration->port,
-                    prefix: $connectionPoolConfiguration->prefix,
-                    timeout: $connectionPoolConfiguration->timeout,
+                    dbIndex: $connectionPoolConfiguration['db_index'],
+                    host: $connectionPoolConfiguration['host'],
+                    password: (string) $connectionPoolConfiguration['password'],
+                    poolPrefill: $connectionPoolConfiguration['pool_prefill'],
+                    poolSize: $connectionPoolConfiguration['pool_size'],
+                    port: $connectionPoolConfiguration['port'],
+                    prefix: $connectionPoolConfiguration['prefix'],
+                    timeout: $connectionPoolConfiguration['timeout'],
                 ),
             );
         }

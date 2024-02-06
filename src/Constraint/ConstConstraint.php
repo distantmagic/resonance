@@ -11,7 +11,7 @@ use Distantmagic\Resonance\ConstraintResult;
 use Distantmagic\Resonance\ConstraintResultStatus;
 use LogicException;
 
-readonly class ConstConstraint extends Constraint
+final readonly class ConstConstraint extends Constraint
 {
     /**
      * @param float|int|non-empty-string $constValue

@@ -6,13 +6,15 @@ namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\IntegerConstraint;
+use Distantmagic\Resonance\Constraint\ObjectConstraint;
 use Distantmagic\Resonance\Feature;
-use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Distantmagic\Resonance\WebSocketConfiguration;
 
 /**
- * @template-extends ConfigurationProvider<WebSocketConfiguration, object{
+ * @template-extends ConfigurationProvider<WebSocketConfiguration, array{
  *     max_connections: int,
  * }>
  */
@@ -20,19 +22,16 @@ use Distantmagic\Resonance\WebSocketConfiguration;
 #[Singleton(provides: WebSocketConfiguration::class)]
 final readonly class WebSocketConfigurationProvider extends ConfigurationProvider
 {
-    public function getSchema(): JsonSchema
+    public function getConstraint(): Constraint
     {
-        return new JsonSchema([
-            'type' => 'object',
-            'properties' => [
-                'max_connections' => [
-                    'type' => 'integer',
-                    'minimum' => 1,
-                    'maximum' => 65535,
-                    'default' => 10000,
-                ],
+        return new ObjectConstraint(
+            // 'minimum' => 1,
+            // 'maximum' => 65535,
+            // 'default' => 10000,
+            properties: [
+                'max_connections' => (new IntegerConstraint())->default(10000),
             ],
-        ]);
+        );
     }
 
     protected function getConfigurationKey(): string
@@ -43,7 +42,7 @@ final readonly class WebSocketConfigurationProvider extends ConfigurationProvide
     protected function provideConfiguration($validatedData): WebSocketConfiguration
     {
         return new WebSocketConfiguration(
-            maxConnections: $validatedData->max_connections,
+            maxConnections: $validatedData['max_connections'],
         );
     }
 }

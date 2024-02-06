@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\ConfigurationFile;
-use Distantmagic\Resonance\JsonSchemaSourceInterface;
-use Distantmagic\Resonance\JsonSchemaValidationException;
-use Distantmagic\Resonance\JsonSchemaValidationResult;
-use Distantmagic\Resonance\JsonSchemaValidator;
+use Distantmagic\Resonance\ConstraintSourceInterface;
+use Distantmagic\Resonance\ConstraintValidationException;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
@@ -19,7 +17,7 @@ use Distantmagic\Resonance\SingletonProvider;
  *
  * @template-extends SingletonProvider<TObject>
  */
-abstract readonly class ConfigurationProvider extends SingletonProvider implements JsonSchemaSourceInterface
+abstract readonly class ConfigurationProvider extends SingletonProvider implements ConstraintSourceInterface
 {
     abstract protected function getConfigurationKey(): string;
 
@@ -32,7 +30,6 @@ abstract readonly class ConfigurationProvider extends SingletonProvider implemen
 
     public function __construct(
         private ConfigurationFile $configurationFile,
-        private JsonSchemaValidator $jsonSchemaValidator,
     ) {}
 
     /**
@@ -45,18 +42,19 @@ abstract readonly class ConfigurationProvider extends SingletonProvider implemen
          */
         $data = $this->configurationFile->config->get($this->getConfigurationKey());
 
-        /**
-         * @var JsonSchemaValidationResult<TSchema>
-         */
-        $jsonSchemaValidationResult = $this->jsonSchemaValidator->validate($this, $data);
+        $constraintResult = $this->getConstraint()->validate($data);
 
-        $errors = $jsonSchemaValidationResult->errors;
-
-        if (empty($errors)) {
-            return $this->provideConfiguration($jsonSchemaValidationResult->data);
+        if ($constraintResult->status->isValid()) {
+            /**
+             * @var TSchema $constraintResult->castedData
+             */
+            return $this->provideConfiguration($constraintResult->castedData);
         }
 
-        throw new JsonSchemaValidationException($errors);
+        throw new ConstraintValidationException(
+            $this->getConfigurationKey(),
+            $constraintResult,
+        );
     }
 
     public function shouldRegister(): bool

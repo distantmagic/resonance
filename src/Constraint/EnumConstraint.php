@@ -11,10 +11,10 @@ use Distantmagic\Resonance\ConstraintReason;
 use Distantmagic\Resonance\ConstraintResult;
 use Distantmagic\Resonance\ConstraintResultStatus;
 
-readonly class EnumConstraint extends Constraint
+final readonly class EnumConstraint extends Constraint
 {
     /**
-     * @param array<non-empty-string> $values
+     * @param array<string>|list<string> $values
      */
     public function __construct(
         public array $values,

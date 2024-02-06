@@ -6,14 +6,17 @@ namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\ConfigurationFile;
-use Distantmagic\Resonance\JsonSchema;
-use Distantmagic\Resonance\JsonSchemaValidator;
+use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\EnumConstraint;
+use Distantmagic\Resonance\Constraint\IntegerConstraint;
+use Distantmagic\Resonance\Constraint\ObjectConstraint;
+use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\RedisConfiguration;
 use Distantmagic\Resonance\SessionConfiguration;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 /**
- * @template-extends ConfigurationProvider<SessionConfiguration, object{
+ * @template-extends ConfigurationProvider<SessionConfiguration, array{
  *     cookie_lifespan: int,
  *     cookie_name: non-empty-string,
  *     cookie_samesite: string,
@@ -25,13 +28,12 @@ final readonly class SessionConfigurationProvider extends ConfigurationProvider
 {
     public function __construct(
         private ConfigurationFile $configurationFile,
-        private JsonSchemaValidator $jsonSchemaValidator,
         private RedisConfiguration $redisConfiguration,
     ) {
-        parent::__construct($configurationFile, $jsonSchemaValidator);
+        parent::__construct($configurationFile);
     }
 
-    public function getSchema(): JsonSchema
+    public function getConstraint(): Constraint
     {
         $redisConnectionPools = $this
             ->redisConfiguration
@@ -40,29 +42,14 @@ final readonly class SessionConfigurationProvider extends ConfigurationProvider
             ->toArray()
         ;
 
-        return new JsonSchema([
-            'type' => 'object',
-            'properties' => [
-                'cookie_lifespan' => [
-                    'type' => 'integer',
-                    'minimum' => 1,
-                ],
-                'cookie_name' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ],
-                'cookie_samesite' => [
-                    'type' => 'string',
-                    'enum' => ['lax', 'none', 'strict'],
-                    'default' => 'lax',
-                ],
-                'redis_connection_pool' => [
-                    'type' => 'string',
-                    'enum' => $redisConnectionPools,
-                ],
+        return new ObjectConstraint(
+            properties: [
+                'cookie_lifespan' => new IntegerConstraint(),
+                'cookie_name' => new StringConstraint(),
+                'cookie_samesite' => (new EnumConstraint(['lax', 'none', 'strict']))->default('lax'),
+                'redis_connection_pool' => new EnumConstraint($redisConnectionPools),
             ],
-            'required' => ['cookie_lifespan', 'cookie_name'],
-        ]);
+        );
     }
 
     protected function getConfigurationKey(): string
@@ -73,10 +60,10 @@ final readonly class SessionConfigurationProvider extends ConfigurationProvider
     protected function provideConfiguration($validatedData): SessionConfiguration
     {
         return new SessionConfiguration(
-            cookieLifespan: $validatedData->cookie_lifespan,
-            cookieName: $validatedData->cookie_name,
-            cookieSameSite: $validatedData->cookie_samesite,
-            redisConnectionPool: $validatedData->redis_connection_pool,
+            cookieLifespan: $validatedData['cookie_lifespan'],
+            cookieName: $validatedData['cookie_name'],
+            cookieSameSite: $validatedData['cookie_samesite'],
+            redisConnectionPool: $validatedData['redis_connection_pool'],
         );
     }
 }

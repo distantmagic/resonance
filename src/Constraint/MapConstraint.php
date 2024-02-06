@@ -10,13 +10,11 @@ use Distantmagic\Resonance\ConstraintPath;
 use Distantmagic\Resonance\ConstraintReason;
 use Distantmagic\Resonance\ConstraintResult;
 use Distantmagic\Resonance\ConstraintResultStatus;
-use Distantmagic\Resonance\ConstraintStringFormat;
-use RuntimeException;
 
-final readonly class StringConstraint extends Constraint
+final readonly class MapConstraint extends Constraint
 {
     public function __construct(
-        public ?ConstraintStringFormat $format = null,
+        public Constraint $valueConstraint,
         ?ConstraintDefaultValue $defaultValue = null,
         bool $isNullable = false,
         bool $isRequired = true,
@@ -31,8 +29,8 @@ final readonly class StringConstraint extends Constraint
     public function default(mixed $defaultValue): self
     {
         return new self(
+            valueConstraint: $this->valueConstraint,
             defaultValue: new ConstraintDefaultValue($defaultValue),
-            format: $this->format,
             isNullable: $this->isNullable,
             isRequired: $this->isRequired,
         );
@@ -41,8 +39,8 @@ final readonly class StringConstraint extends Constraint
     public function nullable(): self
     {
         return new self(
+            valueConstraint: $this->valueConstraint,
             defaultValue: $this->defaultValue ?? new ConstraintDefaultValue(null),
-            format: $this->format,
             isNullable: true,
             isRequired: $this->isRequired,
         );
@@ -51,8 +49,8 @@ final readonly class StringConstraint extends Constraint
     public function optional(): self
     {
         return new self(
+            valueConstraint: $this->valueConstraint,
             defaultValue: $this->defaultValue,
-            format: $this->format,
             isNullable: $this->isNullable,
             isRequired: false,
         );
@@ -61,14 +59,14 @@ final readonly class StringConstraint extends Constraint
     protected function doConvertToJsonSchema(): array
     {
         return [
-            'type' => 'string',
-            'minLength' => 1,
+            'type' => 'object',
+            'additionalProperties' => $this->valueConstraint->toJsonSchema(),
         ];
     }
 
     protected function doValidate(mixed $notValidatedData, ConstraintPath $path): ConstraintResult
     {
-        if (!is_string($notValidatedData) || empty($notValidatedData)) {
+        if (!is_array($notValidatedData)) {
             return new ConstraintResult(
                 castedData: $notValidatedData,
                 path: $path,
@@ -77,33 +75,57 @@ final readonly class StringConstraint extends Constraint
             );
         }
 
-        if (!$this->format) {
-            return new ConstraintResult(
-                castedData: $notValidatedData,
-                path: $path,
-                reason: ConstraintReason::Ok,
-                status: ConstraintResultStatus::Valid,
-            );
+        $ret = [];
+
+        /**
+         * @var list<ConstraintResult>
+         */
+        $invalidChildStatuses = [];
+
+        /**
+         * @var mixed $notValidatedKey explicitly mixed for typechecks
+         * @var mixed $notValidatedValue explicitly mixed for typechecks
+         */
+        foreach ($notValidatedData as $notValidatedKey => $notValidatedValue) {
+            if (!is_string($notValidatedKey)) {
+                $invalidChildStatuses[] = new ConstraintResult(
+                    castedData: null,
+                    path: $path,
+                    reason: ConstraintReason::InvalidDataType,
+                    status: ConstraintResultStatus::Invalid,
+                );
+            } else {
+                $childResult = $this->valueConstraint->validate(
+                    notValidatedData: $notValidatedValue,
+                    path: $path->fork($notValidatedKey)
+                );
+
+                if ($childResult->status->isValid()) {
+                    /**
+                     * @var mixed explicitly mixed for typechecks
+                     */
+                    $ret[$notValidatedKey] = $childResult->castedData;
+                } else {
+                    $invalidChildStatuses[] = $childResult;
+                }
+            }
         }
 
-        if (ConstraintStringFormat::Uuid === $this->format) {
-            if (uuid_is_valid($notValidatedData)) {
-                return new ConstraintResult(
-                    castedData: $notValidatedData,
-                    path: $path,
-                    reason: ConstraintReason::Ok,
-                    status: ConstraintResultStatus::Valid,
-                );
-            }
-
+        if (!empty($invalidChildStatuses)) {
             return new ConstraintResult(
                 castedData: $notValidatedData,
+                nested: $invalidChildStatuses,
                 path: $path,
-                reason: ConstraintReason::InvalidFormat,
+                reason: ConstraintReason::InvalidNestedConstraint,
                 status: ConstraintResultStatus::Invalid,
             );
         }
 
-        throw new RuntimeException('Unknown string format');
+        return new ConstraintResult(
+            castedData: $ret,
+            path: $path,
+            reason: ConstraintReason::Ok,
+            status: ConstraintResultStatus::Valid,
+        );
     }
 }

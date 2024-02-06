@@ -12,7 +12,7 @@ use Distantmagic\Resonance\ConstraintResult;
 use Distantmagic\Resonance\ConstraintResultStatus;
 use stdClass;
 
-readonly class AnyConstraint extends Constraint
+final readonly class AnyConstraint extends Constraint
 {
     public function default(mixed $defaultValue): self
     {
