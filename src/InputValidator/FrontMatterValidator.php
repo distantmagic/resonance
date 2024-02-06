@@ -15,6 +15,7 @@ use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\FrontMatterCollectionReference;
 use Distantmagic\Resonance\InputValidatedData\FrontMatter;
 use Distantmagic\Resonance\InputValidator;
+use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\StaticPageContentType;
 use Generator;
 use RuntimeException;
@@ -32,7 +33,7 @@ use RuntimeException;
  *     title: non-empty-string,
  * }>
  */
-#[Singleton]
+#[Singleton(collection: SingletonCollection::InputValidator)]
 readonly class FrontMatterValidator extends InputValidator
 {
     public function castValidatedData(mixed $data): FrontMatter

@@ -8,6 +8,7 @@ use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\InputValidator;
 use Distantmagic\Resonance\InputValidatorCollection;
+use Distantmagic\Resonance\InputValidatorController;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SingletonContainer;
@@ -20,6 +21,10 @@ use Distantmagic\Resonance\SingletonProvider;
 #[Singleton(provides: InputValidatorCollection::class)]
 final readonly class InputValidatorCollectionProvider extends SingletonProvider
 {
+    public function __construct(
+        private InputValidatorController $inputValidatorController,
+    ) {}
+
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): InputValidatorCollection
     {
         $inputValidatorCollection = new InputValidatorCollection();
@@ -30,6 +35,11 @@ final readonly class InputValidatorCollectionProvider extends SingletonProvider
                     $singleton::class,
                     $singleton,
                 );
+                $this
+                    ->inputValidatorController
+                    ->cachedConstraints
+                    ->put($singleton, $singleton->getConstraint())
+                ;
             }
         }
 

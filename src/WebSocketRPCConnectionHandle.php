@@ -43,8 +43,10 @@ readonly class WebSocketRPCConnectionHandle
             ->selectResponder($rpcMessage)
         ;
 
-        $constraintResult = $responder
-            ->getConstraint()
+        $constraintResult = $this
+            ->webSocketRPCResponderAggregate
+            ->cachedConstraints
+            ->get($responder)
             ->validate($rpcMessage->payload)
         ;
 

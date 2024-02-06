@@ -11,12 +11,18 @@ use Ds\Map;
 readonly class WebSocketRPCResponderAggregate
 {
     /**
+     * @var Map<RPCMethodInterface,Constraint>
+     */
+    public Map $cachedConstraints;
+
+    /**
      * @var Map<RPCMethodInterface,WebSocketRPCResponderInterface> $rpcResponders
      */
     public Map $rpcResponders;
 
     public function __construct()
     {
+        $this->cachedConstraints = new Map();
         $this->rpcResponders = new Map();
     }
 

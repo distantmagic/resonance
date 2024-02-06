@@ -27,6 +27,10 @@ final readonly class WebSocketRPCResponderAggregateProvider extends SingletonPro
         $webSocketRPCResponderAggregate = new WebSocketRPCResponderAggregate();
 
         foreach ($this->collectWebSocketRPCResponders($singletons) as $rpcResponderAttribute) {
+            $webSocketRPCResponderAggregate->cachedConstraints->put(
+                $rpcResponderAttribute->singleton,
+                $rpcResponderAttribute->singleton->getConstraint(),
+            );
             $webSocketRPCResponderAggregate->rpcResponders->put(
                 $rpcResponderAttribute->attribute->method,
                 $rpcResponderAttribute->singleton,

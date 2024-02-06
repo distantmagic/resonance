@@ -5,10 +5,21 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Ds\Map;
 
 #[Singleton]
 readonly class InputValidatorController
 {
+    /**
+     * @var Map<InputValidator,Constraint>
+     */
+    public Map $cachedConstraints;
+
+    public function __construct()
+    {
+        $this->cachedConstraints = new Map();
+    }
+
     /**
      * @template TCastedData of InputValidatedData
      * @template TValidatedData
@@ -19,7 +30,7 @@ readonly class InputValidatorController
      */
     public function validateData(InputValidator $inputValidator, mixed $data): InputValidationResult
     {
-        $constraintResult = $inputValidator->getConstraint()->validate($data);
+        $constraintResult = $this->cachedConstraints->get($inputValidator)->validate($data);
 
         return $this->castJsonSchemaValidationResult($constraintResult, $inputValidator);
     }

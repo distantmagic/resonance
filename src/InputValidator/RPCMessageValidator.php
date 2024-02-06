@@ -16,6 +16,7 @@ use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\InputValidatedData\RPCMessage;
 use Distantmagic\Resonance\InputValidator;
 use Distantmagic\Resonance\RPCMethodValidatorInterface;
+use Distantmagic\Resonance\SingletonCollection;
 
 /**
  * @extends InputValidator<RPCMessage, array{
@@ -25,7 +26,7 @@ use Distantmagic\Resonance\RPCMethodValidatorInterface;
  * }>
  */
 #[GrantsFeature(Feature::WebSocket)]
-#[Singleton]
+#[Singleton(collection: SingletonCollection::InputValidator)]
 readonly class RPCMessageValidator extends InputValidator
 {
     public function __construct(private RPCMethodValidatorInterface $rpcMethodValidator) {}
