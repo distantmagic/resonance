@@ -10,9 +10,13 @@ title: Changelog
 
 # Changelog
 
+## v0.19.1
+
+- Fix: some input validators were not cached correctly
+
 ## v0.19.0
 
-- Use Json-Schema serializable constraints
+- Feature: add {{docs/features/validation/constraints/index}}
 
 ## v0.18.0
 
