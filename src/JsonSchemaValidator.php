@@ -6,7 +6,9 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use Ds\Map;
+use Ds\Set;
 use Opis\JsonSchema\Errors\ErrorFormatter;
+use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Helper;
 use Opis\JsonSchema\Parsers\SchemaParser;
 use Opis\JsonSchema\Schema;
@@ -91,7 +93,7 @@ readonly class JsonSchemaValidator
     }
 
     /**
-     * @return array<string,array<string>>
+     * @return array<non-empty-string,Set<non-empty-string>>
      */
     private function formatErrors(ValidationResult $validationResult): array
     {
@@ -102,8 +104,74 @@ readonly class JsonSchemaValidator
         }
 
         /**
-         * @var array<string,array<string>>
+         * @var list<array{
+         *     message: non-empty-string,
+         *     keywords: list<non-empty-string>,
+         *     path: non-empty-string,
+         * }>
          */
-        return $this->errorFormatter->formatKeyed($error);
+        $nestedFormat = [];
+
+        $this->errorFormatter->formatNested(
+            error: $error,
+            formatter: function (ValidationError $validationError) use (&$nestedFormat) {
+                $fullPath = implode('.', $validationError->data()->fullPath());
+
+                /**
+                 * @var array<non-empty-string> $keywords
+                 */
+                $keywords = [
+                    $validationError->keyword(),
+                ];
+
+                $args = $validationError->args();
+
+                /**
+                 * @var non-empty-string $keyword
+                 * @var list<string>     $paths
+                 */
+                foreach ($args as $keyword => $paths) {
+                    $keywords[] = $keyword;
+
+                    foreach ($paths as $path) {
+                        if (empty($fullPath)) {
+                            $fullPath = $path;
+                        } else {
+                            throw new RuntimeException('Ambigous error path');
+                        }
+                    }
+                }
+
+                if (empty($fullPath)) {
+                    throw new RuntimeException('Unable to determine error path');
+                }
+
+                $nestedFormat[] = [
+                    'message' => $this->errorFormatter->formatErrorMessage($validationError),
+                    'keywords' => $keywords,
+                    'path' => $fullPath,
+                ];
+            },
+        );
+
+        /**
+         * @var array<non-empty-string,Set<non-empty-string>>
+         */
+        $ret = [];
+
+        foreach ($nestedFormat as $error) {
+            if (!isset($ret[$error['path']])) {
+                /**
+                 * @var Set<non-empty-string>
+                 */
+                $ret[$error['path']] = new Set();
+            }
+
+            foreach ($error['keywords'] as $keyword) {
+                $ret[$error['path']]->add($keyword);
+            }
+        }
+
+        return $ret;
     }
 }

@@ -53,9 +53,13 @@ readonly class HttpControllerReflectionMethod
                 );
             }
 
-            if ($returnType->isBuiltin() && 'void' !== $returnType->getName()) {
+            if ($returnType->isBuiltin()) {
+                if ('void' === $returnType->getName()) {
+                    return;
+                }
+
                 throw new HttpControllerMetadataException(
-                    'Only supported return type',
+                    'Only supported builtin return type is "void"',
                     $this->reflectionMethod,
                 );
             }
@@ -71,7 +75,7 @@ readonly class HttpControllerReflectionMethod
 
             throw new HttpControllerMetadataException(
                 sprintf(
-                    'Controller handle can only return null or %s or %s',
+                    'Controller handle can only return null or "%s" or "%s"',
                     HttpResponderInterface::class,
                     HttpInterceptableInterface::class,
                 ),

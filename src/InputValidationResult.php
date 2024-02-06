@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Ds\Map;
+use Ds\Set;
 
 /**
  * @template TValidatedModel of InputValidatedData
@@ -12,7 +13,7 @@ use Ds\Map;
 readonly class InputValidationResult
 {
     /**
-     * @var Map<string,string> $errors
+     * @var Map<non-empty-string,Set<non-empty-string>> $errors
      */
     public Map $errors;
 

@@ -53,7 +53,7 @@ readonly class InputValidatorController
         foreach ($errors as $propertyName => $propertyErrors) {
             $validationResult->errors->put(
                 $propertyName,
-                implode("\n", $propertyErrors),
+                $propertyErrors,
             );
         }
 

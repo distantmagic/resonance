@@ -200,6 +200,7 @@ use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
 use Ds\Map;
+use Ds\Set;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
@@ -220,7 +221,7 @@ final readonly class BlogPostStore extends HttpController
     }
 
     /**
-     * @param Map<string,string> $errors
+     * @param Map<string,Set<string>> $errors
      */
     #[ValidationErrorsHandler]
     public function handleValidationErrors(
