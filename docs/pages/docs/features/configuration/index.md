@@ -112,6 +112,11 @@ session_key_authorization_request = oauth2.authorization_request
 session_key_pkce = oauth2.pkce
 session_key_state = oauth2.state
 
+[openapi]
+description = description
+title = title
+version = 0.0.0
+
 [redis]
 default[db_index] = 0
 default[host] = 127.0.0.1
@@ -148,6 +153,9 @@ ssl_key_file = ssl/origin.key
 [translator]
 base_directory = app/lang
 default_primary_language = en
+
+[websocket]
+max_connections = 10000
 ```
 
 ### Environment Variables
