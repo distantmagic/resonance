@@ -12,19 +12,9 @@ class ConstraintValidationException extends RuntimeException
         string $constraintId,
         ConstraintResult $constraintResult,
     ) {
-        $errors = $constraintResult->getErrors();
-        $message = [];
-
-        foreach ($errors as $name => $errorCode) {
-            $message[] = sprintf('"%s" -> %s', $name, $errorCode);
-        }
-
-        var_dump($constraintResult->castedData);
-
-        parent::__construct(sprintf(
-            "%s:\n%s",
+        parent::__construct((string) new ConstraintResultErrorMessage(
             $constraintId,
-            implode("\n", $message),
+            $constraintResult,
         ));
     }
 }

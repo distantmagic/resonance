@@ -24,19 +24,14 @@ final readonly class WebSocketConfigurationProvider extends ConfigurationProvide
 {
     public function getConstraint(): Constraint
     {
-        return new ObjectConstraint(
-            // 'minimum' => 1,
-            // 'maximum' => 65535,
-            // 'default' => 10000,
-            properties: [
-                'max_connections' => (new IntegerConstraint())->default(10000),
-            ],
-        );
+        return new ObjectConstraint([
+            'max_connections' => (new IntegerConstraint())->default(10000),
+        ]);
     }
 
     protected function getConfigurationKey(): string
     {
-        return 'swoole';
+        return 'websocket';
     }
 
     protected function provideConfiguration($validatedData): WebSocketConfiguration

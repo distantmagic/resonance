@@ -15,7 +15,7 @@ readonly class OpenAPIReusableSchemaCollection
     public Map $hashes;
 
     /**
-     * @var Map<JsonSchema,non-empty-string>
+     * @var Map<JsonSchemableInterface,non-empty-string>
      */
     public Map $references;
 
@@ -25,9 +25,9 @@ readonly class OpenAPIReusableSchemaCollection
         $this->references = new Map();
     }
 
-    public function reuse(JsonSchema $jsonSchema): JsonSchema
+    public function reuse(JsonSchemableInterface $jsonSchemable): array
     {
-        $hashed = $this->makeHash($jsonSchema);
+        $hashed = $this->makeHash($jsonSchemable);
 
         if (!$this->hashes->hasKey($hashed)) {
             $this->hashes->put($hashed, uniqid());
@@ -35,25 +35,25 @@ readonly class OpenAPIReusableSchemaCollection
 
         $schemaId = $this->hashes->get($hashed);
 
-        $this->references->put($jsonSchema, $schemaId);
+        $this->references->put($jsonSchemable, $schemaId);
 
-        return new JsonSchema([
+        return [
             '$ref' => sprintf(
                 '#/components/schemas/%s',
                 $schemaId,
             ),
-        ]);
+        ];
     }
 
     /**
      * @return non-empty-string
      */
-    private function makeHash(JsonSchema $jsonSchema): string
+    private function makeHash(JsonSchemableInterface $jsonSchemable): string
     {
-        $serialized = serialize($jsonSchema->schema);
+        $serialized = serialize($jsonSchemable->toJsonSchema());
 
         if (empty($serialized)) {
-            throw new RuntimeException('Unable to serialize JsonSchema');
+            throw new RuntimeException('Unable to serialize JsonSchemableInterface');
         }
 
         return $serialized;

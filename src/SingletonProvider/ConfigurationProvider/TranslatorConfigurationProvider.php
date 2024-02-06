@@ -22,12 +22,10 @@ final readonly class TranslatorConfigurationProvider extends ConfigurationProvid
 {
     public function getConstraint(): Constraint
     {
-        return new ObjectConstraint(
-            properties: [
-                'base_directory' => new StringConstraint(),
-                'default_primary_language' => new StringConstraint(),
-            ],
-        );
+        return new ObjectConstraint([
+            'base_directory' => new StringConstraint(),
+            'default_primary_language' => new StringConstraint(),
+        ]);
     }
 
     protected function getConfigurationKey(): string

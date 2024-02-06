@@ -6,5 +6,6 @@ namespace Distantmagic\Resonance;
 
 enum ConstraintStringFormat
 {
+    case Mail;
     case Uuid;
 }

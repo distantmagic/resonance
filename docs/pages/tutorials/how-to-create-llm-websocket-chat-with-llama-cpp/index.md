@@ -202,7 +202,9 @@ use Distantmagic\Resonance\Attribute\RespondsToWebSocketRPC;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Feature;
-use Distantmagic\Resonance\JsonSchema;
+use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\ObjectConstraint;
+use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\LlamaCppClient;
 use Distantmagic\Resonance\LlamaCppCompletionRequest;
 use Distantmagic\Resonance\RPCNotification;
@@ -222,20 +224,10 @@ final readonly class LlmChatPromptResponder extends WebSocketRPCResponder
         private LlamaCppClient $llamaCppClient,
     ) {}
 
-    public function getSchema(): JsonSchema
+    public function getConstraint(): Constraint
     {
-        return new JsonSchema([
-            'type' => 'object',
-            'additionalProperties' => false,
-            'properties' => [
-                'prompt' => [
-                    'minLength' => 1,
-                    'type' => 'string',
-                ],
-            ],
-            'required' => [
-                'prompt',
-            ],
+        return new ObjectConstraint([
+            'prompt' => new StringConstraint(),
         ]);
     }
 

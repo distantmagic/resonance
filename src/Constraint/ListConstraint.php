@@ -11,11 +11,11 @@ use Distantmagic\Resonance\ConstraintReason;
 use Distantmagic\Resonance\ConstraintResult;
 use Distantmagic\Resonance\ConstraintResultStatus;
 
-final readonly class MapConstraint extends Constraint
+final readonly class ListConstraint extends Constraint
 {
     public function __construct(
         public Constraint $valueConstraint,
-        ?ConstraintDefaultValue $defaultValue = null,
+        ConstraintDefaultValue $defaultValue = new ConstraintDefaultValue([]),
         bool $isNullable = false,
         bool $isRequired = true,
     ) {
@@ -40,7 +40,7 @@ final readonly class MapConstraint extends Constraint
     {
         return new self(
             valueConstraint: $this->valueConstraint,
-            defaultValue: $this->defaultValue ?? new ConstraintDefaultValue(null),
+            defaultValue: new ConstraintDefaultValue(null),
             isNullable: true,
             isRequired: $this->isRequired,
         );
@@ -50,7 +50,7 @@ final readonly class MapConstraint extends Constraint
     {
         return new self(
             valueConstraint: $this->valueConstraint,
-            defaultValue: $this->defaultValue,
+            defaultValue: $this->defaultValue ?? new ConstraintDefaultValue([]),
             isNullable: $this->isNullable,
             isRequired: false,
         );
@@ -59,14 +59,14 @@ final readonly class MapConstraint extends Constraint
     protected function doConvertToJsonSchema(): array
     {
         return [
-            'type' => 'object',
-            'additionalProperties' => $this->valueConstraint->toJsonSchema(),
+            'type' => 'array',
+            'items' => $this->valueConstraint->toJsonSchema(),
         ];
     }
 
     protected function doValidate(mixed $notValidatedData, ConstraintPath $path): ConstraintResult
     {
-        if (!is_array($notValidatedData) && !is_object($notValidatedData)) {
+        if (!is_array($notValidatedData)) {
             return new ConstraintResult(
                 castedData: $notValidatedData,
                 path: $path,
@@ -77,38 +77,32 @@ final readonly class MapConstraint extends Constraint
 
         $ret = [];
 
+        $i = 0;
+
         /**
          * @var list<ConstraintResult>
          */
         $invalidChildStatuses = [];
 
         /**
-         * @var mixed $notValidatedKey explicitly mixed for typechecks
          * @var mixed $notValidatedValue explicitly mixed for typechecks
          */
-        foreach ($notValidatedData as $notValidatedKey => $notValidatedValue) {
-            if (!is_string($notValidatedKey)) {
-                $invalidChildStatuses[] = new ConstraintResult(
-                    castedData: null,
-                    path: $path,
-                    reason: ConstraintReason::InvalidDataType,
-                    status: ConstraintResultStatus::Invalid,
-                );
-            } else {
-                $childResult = $this->valueConstraint->validate(
-                    notValidatedData: $notValidatedValue,
-                    path: $path->fork($notValidatedKey)
-                );
+        foreach ($notValidatedData as $notValidatedValue) {
+            $childResult = $this->valueConstraint->validate(
+                notValidatedData: $notValidatedValue,
+                path: $path->fork((string) $i)
+            );
 
-                if ($childResult->status->isValid()) {
-                    /**
-                     * @var mixed explicitly mixed for typechecks
-                     */
-                    $ret[$notValidatedKey] = $childResult->castedData;
-                } else {
-                    $invalidChildStatuses[] = $childResult;
-                }
+            if ($childResult->status->isValid()) {
+                /**
+                 * @var mixed explicitly mixed for typechecks
+                 */
+                $ret[] = $childResult->castedData;
+            } else {
+                $invalidChildStatuses[] = $childResult;
             }
+
+            ++$i;
         }
 
         if (!empty($invalidChildStatuses)) {

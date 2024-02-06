@@ -8,13 +8,12 @@ use Distantmagic\Resonance\Attribute\ControlsWebSocketProtocol;
 use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\AuthenticatedUserStoreAggregate;
+use Distantmagic\Resonance\ConstraintResultErrorMessage;
 use Distantmagic\Resonance\CSRFManager;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\Gatekeeper;
 use Distantmagic\Resonance\InputValidator\RPCMessageValidator;
 use Distantmagic\Resonance\InputValidatorController;
-use Distantmagic\Resonance\JsonSchemaValidationErrorMessage;
-use Distantmagic\Resonance\JsonSchemaValidator;
 use Distantmagic\Resonance\JsonSerializer;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SiteAction;
@@ -51,7 +50,6 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
         private AuthenticatedUserStoreAggregate $authenticatedUserSourceAggregate,
         private Gatekeeper $gatekeeper,
         private InputValidatorController $inputValidatorController,
-        private JsonSchemaValidator $jsonSchemaValidator,
         private JsonSerializer $jsonSerializer,
         private LoggerInterface $logger,
         private RPCMessageValidator $rpcMessageValidator,
@@ -124,7 +122,6 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
     {
         $webSocketConnection = new WebSocketConnection($server, $fd);
         $connectionHandle = new WebSocketRPCConnectionHandle(
-            $this->jsonSchemaValidator,
             $this->webSocketRPCResponderAggregate,
             $webSocketAuthResolution,
             $webSocketConnection,
@@ -168,16 +165,16 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
             return;
         }
 
-        $payloadValidationResult = $this
+        $payloadConstraintResult = $this
             ->getFrameController($frame)
             ->onRPCMessage($rpcMessageValidationResult->inputValidatedData)
         ;
 
-        if (!empty($payloadValidationResult->errors)) {
+        if (!$payloadConstraintResult->status->isValid()) {
             $this->onProtocolError(
                 $server,
                 $frame,
-                (string) new JsonSchemaValidationErrorMessage($payloadValidationResult->errors),
+                (string) new ConstraintResultErrorMessage('rpc_protocol_controller', $payloadConstraintResult),
             );
         }
     }

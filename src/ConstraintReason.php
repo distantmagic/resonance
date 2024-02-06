@@ -12,4 +12,5 @@ enum ConstraintReason: string
     case InvalidNestedConstraint = 'invalid_nested_constraint';
     case MissingProperty = 'missing_property';
     case Ok = 'ok';
+    case UnexpectedProperty = 'unexpected_property';
 }

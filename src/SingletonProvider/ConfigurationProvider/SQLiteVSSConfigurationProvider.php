@@ -22,12 +22,10 @@ final readonly class SQLiteVSSConfigurationProvider extends ConfigurationProvide
 {
     public function getConstraint(): Constraint
     {
-        return new ObjectConstraint(
-            properties: [
-                'extension_vector0' => new StringConstraint(),
-                'extension_vss0' => new StringConstraint(),
-            ]
-        );
+        return new ObjectConstraint([
+            'extension_vector0' => new StringConstraint(),
+            'extension_vss0' => new StringConstraint(),
+        ]);
     }
 
     protected function getConfigurationKey(): string

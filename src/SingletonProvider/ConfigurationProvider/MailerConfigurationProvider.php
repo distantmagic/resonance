@@ -31,16 +31,14 @@ final readonly class MailerConfigurationProvider extends ConfigurationProvider
 {
     public function getConstraint(): Constraint
     {
-        $valueConstraint = new ObjectConstraint(
-            properties: [
-                'dkim_domain_name' => (new StringConstraint())->nullable(),
-                'dkim_selector' => (new StringConstraint())->nullable(),
-                'dkim_signing_key_passphrase' => (new StringConstraint())->nullable(),
-                'dkim_signing_key_private' => (new StringConstraint())->nullable(),
-                'dkim_signing_key_public' => (new StringConstraint())->nullable(),
-                'transport_dsn' => new StringConstraint(),
-            ],
-        );
+        $valueConstraint = new ObjectConstraint([
+            'dkim_domain_name' => (new StringConstraint())->nullable(),
+            'dkim_selector' => (new StringConstraint())->nullable(),
+            'dkim_signing_key_passphrase' => (new StringConstraint())->nullable(),
+            'dkim_signing_key_private' => (new StringConstraint())->nullable(),
+            'dkim_signing_key_public' => (new StringConstraint())->nullable(),
+            'transport_dsn' => new StringConstraint(),
+        ]);
 
         return new MapConstraint(valueConstraint: $valueConstraint);
     }

@@ -7,7 +7,7 @@ namespace Distantmagic\Resonance;
 /**
  * @template TPayload
  */
-interface WebSocketRPCResponderInterface extends JsonSchemaSourceInterface
+interface WebSocketRPCResponderInterface extends ConstraintSourceInterface
 {
     public function onBeforeMessage(
         WebSocketAuthResolution $webSocketAuthResolution,

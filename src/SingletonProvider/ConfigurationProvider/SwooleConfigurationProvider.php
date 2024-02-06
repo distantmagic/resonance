@@ -29,17 +29,15 @@ final readonly class SwooleConfigurationProvider extends ConfigurationProvider
 {
     public function getConstraint(): Constraint
     {
-        return new ObjectConstraint(
-            properties: [
-                'host' => new StringConstraint(),
-                'log_level' => new IntegerConstraint(),
-                'log_requests' => (new BooleanConstraint())->default(false),
-                'port' => new IntegerConstraint(),
-                'ssl_cert_file' => new StringConstraint(),
-                'ssl_key_file' => new StringConstraint(),
-                'task_worker_num' => (new IntegerConstraint())->default(4),
-            ],
-        );
+        return new ObjectConstraint([
+            'host' => new StringConstraint(),
+            'log_level' => new IntegerConstraint(),
+            'log_requests' => (new BooleanConstraint())->default(false),
+            'port' => new IntegerConstraint(),
+            'ssl_cert_file' => new StringConstraint(),
+            'ssl_key_file' => new StringConstraint(),
+            'task_worker_num' => (new IntegerConstraint())->default(4),
+        ]);
     }
 
     protected function getConfigurationKey(): string

@@ -8,9 +8,11 @@ use Distantmagic\Resonance\Attribute;
 use Distantmagic\Resonance\Attribute\DoctrineEntityRouteParameter;
 use Distantmagic\Resonance\Attribute\ExtractsOpenAPIRouteParameter;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Constraint\IntegerConstraint;
+use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\DoctrineAttributeDriver;
 use Distantmagic\Resonance\DoctrineEntityManagerRepository;
-use Distantmagic\Resonance\JsonSchema;
+use Distantmagic\Resonance\JsonSchemableInterface;
 use Distantmagic\Resonance\OpenAPIParameterIn;
 use Distantmagic\Resonance\OpenAPIRouteParameterExtractor;
 use Distantmagic\Resonance\OpenAPISchemaParameter;
@@ -26,21 +28,10 @@ use RuntimeException;
 #[Singleton(collection: SingletonCollection::OpenAPIRouteParameterExtractor)]
 readonly class DoctrineEntityRouteParameterExtractor extends OpenAPIRouteParameterExtractor
 {
-    private JsonSchema $jsonSchemaInteger;
-    private JsonSchema $jsonSchemaString;
-
     public function __construct(
         private DoctrineAttributeDriver $doctrineAttributeDriver,
         private DoctrineEntityManagerRepository $doctrineEntityManagerRepository,
-    ) {
-        $this->jsonSchemaInteger = new JsonSchema([
-            'type' => 'integer',
-        ]);
-        $this->jsonSchemaString = new JsonSchema([
-            'minLength' => 1,
-            'type' => 'string',
-        ]);
-    }
+    ) {}
 
     /**
      * Unfortunately to extract the metadata factory we need an instance of
@@ -84,7 +75,7 @@ readonly class DoctrineEntityRouteParameterExtractor extends OpenAPIRouteParamet
             in: OpenAPIParameterIn::Path,
             name: $attribute->from,
             required: true,
-            jsonSchema: $this->jsonSchemaFromFieldType($parameterFieldType),
+            jsonSchemable: $this->jsonSchemableFromFieldType($parameterFieldType),
         );
 
         return [
@@ -92,11 +83,11 @@ readonly class DoctrineEntityRouteParameterExtractor extends OpenAPIRouteParamet
         ];
     }
 
-    private function jsonSchemaFromFieldType(string $fieldType): JsonSchema
+    private function jsonSchemableFromFieldType(string $fieldType): JsonSchemableInterface
     {
         return match ($fieldType) {
-            'integer' => $this->jsonSchemaInteger,
-            'string' => $this->jsonSchemaString,
+            'integer' => new IntegerConstraint(),
+            'string' => new StringConstraint(),
             default => throw new LogicException(sprintf(
                 'Unsupported Doctrine field type: "%s"',
                 $fieldType,

@@ -6,7 +6,7 @@ namespace Distantmagic\Resonance;
 
 /**
  * @psalm-type PArraySerializedOpenAPISchemaRequestBodyContent = array{
- *     schema: JsonSchema
+ *     schema: array
  * }
  *
  * @template-implements OpenAPISerializableFieldInterface<PArraySerializedOpenAPISchemaRequestBodyContent>
@@ -18,13 +18,13 @@ readonly class OpenAPISchemaRequestBodyContent implements OpenAPISerializableFie
      */
     public function __construct(
         public string $mimeType,
-        public JsonSchema $jsonSchema,
+        public JsonSchemableInterface $jsonSchemable,
     ) {}
 
     public function toArray(OpenAPIReusableSchemaCollection $openAPIReusableSchemaCollection): array
     {
         return [
-            'schema' => $openAPIReusableSchemaCollection->reuse($this->jsonSchema),
+            'schema' => $openAPIReusableSchemaCollection->reuse($this->jsonSchemable),
         ];
     }
 }

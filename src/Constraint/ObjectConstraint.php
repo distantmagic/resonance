@@ -17,7 +17,8 @@ final readonly class ObjectConstraint extends Constraint
      * @param array<non-empty-string,Constraint> $properties
      */
     public function __construct(
-        public array $properties,
+        public array $properties = [],
+        public bool $additionalProperties = false,
         ?ConstraintDefaultValue $defaultValue = null,
         bool $isNullable = false,
         bool $isRequired = true,
@@ -29,9 +30,21 @@ final readonly class ObjectConstraint extends Constraint
         );
     }
 
+    public function additionalProperties(bool $allow): self
+    {
+        return new self(
+            additionalProperties: $allow,
+            properties: $this->properties,
+            defaultValue: $this->defaultValue,
+            isNullable: $this->isNullable,
+            isRequired: $this->isRequired,
+        );
+    }
+
     public function default(mixed $defaultValue): self
     {
         return new self(
+            additionalProperties: $this->additionalProperties,
             properties: $this->properties,
             defaultValue: new ConstraintDefaultValue($defaultValue),
             isNullable: $this->isNullable,
@@ -42,6 +55,7 @@ final readonly class ObjectConstraint extends Constraint
     public function nullable(): self
     {
         return new self(
+            additionalProperties: $this->additionalProperties,
             properties: $this->properties,
             defaultValue: $this->defaultValue ?? new ConstraintDefaultValue(null),
             isNullable: true,
@@ -52,6 +66,7 @@ final readonly class ObjectConstraint extends Constraint
     public function optional(): self
     {
         return new self(
+            additionalProperties: $this->additionalProperties,
             properties: $this->properties,
             defaultValue: $this->defaultValue,
             isNullable: $this->isNullable,
@@ -76,13 +91,34 @@ final readonly class ObjectConstraint extends Constraint
             'type' => 'object',
             'properties' => $convertedProperties,
             'required' => $requiredProperties,
-            'additionalProperties' => false,
+            'additionalProperties' => $this->additionalProperties,
         ];
     }
 
+    protected function getProperty(array|object $notValidatedData, string $propertyName): mixed
+    {
+        if (is_array($notValidatedData)) {
+            return $notValidatedData[$propertyName];
+        }
+
+        return $notValidatedData->{$propertyName};
+    }
+
+    protected function hasProperty(array|object $notValidatedData, string $propertyName): bool
+    {
+        if (is_array($notValidatedData)) {
+            return array_key_exists($propertyName, $notValidatedData);
+        }
+
+        return property_exists($notValidatedData, $propertyName);
+    }
+
+    /**
+     * @psalm-suppress UnusedForeachValue we need foreach here
+     */
     protected function doValidate(mixed $notValidatedData, ConstraintPath $path): ConstraintResult
     {
-        if (!is_array($notValidatedData)) {
+        if (!is_array($notValidatedData) && !is_object($notValidatedData)) {
             return new ConstraintResult(
                 castedData: $notValidatedData,
                 path: $path,
@@ -99,7 +135,7 @@ final readonly class ObjectConstraint extends Constraint
         $invalidChildStatuses = [];
 
         foreach ($this->properties as $name => $validator) {
-            if (!array_key_exists($name, $notValidatedData)) {
+            if (!$this->hasProperty($notValidatedData, $name)) {
                 if ($validator->defaultValue) {
                     /**
                      * @var mixed explicitly mixed for typechecks
@@ -115,7 +151,7 @@ final readonly class ObjectConstraint extends Constraint
                 }
             } else {
                 $childResult = $validator->validate(
-                    notValidatedData: $notValidatedData[$name],
+                    notValidatedData: $this->getProperty($notValidatedData, $name),
                     path: $path->fork($name)
                 );
 
@@ -138,6 +174,23 @@ final readonly class ObjectConstraint extends Constraint
                 reason: ConstraintReason::InvalidNestedConstraint,
                 status: ConstraintResultStatus::Invalid,
             );
+        }
+
+        if (!$this->additionalProperties) {
+            /**
+             * @var array-key|string $notValidatedKey
+             * @var mixed $notValidatedValue explicitly mixed for typechecks
+             */
+            foreach ($notValidatedData as $notValidatedKey => $notValidatedValue) {
+                if (!array_key_exists($notValidatedKey, $this->properties)) {
+                    return new ConstraintResult(
+                        castedData: $notValidatedData,
+                        path: $path->fork((string) $notValidatedKey),
+                        reason: ConstraintReason::UnexpectedProperty,
+                        status: ConstraintResultStatus::Invalid,
+                    );
+                }
+            }
         }
 
         return new ConstraintResult(

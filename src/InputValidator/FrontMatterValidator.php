@@ -5,17 +5,23 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\InputValidator;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\AnyOfConstraint;
+use Distantmagic\Resonance\Constraint\BooleanConstraint;
+use Distantmagic\Resonance\Constraint\EnumConstraint;
+use Distantmagic\Resonance\Constraint\ListConstraint;
+use Distantmagic\Resonance\Constraint\ObjectConstraint;
+use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\FrontMatterCollectionReference;
 use Distantmagic\Resonance\InputValidatedData\FrontMatter;
 use Distantmagic\Resonance\InputValidator;
-use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\StaticPageContentType;
 use Generator;
 use RuntimeException;
 
 /**
- * @extends InputValidator<FrontMatter, object{
- *     collections: array<non-empty-string|object{ name: non-empty-string, next: non-empty-string }>,
+ * @extends InputValidator<FrontMatter, array{
+ *     collections: array<non-empty-string|array{ name: non-empty-string, next: non-empty-string }>,
  *     content_type: non-empty-string,
  *     description: non-empty-string,
  *     draft: bool,
@@ -31,15 +37,15 @@ readonly class FrontMatterValidator extends InputValidator
 {
     public function castValidatedData(mixed $data): FrontMatter
     {
-        $collections = iterator_to_array($this->normalizeDataCollections($data->collections));
+        $collections = iterator_to_array($this->normalizeDataCollections($data['collections']));
 
-        $description = trim($data->description);
+        $description = trim($data['description']);
 
         if (empty($description)) {
             throw new RuntimeException('Description cannot be empty');
         }
 
-        $title = trim($data->title);
+        $title = trim($data['title']);
 
         if (empty($title)) {
             throw new RuntimeException('Title cannot be empty');
@@ -47,94 +53,46 @@ readonly class FrontMatterValidator extends InputValidator
 
         return new FrontMatter(
             collections: $collections,
-            contentType: StaticPageContentType::from($data->content_type),
+            contentType: StaticPageContentType::from($data['content_type']),
             description: $description,
-            isDraft: $data->draft,
-            layout: $data->layout,
-            next: $data->next ?? null,
-            parent: $data->parent ?? null,
-            registerStylesheets: $data->register_stylesheets,
+            isDraft: $data['draft'],
+            layout: $data['layout'],
+            next: $data['next'] ?? null,
+            parent: $data['parent'] ?? null,
+            registerStylesheets: $data['register_stylesheets'],
             title: $title,
         );
     }
 
-    public function getSchema(): JsonSchema
+    public function getConstraint(): Constraint
     {
         $contentTypes = StaticPageContentType::values();
 
-        return new JsonSchema([
-            'type' => 'object',
-            'properties' => [
-                'collections' => [
-                    'type' => 'array',
-                    'items' => [
-                        'anyOf' => [
-                            [
-                                'type' => 'string',
-                                'minLength' => 1,
-                            ],
-                            [
-                                'type' => 'object',
-                                'properties' => [
-                                    'name' => [
-                                        'type' => 'string',
-                                        'minLength' => 1,
-                                    ],
-                                    'next' => [
-                                        'type' => 'string',
-                                        'minLength' => 1,
-                                    ],
-                                ],
-                                'required' => ['name', 'next'],
-                            ],
+        return new ObjectConstraint([
+            'collections' => new ListConstraint(
+                valueConstraint: new AnyOfConstraint([
+                    new StringConstraint(),
+                    new ObjectConstraint(
+                        properties: [
+                            'name' => new StringConstraint(),
+                            'next' => new StringConstraint(),
                         ],
-                    ],
-                    'default' => [],
-                ],
-                'content_type' => [
-                    'type' => 'string',
-                    'enum' => $contentTypes,
-                    'default' => StaticPageContentType::Markdown->value,
-                ],
-                'description' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ],
-                'draft' => [
-                    'type' => 'boolean',
-                    'default' => false,
-                ],
-                'layout' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ],
-                'next' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ],
-                'parent' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ],
-                'register_stylesheets' => [
-                    'type' => 'array',
-                    'items' => [
-                        'type' => 'string',
-                        'minLength' => 1,
-                    ],
-                    'default' => [],
-                ],
-                'title' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ],
-            ],
-            'required' => ['description', 'layout', 'title'],
+                    ),
+                ]),
+            ),
+            'content_type' => (new EnumConstraint($contentTypes))->default(StaticPageContentType::Markdown->value),
+            'description' => new StringConstraint(),
+            'draft' => (new BooleanConstraint())->default(false),
+            'layout' => new StringConstraint(),
+            'next' => (new StringConstraint())->nullable(),
+            'parent' => (new StringConstraint())->nullable(),
+            'register_stylesheets' => new ListConstraint(valueConstraint: new StringConstraint()),
+            'title' => new StringConstraint(),
         ]);
     }
 
     /**
-     * @param array<non-empty-string|object{ name: non-empty-string, next: non-empty-string }> $collections
+     * @param array<array{ name: non-empty-string, next: non-empty-string }|non-empty-string> $collections
      *
      * @return Generator<FrontMatterCollectionReference>
      */
@@ -145,8 +103,8 @@ readonly class FrontMatterValidator extends InputValidator
                 yield new FrontMatterCollectionReference($collection, null);
             } else {
                 yield new FrontMatterCollectionReference(
-                    $collection->name,
-                    $collection->next,
+                    $collection['name'],
+                    $collection['next'],
                 );
             }
         }

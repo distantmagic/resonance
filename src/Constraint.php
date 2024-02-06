@@ -33,6 +33,11 @@ abstract readonly class Constraint implements JsonSchemableInterface
         public bool $isRequired = true,
     ) {}
 
+    public function jsonSerialize(): array|object
+    {
+        return $this->toJsonSchema();
+    }
+
     /**
      * @return PJsonSchema
      */

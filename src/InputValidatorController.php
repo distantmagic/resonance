@@ -9,8 +9,6 @@ use Distantmagic\Resonance\Attribute\Singleton;
 #[Singleton]
 readonly class InputValidatorController
 {
-    public function __construct(private JsonSchemaValidator $jsonSchemaValidator) {}
-
     /**
      * @template TCastedData of InputValidatedData
      * @template TValidatedData
@@ -21,9 +19,9 @@ readonly class InputValidatorController
      */
     public function validateData(InputValidator $inputValidator, mixed $data): InputValidationResult
     {
-        $jsonSchemaValidationResult = $this->jsonSchemaValidator->validate($inputValidator, $data);
+        $constraintResult = $inputValidator->getConstraint()->validate($data);
 
-        return $this->castJsonSchemaValidationResult($inputValidator, $jsonSchemaValidationResult);
+        return $this->castJsonSchemaValidationResult($constraintResult, $inputValidator);
     }
 
     /**
@@ -31,32 +29,26 @@ readonly class InputValidatorController
      * @template TValidatedData
      *
      * @param InputValidator<TCastedData,TValidatedData> $inputValidator
-     * @param JsonSchemaValidationResult<TValidatedData> $jsonSchemaValidationResult
      *
      * @return InputValidationResult<TCastedData>
      */
     protected function castJsonSchemaValidationResult(
+        ConstraintResult $constraintResult,
         InputValidator $inputValidator,
-        JsonSchemaValidationResult $jsonSchemaValidationResult,
     ): InputValidationResult {
-        $errors = $jsonSchemaValidationResult->errors;
-
-        if (empty($errors)) {
-            return new InputValidationResult($inputValidator->castValidatedData($jsonSchemaValidationResult->data));
+        if ($constraintResult->status->isValid()) {
+            /**
+             * @var TValidatedData $constraintResult->castedData
+             */
+            return new InputValidationResult(
+                $inputValidator->castValidatedData($constraintResult->castedData),
+                $constraintResult,
+            );
         }
 
         /**
          * @var InputValidationResult<TCastedData>
          */
-        $validationResult = new InputValidationResult();
-
-        foreach ($errors as $propertyName => $propertyErrors) {
-            $validationResult->errors->put(
-                $propertyName,
-                $propertyErrors,
-            );
-        }
-
-        return $validationResult;
+        return new InputValidationResult(null, $constraintResult);
     }
 }

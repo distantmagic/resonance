@@ -10,4 +10,4 @@ namespace Distantmagic\Resonance;
  *
  * @template-implements CastsValidatedDataInterface<TCastedData,TValidatedData>
  */
-abstract readonly class InputValidator implements CastsValidatedDataInterface, JsonSchemaSourceInterface {}
+abstract readonly class InputValidator implements CastsValidatedDataInterface, ConstraintSourceInterface {}

@@ -15,12 +15,10 @@ final class ObjectConstraintTest extends TestCase
 {
     public function test_is_converted_optionally_to_json_schema(): void
     {
-        $constraint = new ObjectConstraint(
-            properties: [
-                'aaa' => new StringConstraint(),
-                'bbb' => new EnumConstraint(['foo']),
-            ]
-        );
+        $constraint = new ObjectConstraint([
+            'aaa' => new StringConstraint(),
+            'bbb' => new EnumConstraint(['foo']),
+        ]);
         self::assertEquals([
             'type' => 'object',
             'properties' => [
@@ -40,12 +38,10 @@ final class ObjectConstraintTest extends TestCase
 
     public function test_is_converted_to_json_schema(): void
     {
-        $constraint = new ObjectConstraint(
-            properties: [
-                'aaa' => new StringConstraint(),
-                'bbb' => new EnumConstraint(['foo']),
-            ]
-        );
+        $constraint = new ObjectConstraint([
+            'aaa' => new StringConstraint(),
+            'bbb' => new EnumConstraint(['foo']),
+        ]);
         self::assertEquals([
             'type' => 'object',
             'properties' => [
@@ -65,12 +61,10 @@ final class ObjectConstraintTest extends TestCase
 
     public function test_is_converted_to_json_schema_with_optionals(): void
     {
-        $constraint = new ObjectConstraint(
-            properties: [
-                'aaa' => (new StringConstraint())->optional(),
-                'bbb' => (new EnumConstraint(['foo']))->default(null),
-            ]
-        );
+        $constraint = new ObjectConstraint([
+            'aaa' => (new StringConstraint())->optional(),
+            'bbb' => (new EnumConstraint(['foo']))->default(null),
+        ]);
         self::assertEquals([
             'type' => 'object',
             'properties' => [
@@ -91,12 +85,10 @@ final class ObjectConstraintTest extends TestCase
 
     public function test_nullable_is_converted_to_json_schema(): void
     {
-        $constraint = new ObjectConstraint(
-            properties: [
-                'aaa' => new StringConstraint(),
-                'bbb' => new EnumConstraint(['foo']),
-            ]
-        );
+        $constraint = new ObjectConstraint([
+            'aaa' => new StringConstraint(),
+            'bbb' => new EnumConstraint(['foo']),
+        ]);
         self::assertEquals([
             'type' => ['null', 'object'],
             'properties' => [
@@ -115,14 +107,38 @@ final class ObjectConstraintTest extends TestCase
         ], $constraint->nullable()->toJsonSchema());
     }
 
+    public function test_validates_additional_properties_failure(): void
+    {
+        $constraint = new ObjectConstraint(additionalProperties: false);
+
+        $validatedResult = $constraint->validate([
+            'aaa' => 'hi',
+            'bbb' => 'foo',
+            'cc' => 'bar',
+        ]);
+
+        self::assertFalse($validatedResult->status->isValid());
+    }
+
+    public function test_validates_additional_properties_ok(): void
+    {
+        $constraint = new ObjectConstraint(additionalProperties: true);
+
+        $validatedResult = $constraint->validate([
+            'aaa' => 'hi',
+            'bbb' => 'foo',
+            'cc' => 'bar',
+        ]);
+
+        self::assertTrue($validatedResult->status->isValid());
+    }
+
     public function test_validates_defaults(): void
     {
-        $constraint = new ObjectConstraint(
-            properties: [
-                'aaa' => (new StringConstraint())->default('hi'),
-                'bbb' => new EnumConstraint(['foo']),
-            ]
-        );
+        $constraint = new ObjectConstraint([
+            'aaa' => (new StringConstraint())->default('hi'),
+            'bbb' => new EnumConstraint(['foo']),
+        ]);
 
         $validatedResult = $constraint->validate([
             'bbb' => 'foo',
@@ -137,12 +153,10 @@ final class ObjectConstraintTest extends TestCase
 
     public function test_validates_fail(): void
     {
-        $constraint = new ObjectConstraint(
-            properties: [
-                'aaa' => new StringConstraint(),
-                'bbb' => new EnumConstraint(['foo']),
-            ]
-        );
+        $constraint = new ObjectConstraint([
+            'aaa' => new StringConstraint(),
+            'bbb' => new EnumConstraint(['foo']),
+        ]);
 
         $validatedResult = $constraint->validate([
             'aaa' => 'hi',
@@ -157,12 +171,10 @@ final class ObjectConstraintTest extends TestCase
 
     public function test_validates_nullable(): void
     {
-        $constraint = new ObjectConstraint(
-            properties: [
-                'aaa' => (new StringConstraint())->nullable(),
-                'bbb' => new EnumConstraint(['foo']),
-            ]
-        );
+        $constraint = new ObjectConstraint([
+            'aaa' => (new StringConstraint())->nullable(),
+            'bbb' => new EnumConstraint(['foo']),
+        ]);
 
         $validatedResult = $constraint->validate([
             'bbb' => 'foo',
@@ -177,12 +189,10 @@ final class ObjectConstraintTest extends TestCase
 
     public function test_validates_nullable_null(): void
     {
-        $constraint = new ObjectConstraint(
-            properties: [
-                'aaa' => (new StringConstraint())->nullable(),
-                'bbb' => new EnumConstraint(['foo']),
-            ]
-        );
+        $constraint = new ObjectConstraint([
+            'aaa' => (new StringConstraint())->nullable(),
+            'bbb' => new EnumConstraint(['foo']),
+        ]);
 
         $validatedResult = $constraint->validate([
             'aaa' => null,
@@ -198,12 +208,10 @@ final class ObjectConstraintTest extends TestCase
 
     public function test_validates_ok(): void
     {
-        $constraint = new ObjectConstraint(
-            properties: [
-                'aaa' => new StringConstraint(),
-                'bbb' => new EnumConstraint(['foo']),
-            ]
-        );
+        $constraint = new ObjectConstraint([
+            'aaa' => new StringConstraint(),
+            'bbb' => new EnumConstraint(['foo']),
+        ]);
 
         $validatedResult = $constraint->validate([
             'aaa' => 'hi',
@@ -215,12 +223,10 @@ final class ObjectConstraintTest extends TestCase
 
     public function test_validates_optional(): void
     {
-        $constraint = new ObjectConstraint(
-            properties: [
-                'aaa' => (new StringConstraint())->optional(),
-                'bbb' => new EnumConstraint(['foo']),
-            ]
-        );
+        $constraint = new ObjectConstraint([
+            'aaa' => (new StringConstraint())->optional(),
+            'bbb' => new EnumConstraint(['foo']),
+        ]);
 
         $validatedResult = $constraint->validate([
             'bbb' => 'foo',

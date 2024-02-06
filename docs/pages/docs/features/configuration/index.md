@@ -196,7 +196,7 @@ readonly class ManifestConfiguration
 ```
 
 Then you need to define the configuration provider. 
-[JSON Schema](https://json-schema.org/) is used for config validation:
+Constraints schema is used for config validation:
 
 ```php
 <?php
@@ -205,11 +205,13 @@ namespace App\SingletonProvider\ConfigurationProvider;
 
 use App\ManifestConfiguration;
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\JsonSchema;
+use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\ObjectConstraint;
+use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 /**
- * @template-extends ConfigurationProvider<ManifestConfiguration, object{
+ * @template-extends ConfigurationProvider<ManifestConfiguration, array{
  *     background_color: string,
  *     theme_color: string,
  * }>
@@ -217,34 +219,24 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 #[Singleton(provides: ManifestConfiguration::class)]
 final readonly class ManifestConfigurationProvider extends ConfigurationProvider
 {
+    public function getConstraint(): Constraint
+    {
+        return new ObjectConstraint([
+            'background_color' => new StringConstraint(),
+            'theme_color' => new StringConstraint(),
+        ]);
+    }
+
     protected function getConfigurationKey(): string
     {
         return 'manifest';
     }
 
-    protected function getSchema(): JsonSchema
-    {
-        return new JsonSchema([
-            'type' => 'object',
-            'properties' => [
-                'background_color' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ],
-                'theme_color' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ]
-            ],
-            'required' => ['background_color', 'theme_color']
-        ]);
-    }
-
     protected function provideConfiguration($validatedData): ManifestConfiguration
     {
         return new ManifestConfiguration(
-            backgroundColor: $validatedData->background_color,
-            themeColor: $validatedData->theme_color,
+            backgroundColor: $validatedData['background_color'],
+            themeColor: $validatedData['theme_color'],
         );
     }
 }

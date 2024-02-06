@@ -29,7 +29,7 @@ readonly class RespondsWithExtractor extends OpenAPIMetadataResponseExtractor
                 contentType: $attribute->contentType,
                 description: $attribute->description,
                 status: $attribute->status,
-                jsonSchema: $attribute->jsonSchema,
+                jsonSchemable: $attribute->constraint,
             ),
         ];
     }

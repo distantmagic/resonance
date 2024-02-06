@@ -10,7 +10,7 @@ readonly class OpenAPISchemaParameter implements JsonSerializable
 {
     public function __construct(
         private OpenAPIParameterIn $in,
-        private JsonSchema $jsonSchema,
+        private JsonSchemableInterface $jsonSchemable,
         private string $name,
         private bool $required,
     ) {}
@@ -21,7 +21,7 @@ readonly class OpenAPISchemaParameter implements JsonSerializable
             'in' => $this->in->value,
             'name' => $this->name,
             'required' => $this->required,
-            'schema' => $this->jsonSchema,
+            'schema' => $this->jsonSchemable,
         ];
     }
 }

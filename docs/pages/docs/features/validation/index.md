@@ -47,8 +47,7 @@ readonly class BlogPostForm extends InputValidatedData
 ## Validators
 
 Validators take in any data and check if it adheres to the configuration 
-schema. The `getSchema()` method must return a 
-[JSON Schema](https://json-schema.org/) object.
+schema. The `getConstraint()` method must return a constraints object.
 
 ```php
 <?php
@@ -57,8 +56,10 @@ namespace App\InputValidator;
 
 use App\InputValidatedData\BlogPostForm;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\ObjectConstraint;
+use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\InputValidator;
-use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\SingletonCollection;
 
 /**
@@ -78,21 +79,11 @@ readonly class BlogPostFormValidator extends InputValidator
         );
     }
 
-    public function getSchema(): JsonSchema
+    public function getConstraint(): Constraint
     {
-        return new JsonSchema([
-            'type' => 'object',
-            'properties' => [
-                'content' => [
-                    'type' => 'string',
-                    'minLength' => 1
-                ],
-                'title' => [
-                    'type' => 'string',
-                    'minLength' => 1
-                ]
-            ],
-            'required' => ['content', 'title']
+        return new ObjectConstraint([
+            'content' => new StringConstraint(),
+            'title' => new StringConstraint()
         ]);
     }
 }
@@ -106,11 +97,9 @@ parameters manually. Then you can call their `validateData()` method.
 <?php
 
 use Distantmagic\Resonance\InputValidatorController;
-use Distantmagic\Resonance\JsonSchemaValidator;
 use Distantmagic\Resonance\InputValidationResult;
 
-$jsonSchemaValidator = new JsonSchemaValidator();
-$inputValidatorController = new InputValidatorController($jsonSchemaValidator);
+$inputValidatorController = new InputValidatorController();
 
 /**
  * @var InputValidationResult $validationResult
@@ -122,7 +111,7 @@ $validationResult = $inputValidatorController->validateData($blogPostFormValidat
 
 // If validation is successful, the errors list is empty and validation data
 // is set.
-assert($validationResult->errors->isEmpty());
+assert($validationResult->constraintResult->getErrors()->isEmpty());
 
 /**
  * It's null if validation failed.

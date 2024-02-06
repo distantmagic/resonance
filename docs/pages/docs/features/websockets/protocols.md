@@ -65,7 +65,8 @@ use Distantmagic\Resonance\Attribute\RespondsToWebSocketRPC;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Feature;
-use Distantmagic\Resonance\JsonSchema;
+use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\RPCRequest;
 use Distantmagic\Resonance\RPCResponse;
 use Distantmagic\Resonance\SingletonCollection;
@@ -78,11 +79,9 @@ use Distantmagic\Resonance\WebSocketRPCResponder;
 #[WantsFeature(Feature::WebSocket)]
 final readonly class EchoResponder extends WebSocketRPCResponder
 {
-    public function getSchema(): JsonSchema
+    public function getConstraint(): Constraint
     {
-        return new JsonSchema([
-            'type' => 'string',
-        ]);
+        return new StringConstraint();
     }
 
     public function onRequest(

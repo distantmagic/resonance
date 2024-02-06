@@ -62,7 +62,7 @@ readonly class ValidatedRequestResolver extends HttpControllerParameterResolver
 
         return new HttpControllerParameterResolution(
             HttpControllerParameterResolutionStatus::ValidationErrors,
-            $validationResult->errors,
+            $validationResult->constraintResult->getErrors(),
         );
     }
 }

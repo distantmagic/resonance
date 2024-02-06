@@ -32,11 +32,11 @@ readonly class ValidatedRequestExtractor extends OpenAPIRouteRequestBodyContentE
         return [
             new OpenAPISchemaRequestBodyContent(
                 mimeType: 'application/x-www-form-urlencoded',
-                jsonSchema: $this
+                jsonSchemable: $this
                     ->inputValidatorCollection
                     ->inputValidators
                     ->get($attribute->validator)
-                    ->getSchema(),
+                    ->getConstraint(),
             ),
         ];
     }

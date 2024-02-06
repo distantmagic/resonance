@@ -15,7 +15,6 @@ readonly class WebSocketRPCConnectionHandle
     private Set $activeResponders;
 
     public function __construct(
-        public JsonSchemaValidator $jsonSchemaValidator,
         public WebSocketRPCResponderAggregate $webSocketRPCResponderAggregate,
         public WebSocketAuthResolution $webSocketAuthResolution,
         public WebSocketConnection $webSocketConnection,
@@ -37,20 +36,20 @@ readonly class WebSocketRPCConnectionHandle
         }
     }
 
-    public function onRPCMessage(RPCMessage $rpcMessage): JsonSchemaValidationResult
+    public function onRPCMessage(RPCMessage $rpcMessage): ConstraintResult
     {
         $responder = $this
             ->webSocketRPCResponderAggregate
             ->selectResponder($rpcMessage)
         ;
 
-        $jsonSchemaValidationResult = $this
-            ->jsonSchemaValidator
-            ->validate($responder, $rpcMessage->payload)
+        $constraintResult = $responder
+            ->getConstraint()
+            ->validate($rpcMessage->payload)
         ;
 
-        if (!empty($jsonSchemaValidationResult->errors)) {
-            return $jsonSchemaValidationResult;
+        if ($constraintResult->status->isValid()) {
+            return $constraintResult;
         }
 
         $this->activeResponders->add($responder);
@@ -66,7 +65,7 @@ readonly class WebSocketRPCConnectionHandle
                 $this->webSocketConnection,
                 new RPCRequest(
                     $rpcMessage->method,
-                    $jsonSchemaValidationResult->data,
+                    $constraintResult->castedData,
                     $rpcMessage->requestId,
                 ),
             );
@@ -76,11 +75,11 @@ readonly class WebSocketRPCConnectionHandle
                 $this->webSocketConnection,
                 new RPCNotification(
                     $rpcMessage->method,
-                    $jsonSchemaValidationResult->data,
+                    $constraintResult->castedData,
                 )
             );
         }
 
-        return $jsonSchemaValidationResult;
+        return $constraintResult;
     }
 }

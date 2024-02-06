@@ -39,20 +39,18 @@ final readonly class DatabaseConfigurationProvider extends ConfigurationProvider
 {
     public function getConstraint(): Constraint
     {
-        $valueConstraint = new ObjectConstraint(
-            properties: [
-                'database' => new StringConstraint(),
-                'driver' => new EnumConstraint(DatabaseConnectionPoolDriverName::values()),
-                'host' => (new StringConstraint())->default(null),
-                'log_queries' => new BooleanConstraint(),
-                'password' => (new StringConstraint())->nullable(),
-                'pool_prefill' => (new BooleanConstraint())->default(true),
-                'pool_size' => new IntegerConstraint(),
-                'port' => (new IntegerConstraint())->nullable()->default(3306),
-                'unix_socket' => (new StringConstraint())->nullable(),
-                'username' => new StringConstraint(),
-            ],
-        );
+        $valueConstraint = new ObjectConstraint([
+            'database' => new StringConstraint(),
+            'driver' => new EnumConstraint(DatabaseConnectionPoolDriverName::values()),
+            'host' => (new StringConstraint())->default(null),
+            'log_queries' => new BooleanConstraint(),
+            'password' => (new StringConstraint())->nullable(),
+            'pool_prefill' => (new BooleanConstraint())->default(true),
+            'pool_size' => new IntegerConstraint(),
+            'port' => (new IntegerConstraint())->nullable()->default(3306),
+            'unix_socket' => (new StringConstraint())->nullable(),
+            'username' => new StringConstraint(),
+        ]);
 
         return new MapConstraint(valueConstraint: $valueConstraint);
     }

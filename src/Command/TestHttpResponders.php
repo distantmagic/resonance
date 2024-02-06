@@ -11,7 +11,6 @@ use Distantmagic\Resonance\HttpRecursiveResponder;
 use Distantmagic\Resonance\HttpResponderAggregate;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\InspectableSwooleResponse;
-use Distantmagic\Resonance\JsonSchemaValidator;
 use Distantmagic\Resonance\SwooleCoroutineHelper;
 use Distantmagic\Resonance\TestableHttpResponseCollection;
 use Ds\Map;
@@ -29,7 +28,6 @@ final class TestHttpResponders extends Command
     public function __construct(
         private readonly HttpRecursiveResponder $recursiveResponder,
         private readonly HttpResponderAggregate $httpResponderAggregate,
-        private readonly JsonSchemaValidator $jsonSchemaValidator,
         private readonly TestableHttpResponseCollection $testableHttpResponseCollection,
     ) {
         parent::__construct();
@@ -109,15 +107,12 @@ final class TestHttpResponders extends Command
             ));
         }
 
-        $jsonSchemaValidationResult = $this
-            ->jsonSchemaValidator
-            ->validateSchema(
-                $respondsWith->jsonSchema,
-                $response->mockGetCastedContent(),
-            )
+        $constraintResult = $respondsWith
+            ->constraint
+            ->validate($response->mockGetCastedContent())
         ;
 
-        if (empty($jsonSchemaValidationResult->errors)) {
+        if ($constraintResult->status->isValid()) {
             $output->writeln('ok');
 
             return true;
@@ -125,10 +120,9 @@ final class TestHttpResponders extends Command
 
         $output->writeln('<error>error</error>');
 
-        foreach ($jsonSchemaValidationResult->errors as $path => $errors) {
-            foreach ($errors as $error) {
-                $output->writeln(sprintf('%s -> %s', $path, $error));
-            }
+        foreach ($constraintResult->getErrors() as $path => $error) {
+            $output->writeln(sprintf('%s -> %s', $path, $error));
+            $output->writeln(print_r($constraintResult->castedData, true));
         }
 
         return false;

@@ -346,8 +346,7 @@ readonly class UsernamePassword extends InputValidatedData
 ```
 
 We will use this input validator in the HTTP Responder. It uses
-[JSON Schema](https://json-schema.org/)
-to validate the incoming data:
+constraints to validate the incoming data:
 
 ```php file:app/InputValidator/UsernamePasswordValidator.php
 <?php
@@ -357,11 +356,13 @@ namespace App\InputValidator;
 use App\InputValidatedData\UsernamePassword;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\InputValidator;
-use Distantmagic\Resonance\JsonSchema;
+use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\ObjectConstraint;
+use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\SingletonCollection;
 
 /**
- * @extends InputValidator<UsernamePassword, object{
+ * @extends InputValidator<UsernamePassword, array{
  *     csrf: string,
  *     username: string,
  *     password: string,
@@ -372,27 +373,15 @@ readonly class UsernamePasswordValidator extends InputValidator
 {
     public function castValidatedData(mixed $data): UsernamePassword
     {
-        return new UsernamePassword($data->username, $data->password);
+        return new UsernamePassword($data['username'], $data['password']);
     }
 
-    public function getSchema(): Schema
+    public function getSchema(): Constraint
     {
-        return new JsonSchema([
-            'type' => 'object',
-            'properties' => [
-                'csrf' => [
-                    'type' => 'string',
-                ],
-                'username' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ],
-                'password' => [
-                    'type' => 'string',
-                    'minLength' => 1,
-                ]
-            ],
-            'required' => ['csrf', 'username', 'password']
+        return new ObjectConstraint([
+            'csrf' => (new StringConstraint())->optional(),
+            'username' => new StringConstraint(),
+            'password' => new StringConstraint(),
         ]);
     }
 }

@@ -81,3 +81,6 @@ ssl_key_file = ssl/origin.key
 [translator]
 base_directory = app/lang
 default_primary_language = en
+
+[websocket]
+max_connections = 10000

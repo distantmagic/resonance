@@ -8,7 +8,7 @@ use stdClass;
 
 /**
  * @template-implements OpenAPISerializableFieldInterface<array{
- *     schemas: object|array<non-empty-string,JsonSchema>,
+ *     schemas: object|array<non-empty-string,JsonSchemableInterface>,
  *     securitySchemes: OpenAPISchemaComponentsSecuritySchemes,
  * }>
  */
@@ -27,12 +27,12 @@ readonly class OpenAPISchemaComponents implements OpenAPISerializableFieldInterf
     }
 
     /**
-     * @return array<non-empty-string,JsonSchema>|object
+     * @return array<non-empty-string,JsonSchemableInterface>|object
      */
     private function serializeSchemaCollection(OpenAPIReusableSchemaCollection $openAPIReusableSchemaCollection): array|object
     {
         /**
-         * @var array<non-empty-string,JsonSchema> $schemas
+         * @var array<non-empty-string,JsonSchemableInterface> $schemas
          */
         $schemas = [];
 

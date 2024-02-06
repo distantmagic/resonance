@@ -34,17 +34,15 @@ final readonly class OAuth2ConfigurationProvider extends ConfigurationProvider
 {
     public function getConstraint(): Constraint
     {
-        return new ObjectConstraint(
-            properties: [
-                'encryption_key' => new StringConstraint(),
-                'jwt_signing_key_passphrase' => (new StringConstraint())->nullable(),
-                'jwt_signing_key_private' => new StringConstraint(),
-                'jwt_signing_key_public' => new StringConstraint(),
-                'session_key_authorization_request' => (new StringConstraint())->default('oauth2.authorization_request'),
-                'session_key_pkce' => (new StringConstraint())->default('oauth2.pkce'),
-                'session_key_state' => (new StringConstraint())->default('oauth2.state'),
-            ],
-        );
+        return new ObjectConstraint([
+            'encryption_key' => new StringConstraint(),
+            'jwt_signing_key_passphrase' => (new StringConstraint())->nullable(),
+            'jwt_signing_key_private' => new StringConstraint(),
+            'jwt_signing_key_public' => new StringConstraint(),
+            'session_key_authorization_request' => (new StringConstraint())->default('oauth2.authorization_request'),
+            'session_key_pkce' => (new StringConstraint())->default('oauth2.pkce'),
+            'session_key_state' => (new StringConstraint())->default('oauth2.state'),
+        ]);
     }
 
     protected function getConfigurationKey(): string

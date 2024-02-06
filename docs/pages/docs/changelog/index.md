@@ -10,6 +10,10 @@ title: Changelog
 
 # Changelog
 
+## v0.19.0
+
+- Use Json-Schema serializable constraints
+
 ## v0.18.0
 
 - Feature: add {{docs/features/mail/index}}

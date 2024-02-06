@@ -35,18 +35,16 @@ final readonly class RedisConfigurationProvider extends ConfigurationProvider
 {
     public function getConstraint(): Constraint
     {
-        $valueConstraint = new ObjectConstraint(
-            properties: [
-                'db_index' => new IntegerConstraint(),
-                'host' => new StringConstraint(),
-                'password' => (new StringConstraint())->nullable(),
-                'pool_prefill' => (new BooleanConstraint())->default(true),
-                'pool_size' => new IntegerConstraint(),
-                'port' => new IntegerConstraint(),
-                'prefix' => new StringConstraint(),
-                'timeout' => new IntegerConstraint(),
-            ],
-        );
+        $valueConstraint = new ObjectConstraint([
+            'db_index' => new IntegerConstraint(),
+            'host' => new StringConstraint(),
+            'password' => (new StringConstraint())->nullable(),
+            'pool_prefill' => (new BooleanConstraint())->default(true),
+            'pool_size' => new IntegerConstraint(),
+            'port' => new IntegerConstraint(),
+            'prefix' => new StringConstraint(),
+            'timeout' => new IntegerConstraint(),
+        ]);
 
         return new MapConstraint(valueConstraint: $valueConstraint);
     }

@@ -7,7 +7,7 @@ namespace Distantmagic\Resonance;
 /**
  * @psalm-type PArraySerializedOpenAPISchemaResponse = array{
  *     description?: non-empty-string,
- *     content: array<string, array{ schema: JsonSchema }>
+ *     content: array<string, array{ schema: array }>
  * }
  *
  * @template-implements OpenAPISerializableFieldInterface<PArraySerializedOpenAPISchemaResponse>
@@ -19,7 +19,7 @@ readonly class OpenAPISchemaResponse implements OpenAPISerializableFieldInterfac
      */
     public function __construct(
         public ContentType $contentType,
-        public JsonSchema $jsonSchema,
+        public JsonSchemableInterface $jsonSchemable,
         public int $status,
         public ?string $description = null,
     ) {}
@@ -34,7 +34,7 @@ readonly class OpenAPISchemaResponse implements OpenAPISerializableFieldInterfac
 
         $response['content'] = [
             $this->contentType->value => [
-                'schema' => $openAPIReusableSchemaCollection->reuse($this->jsonSchema),
+                'schema' => $openAPIReusableSchemaCollection->reuse($this->jsonSchemable),
             ],
         ];
 

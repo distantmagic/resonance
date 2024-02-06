@@ -6,12 +6,16 @@ namespace Distantmagic\Resonance\InputValidator;
 
 use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\AnyConstraint;
+use Distantmagic\Resonance\Constraint\EnumConstraint;
+use Distantmagic\Resonance\Constraint\StringConstraint;
+use Distantmagic\Resonance\Constraint\TupleConstraint;
+use Distantmagic\Resonance\ConstraintStringFormat;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\InputValidatedData\RPCMessage;
 use Distantmagic\Resonance\InputValidator;
-use Distantmagic\Resonance\JsonSchema;
 use Distantmagic\Resonance\RPCMethodValidatorInterface;
-use stdClass;
 
 /**
  * @extends InputValidator<RPCMessage, array{
@@ -35,22 +39,14 @@ readonly class RPCMessageValidator extends InputValidator
         );
     }
 
-    public function getSchema(): JsonSchema
+    public function getConstraint(): Constraint
     {
-        return new JsonSchema([
-            'type' => 'array',
-            'items' => false,
-            'prefixItems' => [
-                [
-                    'type' => 'string',
-                    'enum' => $this->rpcMethodValidator->values(),
-                ],
-                new stdClass(),
-                [
-                    'type' => ['null', 'string'],
-                    'format' => 'uuid',
-                ],
+        return new TupleConstraint(
+            items: [
+                new EnumConstraint($this->rpcMethodValidator->values()),
+                new AnyConstraint(),
+                (new StringConstraint(format: ConstraintStringFormat::Uuid))->nullable(),
             ],
-        ]);
+        );
     }
 }
