@@ -451,7 +451,7 @@ final readonly class LoginValidation extends HttpController
         UsernamePassword $usernamePassword,
         #[DoctrineEntityRepository(User::class)]
         EntityRepository $users,
-    ): HttpInterceptableInterface {
+    ): null|HttpInterceptableInterface {
         /**
          * @var null|User
          */
@@ -460,9 +460,9 @@ final readonly class LoginValidation extends HttpController
         ]);
 
         if (!$user || !password_verify($usernamePassword->password, $user->getPasswordHash())) {
-            return $this->handleValidationErrors($response, new Map([
-                'username' => 'Invalid credentials',
-            ]));
+            $response->status(403);
+
+            return;
         }
 
         $this->sessionAuthentication->setAuthenticatedUser(
@@ -472,22 +472,6 @@ final readonly class LoginValidation extends HttpController
         );
 
         return new InternalRedirect(HttpRouteSymbol::Homepage);
-    }
-
-    /**
-     * @param Map<string,string> $errors
-     */
-    #[ValidationErrorsHandler]
-    public function handleValidationErrors(
-        Response $response,
-        #[ValidationErrors]
-        Map $errors,
-    ): HttpInterceptableInterface {
-        $response->status(400);
-
-        return new TwigTemplate('turbo/auth/login_form.twig', [
-            'errors' => $errors,
-        ]);
     }
 }
 ```

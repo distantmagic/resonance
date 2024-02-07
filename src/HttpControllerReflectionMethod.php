@@ -7,7 +7,7 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Attribute\CurrentRequest;
 use Distantmagic\Resonance\Attribute\CurrentResponse;
 use Distantmagic\Resonance\HttpResponder\HttpController;
-use Ds\Map;
+use Ds\Set;
 use Generator;
 use ReflectionAttribute;
 use ReflectionClass;
@@ -23,9 +23,9 @@ use Swoole\Http\Response;
 readonly class HttpControllerReflectionMethod
 {
     /**
-     * @var Map<string, HttpControllerParameter>
+     * @var Set<HttpControllerParameter>
      */
-    public Map $parameters;
+    public Set $parameters;
 
     /**
      * @param ReflectionClass<HttpController> $reflectionClass
@@ -34,7 +34,7 @@ readonly class HttpControllerReflectionMethod
         public ReflectionClass $reflectionClass,
         private ReflectionMethod $reflectionMethod,
     ) {
-        $this->parameters = new Map();
+        $this->parameters = new Set();
 
         $this->assertReturnTypes();
 
@@ -117,9 +117,9 @@ readonly class HttpControllerReflectionMethod
             );
         }
 
-        $this->parameters->put($name, new HttpControllerParameter(
+        $this->parameters->add(new HttpControllerParameter(
             $reflectionParameter,
-            $this->getParameterAttribute($reflectionParameter, $className),
+            $this->getParameterAttributes($reflectionParameter, $className),
             $className,
             $name,
         ));
@@ -148,34 +148,40 @@ readonly class HttpControllerReflectionMethod
 
     /**
      * @param class-string $className
+     *
+     * @return Set<Attribute>
      */
-    private function getParameterAttribute(
+    private function getParameterAttributes(
         ReflectionParameter $reflectionParameter,
         string $className,
-    ): ?Attribute {
+    ): Set {
         $routeParameterAttributes = $reflectionParameter->getAttributes(
             Attribute::class,
             ReflectionAttribute::IS_INSTANCEOF,
         );
 
+        /**
+         * @var Set<Attribute>
+         */
+        $attributes = new Set();
+
         switch (count($routeParameterAttributes)) {
             case 0:
                 if (is_a($className, Request::class, true)) {
-                    return new CurrentRequest();
-                }
-                if (is_a($className, Response::class, true)) {
-                    return new CurrentResponse();
+                    $attributes->add(new CurrentRequest());
+                } elseif (is_a($className, Response::class, true)) {
+                    $attributes->add(new CurrentResponse());
                 }
 
                 break;
-            case 1:
+            default:
                 foreach ($routeParameterAttributes as $routeParameterAttribute) {
-                    return $routeParameterAttribute->newInstance();
+                    $attributes->add($routeParameterAttribute->newInstance());
                 }
 
                 break;
         }
 
-        return null;
+        return $attributes;
     }
 }

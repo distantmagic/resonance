@@ -26,24 +26,32 @@ readonly class HttpControllerParameterResolverAggregate
         Response $response,
         HttpControllerParameter $parameter,
     ): HttpControllerParameterResolution {
-        $attribute = $parameter->attribute;
+        /**
+         * @var null|HttpControllerParameterResolution $resolved
+         */
+        $resolved = null;
 
-        if (!$attribute) {
-            throw new LogicException('To use the attribute resolver, attribute must be provided.');
+        foreach ($parameter->attributes as $attribute) {
+            if ($this->resolvers->hasKey($attribute::class)) {
+                if (!is_null($resolved)) {
+                    throw new LogicException('Ambiguous parameter resolution. You can only use one resolving attribute.');
+                }
+
+                $resolved = $this->resolvers->get($attribute::class)->resolve(
+                    $request,
+                    $response,
+                    $parameter,
+                    $attribute,
+                );
+            }
         }
 
-        if ($this->resolvers->hasKey($parameter->attribute::class)) {
-            return $this->resolvers->get($parameter->attribute::class)->resolve(
-                $request,
-                $response,
-                $parameter,
-                $attribute,
-            );
+        if ($resolved) {
+            return $resolved;
         }
 
-        throw new LogicException(sprintf(
-            'There is no resolver registered for attribute: %s',
-            $parameter->attribute::class,
-        ));
+        return new HttpControllerParameterResolution(
+            status: HttpControllerParameterResolutionStatus::NoResolver,
+        );
     }
 }
