@@ -126,11 +126,11 @@ readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterfa
         $parameters = [];
 
         foreach ($this->httpControllerReflectionMethod->parameters as $reflectionMethodParameter) {
-            if ($reflectionMethodParameter->attribute) {
+            foreach ($reflectionMethodParameter->attributes as $attribute) {
                 $extractedParameters = $this
                     ->openAPIRouteParameterExtractorAggregate
                     ->extractFromHttpControllerParameter(
-                        $reflectionMethodParameter->attribute,
+                        $attribute,
                         $reflectionMethodParameter->className,
                         $reflectionMethodParameter->name,
                     )
@@ -154,11 +154,11 @@ readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterfa
         $requestBodyContents = [];
 
         foreach ($this->httpControllerReflectionMethod->parameters as $reflectionMethodParameter) {
-            if ($reflectionMethodParameter->attribute) {
+            foreach ($reflectionMethodParameter->attributes as $attribute) {
                 $parameterResolvedValue = $this
                     ->openAPIRouteRequestBodyContentExtractorAggregate
                     ->extractFromHttpControllerParameter(
-                        $reflectionMethodParameter->attribute,
+                        $attribute,
                         $reflectionMethodParameter->className,
                         $reflectionMethodParameter->name,
                     )
@@ -219,11 +219,11 @@ readonly class OpenAPISchemaOperation implements OpenAPISerializableFieldInterfa
         $mergedSecurityRequirements = [];
 
         foreach ($this->httpControllerReflectionMethod->parameters as $reflectionMethodParameter) {
-            if ($reflectionMethodParameter->attribute) {
+            foreach ($reflectionMethodParameter->attributes as $attribute) {
                 $extractedSecurityRequirements = $this
                     ->openAPIRouteSecurityRequirementExtractorAggregate
                     ->extractFromHttpControllerParameter(
-                        $reflectionMethodParameter->attribute,
+                        $attribute,
                         $reflectionMethodParameter->className,
                         $reflectionMethodParameter->name,
                     )

@@ -8,6 +8,7 @@ enum HttpControllerParameterResolutionStatus
 {
     case Forbidden;
     case MissingUrlParameterValue;
+    case NoResolver;
     case NotFound;
     case Success;
     case ValidationErrors;

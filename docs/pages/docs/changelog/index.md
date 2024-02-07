@@ -10,6 +10,10 @@ title: Changelog
 
 # Changelog
 
+## v0.20.0
+
+- Feat: reworked {{docs/features/http/controllers}} parameter resolution handlers
+
 ## v0.19.1
 
 - Fix: some input validators were not cached correctly

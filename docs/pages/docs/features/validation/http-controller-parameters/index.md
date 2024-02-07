@@ -45,8 +45,8 @@ public function handle(
 
 ## Error Handling
 
-To handle errors, you can create an optional method marked with the
-`#[ValidationErrorsHandler]` attribute. If such a method exists, then will be 
+To handle errors, you can create an optional method marked in the
+`#[OnParameterResolution]` attribute. If such a method exists, then will be 
 be called in case of validation failure. 
 
 If no such method exists, the controller is going to return a generic
@@ -56,8 +56,7 @@ If no such method exists, the controller is going to return a generic
 `handle` method's arguments are forwarded into the error validation method.
 
 It can only use the parameters that are already resolved in the `handle` method
-plus an extra argument with validation errors (marked by the 
-`#[ValidationErrors]`) and request/response pair.
+plus an extra argument with validation errors and request/response pair.
 
 Adding new arguments to the error handler besides those is going to cause an
 error.
@@ -73,9 +72,10 @@ use App\InputValidatedData\BlogPostForm;
 use App\InputValidator\BlogPostFormValidator;
 use Distantmagic\Resonance\Attribute\RespondsToHttp;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\OnParameterResolution;
 use Distantmagic\Resonance\Attribute\ValidatedRequest;
-use Distantmagic\Resonance\Attribute\ValidationErrors;
-use Distantmagic\Resonance\Attribute\ValidationErrorsHandler;
+use Distantmagic\Resonance\HttpControllerParameterResolution;
+use Distantmagic\Resonance\HttpControllerParameterResolutionStatus;
 use Distantmagic\Resonance\HttpResponder\HttpController;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\RequestMethod;
@@ -95,6 +95,10 @@ final readonly class BlogPostStore extends HttpController
 {
     public function handle(
         #[ValidatedRequest(BlogPostFormValidator::class)]
+        #[OnParameterResolution(
+            status: HttpControllerParameterResolutionStatus::ValidationErrors,
+            forwardTo: 'handleValidationErrors',
+        )]
         BlogPostForm $blogPostForm,
     ): HttpResponderInterface {
         /* inser blog post, redirect, etc */
@@ -104,12 +108,10 @@ final readonly class BlogPostStore extends HttpController
     /**
      * @param Map<string,Set<string>> $errors
      */
-    #[ValidationErrorsHandler]
     public function handleValidationErrors(
         Request $request,
         Response $response,
-        #[ValidationErrors]
-        Map $errors,
+        HttpControllerParameterResolution $resolution,
     ): HttpResponderInterface {
         $response->status(400);
 
