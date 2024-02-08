@@ -8,6 +8,7 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\DatabaseConfiguration;
 use Distantmagic\Resonance\DatabaseConnectionPoolRepository;
 use Distantmagic\Resonance\PDOPool;
+use Distantmagic\Resonance\PDOPoolConnectionBuilderCollection;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
@@ -21,6 +22,7 @@ final readonly class DatabaseConnectionPoolRepositoryProvider extends SingletonP
 {
     public function __construct(
         private DatabaseConfiguration $databaseConfiguration,
+        private PDOPoolConnectionBuilderCollection $pdoPoolConnectionBuilderCollection,
     ) {}
 
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): DatabaseConnectionPoolRepository
@@ -45,8 +47,9 @@ final readonly class DatabaseConnectionPoolRepositoryProvider extends SingletonP
             $pdoConfig->withPassword($connectionPoolConfiguration->password);
 
             $pdoPool = new PDOPool(
-                $pdoConfig,
+                $this->pdoPoolConnectionBuilderCollection->getBuildersForConnection($name),
                 $connectionPoolConfiguration,
+                $pdoConfig,
             );
 
             if ($connectionPoolConfiguration->poolPrefill) {

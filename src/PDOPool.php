@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Ds\Set;
 use PDO;
 use Swoole\ConnectionPool;
 use Swoole\Database\PDOConfig;
@@ -14,9 +15,13 @@ use Swoole\Database\PDOProxy;
  */
 class PDOPool extends ConnectionPool
 {
+    /**
+     * @param Set<PDOPoolConnectionBuilderInterface> $connectionBuilders
+     */
     public function __construct(
-        private PDOConfig $config,
+        private Set $connectionBuilders,
         DatabaseConnectionPoolConfiguration $databaseConnectionPoolConfiguration,
+        private PDOConfig $config,
     ) {
         parent::__construct(
             $this->createConnection(...),
@@ -38,21 +43,13 @@ class PDOPool extends ConnectionPool
 
     private function createConnection(): PDO
     {
-        $driver = $this->config->getDriver();
+        $pdo = $this->createPDO();
 
-        if ('sqlite' !== $driver) {
-            return new PDO(
-                $this->createDSN($driver),
-                $this->config->getUsername(),
-                $this->config->getPassword(),
-                $this->config->getOptions()
-            );
+        foreach ($this->connectionBuilders as $connectionBuilder) {
+            $pdo = $connectionBuilder->buildPDOConnection($pdo);
         }
 
-        return new PDO(sprintf(
-            'sqlite:%s',
-            $this->config->getDbname()
-        ));
+        return $pdo;
     }
 
     private function createDSN(string $driver): string
@@ -86,5 +83,24 @@ class PDOPool extends ConnectionPool
                 $this->config->getCharset()
             ),
         };
+    }
+
+    private function createPDO(): PDO
+    {
+        $driver = $this->config->getDriver();
+
+        if ('sqlite' !== $driver) {
+            return new PDO(
+                $this->createDSN($driver),
+                $this->config->getUsername(),
+                $this->config->getPassword(),
+                $this->config->getOptions()
+            );
+        }
+
+        return new PDO(sprintf(
+            'sqlite:%s',
+            $this->config->getDbname()
+        ));
     }
 }
