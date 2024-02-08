@@ -14,9 +14,9 @@ readonly class SwooleConfiguration
      * @psalm-taint-source system_secret $host
      * @psalm-taint-source system_secret $port
      *
-     * @param non-empty-string $host
-     * @param non-empty-string $sslCertFile
-     * @param non-empty-string $sslKeyFile
+     * @param non-empty-string      $host
+     * @param null|non-empty-string $sslCertFile
+     * @param null|non-empty-string $sslKeyFile
      */
     public function __construct(
         #[SensitiveParameter]
@@ -26,9 +26,14 @@ readonly class SwooleConfiguration
         #[SensitiveParameter]
         public int $port,
         #[SensitiveParameter]
-        public string $sslCertFile,
+        public ?string $sslCertFile,
         #[SensitiveParameter]
-        public string $sslKeyFile,
+        public ?string $sslKeyFile,
         public int $taskWorkerNum,
     ) {}
+
+    public function usesSsl(): bool
+    {
+        return is_string($this->sslCertFile) && is_string($this->sslKeyFile);
+    }
 }

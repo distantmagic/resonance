@@ -47,7 +47,9 @@ readonly class SwooleServer
             $this->swooleConfiguration->host,
             $this->swooleConfiguration->port,
             SWOOLE_PROCESS,
-            SWOOLE_SOCK_TCP | SWOOLE_SSL,
+            $this->swooleConfiguration->usesSsl()
+                ? SWOOLE_SOCK_TCP | SWOOLE_SSL
+                : SWOOLE_SOCK_TCP,
         );
 
         $this->swooleTaskServerMessageBroker->runningServers->add($this->server);
@@ -67,8 +69,8 @@ readonly class SwooleServer
             'enable_static_handler' => false,
             'http_autoindex' => false,
             'log_level' => $this->swooleConfiguration->logLevel,
-            'ssl_cert_file' => DM_ROOT.'/'.$this->swooleConfiguration->sslCertFile,
-            'ssl_key_file' => DM_ROOT.'/'.$this->swooleConfiguration->sslKeyFile,
+            'ssl_cert_file' => is_string($this->swooleConfiguration->sslCertFile) ? DM_ROOT.'/'.$this->swooleConfiguration->sslCertFile : null,
+            'ssl_key_file' => is_string($this->swooleConfiguration->sslKeyFile) ? DM_ROOT.'/'.$this->swooleConfiguration->sslKeyFile : null,
             'open_http2_protocol' => true,
             'task_enable_coroutine' => true,
             'task_worker_num' => $this->swooleConfiguration->taskWorkerNum,
@@ -118,14 +120,16 @@ readonly class SwooleServer
         $this->eventDispatcher->dispatch(new HttpServerStarted($server));
 
         $this->logger->info(sprintf(
-            'http_server_start(https://%s:%s)',
+            'http_server_start(%s://%s:%s)',
+            $this->swooleConfiguration->usesSsl() ? 'https' : 'http',
             $this->swooleConfiguration->host,
             $this->swooleConfiguration->port,
         ));
 
         if ($this->webSocketServerController) {
             $this->logger->info(sprintf(
-                'websocket_server_start(wss://%s:%s)',
+                'websocket_server_start(%s://%s:%s)',
+                $this->swooleConfiguration->usesSsl() ? 'wss' : 'ws',
                 $this->swooleConfiguration->host,
                 $this->swooleConfiguration->port,
             ));

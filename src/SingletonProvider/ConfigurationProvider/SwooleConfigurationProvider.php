@@ -19,8 +19,8 @@ use Distantmagic\Resonance\SwooleConfiguration;
  *     log_level: int,
  *     log_requests: boolean,
  *     port: int,
- *     ssl_cert_file: non-empty-string,
- *     ssl_key_file: non-empty-string,
+ *     ssl_cert_file: null|non-empty-string,
+ *     ssl_key_file: null|non-empty-string,
  *     task_worker_num: int,
  * }>
  */
@@ -34,8 +34,8 @@ final readonly class SwooleConfigurationProvider extends ConfigurationProvider
             'log_level' => new IntegerConstraint(),
             'log_requests' => (new BooleanConstraint())->default(false),
             'port' => new IntegerConstraint(),
-            'ssl_cert_file' => new StringConstraint(),
-            'ssl_key_file' => new StringConstraint(),
+            'ssl_cert_file' => (new StringConstraint())->default(null),
+            'ssl_key_file' => (new StringConstraint())->default(null),
             'task_worker_num' => (new IntegerConstraint())->default(4),
         ]);
     }

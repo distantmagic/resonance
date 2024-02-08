@@ -28,6 +28,9 @@ readonly class TwigBridgeExtension implements ExtensionInterface
         $ret = [];
 
         foreach ($this->twigFilterCollection->twigFilters as $twigFilter) {
+            /**
+             * @psalm-suppress InvalidArgument twig filters are callable
+             */
             $ret[] = new TwigFilter($twigFilter->getName(), $twigFilter, $safe);
         }
 
@@ -43,6 +46,9 @@ readonly class TwigBridgeExtension implements ExtensionInterface
         $ret = [];
 
         foreach ($this->twigFunctionCollection->twigFunctions as $twigFunction) {
+            /**
+             * @psalm-suppress InvalidArgument twig functions are callable
+             */
             $ret[] = new TwigFunction($twigFunction->getName(), $twigFunction, $safe);
         }
 
