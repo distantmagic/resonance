@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\HttpControllerParameterResolver;
 
 use Distantmagic\Resonance\Attribute;
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\ResolvesHttpControllerParameter;
 use Distantmagic\Resonance\Attribute\SessionAuthenticated;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\HttpControllerParameter;
 use Distantmagic\Resonance\HttpControllerParameterResolution;
 use Distantmagic\Resonance\HttpControllerParameterResolutionStatus;
@@ -21,6 +23,7 @@ use Swoole\Http\Response;
 /**
  * @template-extends HttpControllerParameterResolver<SessionAuthenticated>
  */
+#[GrantsFeature(Feature::HttpSession)]
 #[ResolvesHttpControllerParameter(SessionAuthenticated::class)]
 #[Singleton(collection: SingletonCollection::HttpControllerParameterResolver)]
 readonly class SessionAuthenticatedResolver extends HttpControllerParameterResolver

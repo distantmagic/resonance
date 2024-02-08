@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
@@ -17,6 +19,7 @@ use Doctrine\ORM\Configuration as ORMConfiguration;
  *
  * @template-extends SingletonProvider<Configuration>
  */
+#[GrantsFeature(Feature::Doctrine)]
 #[Singleton(provides: Configuration::class)]
 final readonly class DoctrineDBALConfigurationProvider extends SingletonProvider
 {

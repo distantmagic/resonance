@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\ProvidesAuthenticatedUser;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use WeakMap;
 
+#[GrantsFeature(Feature::HttpSession)]
 #[ProvidesAuthenticatedUser(1000)]
 #[Singleton(collection: SingletonCollection::AuthenticatedUserStore)]
 final readonly class SessionAuthentication implements AuthenticatedUserStoreInterface

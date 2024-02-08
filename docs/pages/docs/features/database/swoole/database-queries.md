@@ -29,7 +29,7 @@ support your driver), then database connections will be blocking (synchronous).
 digraph { 
     database_connection [label="DatabaseConnection"];
     execute [label="Executes the query"];
-    pdo_pool [label="Swoole\\PDOPool"];
+    pdo_pool [label="PDOPool"];
     prepare [label="Prepares the Query"];
 
     pdo_pool -> database_connection [label="Lends a Connection"];
@@ -92,7 +92,6 @@ The primary difference is the Resonance's `bindValue` is chainable:
 
 use Distantmagic\Resonance\DatabaseConnection;
 use Distantmagic\Resonance\DatabaseConnectionPoolRepository;
-use Swoole\Database\PDOPool;
 
 /**
  * DatabaseConnection grabs one connection from the PDO Pool

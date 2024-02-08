@@ -18,10 +18,6 @@ readonly class LlamaCppInfillRequest implements JsonSerializable
         return [
             'infill_prefix' => $this->before,
             'infill_suffix' => $this->after,
-
-            // prompt field should not be mandatory, its a bug:
-            // https://github.com/ggerganov/llama.cpp/issues/4027
-            'prompt' => 'prompt',
         ];
     }
 }

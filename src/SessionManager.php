@@ -4,19 +4,15 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Distantmagic\Resonance\Attribute\ListensTo;
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\Event\HttpResponseReady;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use WeakMap;
 
-/**
- * @template-extends EventListener<HttpResponseReady,void>
- */
-#[ListensTo(HttpResponseReady::class)]
-#[Singleton(collection: SingletonCollection::EventListener)]
-final readonly class SessionManager extends EventListener
+#[GrantsFeature(Feature::HttpSession)]
+#[Singleton]
+final readonly class SessionManager
 {
     /**
      * @var WeakMap<Request, Session>
@@ -32,14 +28,6 @@ final readonly class SessionManager extends EventListener
          * @var WeakMap<Request, Session>
          */
         $this->sessions = new WeakMap();
-    }
-
-    /**
-     * @param HttpResponseReady $event
-     */
-    public function handle(object $event): void
-    {
-        $this->persistSession($event->request);
     }
 
     public function persistSession(Request $request): void

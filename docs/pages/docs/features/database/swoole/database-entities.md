@@ -61,7 +61,6 @@ use App\DatabaseEntity\BlogPost;
 use Generator;
 use PDO;
 use Distantmagic\Resonance\DatabaseQuery;
-use Swoole\Database\PDOPool;
 
 /**
  * @template-extends DatabaseQuery<Generator<int, BlogPost>>

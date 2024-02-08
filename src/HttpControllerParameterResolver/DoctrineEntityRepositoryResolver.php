@@ -6,9 +6,11 @@ namespace Distantmagic\Resonance\HttpControllerParameterResolver;
 
 use Distantmagic\Resonance\Attribute;
 use Distantmagic\Resonance\Attribute\DoctrineEntityRepository;
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\ResolvesHttpControllerParameter;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\DoctrineEntityManagerRepository;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\HttpControllerParameter;
 use Distantmagic\Resonance\HttpControllerParameterResolution;
 use Distantmagic\Resonance\HttpControllerParameterResolutionStatus;
@@ -20,6 +22,7 @@ use Swoole\Http\Response;
 /**
  * @template-extends HttpControllerParameterResolver<DoctrineEntityRepository>
  */
+#[GrantsFeature(Feature::Doctrine)]
 #[ResolvesHttpControllerParameter(DoctrineEntityRepository::class)]
 #[Singleton(collection: SingletonCollection::HttpControllerParameterResolver)]
 readonly class DoctrineEntityRepositoryResolver extends HttpControllerParameterResolver

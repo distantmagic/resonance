@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\ApplicationConfiguration;
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\DoctrineAttributeDriver;
 use Distantmagic\Resonance\Environment;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
@@ -19,6 +21,7 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 /**
  * @template-extends SingletonProvider<Configuration>
  */
+#[GrantsFeature(Feature::Doctrine)]
 #[Singleton(provides: Configuration::class)]
 final readonly class DoctrineORMConfigurationProvider extends SingletonProvider
 {

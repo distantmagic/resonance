@@ -136,7 +136,6 @@ use Distantmagic\Resonance\DatabaseConnectionPoolRepository;
 use Distantmagic\Resonance\GraphQLFieldableInterface;
 use Distantmagic\Resonance\GraphQLReusableDatabaseQueryInterface;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Database\PDOPool;
 
 #[GraphQLRootField(name: 'blogPost')]
 #[Singleton(collection: SingletonCollection::GraphQLRootField)]

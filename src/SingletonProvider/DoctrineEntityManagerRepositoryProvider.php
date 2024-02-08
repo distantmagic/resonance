@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\ApplicationConfiguration;
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\DoctrineConnectionRepository;
 use Distantmagic\Resonance\DoctrineEntityManagerRepository;
 use Distantmagic\Resonance\Environment;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
@@ -18,6 +20,7 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * @template-extends SingletonProvider<DoctrineEntityManagerRepository>
  */
+#[GrantsFeature(Feature::Doctrine)]
 #[Singleton(provides: DoctrineEntityManagerRepository::class)]
 final readonly class DoctrineEntityManagerRepositoryProvider extends SingletonProvider
 {

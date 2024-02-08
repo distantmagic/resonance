@@ -6,6 +6,8 @@ namespace Distantmagic\Resonance;
 
 enum Feature implements FeatureInterface
 {
+    case Doctrine;
+    case HttpSession;
     case OAuth2;
     case Postfix;
     case StaticPages;

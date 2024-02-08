@@ -38,7 +38,9 @@ readonly class EventDispatcher implements EventDispatcherInterface
 
     private function doDispatch(object $event): array
     {
-        $this->logger->debug(sprintf('event_dispatch(%s)', $event::class));
+        if (!($event instanceof LoggableInterface) || $event->shouldLog()) {
+            $this->logger->debug(sprintf('event_dispatch(%s)', $event::class));
+        }
 
         $listeners = $this->eventListenerAggregate->getListenersForEvent($event);
 

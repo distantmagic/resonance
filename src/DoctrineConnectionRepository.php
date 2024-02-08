@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Distantmagic\Resonance\Attribute\ListensTo;
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\Event\HttpResponseReady;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver;
@@ -20,17 +19,15 @@ use WeakMap;
  * We are implementing a custom driver to be used internally by Doctrine.
  *
  * @psalm-suppress InternalMethod
- *
- * @template-extends EventListener<HttpResponseReady,void>
  */
-#[ListensTo(HttpResponseReady::class)]
-#[Singleton(collection: SingletonCollection::EventListener)]
-readonly class DoctrineConnectionRepository extends EventListener
+#[GrantsFeature(Feature::Doctrine)]
+#[Singleton]
+readonly class DoctrineConnectionRepository
 {
     /**
      * @var WeakMap<Request,Map<string,Connection>>
      */
-    private WeakMap $connections;
+    public WeakMap $connections;
 
     public function __construct(
         private Configuration $configuration,
@@ -82,36 +79,6 @@ readonly class DoctrineConnectionRepository extends EventListener
         $connectionsMap->put($name, $conn);
 
         return $conn;
-    }
-
-    /**
-     * Since Doctrine caches Repositories and other objects and many of them
-     * may hold a connection reference, those connections need to be manually
-     * closed and returned to the pool after each request.
-     *
-     * @param HttpResponseReady $event
-     */
-    public function handle(object $event): void
-    {
-        if (!$this->connections->offsetExists($event->request)) {
-            return;
-        }
-
-        foreach ($this->connections->offsetGet($event->request) as $connection) {
-            /**
-             * This doesn't really terminate the connection, instead (as of
-             * writing this), internally to Doctrine, it just sets the pointer
-             * to that connection to NULL, thus allowing the GC to collect the
-             * underlying PDO object.
-             *
-             * This is exactly the behavior we need.
-             *
-             * This also seems to be the PDO's recommended way of terminating
-             * connections - PDO closes a connection when all references to
-             * that connection are gone.
-             */
-            $connection->close();
-        }
     }
 
     /**

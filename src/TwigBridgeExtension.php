@@ -15,14 +15,8 @@ use Twig\TwigFunction;
 readonly class TwigBridgeExtension implements ExtensionInterface
 {
     public function __construct(
-        private TwigFilterIntlFormatDate $filterIntlFormatDate,
-        private TwigFilterTrans $filterTrans,
-        private TwigFunctionCSPNonce $functionCspNonce,
-        private TwigFunctionCSRFToken $functionCSRFToken,
-        private TwigFunctionGatekeeperCan $functionGatekeeperCan,
-        private TwigFunctionGatekeeperCanCrud $functionGatekeeperCanCrud,
-        private TwigFunctionOld $functionOld,
-        private TwigFunctionRoute $functionRoute,
+        private TwigFilterCollection $twigFilterCollection,
+        private TwigFunctionCollection $twigFunctionCollection,
     ) {}
 
     public function getFilters()
@@ -31,10 +25,13 @@ readonly class TwigBridgeExtension implements ExtensionInterface
             'is_safe' => ['html'],
         ];
 
-        return [
-            new TwigFilter('intl_format_date', $this->filterIntlFormatDate, $safe),
-            new TwigFilter('trans', $this->filterTrans, $safe),
-        ];
+        $ret = [];
+
+        foreach ($this->twigFilterCollection->twigFilters as $twigFilter) {
+            $ret[] = new TwigFilter($twigFilter->getName(), $twigFilter, $safe);
+        }
+
+        return $ret;
     }
 
     public function getFunctions()
@@ -43,14 +40,13 @@ readonly class TwigBridgeExtension implements ExtensionInterface
             'is_safe' => ['html'],
         ];
 
-        return [
-            new TwigFunction('can', $this->functionGatekeeperCan, $safe),
-            new TwigFunction('can_crud', $this->functionGatekeeperCanCrud, $safe),
-            new TwigFunction('csp_nonce', $this->functionCspNonce, $safe),
-            new TwigFunction('csrf_token', $this->functionCSRFToken, $safe),
-            new TwigFunction('old', $this->functionOld),
-            new TwigFunction('route', $this->functionRoute, $safe),
-        ];
+        $ret = [];
+
+        foreach ($this->twigFunctionCollection->twigFunctions as $twigFunction) {
+            $ret[] = new TwigFunction($twigFunction->getName(), $twigFunction, $safe);
+        }
+
+        return $ret;
     }
 
     public function getNodeVisitors()

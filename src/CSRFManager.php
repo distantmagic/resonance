@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
+#[GrantsFeature(Feature::HttpSession)]
 #[Singleton]
 final readonly class CSRFManager
 {

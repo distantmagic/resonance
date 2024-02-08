@@ -1,0 +1,90 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Distantmagic\Resonance;
+
+use PDO;
+use Swoole\ConnectionPool;
+use Swoole\Database\PDOConfig;
+use Swoole\Database\PDOProxy;
+
+/**
+ * @psalm-suppress PropertyNotSetInConstructor swoole internals
+ */
+class PDOPool extends ConnectionPool
+{
+    public function __construct(
+        private PDOConfig $config,
+        DatabaseConnectionPoolConfiguration $databaseConnectionPoolConfiguration,
+    ) {
+        parent::__construct(
+            $this->createConnection(...),
+            $databaseConnectionPoolConfiguration->poolSize,
+            PDOProxy::class,
+        );
+    }
+
+    public function get(float $timeout = -1): PDOProxy
+    {
+        /**
+         * @var PDOProxy $pdo
+         */
+        $pdo = parent::get($timeout);
+        $pdo->reset();
+
+        return $pdo;
+    }
+
+    private function createConnection(): PDO
+    {
+        $driver = $this->config->getDriver();
+
+        if ('sqlite' !== $driver) {
+            return new PDO(
+                $this->createDSN($driver),
+                $this->config->getUsername(),
+                $this->config->getPassword(),
+                $this->config->getOptions()
+            );
+        }
+
+        return new PDO(sprintf(
+            'sqlite:%s',
+            $this->config->getDbname()
+        ));
+    }
+
+    private function createDSN(string $driver): string
+    {
+        return match ($driver) {
+            'mysql' => $this->config->hasUnixSocket()
+                ? sprintf(
+                    'mysql:unix_socket=%s;dbname=%s;charset=%s',
+                    (string) $this->config->getUnixSocket(),
+                    $this->config->getDbname(),
+                    $this->config->getCharset()
+                )
+                : sprintf(
+                    'mysql:host=%s;port=%d;dbname=%s;charset=%s',
+                    $this->config->getHost(),
+                    $this->config->getPort(),
+                    $this->config->getDbname(),
+                    $this->config->getCharset()
+                ),
+            'pgsql' => sprintf(
+                'pgsql:host=%s;port=%s;dbname=%s',
+                (string) ($this->config->hasUnixSocket() ? $this->config->getUnixSocket() : $this->config->getHost()),
+                $this->config->getPort(),
+                $this->config->getDbname(),
+            ),
+            'oci' => sprintf(
+                'oci:dbname=%s:%d/%s;charset=%s',
+                (string) ($this->config->hasUnixSocket() ? $this->config->getUnixSocket() : $this->config->getHost()),
+                $this->config->getPort(),
+                $this->config->getDbname(),
+                $this->config->getCharset()
+            ),
+        };
+    }
+}

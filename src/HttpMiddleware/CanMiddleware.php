@@ -12,6 +12,7 @@ use Distantmagic\Resonance\Gatekeeper;
 use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpMiddleware;
 use Distantmagic\Resonance\HttpResponder\Error\Forbidden;
+use Distantmagic\Resonance\HttpResponderCollection;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\SingletonCollection;
 use Swoole\Http\Request;
@@ -30,6 +31,7 @@ readonly class CanMiddleware extends HttpMiddleware
     public function __construct(
         private Forbidden $forbidden,
         private Gatekeeper $gatekeeper,
+        private HttpResponderCollection $httpResponderCollection,
     ) {}
 
     public function preprocess(
@@ -40,10 +42,17 @@ readonly class CanMiddleware extends HttpMiddleware
     ): HttpInterceptableInterface|HttpResponderInterface {
         $gatekeeperUserContext = $this->gatekeeper->withRequest($request);
 
-        if (!$gatekeeperUserContext->can($attribute->siteAction)) {
-            return $this->forbidden;
+        if ($gatekeeperUserContext->can($attribute->siteAction)) {
+            return $next;
         }
 
-        return $next;
+        if ($attribute->onForbiddenRespondWith) {
+            return $this
+                ->httpResponderCollection
+                ->httpResponders->get($attribute->onForbiddenRespondWith)
+            ;
+        }
+
+        return $this->forbidden;
     }
 }
