@@ -25,6 +25,28 @@
   text-decoration: none;
 }
 
+.document-links-group__link__description {
+  flex-grow: 1;
+}
+
 .document-links-group__link__title {
   color: var(--color-link-active);
+}
+
+ol.document-links-group__link__tags {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  list-style: none;
+  padding-top: 1em;
+}
+
+.document-links-group__link__tag {
+  background-color: var(--color-tag-background);
+  border-color: var(--color-tag-border);
+  border-radius: 0.5em;
+  border-style: solid;
+  border-width: 1px;
+  color: var(--color-tag-font);
+  padding: 5px 10px;
 }

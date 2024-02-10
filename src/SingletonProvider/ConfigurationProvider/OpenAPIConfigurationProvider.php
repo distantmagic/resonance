@@ -23,11 +23,13 @@ final readonly class OpenAPIConfigurationProvider extends ConfigurationProvider
 {
     public function getConstraint(): Constraint
     {
-        return new ObjectConstraint([
-            'description' => new StringConstraint(),
-            'title' => new StringConstraint(),
-            'version' => new StringConstraint(),
-        ]);
+        return new ObjectConstraint(
+            properties: [
+                'description' => new StringConstraint(),
+                'title' => new StringConstraint(),
+                'version' => new StringConstraint(),
+            ],
+        );
     }
 
     protected function getConfigurationKey(): string

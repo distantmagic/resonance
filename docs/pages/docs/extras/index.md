@@ -11,4 +11,4 @@ description: >
 
 # Extras
 
-{{docs/extras/*!docs/extras/index}}
+{{docs/extras/*/index}}

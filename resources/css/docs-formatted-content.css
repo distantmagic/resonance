@@ -130,8 +130,8 @@
     width: 100%;
   }
 
-  ol,
-  ul {
+  ol:not([class]),
+  ul:not([class]) {
     display: flex;
     flex-direction: column;
     line-height: 1.5;

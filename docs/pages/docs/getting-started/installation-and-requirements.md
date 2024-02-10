@@ -100,4 +100,4 @@ Available commands:
 ```
 
 `php bin/resonance.php serve` should start the HTTP server. If you need to, 
-you can generate the {{docs/extras/ssl-certificate-for-local-development}}.
+you can generate the {{docs/extras/ssl-certificate-for-local-development/index}}.

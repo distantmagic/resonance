@@ -3,6 +3,9 @@ collections:
   - tutorials
 layout: dm:tutorial
 parent: tutorials/index
+tags:
+    - llama.cpp
+    - LLM
 title: How to Serve LLM Completions (With llama.cpp)?
 description: >
     How to connect with llama.cpp and issue parallel requests for LLM 

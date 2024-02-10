@@ -269,10 +269,12 @@ Possible error codes are:
 You can compose constraints together:
 
 ```php
-$constraint = new ObjectConstraint([
-    'host' => new StringConstraint(),
-    'port' => new IntegerConstraint(),
-]);
+$constraint = new ObjectConstraint(
+    properties: [
+        'host' => new StringConstraint(),
+        'port' => new IntegerConstraint(),
+    ],
+);
 
 $constraint->validate([
     'host' => 'http://example.com',

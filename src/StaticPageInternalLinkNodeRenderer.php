@@ -102,28 +102,55 @@ readonly class StaticPageInternalLinkNodeRenderer implements NodeRendererInterfa
 
     private function renderStaticPageBlockLink(StaticPage $staticPage): Stringable
     {
+        /**
+         * @list<HtmlElement> $contents
+         */
+        $contents = [
+            new HtmlElement(
+                'div',
+                [
+                    'class' => 'document-links-group__link__title',
+                ],
+                $staticPage->frontMatter->title
+            ),
+            new HtmlElement(
+                'div',
+                [
+                    'class' => 'document-links-group__link__description',
+                ],
+                $staticPage->frontMatter->description
+            ),
+        ];
+
+        if (!empty($staticPage->frontMatter->tags)) {
+            $tags = [];
+
+            foreach ($staticPage->frontMatter->tags as $tag) {
+                $tags[] = new HtmlElement(
+                    'li',
+                    [
+                        'class' => 'document-links-group__link__tag',
+                    ],
+                    $tag,
+                );
+            }
+
+            $contents[] = new HtmlElement(
+                'ol',
+                [
+                    'class' => 'document-links-group__link__tags',
+                ],
+                $tags
+            );
+        }
+
         return new HtmlElement(
             'a',
             [
                 'class' => 'document-links-group__link',
                 'href' => $staticPage->getHref(),
             ],
-            [
-                new HtmlElement(
-                    'div',
-                    [
-                        'class' => 'document-links-group__link__title',
-                    ],
-                    $staticPage->frontMatter->title
-                ),
-                new HtmlElement(
-                    'div',
-                    [
-                        'class' => 'document-links-group__link__description',
-                    ],
-                    $staticPage->frontMatter->description
-                ),
-            ],
+            $contents,
         );
     }
 

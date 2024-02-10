@@ -77,10 +77,12 @@ readonly class BlogPostFormValidator extends InputValidator
 
     public function getConstraint(): Constraint
     {
-        return new ObjectConstraint([
-            'content' => new StringConstraint(),
-            'title' => new StringConstraint()
-        ]);
+        return new ObjectConstraint(
+            properties: [
+                'content' => new StringConstraint(),
+                'title' => new StringConstraint()
+            ],
+        );
     }
 }
 ```

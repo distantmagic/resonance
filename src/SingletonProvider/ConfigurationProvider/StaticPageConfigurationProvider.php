@@ -25,13 +25,15 @@ final readonly class StaticPageConfigurationProvider extends ConfigurationProvid
 {
     public function getConstraint(): Constraint
     {
-        return new ObjectConstraint([
-            'base_url' => new StringConstraint(),
-            'esbuild_metafile' => new StringConstraint(),
-            'input_directory' => new StringConstraint(),
-            'output_directory' => new StringConstraint(),
-            'sitemap' => new StringConstraint(),
-        ]);
+        return new ObjectConstraint(
+            properties: [
+                'base_url' => new StringConstraint(),
+                'esbuild_metafile' => new StringConstraint(),
+                'input_directory' => new StringConstraint(),
+                'output_directory' => new StringConstraint(),
+                'sitemap' => new StringConstraint(),
+            ]
+        );
     }
 
     protected function getConfigurationKey(): string

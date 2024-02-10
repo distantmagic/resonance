@@ -3,6 +3,10 @@ collections:
   - tutorials
 layout: dm:tutorial
 parent: tutorials/index
+tags:
+    - llama.cpp
+    - LLM
+    - WebSocket
 title: How to Create LLM WebSocket Chat with llama.cpp?
 description: >
     Learn how to setup a WebSocket server and create basic chat with an open
@@ -226,9 +230,11 @@ final readonly class LlmChatPromptResponder extends WebSocketRPCResponder
 
     public function getConstraint(): Constraint
     {
-        return new ObjectConstraint([
-            'prompt' => new StringConstraint(),
-        ]);
+        return new ObjectConstraint(
+            properties: [
+                'prompt' => new StringConstraint(),
+            ],
+        );
     }
 
     public function onNotification(

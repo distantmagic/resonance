@@ -27,12 +27,14 @@ final readonly class ApplicationConfigurationProvider extends ConfigurationProvi
 {
     public function getConstraint(): Constraint
     {
-        return new ObjectConstraint([
-            'env' => new EnumConstraint(Environment::values()),
-            'esbuild_metafile' => (new StringConstraint())->default('esbuild-meta.json'),
-            'scheme' => (new EnumConstraint(['http', 'https']))->default('https'),
-            'url' => new StringConstraint(),
-        ]);
+        return new ObjectConstraint(
+            properties: [
+                'env' => new EnumConstraint(Environment::values()),
+                'esbuild_metafile' => (new StringConstraint())->default('esbuild-meta.json'),
+                'scheme' => (new EnumConstraint(['http', 'https']))->default('https'),
+                'url' => new StringConstraint(),
+            ],
+        );
     }
 
     protected function getConfigurationKey(): string

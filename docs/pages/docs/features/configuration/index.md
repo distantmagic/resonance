@@ -229,10 +229,12 @@ final readonly class ManifestConfigurationProvider extends ConfigurationProvider
 {
     public function getConstraint(): Constraint
     {
-        return new ObjectConstraint([
-            'background_color' => new StringConstraint(),
-            'theme_color' => new StringConstraint(),
-        ]);
+        return new ObjectConstraint(
+            properties: [
+                'background_color' => new StringConstraint(),
+                'theme_color' => new StringConstraint(),
+            ],
+        );
     }
 
     protected function getConfigurationKey(): string

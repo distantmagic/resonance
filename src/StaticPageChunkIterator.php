@@ -8,9 +8,6 @@ use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Generator;
 use IteratorAggregate;
-use League\CommonMark\Extension\CommonMark\Node\Block\FencedCode;
-use League\CommonMark\Extension\CommonMark\Node\Block\Heading;
-use League\CommonMark\Extension\CommonMark\Node\Block\ListBlock;
 use League\CommonMark\Node\Node;
 use League\CommonMark\Node\StringContainerHelper;
 
@@ -59,32 +56,9 @@ readonly class StaticPageChunkIterator implements IteratorAggregate
      */
     private function generateChunksFromNodeChildren(Node $node): Generator
     {
-        foreach ($node->children() as $child) {
-            if ($child instanceof Heading) {
-                continue;
-            }
+        $textContent = $this->extractNodeTextContent($node);
 
-            if ($child instanceof FencedCode) {
-                continue;
-            }
-
-            if ($child instanceof StaticPageInternalLinkNode) {
-                continue;
-            }
-
-            if ($child instanceof ListBlock) {
-                yield from $this->generateChunksFromNodeChildren($child);
-
-                continue;
-            }
-
-            $textContent = $this->extractNodeTextContent($child);
-            if (empty($textContent)) {
-                continue;
-            }
-            if (!str_contains($textContent, ' ')) {
-                continue;
-            }
+        if (!empty($textContent)) {
             yield $textContent;
         }
     }

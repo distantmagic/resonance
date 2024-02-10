@@ -3,6 +3,9 @@ collections:
   - tutorials
 layout: dm:tutorial
 parent: tutorials/index
+tags:
+    - Authentication
+    - Session
 title: Session-Based Authentication
 description: >
     Learn how to create basic authentication pages and how to secure your 
@@ -378,11 +381,13 @@ readonly class UsernamePasswordValidator extends InputValidator
 
     public function getConstraint(): Constraint
     {
-        return new ObjectConstraint([
-            'csrf' => (new StringConstraint())->optional(),
-            'username' => new StringConstraint(),
-            'password' => new StringConstraint(),
-        ]);
+        return new ObjectConstraint(
+            properties: [
+                'csrf' => (new StringConstraint())->optional(),
+                'username' => new StringConstraint(),
+                'password' => new StringConstraint(),
+            ],
+        );
     }
 }
 ```

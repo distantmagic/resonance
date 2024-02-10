@@ -42,12 +42,14 @@ final readonly class SessionConfigurationProvider extends ConfigurationProvider
             ->toArray()
         ;
 
-        return new ObjectConstraint([
-            'cookie_lifespan' => new IntegerConstraint(),
-            'cookie_name' => new StringConstraint(),
-            'cookie_samesite' => (new EnumConstraint(['lax', 'none', 'strict']))->default('lax'),
-            'redis_connection_pool' => new EnumConstraint($redisConnectionPools),
-        ]);
+        return new ObjectConstraint(
+            properties: [
+                'cookie_lifespan' => new IntegerConstraint(),
+                'cookie_name' => new StringConstraint(),
+                'cookie_samesite' => (new EnumConstraint(['lax', 'none', 'strict']))->default('lax'),
+                'redis_connection_pool' => new EnumConstraint($redisConnectionPools),
+            ],
+        );
     }
 
     protected function getConfigurationKey(): string

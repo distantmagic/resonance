@@ -28,13 +28,15 @@ final readonly class LlamaCppConfigurationProvider extends ConfigurationProvider
 {
     public function getConstraint(): Constraint
     {
-        return new ObjectConstraint([
-            'api_key' => (new StringConstraint())->default(null),
-            'completion_token_timeout' => (new NumberConstraint())->default(1.0),
-            'host' => new StringConstraint(),
-            'port' => new IntegerConstraint(),
-            'scheme' => (new EnumConstraint(['http', 'https']))->default('http'),
-        ]);
+        return new ObjectConstraint(
+            properties: [
+                'api_key' => (new StringConstraint())->default(null),
+                'completion_token_timeout' => (new NumberConstraint())->default(1.0),
+                'host' => new StringConstraint(),
+                'port' => new IntegerConstraint(),
+                'scheme' => (new EnumConstraint(['http', 'https']))->default('http'),
+            ]
+        );
     }
 
     protected function getConfigurationKey(): string

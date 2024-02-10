@@ -3,6 +3,9 @@ collections:
   - tutorials
 layout: dm:tutorial
 parent: tutorials/index
+tags:
+    - Mailer
+    - Postfix
 title: How to Setup Postfix for Outgoing Emails
 description: >
     Learn how to set up an outgoing email server (no inbox) with Postfix and

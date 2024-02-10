@@ -24,14 +24,15 @@ use RuntimeException;
 
 /**
  * @extends InputValidator<FrontMatter, array{
- *     collections: array<non-empty-string|array{ name: non-empty-string, next: non-empty-string }>,
+ *     collections: list<non-empty-string|array{ name: non-empty-string, next: non-empty-string }>,
  *     content_type: non-empty-string,
  *     description: non-empty-string,
  *     draft: bool,
  *     next: null|non-empty-string,
  *     layout: non-empty-string,
  *     parent: null|non-empty-string,
- *     register_stylesheets: array<non-empty-string>,
+ *     register_stylesheets: list<non-empty-string>,
+ *     tags: list<non-empty-string>,
  *     title: non-empty-string,
  * }>
  */
@@ -63,6 +64,7 @@ readonly class FrontMatterValidator extends InputValidator
             layout: $data['layout'],
             next: $data['next'] ?? null,
             parent: $data['parent'] ?? null,
+            tags: $data['tags'],
             registerStylesheets: $data['register_stylesheets'],
             title: $title,
         );
@@ -72,31 +74,38 @@ readonly class FrontMatterValidator extends InputValidator
     {
         $contentTypes = StaticPageContentType::values();
 
-        return new ObjectConstraint([
-            'collections' => new ListConstraint(
-                valueConstraint: new AnyOfConstraint([
-                    new StringConstraint(),
-                    new ObjectConstraint(
-                        properties: [
-                            'name' => new StringConstraint(),
-                            'next' => new StringConstraint(),
-                        ],
-                    ),
-                ]),
-            ),
-            'content_type' => (new EnumConstraint($contentTypes))->default(StaticPageContentType::Markdown->value),
-            'description' => new StringConstraint(),
-            'draft' => (new BooleanConstraint())->default(false),
-            'layout' => new StringConstraint(),
-            'next' => (new StringConstraint())->nullable(),
-            'parent' => (new StringConstraint())->nullable(),
-            'register_stylesheets' => new ListConstraint(valueConstraint: new StringConstraint()),
-            'title' => new StringConstraint(),
-        ]);
+        return new ObjectConstraint(
+            properties: [
+                'collections' => new ListConstraint(
+                    valueConstraint: new AnyOfConstraint([
+                        new StringConstraint(),
+                        new ObjectConstraint(
+                            properties: [
+                                'name' => new StringConstraint(),
+                                'next' => new StringConstraint(),
+                            ],
+                        ),
+                    ]),
+                ),
+                'content_type' => (new EnumConstraint($contentTypes))->default(StaticPageContentType::Markdown->value),
+                'description' => new StringConstraint(),
+                'draft' => (new BooleanConstraint())->default(false),
+                'layout' => new StringConstraint(),
+                'next' => (new StringConstraint())->nullable(),
+                'parent' => (new StringConstraint())->nullable(),
+                'register_stylesheets' => new ListConstraint(
+                    valueConstraint: new StringConstraint(),
+                ),
+                'tags' => (new ListConstraint(
+                    valueConstraint: new StringConstraint(),
+                ))->default([]),
+                'title' => new StringConstraint(),
+            ],
+        );
     }
 
     /**
-     * @param array<array{ name: non-empty-string, next: non-empty-string }|non-empty-string> $collections
+     * @param list<array{ name: non-empty-string, next: non-empty-string }|non-empty-string> $collections
      *
      * @return Generator<FrontMatterCollectionReference>
      */

@@ -14,6 +14,9 @@
   --color-primary-footer-background: var(--color-body-background);
   --color-primary-navigation-background: var(--color-body-background);
   --color-text-decoration-highlight: var(--color-body-font);
+  --color-tag-background: transparent;
+  --color-tag-border: var(--color-body-font);
+  --color-tag-font: var(--color-body-font);
   --font-family-body: sans-serif;
   --font-family-monospace: monospace;
   --height-primary-navigation: 70px;
