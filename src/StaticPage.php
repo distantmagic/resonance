@@ -22,7 +22,7 @@ readonly class StaticPage
             return 0;
         }
 
-        return $this->frontMatter->title <=> $other->frontMatter->title;
+        return mb_strtolower($this->frontMatter->title) <=> mb_strtolower($other->frontMatter->title);
     }
 
     public function getBasename(): string
