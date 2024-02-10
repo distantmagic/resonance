@@ -20,12 +20,12 @@ class PDOPool extends ConnectionPool
      */
     public function __construct(
         private Set $connectionBuilders,
-        DatabaseConnectionPoolConfiguration $databaseConnectionPoolConfiguration,
         private PDOConfig $config,
+        int $size,
     ) {
         parent::__construct(
             $this->createConnection(...),
-            $databaseConnectionPoolConfiguration->poolSize,
+            $size,
             PDOProxy::class,
         );
     }
