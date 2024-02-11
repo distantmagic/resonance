@@ -44,6 +44,8 @@ final readonly class DoctrineEntityManagerRepositoryProvider extends SingletonPr
             $this->generateProxies($doctrineEntityManagerRepository);
         }
 
+        $this->preloadClassMetadata($doctrineEntityManagerRepository);
+
         return $doctrineEntityManagerRepository;
     }
 
@@ -65,5 +67,14 @@ final readonly class DoctrineEntityManagerRepositoryProvider extends SingletonPr
          * Doctrine starts a database connection to prebuild the proxy classes.
          */
         $entityManager->getConnection()->close();
+    }
+
+    private function preloadClassMetadata(DoctrineEntityManagerRepository $doctrineEntityManagerRepository): void
+    {
+        $doctrineEntityManagerRepository
+            ->buildEntityManager()
+            ->getMetadataFactory()
+            ->getAllMetadata()
+        ;
     }
 }

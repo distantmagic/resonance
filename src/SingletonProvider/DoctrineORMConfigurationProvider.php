@@ -14,6 +14,7 @@ use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
+use Doctrine\Common\EventManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Proxy\ProxyFactory;
@@ -30,6 +31,7 @@ final readonly class DoctrineORMConfigurationProvider extends SingletonProvider
         private ApplicationConfiguration $applicationConfiguration,
         private DoctrineAttributeDriver $doctrineAttributeDriver,
         private DoctrineEntityListenerResolver $doctrineEntityListenerResolver,
+        private EventManager $eventManager,
     ) {}
 
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): Configuration
