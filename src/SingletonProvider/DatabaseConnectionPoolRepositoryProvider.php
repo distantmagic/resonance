@@ -43,8 +43,12 @@ final readonly class DatabaseConnectionPoolRepositoryProvider extends SingletonP
 
             $pdoConfig->withDbName($connectionPoolConfiguration->database);
             $pdoConfig->withDriver($connectionPoolConfiguration->driver->value);
+
             $pdoConfig->withUsername($connectionPoolConfiguration->username);
-            $pdoConfig->withPassword($connectionPoolConfiguration->password);
+
+            if (is_string($connectionPoolConfiguration->password)) {
+                $pdoConfig->withPassword($connectionPoolConfiguration->password);
+            }
 
             $pdoPool = new PDOPool(
                 $this->pdoPoolConnectionBuilderCollection->getBuildersForConnection($name),

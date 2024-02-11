@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\EventDispatcherInterface;
 use Distantmagic\Resonance\Mailer;
 use Distantmagic\Resonance\MailerConfiguration;
 use Distantmagic\Resonance\MailerRepository;
@@ -28,7 +27,6 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 final readonly class MailerRepositoryProvider extends SingletonProvider
 {
     public function __construct(
-        private EventDispatcherInterface $eventDispatcher,
         private HttpClientInterface $httpClient,
         private LoggerInterface $logger,
         private MailerConfiguration $mailerConfiguration,
@@ -96,7 +94,6 @@ final readonly class MailerRepositoryProvider extends SingletonProvider
     {
         return Transport::fromDsn(
             client: $this->httpClient,
-            dispatcher: $this->eventDispatcher,
             dsn: $transportConfiguration->transportDsn,
             logger: $this->logger,
         );

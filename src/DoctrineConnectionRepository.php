@@ -6,6 +6,7 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver;
@@ -35,6 +36,7 @@ readonly class DoctrineConnectionRepository
         private DoctrineMySQLDriver $doctrineMySQLDriver,
         private DoctrinePostgreSQLDriver $doctrinePostgreSQLDriver,
         private DoctrineSQLiteDriver $doctrineSQLiteDriver,
+        private EventManager $eventManager,
         private LoggerInterface $logger,
     ) {
         /**
@@ -49,13 +51,14 @@ readonly class DoctrineConnectionRepository
     public function buildConnection(string $name = 'default'): Connection
     {
         return new Connection(
-            [
+            config: $this->configuration,
+            driver: $this->getDriver($name),
+            eventManager: $this->eventManager,
+            params: [
                 'driverOptions' => [
                     'connectionPoolName' => $name,
                 ],
             ],
-            $this->getDriver($name),
-            $this->configuration,
         );
     }
 

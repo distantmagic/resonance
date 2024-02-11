@@ -14,6 +14,7 @@ use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
+use Doctrine\Common\EventManager;
 use Doctrine\ORM\Configuration;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -26,15 +27,17 @@ final readonly class DoctrineEntityManagerRepositoryProvider extends SingletonPr
 {
     public function __construct(
         private ApplicationConfiguration $applicationConfiguration,
-        private DoctrineConnectionRepository $doctrineConnectionRepository,
         private Configuration $configuration,
+        private DoctrineConnectionRepository $doctrineConnectionRepository,
+        private EventManager $eventManager,
     ) {}
 
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): DoctrineEntityManagerRepository
     {
         $doctrineEntityManagerRepository = new DoctrineEntityManagerRepository(
-            $this->doctrineConnectionRepository,
             $this->configuration,
+            $this->doctrineConnectionRepository,
+            $this->eventManager,
         );
 
         if (Environment::Development !== $this->applicationConfiguration->environment) {

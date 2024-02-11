@@ -25,7 +25,7 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
  *         driver: string,
  *         host: non-empty-string,
  *         log_queries: bool,
- *         password: string,
+ *         password: null|non-empty-string,
  *         pool_prefill: bool,
  *         pool_size: int,
  *         port: int,

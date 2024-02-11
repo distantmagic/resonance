@@ -22,7 +22,7 @@
         "distantmagic/swoole-futures": "^0.1.2",
         "doctrine/dbal": "^3.7",
         "doctrine/migrations": "^3.6",
-        "doctrine/orm": "^2.16",
+        "doctrine/orm": "^3.0",
         "doctrine/sql-formatter": "^1.1",
         "ezyang/htmlpurifier": "^4.16",
         "guzzlehttp/guzzle": "^7.8",

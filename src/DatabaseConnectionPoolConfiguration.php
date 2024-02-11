@@ -12,6 +12,7 @@ readonly class DatabaseConnectionPoolConfiguration
      * @psalm-taint-source file $unixSocket
      *
      * @param non-empty-string      $host
+     * @param null|non-empty-string $password
      * @param null|non-empty-string $unixSocket
      * @param non-empty-string      $username
      */
@@ -25,7 +26,7 @@ readonly class DatabaseConnectionPoolConfiguration
         #[SensitiveParameter]
         public bool $logQueries,
         #[SensitiveParameter]
-        public string $password,
+        public ?string $password,
         #[SensitiveParameter]
         public bool $poolPrefill,
         #[SensitiveParameter]

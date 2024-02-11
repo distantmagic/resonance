@@ -9,6 +9,8 @@ enum SingletonCollection implements SingletonCollectionInterface
     case AuthenticatedUserStore;
     case CronJob;
     case CrudActionGate;
+    case DoctrineEntityListener;
+    case DoctrineEventListener;
     case EventListener;
     case GraphQLRootField;
     case HttpControllerParameterResolver;

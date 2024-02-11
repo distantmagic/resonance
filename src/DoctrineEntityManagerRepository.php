@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Doctrine\Common\EventManager;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,8 +25,9 @@ readonly class DoctrineEntityManagerRepository
     private WeakMap $entityManagers;
 
     public function __construct(
-        private DoctrineConnectionRepository $doctrineConnectionRepository,
         private Configuration $configuration,
+        private DoctrineConnectionRepository $doctrineConnectionRepository,
+        private EventManager $eventManager,
     ) {
         /**
          * @var WeakMap<Request,Map<string,EntityManagerInterface>>
@@ -37,9 +40,8 @@ readonly class DoctrineEntityManagerRepository
      */
     public function buildEntityManager(string $name = 'default'): EntityManagerInterface
     {
-        return new EntityManager(
-            $this->doctrineConnectionRepository->buildConnection($name),
-            $this->configuration,
+        return $this->buildEntityManagerFromConnection(
+            connection: $this->doctrineConnectionRepository->buildConnection($name),
         );
     }
 
@@ -76,8 +78,9 @@ readonly class DoctrineEntityManagerRepository
             return $context[$contextKey]->getEntityManager();
         }
 
-        $conn = $this->doctrineConnectionRepository->getConnection($request, $name);
-        $entityManager = new EntityManager($conn, $this->configuration);
+        $entityManager = $this->buildEntityManagerFromConnection(
+            connection: $this->doctrineConnectionRepository->getConnection($request, $name),
+        );
 
         if ($context) {
             $context[$contextKey] = new EntityManagerWeakReference($entityManager);
@@ -150,6 +153,15 @@ readonly class DoctrineEntityManagerRepository
 
             return $callback($entityManager, $repository);
         }, $name, $flush);
+    }
+
+    private function buildEntityManagerFromConnection(Connection $connection): EntityManagerInterface
+    {
+        return new EntityManager(
+            conn: $connection,
+            config: $this->configuration,
+            eventManager: $this->eventManager,
+        );
     }
 
     /**
