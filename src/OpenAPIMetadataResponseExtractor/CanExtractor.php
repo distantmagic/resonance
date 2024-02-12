@@ -36,7 +36,7 @@ readonly class CanExtractor extends OpenAPIMetadataResponseExtractor
         Attribute $attribute,
     ): array {
         /**
-         * @var array<OpenAPISchemaResponse>
+         * @var list<OpenAPISchemaResponse> $ret
          */
         $ret = [];
 
