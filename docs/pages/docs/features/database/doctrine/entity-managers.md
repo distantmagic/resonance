@@ -1,7 +1,9 @@
 ---
 collections: 
-    - documents
+    - name: documents
+      next: docs/features/database/doctrine/events
 layout: dm:document
+next: docs/features/database/doctrine/events
 parent: docs/features/database/doctrine/index
 title: Entity Managers
 description: >

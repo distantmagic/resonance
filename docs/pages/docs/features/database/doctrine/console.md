@@ -1,6 +1,7 @@
 ---
 collections: 
-    - documents
+    - name: documents
+      next: docs/features/database/doctrine/entities
 layout: dm:document
 next: docs/features/database/doctrine/entities
 parent: docs/features/database/doctrine/index
