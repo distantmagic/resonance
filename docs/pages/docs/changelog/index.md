@@ -10,9 +10,15 @@ title: Changelog
 
 # Changelog
 
+## v0.21.0
+
+- Feature: Doctrine {{docs/features/database/doctrine/events}} hooks
+- Improvements: OpenAPI reads return types from `Can` 
+    {{docs/features/openapi/attributes/index}}
+
 ## v0.20.0
 
-- Feat: reworked {{docs/features/http/controllers}} parameter resolution handlers
+- Feature: reworked {{docs/features/http/controllers}} parameter resolution handlers
 
 ## v0.19.1
 
