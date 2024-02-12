@@ -65,7 +65,7 @@ extension_vector0 = vector0.so
 extension_vss0 = vss0.so
 
 [static]
-base_url = http://localhost:8080
+base_url = https://resonance.distantmagic.com
 esbuild_metafile = esbuild-meta-docs.json
 input_directory = docs
 output_directory = docs/build
