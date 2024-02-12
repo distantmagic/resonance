@@ -80,6 +80,18 @@ abstract readonly class HttpController extends HttpResponder
 
     final public function respond(Request $request, Response $response): null|HttpInterceptableInterface|HttpResponderInterface
     {
+        if ($this->handleReflection->parameters->isEmpty()) {
+            /**
+             * This method is dynamically built and it's checked in the
+             * constructor.
+             *
+             * @psalm-suppress UndefinedMethod
+             *
+             * @var null|HttpInterceptableInterface|HttpResponderInterface
+             */
+            return $this->handle();
+        }
+
         /**
          * @var array <string,mixed>
          */

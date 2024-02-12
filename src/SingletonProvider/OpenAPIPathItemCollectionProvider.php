@@ -53,11 +53,14 @@ final readonly class OpenAPIPathItemCollectionProvider extends SingletonProvider
              */
             $httpResponderReflectionClass = $belongsToOpenAPISchemaFile->reflectionClass;
 
-            $openAPIPathItemCollection->pathItems->add(new OpenAPIPathItem(
-                $belongsToOpenAPISchemaFile->attribute->schemaSymbol,
-                $httpResponderReflectionClass,
-                $respondsToHttpAttribute,
-            ));
+            if (OpenAPISchemaSymbol::All !== $belongsToOpenAPISchemaFile->attribute->schemaSymbol) {
+                $openAPIPathItemCollection->pathItems->add(new OpenAPIPathItem(
+                    $belongsToOpenAPISchemaFile->attribute->schemaSymbol,
+                    $httpResponderReflectionClass,
+                    $respondsToHttpAttribute,
+                ));
+            }
+
             $openAPIPathItemCollection->pathItems->add(new OpenAPIPathItem(
                 OpenAPISchemaSymbol::All,
                 $httpResponderReflectionClass,
