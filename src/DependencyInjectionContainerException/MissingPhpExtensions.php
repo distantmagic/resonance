@@ -7,22 +7,23 @@ namespace Distantmagic\Resonance\DependencyInjectionContainerException;
 use Distantmagic\Resonance\DependencyInjectionContainerException;
 use Throwable;
 
-class MissingPhpExtension extends DependencyInjectionContainerException
+class MissingPhpExtensions extends DependencyInjectionContainerException
 {
     /**
-     * @param class-string     $className
-     * @param non-empty-string $extensionName
+     * @param class-string                     $className
+     * @param non-empty-list<non-empty-string> $extensionNames
      */
     public function __construct(
         string $className,
-        string $extensionName,
+        array $extensionNames,
         ?Throwable $previous = null,
     ) {
         parent::__construct(
             sprintf(
-                'To use "%s" you need to install "%s" PHP extension.',
+                'To use "%s" you need to install "%s" PHP %s.',
                 $className,
-                $extensionName,
+                implode('", "', $extensionNames),
+                1 === count($extensionNames) ? 'extension' : 'extensions',
             ),
             $previous
         );

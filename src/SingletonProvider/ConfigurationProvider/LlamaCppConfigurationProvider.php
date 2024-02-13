@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Constraint;
 use Distantmagic\Resonance\Constraint\EnumConstraint;
@@ -11,6 +12,7 @@ use Distantmagic\Resonance\Constraint\IntegerConstraint;
 use Distantmagic\Resonance\Constraint\NumberConstraint;
 use Distantmagic\Resonance\Constraint\ObjectConstraint;
 use Distantmagic\Resonance\Constraint\StringConstraint;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\LlamaCppConfiguration;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
@@ -23,6 +25,7 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
  *     scheme: non-empty-string,
  * }>
  */
+#[GrantsFeature(Feature::Grpc)]
 #[Singleton(provides: LlamaCppConfiguration::class)]
 final readonly class LlamaCppConfigurationProvider extends ConfigurationProvider
 {

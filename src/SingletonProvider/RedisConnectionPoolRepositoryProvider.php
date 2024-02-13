@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
+use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\RedisConfiguration;
@@ -16,6 +17,7 @@ use Swoole\Database\RedisPool;
 /**
  * @template-extends SingletonProvider<RedisConnectionPoolRepository>
  */
+#[RequiresPhpExtension('redis')]
 #[Singleton(provides: RedisConnectionPoolRepository::class)]
 final readonly class RedisConnectionPoolRepositoryProvider extends SingletonProvider
 {

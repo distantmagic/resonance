@@ -10,10 +10,15 @@ title: Changelog
 
 # Changelog
 
+## v0.22.0
+
+- Change: switch to absolute paths in {{docs/features/configuration/index}}
+- Feature: interpolate some constants in {{docs/features/configuration/index}}
+
 ## v0.21.0
 
 - Feature: Doctrine {{docs/features/database/doctrine/events}} hooks
-- Improvements: OpenAPI reads return types from `Can` 
+- Improvement: OpenAPI reads return types from `Can` 
     {{docs/features/openapi/attributes/index}}
 
 ## v0.20.0

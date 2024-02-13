@@ -26,7 +26,7 @@ readonly class EsbuildMetaBuilder
 
     public function build(
         string $esbuildMetafile,
-        string $stripOutputPrefix = '',
+        ?string $stripOutputPrefix = null,
     ): EsbuildMeta {
         if ($this->esbuildMetaCache->hasKey($esbuildMetafile)) {
             return $this->esbuildMetaCache->get($esbuildMetafile);
@@ -41,7 +41,7 @@ readonly class EsbuildMetaBuilder
 
     private function doBuild(
         string $esbuildMetafile,
-        string $stripOutputPrefix = '',
+        ?string $stripOutputPrefix = null,
     ): EsbuildMeta {
         $esbuildMeta = new EsbuildMeta();
 
@@ -68,7 +68,7 @@ readonly class EsbuildMetaBuilder
      */
     private function entryPointImports(
         string $esbuildMetafile,
-        string $stripOutputPrefix,
+        ?string $stripOutputPrefix,
         EsbuildMeta $esbuildMeta,
     ): Generator {
         foreach ($this->entryPointOutputs($esbuildMetafile, $stripOutputPrefix) as $filename => $output) {
@@ -77,8 +77,8 @@ readonly class EsbuildMetaBuilder
             }
 
             $entryPointBasename = basename($output->entryPoint);
-
             $esbuildMeta->registerEntryPoint($entryPointBasename, $filename);
+
             if (!isset($output->imports)) {
                 continue;
             }
@@ -101,7 +101,11 @@ readonly class EsbuildMetaBuilder
                     throw new LogicException('Expected "kind" and "path" import fields to be set.');
                 }
 
-                yield $filename => $this->stripBaseDirectory($stripOutputPrefix, $import->path);
+                yield $filename => $this->stripBaseDirectory(
+                    $esbuildMetafile,
+                    $stripOutputPrefix,
+                    $import->path,
+                );
             }
         }
     }
@@ -111,7 +115,7 @@ readonly class EsbuildMetaBuilder
      */
     private function entryPointOutputs(
         string $esbuildMetafile,
-        string $stripOutputPrefix,
+        ?string $stripOutputPrefix,
     ): Generator {
         $esbuildMeta = $this->getEsbuildMetaDecoded($esbuildMetafile);
 
@@ -129,7 +133,11 @@ readonly class EsbuildMetaBuilder
             if (!is_string($output->entryPoint)) {
                 continue;
             }
-            yield $this->stripBaseDirectory($stripOutputPrefix, $filename) => $output;
+            yield $this->stripBaseDirectory(
+                $esbuildMetafile,
+                $stripOutputPrefix,
+                $filename,
+            ) => $output;
         }
     }
 
@@ -166,12 +174,21 @@ readonly class EsbuildMetaBuilder
         return $ret;
     }
 
-    private function stripBaseDirectory(string $stripOutputPrefix, string $filename): string
-    {
-        if (!str_starts_with($filename, $stripOutputPrefix)) {
+    private function stripBaseDirectory(
+        string $esbuildMetafile,
+        ?string $stripOutputPrefix,
+        string $filename,
+    ): string {
+        if (is_null($stripOutputPrefix)) {
             return $filename;
         }
 
-        return substr($filename, strlen($stripOutputPrefix));
+        $absoluteFilename = dirname($esbuildMetafile).'/'.$filename;
+
+        if (!str_starts_with($absoluteFilename, $stripOutputPrefix)) {
+            return $filename;
+        }
+
+        return substr($absoluteFilename, strlen($stripOutputPrefix));
     }
 }

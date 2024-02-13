@@ -8,6 +8,7 @@ use Distantmagic\Resonance\ConfigurationFile;
 use Distantmagic\Resonance\ConstraintSourceInterface;
 use Distantmagic\Resonance\ConstraintValidationException;
 use Distantmagic\Resonance\PHPProjectFiles;
+use Distantmagic\Resonance\RegisterableInterface;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
 
@@ -17,7 +18,7 @@ use Distantmagic\Resonance\SingletonProvider;
  *
  * @template-extends SingletonProvider<TObject>
  */
-abstract readonly class ConfigurationProvider extends SingletonProvider implements ConstraintSourceInterface
+abstract readonly class ConfigurationProvider extends SingletonProvider implements ConstraintSourceInterface, RegisterableInterface
 {
     abstract protected function getConfigurationKey(): string;
 
@@ -40,7 +41,7 @@ abstract readonly class ConfigurationProvider extends SingletonProvider implemen
         /**
          * @var mixed $data explicitly mixed for typechecks
          */
-        $data = $this->configurationFile->config->get($this->getConfigurationKey());
+        $data = $this->configurationFile->config[$this->getConfigurationKey()];
 
         $constraintResult = $this->getConstraint()->validate($data);
 
@@ -59,6 +60,9 @@ abstract readonly class ConfigurationProvider extends SingletonProvider implemen
 
     public function shouldRegister(): bool
     {
-        return $this->configurationFile->config->has($this->getConfigurationKey());
+        return array_key_exists(
+            $this->getConfigurationKey(),
+            $this->configurationFile->config,
+        );
     }
 }

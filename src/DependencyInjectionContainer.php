@@ -8,7 +8,7 @@ use Closure;
 use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\DependencyInjectionContainerException\AmbiguousProvider;
 use Distantmagic\Resonance\DependencyInjectionContainerException\DisabledFeatureProvider;
-use Distantmagic\Resonance\DependencyInjectionContainerException\MissingPhpExtension;
+use Distantmagic\Resonance\DependencyInjectionContainerException\MissingPhpExtensions;
 use Distantmagic\Resonance\DependencyInjectionContainerException\MissingProvider;
 use Ds\Map;
 use Ds\Set;
@@ -197,12 +197,12 @@ readonly class DependencyInjectionContainer
         }
 
         foreach ($dependencyProvider->grantsFeatures as $grantedFeature) {
-            if ($this->wantedFeatures->contains($grantedFeature)) {
-                return true;
+            if (!$this->wantedFeatures->contains($grantedFeature)) {
+                return false;
             }
         }
 
-        return false;
+        return true;
     }
 
     /**
@@ -230,10 +230,19 @@ readonly class DependencyInjectionContainer
         $requiredPhpExtensions = $reflectionClassAttributeManager->findAttributes(RequiresPhpExtension::class);
 
         if (!$requiredPhpExtensions->isEmpty()) {
+            /**
+             * @var list<non-empty-string>
+             */
+            $missingExtensions = [];
+
             foreach ($requiredPhpExtensions as $requiredPhpExtension) {
                 if (!extension_loaded($requiredPhpExtension->name)) {
-                    throw new MissingPhpExtension($reflectionClass->name, $requiredPhpExtension->name);
+                    $missingExtensions[] = $requiredPhpExtension->name;
                 }
+            }
+
+            if (!empty($missingExtensions)) {
+                throw new MissingPhpExtensions($reflectionClass->name, $missingExtensions);
             }
         }
 
@@ -304,6 +313,13 @@ readonly class DependencyInjectionContainer
         $potentialSingletonProvider = $this->makeClassFromReflection($dependencyProvider->providerReflectionClass, $stack);
 
         if ($potentialSingletonProvider instanceof SingletonProviderInterface) {
+            if ($potentialSingletonProvider instanceof RegisterableInterface && !$potentialSingletonProvider->shouldRegister()) {
+                throw new DependencyInjectionContainerException(sprintf(
+                    '"%s" service provider refused to register',
+                    $potentialSingletonProvider::class,
+                ));
+            }
+
             $potentialSingleton = $potentialSingletonProvider->provide($this->singletons, $this->phpProjectFiles);
         } else {
             $potentialSingleton = $potentialSingletonProvider;

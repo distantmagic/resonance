@@ -9,6 +9,7 @@ use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\Feature;
+use Distantmagic\Resonance\GrpcConfiguration;
 use Nette\PhpGenerator\Printer;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,11 +19,14 @@ use Symfony\Component\Console\Output\OutputInterface;
     description: 'Generate GRPC stubs'
 )]
 #[RequiresPhpExtension('grpc')]
+#[RequiresPhpExtension('protobuf')]
 #[WantsFeature(Feature::Grpc)]
 final class GrpcGenerate extends Command
 {
-    public function __construct(private readonly Printer $printer)
-    {
+    public function __construct(
+        private readonly GrpcConfiguration $grpcConfiguration,
+        private readonly Printer $printer,
+    ) {
         parent::__construct();
     }
 

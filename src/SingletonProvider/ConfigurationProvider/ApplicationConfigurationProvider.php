@@ -52,7 +52,7 @@ final readonly class ApplicationConfigurationProvider extends ConfigurationProvi
 
         return new ApplicationConfiguration(
             environment: Environment::from($validatedData['env']),
-            esbuildMetafile: DM_ROOT.'/'.$validatedData['esbuild_metafile'],
+            esbuildMetafile: $validatedData['esbuild_metafile'],
             scheme: $validatedData['scheme'],
             url: $url,
         );

@@ -72,9 +72,9 @@ This is the default configuration file:
 ```ini file:config.ini
 [app]
 env = development
-esbuild_metafile = esbuild-meta-app.json
+esbuild_metafile = %DM_ROOT%/esbuild-meta-app.json
 scheme = https
-url = https://resonance.distantmagic.com
+url = http://localhost:9501
 
 [database]
 default[driver] = mysql
@@ -87,27 +87,31 @@ default[log_queries] = false
 default[pool_prefill] = false
 default[pool_size] = 8
 
+[grpc]
+grpc_php_plugin_bin = %DM_ROOT%/grpc_php_plugin
+protoc_bin = /usr/bin/protoc
+
 [llamacpp]
 host = 127.0.0.1
 port = 8081
 
 [mailer]
 default[transport_dsn] = smtp://localhost
-default[dkim_domain_name] = example.com
-default[dkim_selector] = resonance1
-default[dkim_signing_key_passphrase] = yourpassphrase
-default[dkim_signing_key_private] = dkim/private.key
-default[dkim_signing_key_public] = dkim/public.key
+; default[dkim_domain_name] = example.com
+; default[dkim_selector] = resonance1
+; default[dkim_signing_key_passphrase] = yourpassphrase
+; default[dkim_signing_key_private] = dkim/private.key
+; default[dkim_signing_key_public] = dkim/public.key
 
 [manifest]
 background_color = "#ffffff"
 theme_color = "#ffffff"
 
 [oauth2]
-encryption_key = oauth2/defuse.key
+encryption_key = %DM_ROOT%/oauth2/defuse.key
 jwt_signing_key_passphrase = yourpassphrase
-jwt_signing_key_private = oauth2/private.key
-jwt_signing_key_public = oauth2/public.key
+jwt_signing_key_private = %DM_ROOT%/oauth2/private.key
+jwt_signing_key_public = %DM_ROOT%/oauth2/public.key
 session_key_authorization_request = oauth2.authorization_request
 session_key_pkce = oauth2.pkce
 session_key_state = oauth2.state
@@ -120,7 +124,7 @@ version = 0.0.0
 [redis]
 default[db_index] = 0
 default[host] = 127.0.0.1
-default[password] =
+default[password] = null
 default[port] = 6379
 default[prefix] = dm:
 default[timeout] = 1
@@ -133,25 +137,25 @@ cookie_name = dmsession
 redis_connection_pool = default
 
 [sqlite-vss]
-extension_vector0 = vector0.so
-extension_vss0 = vss0.so
+extension_vector0 = %DM_ROOT%/vector0.so
+extension_vss0 = %DM_ROOT%/vss0.so
 
 [static]
 base_url = https://resonance.distantmagic.com
-esbuild_metafile = esbuild-meta-docs.json
+esbuild_metafile = %DM_ROOT%/esbuild-meta-docs.json
 input_directory = docs
-output_directory = docs/build
-sitemap = docs/build/sitemap.xml
+output_directory = %DM_ROOT%/docs/build
+sitemap = %DM_ROOT%/docs/build/sitemap.xml
 
 [swoole]
 host = 127.0.0.1
 port = 9501
 log_level = SWOOLE_LOG_DEBUG
-ssl_cert_file = ssl/origin.crt
-ssl_key_file = ssl/origin.key
+ssl_cert_file = %DM_ROOT%/ssl/origin.crt
+ssl_key_file = %DM_ROOT%/ssl/origin.key
 
 [translator]
-base_directory = app/lang
+base_directory = %DM_APP_ROOT%/lang
 default_primary_language = en
 
 [websocket]
@@ -167,6 +171,17 @@ interpolation rules. For example:
 ; Interpolate the PATH environment variable
 path = ${PATH}
 ```
+
+### File Paths
+
+For the sake of consistency, all file paths in the configuration file are 
+absolute.
+
+### Interpolatable Constants
+
+You can use `DM_APP_ROOT`, `DM_PUBLIC_ROOT`, `DM_RESONANCE_ROOT` and `DM_ROOT`
+constants in your configuration file by inserting them with `%%` delimiters,
+for example: `%DM_APP_ROOT%`.
 
 ### Configuration Providers
 

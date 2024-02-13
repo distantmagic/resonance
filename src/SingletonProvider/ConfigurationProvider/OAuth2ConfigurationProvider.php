@@ -63,11 +63,11 @@ final readonly class OAuth2ConfigurationProvider extends ConfigurationProvider
         return new OAuth2Configuration(
             encryptionKey: Key::loadFromAsciiSafeString($encryptionKeyContent),
             jwtSigningKeyPrivate: new CryptKey(
-                DM_ROOT.'/'.$validatedData['jwt_signing_key_private'],
+                $validatedData['jwt_signing_key_private'],
                 $validatedData['jwt_signing_key_passphrase'],
             ),
             jwtSigningKeyPublic: new CryptKey(
-                DM_ROOT.'/'.$validatedData['jwt_signing_key_public'],
+                $validatedData['jwt_signing_key_public'],
                 $validatedData['jwt_signing_key_passphrase'],
             ),
             sessionKeyAuthorizationRequest: $validatedData['session_key_authorization_request'],

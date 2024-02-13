@@ -38,7 +38,7 @@ final readonly class TranslatorBridgeProvider extends SingletonProvider
             ->ignoreDotFiles(true)
             ->ignoreUnreadableDirs()
             ->ignoreVCS(true)
-            ->in(DM_ROOT.'/'.$this->translatorConfiguration->baseDirectory)
+            ->in($this->translatorConfiguration->baseDirectory)
         ;
 
         foreach ($translationFiles as $translationFile) {
