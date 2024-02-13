@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\ConfigurationFile;
+use Distantmagic\Resonance\ConstraintPath;
 use Distantmagic\Resonance\ConstraintSourceInterface;
 use Distantmagic\Resonance\ConstraintValidationException;
 use Distantmagic\Resonance\PHPProjectFiles;
@@ -38,12 +39,15 @@ abstract readonly class ConfigurationProvider extends SingletonProvider implemen
      */
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): object
     {
+        $configurationKey = $this->getConfigurationKey();
+
         /**
          * @var mixed $data explicitly mixed for typechecks
          */
-        $data = $this->configurationFile->config[$this->getConfigurationKey()];
+        $data = $this->configurationFile->config[$configurationKey];
 
-        $constraintResult = $this->getConstraint()->validate($data);
+        $path = new ConstraintPath([$configurationKey]);
+        $constraintResult = $this->getConstraint()->validate($data, $path);
 
         if ($constraintResult->status->isValid()) {
             /**
@@ -52,10 +56,7 @@ abstract readonly class ConfigurationProvider extends SingletonProvider implemen
             return $this->provideConfiguration($constraintResult->castedData);
         }
 
-        throw new ConstraintValidationException(
-            $this->getConfigurationKey(),
-            $constraintResult,
-        );
+        throw new ConstraintValidationException($constraintResult);
     }
 
     public function shouldRegister(): bool

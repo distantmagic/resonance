@@ -10,10 +10,8 @@ readonly class ConstraintResultErrorMessage implements Stringable
 {
     public string $message;
 
-    public function __construct(
-        string $constraintId,
-        ConstraintResult $constraintResult,
-    ) {
+    public function __construct(ConstraintResult $constraintResult)
+    {
         $errors = $constraintResult->getErrors();
         $message = [];
 
@@ -24,8 +22,7 @@ readonly class ConstraintResultErrorMessage implements Stringable
         // var_dump($constraintResult->castedData);
 
         $this->message = sprintf(
-            "%s:\n%s",
-            $constraintId,
+            '%s',
             implode("\n", $message),
         );
     }

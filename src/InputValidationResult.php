@@ -19,9 +19,6 @@ readonly class InputValidationResult
 
     public function getErrorMessage(): string
     {
-        return (string) (new ConstraintResultErrorMessage(
-            'input_validation_result',
-            $this->constraintResult,
-        ));
+        return (string) (new ConstraintResultErrorMessage($this->constraintResult));
     }
 }

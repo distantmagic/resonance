@@ -34,6 +34,7 @@ readonly class PHPProjectFiles
     public function indexDirectory(string $dirname): void
     {
         $files = new PHPFileIterator($dirname);
+
         $reflectionsIterator = new PHPFileReflectionClassIterator($files);
 
         $this->indexReflections($reflectionsIterator);

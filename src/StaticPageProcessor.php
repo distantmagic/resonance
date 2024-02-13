@@ -14,6 +14,7 @@ use Symfony\Component\Finder\Finder;
 readonly class StaticPageProcessor
 {
     public function __construct(
+        private Filesystem $filesystem,
         private StaticPageAggregate $staticPageAggregate,
         private StaticPageConfiguration $staticPageConfiguration,
         private StaticPageLayoutAggregate $staticPageLayoutAggregate,
@@ -27,8 +28,7 @@ readonly class StaticPageProcessor
             ->in($this->staticPageConfiguration->outputDirectory)
         ;
 
-        $filesystem = new Filesystem();
-        $filesystem->remove($removableFiles);
+        $this->filesystem->remove($removableFiles);
 
         foreach ($this->staticPageAggregate->staticPages as $staticPage) {
             /**
@@ -37,7 +37,7 @@ readonly class StaticPageProcessor
             $outputDirectory = $staticPage->getOutputDirectory();
             $outputFilename = $staticPage->getOutputPathname();
 
-            $filesystem->mkdir($outputDirectory);
+            $this->filesystem->mkdir($outputDirectory);
 
             $fhandle = fopen($outputFilename, 'w');
 

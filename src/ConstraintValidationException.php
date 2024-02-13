@@ -8,13 +8,8 @@ use RuntimeException;
 
 class ConstraintValidationException extends RuntimeException
 {
-    public function __construct(
-        string $constraintId,
-        ConstraintResult $constraintResult,
-    ) {
-        parent::__construct((string) new ConstraintResultErrorMessage(
-            $constraintId,
-            $constraintResult,
-        ));
+    public function __construct(ConstraintResult $constraintResult)
+    {
+        parent::__construct((string) new ConstraintResultErrorMessage($constraintResult));
     }
 }

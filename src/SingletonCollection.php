@@ -13,6 +13,7 @@ enum SingletonCollection implements SingletonCollectionInterface
     case DoctrineEventListener;
     case EventListener;
     case GraphQLRootField;
+    case GrpcClient;
     case HttpControllerParameterResolver;
     case HttpInterceptor;
     case HttpMiddleware;

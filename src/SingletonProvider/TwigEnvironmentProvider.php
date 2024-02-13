@@ -32,6 +32,7 @@ final readonly class TwigEnvironmentProvider extends SingletonProvider
 {
     public function __construct(
         private ApplicationConfiguration $applicationConfiguration,
+        private Filesystem $filesystem,
         private LoggerInterface $logger,
         private TwigChainLoader $twigChainLoader,
     ) {}
@@ -72,8 +73,7 @@ final readonly class TwigEnvironmentProvider extends SingletonProvider
 
         $cacheDirectory = DM_ROOT.'/cache/twig';
 
-        $filesystem = new Filesystem();
-        $filesystem->remove($cacheDirectory);
+        $this->filesystem->remove($cacheDirectory);
 
         return new FilesystemCache($cacheDirectory, FilesystemCache::FORCE_BYTECODE_INVALIDATION);
     }

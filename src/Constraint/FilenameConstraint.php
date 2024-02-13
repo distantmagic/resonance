@@ -17,6 +17,8 @@ final readonly class FilenameConstraint extends Constraint
         ?ConstraintDefaultValue $defaultValue = null,
         bool $isNullable = false,
         bool $isRequired = true,
+        public bool $isDirectory = false,
+        public bool $mustExist = true,
     ) {
         parent::__construct(
             defaultValue: $defaultValue,
@@ -29,8 +31,10 @@ final readonly class FilenameConstraint extends Constraint
     {
         return new self(
             defaultValue: new ConstraintDefaultValue($defaultValue),
+            isDirectory: $this->isDirectory,
             isNullable: $this->isNullable,
             isRequired: $this->isRequired,
+            mustExist: $this->mustExist,
         );
     }
 
@@ -38,8 +42,10 @@ final readonly class FilenameConstraint extends Constraint
     {
         return new self(
             defaultValue: $this->defaultValue ?? new ConstraintDefaultValue(null),
+            isDirectory: $this->isDirectory,
             isNullable: true,
             isRequired: $this->isRequired,
+            mustExist: $this->mustExist,
         );
     }
 
@@ -47,8 +53,10 @@ final readonly class FilenameConstraint extends Constraint
     {
         return new self(
             defaultValue: $this->defaultValue,
+            isDirectory: $this->isDirectory,
             isNullable: $this->isNullable,
             isRequired: false,
+            mustExist: $this->mustExist,
         );
     }
 
@@ -71,26 +79,46 @@ final readonly class FilenameConstraint extends Constraint
             );
         }
 
-        if (!file_exists($notValidatedData)) {
+        $realPath = realpath($notValidatedData);
+
+        if (false === $realPath || !file_exists($realPath)) {
+            if (!$this->mustExist) {
+                return new ConstraintResult(
+                    castedData: $notValidatedData,
+                    path: $path,
+                    reason: ConstraintReason::Ok,
+                    status: ConstraintResultStatus::Valid,
+                );
+            }
+
             return new ConstraintResult(
-                castedData: $notValidatedData,
+                castedData: $realPath,
                 path: $path,
                 reason: ConstraintReason::FileNotFound,
                 status: ConstraintResultStatus::Invalid,
             );
         }
 
-        if (!is_readable($notValidatedData)) {
+        if (!is_readable($realPath)) {
             return new ConstraintResult(
-                castedData: $notValidatedData,
+                castedData: $realPath,
                 path: $path,
                 reason: ConstraintReason::FileNotReadable,
                 status: ConstraintResultStatus::Invalid,
             );
         }
 
+        if ($this->isDirectory && !is_dir($realPath)) {
+            return new ConstraintResult(
+                castedData: $realPath,
+                path: $path,
+                reason: ConstraintReason::NotDirectory,
+                status: ConstraintResultStatus::Invalid,
+            );
+        }
+
         return new ConstraintResult(
-            castedData: $notValidatedData,
+            castedData: $realPath,
             path: $path,
             reason: ConstraintReason::Ok,
             status: ConstraintResultStatus::Valid,

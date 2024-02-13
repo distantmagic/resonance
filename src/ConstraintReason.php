@@ -13,6 +13,7 @@ enum ConstraintReason: string
     case InvalidFormat = 'invalid_format';
     case InvalidNestedConstraint = 'invalid_nested_constraint';
     case MissingProperty = 'missing_property';
+    case NotDirectory = 'not_directory';
     case Ok = 'ok';
     case UnexpectedProperty = 'unexpected_property';
 }

@@ -32,6 +32,7 @@ final readonly class DoctrineEntityManagerRepositoryProvider extends SingletonPr
         private Configuration $configuration,
         private DoctrineConnectionRepository $doctrineConnectionRepository,
         private EventManager $eventManager,
+        private Filesystem $filesystem,
     ) {}
 
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): DoctrineEntityManagerRepository
@@ -55,8 +56,7 @@ final readonly class DoctrineEntityManagerRepositoryProvider extends SingletonPr
     {
         $cacheDirectory = DM_ROOT.'/cache/doctrine';
 
-        $filesystem = new Filesystem();
-        $filesystem->remove($cacheDirectory);
+        $this->filesystem->remove($cacheDirectory);
 
         $entityManager = $doctrineEntityManagerRepository->buildEntityManager();
 

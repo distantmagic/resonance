@@ -174,7 +174,7 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
             $this->onProtocolError(
                 $server,
                 $frame,
-                (string) new ConstraintResultErrorMessage('rpc_protocol_controller', $payloadConstraintResult),
+                (string) new ConstraintResultErrorMessage($payloadConstraintResult),
             );
         }
     }

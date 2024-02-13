@@ -9,7 +9,7 @@ use IteratorAggregate;
 use LogicException;
 use PhpToken;
 use ReflectionClass;
-use Symfony\Component\Finder\SplFileInfo;
+use SplFileInfo;
 
 /**
  * @template-implements IteratorAggregate<ReflectionClass>
@@ -45,10 +45,32 @@ readonly class PHPFileReflectionClassIterator implements IteratorAggregate
     }
 
     /**
+     * @return class-string
+     */
+    private function assertClassExists(string $className): string
+    {
+        if (class_exists($className) || interface_exists($className) || trait_exists($className)) {
+            return $className;
+        }
+
+        throw new LogicException('Class could not be loaded: '.$className);
+    }
+
+    /**
      * @return null|class-string
      */
     private function readClassName(SplFileInfo $file): ?string
     {
+        $fileBasename = $file->getBasename();
+
+        if (ucfirst($fileBasename) !== $fileBasename) {
+            return null;
+        }
+
+        if (str_starts_with($file->getPath(), DM_RESONANCE_ROOT)) {
+            return $this->readKnownClassName($file, 'Distantmagic\\Resonance\\');
+        }
+
         $namespace = $this->readNamespace($file);
 
         if (is_null($namespace)) {
@@ -67,15 +89,31 @@ readonly class PHPFileReflectionClassIterator implements IteratorAggregate
             if ($namespaceSequence->isMatching()) {
                 $className = $namespace.'\\'.$namespaceSequence->matchingTokens->get(2)->text;
 
-                if (class_exists($className)) {
-                    return $className;
-                }
-
-                throw new LogicException('Class could not be loaded: '.$className);
+                return $this->assertClassExists($className);
             }
         }
 
         return null;
+    }
+
+    /**
+     * This is an optimization to not tokenize all the files.
+     *
+     * @return class-string
+     */
+    private function readKnownClassName(SplFileInfo $file, string $namespace): string
+    {
+        $relativeFilename = str_replace(
+            DIRECTORY_SEPARATOR,
+            '\\',
+            substr(
+                trim(substr($file->getPathname(), strlen(DM_RESONANCE_ROOT)), DIRECTORY_SEPARATOR),
+                0,
+                -4,
+            )
+        );
+
+        return $this->assertClassExists($namespace.$relativeFilename);
     }
 
     private function readNamespace(SplFileInfo $file): ?string
@@ -111,6 +149,6 @@ readonly class PHPFileReflectionClassIterator implements IteratorAggregate
      */
     private function tokenizeFile(SplFileInfo $file): array
     {
-        return PhpToken::tokenize($file->getContents());
+        return PhpToken::tokenize(file_get_contents($file->getPathname()));
     }
 }

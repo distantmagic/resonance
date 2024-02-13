@@ -25,7 +25,7 @@ final readonly class TranslatorConfigurationProvider extends ConfigurationProvid
     {
         return new ObjectConstraint(
             properties: [
-                'base_directory' => new FilenameConstraint(),
+                'base_directory' => new FilenameConstraint(isDirectory: true),
                 'default_primary_language' => new StringConstraint(),
             ]
         );

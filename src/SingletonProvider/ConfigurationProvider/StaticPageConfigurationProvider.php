@@ -30,8 +30,8 @@ final readonly class StaticPageConfigurationProvider extends ConfigurationProvid
             properties: [
                 'base_url' => new StringConstraint(),
                 'esbuild_metafile' => new FilenameConstraint(),
-                'input_directory' => new FilenameConstraint(),
-                'output_directory' => new FilenameConstraint(),
+                'input_directory' => new FilenameConstraint(isDirectory: true),
+                'output_directory' => new FilenameConstraint(isDirectory: true),
                 'sitemap' => new StringConstraint(),
             ]
         );

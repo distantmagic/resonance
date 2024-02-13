@@ -9,7 +9,7 @@ enum Feature implements FeatureInterface
     use NameableEnumTrait;
 
     case Doctrine;
-    case Grpc;
+    case GrpcClient;
     case HttpSession;
     case Mailer;
     case OAuth2;

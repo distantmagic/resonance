@@ -51,7 +51,8 @@
         "symfony/messenger": "^7.0",
         "symfony/http-client": "^7.0",
         "rubix/ml": "^2.4",
-        "grpc/grpc": "^1.57"
+        "grpc/grpc": "^1.57",
+        "hyperf/grpc-client": "^3.1"
     },
     "require-dev": {
         "mockery/mockery": "^1.6",

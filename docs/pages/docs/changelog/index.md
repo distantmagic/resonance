@@ -10,6 +10,10 @@ title: Changelog
 
 # Changelog
 
+## v0.24.0
+
+- Feature: {{docs/features/grpc/client/index}} client wrapper
+
 ## v0.23.0
 
 - Feature: filename constraint in {{docs/features/validation/constraints/index}}
