@@ -25,7 +25,7 @@ use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\WantsFeature;
 
 #[Singleton]
-#[WantsFeature(Feature::Grpc)]
+#[WantsFeature(Feature::GrpcClient)]
 readonly class MyClass
 {
     public function __construct(
