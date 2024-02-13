@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
-import css from "highlight.js/lib/languages/css";
 import hljs from "highlight.js/lib/core";
+import css from "highlight.js/lib/languages/css";
 import ini from "highlight.js/lib/languages/ini";
 import json from "highlight.js/lib/languages/json";
 import makefile from "highlight.js/lib/languages/makefile";
