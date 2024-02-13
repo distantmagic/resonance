@@ -10,6 +10,10 @@ title: Changelog
 
 # Changelog
 
+## v0.23.0
+
+- Feature: filename constraint in {{docs/features/validation/constraints/index}}
+
 ## v0.22.0
 
 - Change: switch to absolute paths in {{docs/features/configuration/index}}

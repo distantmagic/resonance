@@ -6,8 +6,8 @@ namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\FilenameConstraint;
 use Distantmagic\Resonance\Constraint\ObjectConstraint;
-use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\GrpcConfiguration;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
@@ -26,7 +26,8 @@ final readonly class GrpcConfigurationProvider extends ConfigurationProvider
     {
         return new ObjectConstraint(
             properties: [
-                'protoc_bin' => new StringConstraint(),
+                'grpc_php_plugin_bin' => new FilenameConstraint(),
+                'protoc_bin' => new FilenameConstraint(),
             ],
         );
     }

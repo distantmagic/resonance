@@ -1,6 +1,6 @@
 [app]
 env = development
-esbuild_metafile = %DM_ROOT%/esbuild-meta-app.json
+esbuild_metafile = null
 scheme = https
 url = http://localhost:9501
 
@@ -79,8 +79,8 @@ sitemap = %DM_ROOT%/docs/build/sitemap.xml
 host = 127.0.0.1
 port = 9501
 log_level = SWOOLE_LOG_DEBUG
-ssl_cert_file = %DM_ROOT%/ssl/origin.crt
-ssl_key_file = %DM_ROOT%/ssl/origin.key
+ssl_cert_file = null
+ssl_key_file = null
 
 [translator]
 base_directory = %DM_APP_ROOT%/lang

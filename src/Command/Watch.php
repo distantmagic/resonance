@@ -43,16 +43,19 @@ final class Watch extends Command
          */
         $childCommandName = $input->getArgument('name');
 
-        $directories = [
+        $files = [
             DM_APP_ROOT,
             DM_APP_ROOT.'/../config.ini',
-            $this->applicationConfiguration->esbuildMetafile,
             DM_RESONANCE_ROOT,
         ];
 
+        if (is_string($this->applicationConfiguration->esbuildMetafile)) {
+            $files[] = $this->applicationConfiguration->esbuildMetafile;
+        }
+
         $this->restartChildCommand($childCommandName);
 
-        foreach (new InotifyIterator($directories) as $event) {
+        foreach (new InotifyIterator($files) as $event) {
             $this->logger->info(sprintf('watch_file_changed(%s)', $event['name']));
 
             $this->restartChildCommand($childCommandName);

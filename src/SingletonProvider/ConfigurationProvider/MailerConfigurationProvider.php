@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\FilenameConstraint;
 use Distantmagic\Resonance\Constraint\MapConstraint;
 use Distantmagic\Resonance\Constraint\ObjectConstraint;
 use Distantmagic\Resonance\Constraint\StringConstraint;
@@ -39,8 +40,8 @@ final readonly class MailerConfigurationProvider extends ConfigurationProvider
                 'dkim_domain_name' => (new StringConstraint())->nullable(),
                 'dkim_selector' => (new StringConstraint())->nullable(),
                 'dkim_signing_key_passphrase' => (new StringConstraint())->nullable(),
-                'dkim_signing_key_private' => (new StringConstraint())->nullable(),
-                'dkim_signing_key_public' => (new StringConstraint())->nullable(),
+                'dkim_signing_key_private' => (new FilenameConstraint())->nullable(),
+                'dkim_signing_key_public' => (new FilenameConstraint())->nullable(),
                 'transport_dsn' => new StringConstraint(),
             ]
         );

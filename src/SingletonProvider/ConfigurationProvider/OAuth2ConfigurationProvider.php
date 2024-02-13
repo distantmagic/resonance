@@ -8,6 +8,7 @@ use Defuse\Crypto\Key;
 use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\FilenameConstraint;
 use Distantmagic\Resonance\Constraint\ObjectConstraint;
 use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\Feature;
@@ -36,10 +37,10 @@ final readonly class OAuth2ConfigurationProvider extends ConfigurationProvider
     {
         return new ObjectConstraint(
             properties: [
-                'encryption_key' => new StringConstraint(),
+                'encryption_key' => new FilenameConstraint(),
                 'jwt_signing_key_passphrase' => (new StringConstraint())->nullable(),
-                'jwt_signing_key_private' => new StringConstraint(),
-                'jwt_signing_key_public' => new StringConstraint(),
+                'jwt_signing_key_private' => new FilenameConstraint(),
+                'jwt_signing_key_public' => new FilenameConstraint(),
                 'session_key_authorization_request' => (new StringConstraint())->default('oauth2.authorization_request'),
                 'session_key_pkce' => (new StringConstraint())->default('oauth2.pkce'),
                 'session_key_state' => (new StringConstraint())->default('oauth2.state'),

@@ -6,6 +6,7 @@ namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\FilenameConstraint;
 use Distantmagic\Resonance\Constraint\ObjectConstraint;
 use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
@@ -28,9 +29,9 @@ final readonly class StaticPageConfigurationProvider extends ConfigurationProvid
         return new ObjectConstraint(
             properties: [
                 'base_url' => new StringConstraint(),
-                'esbuild_metafile' => new StringConstraint(),
-                'input_directory' => new StringConstraint(),
-                'output_directory' => new StringConstraint(),
+                'esbuild_metafile' => new FilenameConstraint(),
+                'input_directory' => new FilenameConstraint(),
+                'output_directory' => new FilenameConstraint(),
                 'sitemap' => new StringConstraint(),
             ]
         );

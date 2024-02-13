@@ -8,6 +8,7 @@ use Distantmagic\Resonance\ApplicationConfiguration;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Constraint;
 use Distantmagic\Resonance\Constraint\EnumConstraint;
+use Distantmagic\Resonance\Constraint\FilenameConstraint;
 use Distantmagic\Resonance\Constraint\ObjectConstraint;
 use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\Environment;
@@ -30,7 +31,7 @@ final readonly class ApplicationConfigurationProvider extends ConfigurationProvi
         return new ObjectConstraint(
             properties: [
                 'env' => new EnumConstraint(Environment::values()),
-                'esbuild_metafile' => (new StringConstraint())->default('esbuild-meta.json'),
+                'esbuild_metafile' => (new FilenameConstraint())->nullable(),
                 'scheme' => (new EnumConstraint(['http', 'https']))->default('https'),
                 'url' => new StringConstraint(),
             ],

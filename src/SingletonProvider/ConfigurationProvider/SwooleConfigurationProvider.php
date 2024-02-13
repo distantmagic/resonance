@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Constraint;
 use Distantmagic\Resonance\Constraint\BooleanConstraint;
+use Distantmagic\Resonance\Constraint\FilenameConstraint;
 use Distantmagic\Resonance\Constraint\IntegerConstraint;
 use Distantmagic\Resonance\Constraint\ObjectConstraint;
 use Distantmagic\Resonance\Constraint\StringConstraint;
@@ -35,8 +36,8 @@ final readonly class SwooleConfigurationProvider extends ConfigurationProvider
                 'log_level' => new IntegerConstraint(),
                 'log_requests' => (new BooleanConstraint())->default(false),
                 'port' => new IntegerConstraint(),
-                'ssl_cert_file' => (new StringConstraint())->default(null),
-                'ssl_key_file' => (new StringConstraint())->default(null),
+                'ssl_cert_file' => (new FilenameConstraint())->nullable(),
+                'ssl_key_file' => (new FilenameConstraint())->nullable(),
                 'task_worker_num' => (new IntegerConstraint())->default(4),
             ],
         );

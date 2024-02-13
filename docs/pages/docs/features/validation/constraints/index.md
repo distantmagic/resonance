@@ -78,7 +78,7 @@ new ConstConstraint(constValue: $constValue);
 }
 ```
 
-Accepts exactly the provided value
+Accepts exactly the provided value.
 
 ### Enum
 
@@ -87,6 +87,20 @@ Accepts exactly the provided value
  * @var array<string>|list<string> $values
  */
 new EnumConstraint(values: $values);
+```
+```json
+{ 
+    "type": "string",
+    "enum": [...]
+}
+```
+
+### Filename
+
+Checks if a given file exists and is readable.
+
+```php
+new FilenameConstraint();
 ```
 ```json
 { 

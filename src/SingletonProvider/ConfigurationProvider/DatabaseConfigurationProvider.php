@@ -8,6 +8,7 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Constraint;
 use Distantmagic\Resonance\Constraint\BooleanConstraint;
 use Distantmagic\Resonance\Constraint\EnumConstraint;
+use Distantmagic\Resonance\Constraint\FilenameConstraint;
 use Distantmagic\Resonance\Constraint\IntegerConstraint;
 use Distantmagic\Resonance\Constraint\MapConstraint;
 use Distantmagic\Resonance\Constraint\ObjectConstraint;
@@ -49,7 +50,7 @@ final readonly class DatabaseConfigurationProvider extends ConfigurationProvider
                 'pool_prefill' => (new BooleanConstraint())->default(true),
                 'pool_size' => new IntegerConstraint(),
                 'port' => (new IntegerConstraint())->nullable()->default(3306),
-                'unix_socket' => (new StringConstraint())->nullable(),
+                'unix_socket' => (new FilenameConstraint())->nullable(),
                 'username' => new StringConstraint(),
             ]
         );

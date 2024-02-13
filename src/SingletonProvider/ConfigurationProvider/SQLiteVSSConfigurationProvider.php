@@ -6,8 +6,8 @@ namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Constraint;
+use Distantmagic\Resonance\Constraint\FilenameConstraint;
 use Distantmagic\Resonance\Constraint\ObjectConstraint;
-use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use Distantmagic\Resonance\SQLiteVSSConfiguration;
 
@@ -24,8 +24,8 @@ final readonly class SQLiteVSSConfigurationProvider extends ConfigurationProvide
     {
         return new ObjectConstraint(
             properties: [
-                'extension_vector0' => new StringConstraint(),
-                'extension_vss0' => new StringConstraint(),
+                'extension_vector0' => new FilenameConstraint(),
+                'extension_vss0' => new FilenameConstraint(),
             ],
         );
     }
