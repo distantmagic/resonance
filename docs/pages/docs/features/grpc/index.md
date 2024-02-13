@@ -12,7 +12,7 @@ description: >
 
 # Installation
 
-You can find instruction on the official 
+You can find instructions on the official 
 [Google documentation page](https://cloud.google.com/php/grpc).
 
 ## PHP Extensions
@@ -73,8 +73,8 @@ Resonance replaces the default `Grpc\BaseStub` class for clients with
 That class user [Hyperf's GRPC client](https://github.com/hyperf/grpc-client)
 under the hood.
 
-Resonance also adds a few methods that allow to use the GRPC client as 
-singleton and easily reuse it among multiple requests.
+Resonance also adds a few methods that allow the GRPC client to be used as a 
+singleton and easily reused among multiple requests.
 :::
 
 First, decide on what namespace your generated files are going to use. In this
@@ -106,7 +106,7 @@ Update autoloader to incorporate changes:
 $ composer dump-autoload
 ```
 
-You can adjust PHP generated namespaces in the protocol buffers file:
+You can adjust PHP-generated namespaces in the protocol buffers file:
 
 ```protobuf file:hello.proto
 syntax = "proto3";
@@ -145,9 +145,9 @@ directory.
 
 ## Add Generated Classes to the Container
 
-In your `container.php` file, add generated classess to the 
-{{docs/features/dependency-injection/index}} container. That will allow to
-use generated clients throught the container:
+In your `container.php` file, add generated classes to the 
+{{docs/features/dependency-injection/index}} container. That will allow the use 
+of the generated clients through the container:
 
 ```php
 // (...)
