@@ -12,7 +12,7 @@ use Distantmagic\Resonance\HttpResponderAggregate;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\InspectableSwooleResponse;
 use Distantmagic\Resonance\SwooleCoroutineHelper;
-use Distantmagic\Resonance\TestableHttpResponseCollection;
+use Distantmagic\Resonance\TestsHttpResponseCollection;
 use Ds\Map;
 use RuntimeException;
 use Swoole\Http\Request;
@@ -28,7 +28,7 @@ final class TestHttpResponders extends Command
     public function __construct(
         private readonly HttpRecursiveResponder $recursiveResponder,
         private readonly HttpResponderAggregate $httpResponderAggregate,
-        private readonly TestableHttpResponseCollection $testableHttpResponseCollection,
+        private readonly TestsHttpResponseCollection $testsHttpResponseCollection,
     ) {
         parent::__construct();
     }
@@ -40,12 +40,12 @@ final class TestHttpResponders extends Command
          */
         $isValid = true;
 
-        foreach ($this->testableHttpResponseCollection->httpResponder as $httpResponder => $testableHttpResponses) {
-            foreach ($testableHttpResponses as $testableHttpResponse) {
+        foreach ($this->testsHttpResponseCollection->httpResponder as $httpResponder => $testsHttpResponses) {
+            foreach ($testsHttpResponses as $testsHttpResponse) {
                 $potentialResponses = $this
-                    ->testableHttpResponseCollection
-                    ->testableHttpResponse
-                    ->get($testableHttpResponse)
+                    ->testsHttpResponseCollection
+                    ->testsHttpResponse
+                    ->get($testsHttpResponse)
                 ;
 
                 $result = SwooleCoroutineHelper::mustRun(function () use (

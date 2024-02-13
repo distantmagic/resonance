@@ -13,7 +13,6 @@ use Ds\Set;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionFunctionAbstract;
-use RuntimeException;
 use Swoole\Event;
 
 readonly class DependencyInjectionContainer
@@ -113,8 +112,8 @@ readonly class DependencyInjectionContainer
                 throw new AmbiguousProvider($providedClassName);
             }
 
-            if ($dependencyProvider->wantsFeature) {
-                $this->enableFeature($dependencyProvider->wantsFeature);
+            foreach ($dependencyProvider->wantsFeatures as $wantedFeature) {
+                $this->enableFeature($wantedFeature);
             }
 
             $this->dependencyProviders->put($providedClassName, $dependencyProvider);
@@ -191,11 +190,17 @@ readonly class DependencyInjectionContainer
 
     private function isDependencyProviderWanted(DependencyProvider $dependencyProvider): bool
     {
-        if (is_null($dependencyProvider->grantsFeature)) {
+        if ($dependencyProvider->grantsFeatures->isEmpty()) {
             return true;
         }
 
-        return $this->wantedFeatures->contains($dependencyProvider->grantsFeature);
+        foreach ($dependencyProvider->grantsFeatures as $grantedFeature) {
+            if ($this->wantedFeatures->contains($grantedFeature)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -272,13 +277,9 @@ readonly class DependencyInjectionContainer
         }
 
         if (!$this->isDependencyProviderWanted($dependencyProvider)) {
-            if (!$dependencyProvider->grantsFeature) {
-                throw new RuntimeException('Classname with no provider, not wanted: '.$className);
-            }
-
             throw new DisabledFeatureProvider(
                 $className,
-                $dependencyProvider->grantsFeature,
+                $dependencyProvider->grantsFeatures->diff($this->wantedFeatures),
                 $stack,
             );
         }

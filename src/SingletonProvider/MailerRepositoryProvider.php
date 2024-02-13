@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\DependencyInjectionContainer;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\Mailer;
 use Distantmagic\Resonance\MailerConfiguration;
 use Distantmagic\Resonance\MailerRepository;
@@ -16,17 +19,18 @@ use Distantmagic\Resonance\SwooleTaskServerMessageBus;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Symfony\Component\Mailer\Transport;
-use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Component\Mime\Crypto\DkimSigner;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * @template-extends SingletonProvider<MailerRepository>
  */
+#[GrantsFeature(Feature::Mailer)]
 #[Singleton(provides: MailerRepository::class)]
 final readonly class MailerRepositoryProvider extends SingletonProvider
 {
     public function __construct(
+        private DependencyInjectionContainer $dependencyInjectionContainer,
         private HttpClientInterface $httpClient,
         private LoggerInterface $logger,
         private MailerConfiguration $mailerConfiguration,
@@ -44,7 +48,12 @@ final readonly class MailerRepositoryProvider extends SingletonProvider
                     dkimSigner: $this->buildDkimSigner($name, $transportConfiguration),
                     name: $name,
                     messageBus: $this->swooleTaskServerMessageBus,
-                    transport: $this->buildTransport($transportConfiguration),
+                    transport: Transport::fromDsn(
+                        client: $this->httpClient,
+                        // dispatcher: $eventDispatcher,
+                        dsn: $transportConfiguration->transportDsn,
+                        logger: $this->logger,
+                    ),
                 )
             );
         }
@@ -88,14 +97,5 @@ final readonly class MailerRepositoryProvider extends SingletonProvider
             ERROR_MESSAGE,
             $name,
         ));
-    }
-
-    private function buildTransport(MailerTransportConfiguration $transportConfiguration): TransportInterface
-    {
-        return Transport::fromDsn(
-            client: $this->httpClient,
-            dsn: $transportConfiguration->transportDsn,
-            logger: $this->logger,
-        );
     }
 }

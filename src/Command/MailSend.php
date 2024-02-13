@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\Command;
 
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
+use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Command;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\MailerRepository;
 use RuntimeException;
 use Swoole\Event;
@@ -19,6 +21,7 @@ use Symfony\Component\Mime\Email;
     name: 'mail:send',
     description: 'Send email using the selected transport'
 )]
+#[WantsFeature(Feature::Mailer)]
 final class MailSend extends Command
 {
     public function __construct(

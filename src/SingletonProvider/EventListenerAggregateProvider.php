@@ -22,9 +22,6 @@ use Distantmagic\Resonance\SingletonProvider;
 #[Singleton(provides: EventListenerAggregate::class)]
 final readonly class EventListenerAggregateProvider extends SingletonProvider
 {
-    public function __construct(
-    ) {}
-
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): EventListenerAggregate
     {
         $eventListenerAggregate = new EventListenerAggregate();

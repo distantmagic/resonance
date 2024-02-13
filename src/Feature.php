@@ -6,16 +6,15 @@ namespace Distantmagic\Resonance;
 
 enum Feature implements FeatureInterface
 {
+    use NameableEnumTrait;
+
     case Doctrine;
+    case Grpc;
     case HttpSession;
+    case Mailer;
     case OAuth2;
     case Postfix;
     case StaticPages;
     case SwooleTaskServer;
     case WebSocket;
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
 }

@@ -8,7 +8,7 @@ use Attribute;
 use Distantmagic\Resonance\Attribute as BaseAttribute;
 use Distantmagic\Resonance\FeatureInterface;
 
-#[Attribute(Attribute::TARGET_CLASS)]
+#[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_CLASS)]
 final readonly class GrantsFeature extends BaseAttribute
 {
     public function __construct(

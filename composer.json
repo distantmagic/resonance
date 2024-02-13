@@ -50,7 +50,8 @@
         "symfony/mailer": "^7.0",
         "symfony/messenger": "^7.0",
         "symfony/http-client": "^7.0",
-        "rubix/ml": "^2.4"
+        "rubix/ml": "^2.4",
+        "grpc/grpc": "^1.57"
     },
     "require-dev": {
         "mockery/mockery": "^1.6",

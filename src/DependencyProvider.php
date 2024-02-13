@@ -10,15 +10,17 @@ use ReflectionClass;
 readonly class DependencyProvider
 {
     /**
+     * @param Set<FeatureInterface>             $grantsFeatures
      * @param Set<SingletonCollectionInterface> $requiredCollections
      * @param class-string                      $providedClassName
+     * @param Set<FeatureInterface>             $wantsFeatures
      */
     public function __construct(
-        public ?FeatureInterface $grantsFeature,
+        public Set $grantsFeatures,
         public ReflectionClass $providerReflectionClass,
         public Set $requiredCollections,
         public ?SingletonCollectionInterface $collection,
         public string $providedClassName,
-        public ?FeatureInterface $wantsFeature,
+        public Set $wantsFeatures,
     ) {}
 }

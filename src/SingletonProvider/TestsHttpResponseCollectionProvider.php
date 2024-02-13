@@ -7,7 +7,7 @@ namespace Distantmagic\Resonance\SingletonProvider;
 use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\RespondsWith;
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\Attribute\TestableHttpResponse;
+use Distantmagic\Resonance\Attribute\TestsHttpResponse;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\ReflectionClassAttributeManager;
@@ -15,20 +15,20 @@ use Distantmagic\Resonance\SingletonAttribute;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
-use Distantmagic\Resonance\TestableHttpResponseCollection;
+use Distantmagic\Resonance\TestsHttpResponseCollection;
 use LogicException;
 use ReflectionClass;
 
 /**
- * @template-extends SingletonProvider<TestableHttpResponseCollection>
+ * @template-extends SingletonProvider<TestsHttpResponseCollection>
  */
 #[RequiresSingletonCollection(SingletonCollection::HttpResponder)]
-#[Singleton(provides: TestableHttpResponseCollection::class)]
-final readonly class TestableHttpResponseCollectionProvider extends SingletonProvider
+#[Singleton(provides: TestsHttpResponseCollection::class)]
+final readonly class TestsHttpResponseCollectionProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): TestableHttpResponseCollection
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): TestsHttpResponseCollection
     {
-        $testableHttpResponseCollection = new TestableHttpResponseCollection();
+        $testableHttpResponseCollection = new TestsHttpResponseCollection();
 
         foreach ($this->collectResponders($singletons) as $testableHttpResponseAttribute) {
             $reflectionClass = new ReflectionClass($testableHttpResponseAttribute->singleton);
@@ -57,14 +57,14 @@ final readonly class TestableHttpResponseCollectionProvider extends SingletonPro
     }
 
     /**
-     * @return iterable<SingletonAttribute<HttpResponderInterface,TestableHttpResponse>>
+     * @return iterable<SingletonAttribute<HttpResponderInterface,TestsHttpResponse>>
      */
     private function collectResponders(SingletonContainer $singletons): iterable
     {
         return $this->collectAttributes(
             $singletons,
             HttpResponderInterface::class,
-            TestableHttpResponse::class,
+            TestsHttpResponse::class,
         );
     }
 }

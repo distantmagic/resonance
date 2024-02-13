@@ -5,44 +5,44 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\RespondsWith;
-use Distantmagic\Resonance\Attribute\TestableHttpResponse;
+use Distantmagic\Resonance\Attribute\TestsHttpResponse;
 use Ds\Map;
 use Ds\Set;
 
-readonly class TestableHttpResponseCollection
+readonly class TestsHttpResponseCollection
 {
     /**
-     * @var Map<HttpResponderInterface,Set<TestableHttpResponse>>
+     * @var Map<HttpResponderInterface,Set<TestsHttpResponse>>
      */
     public Map $httpResponder;
 
     /**
-     * @var Map<TestableHttpResponse,Map<int,RespondsWith>>
+     * @var Map<TestsHttpResponse,Map<int,RespondsWith>>
      */
-    public Map $testableHttpResponse;
+    public Map $testsHttpResponse;
 
     public function __construct()
     {
         $this->httpResponder = new Map();
-        $this->testableHttpResponse = new Map();
+        $this->testsHttpResponse = new Map();
     }
 
     public function registerTestableHttpResponse(
         HttpResponderInterface $httpResponder,
-        TestableHttpResponse $testableHttpResponse,
+        TestsHttpResponse $testsHttpResponse,
         RespondsWith $respondsWith,
     ): void {
         if (!$this->httpResponder->hasKey($httpResponder)) {
             $this->httpResponder->put($httpResponder, new Set());
         }
 
-        $this->httpResponder->get($httpResponder)->add($testableHttpResponse);
+        $this->httpResponder->get($httpResponder)->add($testsHttpResponse);
 
-        if (!$this->testableHttpResponse->hasKey($testableHttpResponse)) {
-            $this->testableHttpResponse->put($testableHttpResponse, new Map());
+        if (!$this->testsHttpResponse->hasKey($testsHttpResponse)) {
+            $this->testsHttpResponse->put($testsHttpResponse, new Map());
         }
 
-        $this->testableHttpResponse->get($testableHttpResponse)->put(
+        $this->testsHttpResponse->get($testsHttpResponse)->put(
             $respondsWith->status,
             $respondsWith,
         );

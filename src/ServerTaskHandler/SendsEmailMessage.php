@@ -17,6 +17,7 @@ use Distantmagic\Resonance\SingletonCollection;
  * @template-extends ServerTaskHandler<SendEmailMessage>
  */
 #[GrantsFeature(Feature::SwooleTaskServer)]
+#[GrantsFeature(Feature::Mailer)]
 #[HandlesServerTask(SendEmailMessage::class)]
 #[Singleton(collection: SingletonCollection::ServerTaskHandler)]
 readonly class SendsEmailMessage extends ServerTaskHandler

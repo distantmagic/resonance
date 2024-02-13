@@ -6,5 +6,8 @@ namespace Distantmagic\Resonance;
 
 interface NameableInterface
 {
+    /**
+     * @return non-empty-string
+     */
     public function getName(): string;
 }

@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Constraint;
 use Distantmagic\Resonance\Constraint\MapConstraint;
 use Distantmagic\Resonance\Constraint\ObjectConstraint;
 use Distantmagic\Resonance\Constraint\StringConstraint;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\MailerConfiguration;
 use Distantmagic\Resonance\MailerTransportConfiguration;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
@@ -26,6 +28,7 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
  *     }>
  * >
  */
+#[GrantsFeature(Feature::Mailer)]
 #[Singleton(provides: MailerConfiguration::class)]
 final readonly class MailerConfigurationProvider extends ConfigurationProvider
 {

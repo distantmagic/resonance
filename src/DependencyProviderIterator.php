@@ -30,11 +30,11 @@ readonly class DependencyProviderIterator implements IteratorAggregate
 
             yield $providedClassName => new DependencyProvider(
                 collection: $reflectionAttribute->attribute->collection,
-                grantsFeature: $reflectionClassAttributeManager->findAttribute(GrantsFeature::class)?->feature,
+                grantsFeatures: $this->pluckFeature($reflectionClassAttributeManager->findAttributes(GrantsFeature::class)),
                 providedClassName: $providedClassName,
                 providerReflectionClass: $reflectionAttribute->reflectionClass,
                 requiredCollections: $this->findRequiredCollections($reflectionClassAttributeManager),
-                wantsFeature: $reflectionClassAttributeManager->findAttribute(WantsFeature::class)?->feature,
+                wantsFeatures: $this->pluckFeature($reflectionClassAttributeManager->findAttributes(WantsFeature::class)),
             );
         }
     }
@@ -56,5 +56,24 @@ readonly class DependencyProviderIterator implements IteratorAggregate
         }
 
         return $requiredCollections;
+    }
+
+    /**
+     * @param Set<GrantsFeature>|Set<WantsFeature> $attributes
+     *
+     * @return Set<FeatureInterface>
+     */
+    private function pluckFeature(Set $attributes): Set
+    {
+        /**
+         * @var Set<FeatureInterface>
+         */
+        $ret = new Set();
+
+        foreach ($attributes as $attribute) {
+            $ret->add($attribute->feature);
+        }
+
+        return $ret;
     }
 }
