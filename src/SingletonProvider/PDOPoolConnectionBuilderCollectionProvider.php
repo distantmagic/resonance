@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\Attribute\BuildsPDOPoolConnection;
+use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpResponderCollection;
@@ -19,6 +20,7 @@ use Distantmagic\Resonance\SingletonProvider;
 /**
  * @template-extends SingletonProvider<HttpResponderCollection>
  */
+#[RequiresPhpExtension('pdo')]
 #[RequiresSingletonCollection(SingletonCollection::PDOPoolConnectionBuilder)]
 #[Singleton(provides: PDOPoolConnectionBuilderCollection::class)]
 final readonly class PDOPoolConnectionBuilderCollectionProvider extends SingletonProvider

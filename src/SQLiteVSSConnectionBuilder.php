@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Attribute\Singleton;
 use SQLite3;
 
+#[RequiresPhpExtension('sqlite3')]
 #[Singleton]
 readonly class SQLiteVSSConnectionBuilder
 {

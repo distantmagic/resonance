@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Closure;
+use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\DependencyInjectionContainerException\AmbiguousProvider;
 use Distantmagic\Resonance\DependencyInjectionContainerException\DisabledFeatureProvider;
+use Distantmagic\Resonance\DependencyInjectionContainerException\MissingPhpExtension;
 use Distantmagic\Resonance\DependencyInjectionContainerException\MissingProvider;
 use Ds\Map;
 use Ds\Set;
@@ -224,6 +226,17 @@ readonly class DependencyInjectionContainer
      */
     private function makeClassFromReflection(ReflectionClass $reflectionClass, DependencyStack $stack): object
     {
+        $reflectionClassAttributeManager = new ReflectionClassAttributeManager($reflectionClass);
+        $requiredPhpExtensions = $reflectionClassAttributeManager->findAttributes(RequiresPhpExtension::class);
+
+        if (!$requiredPhpExtensions->isEmpty()) {
+            foreach ($requiredPhpExtensions as $requiredPhpExtension) {
+                if (!extension_loaded($requiredPhpExtension->name)) {
+                    throw new MissingPhpExtension($reflectionClass->name, $requiredPhpExtension->name);
+                }
+            }
+        }
+
         $constructorReflection = $reflectionClass->getConstructor();
 
         if ($constructorReflection) {

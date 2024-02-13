@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\Command;
 
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
+use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\Feature;
@@ -16,6 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
     name: 'grpc:generate',
     description: 'Generate GRPC stubs'
 )]
+#[RequiresPhpExtension('grpc')]
 #[WantsFeature(Feature::Grpc)]
 final class GrpcGenerate extends Command
 {

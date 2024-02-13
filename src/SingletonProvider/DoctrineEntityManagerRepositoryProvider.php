@@ -6,6 +6,7 @@ namespace Distantmagic\Resonance\SingletonProvider;
 
 use Distantmagic\Resonance\ApplicationConfiguration;
 use Distantmagic\Resonance\Attribute\GrantsFeature;
+use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\DoctrineConnectionRepository;
 use Distantmagic\Resonance\DoctrineEntityManagerRepository;
@@ -21,6 +22,7 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * @template-extends SingletonProvider<DoctrineEntityManagerRepository>
  */
+#[RequiresPhpExtension('pdo')]
 #[GrantsFeature(Feature::Doctrine)]
 #[Singleton(provides: DoctrineEntityManagerRepository::class)]
 final readonly class DoctrineEntityManagerRepositoryProvider extends SingletonProvider

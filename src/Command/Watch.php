@@ -6,10 +6,10 @@ namespace Distantmagic\Resonance\Command;
 
 use Distantmagic\Resonance\ApplicationConfiguration;
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
+use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\InotifyIterator;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 use Swoole\Process;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,8 +17,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 #[ConsoleCommand(
     name: 'watch:command',
-    description: 'Watch project files for changes (requires inotify)'
+    description: 'Watch project files for changes'
 )]
+#[RequiresPhpExtension('inotify')]
 final class Watch extends Command
 {
     private ?Process $process = null;
@@ -37,10 +38,6 @@ final class Watch extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if (!extension_loaded('inotify')) {
-            throw new RuntimeException('You need to install "inotify" extension');
-        }
-
         /**
          * @var string $childCommandName
          */

@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use CurlHandle;
+use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Generator;
 use JsonSerializable;
 use RuntimeException;
 use Swoole\Coroutine\Channel;
 
+#[RequiresPhpExtension('curl')]
 #[Singleton]
 readonly class LlamaCppClient
 {

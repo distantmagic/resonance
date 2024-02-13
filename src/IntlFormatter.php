@@ -6,11 +6,13 @@ namespace Distantmagic\Resonance;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Attribute\Singleton;
 use IntlDateFormatter;
 use Swoole\Http\Request;
 
 #[Singleton]
+#[RequiresPhpExtension('intl')]
 final readonly class IntlFormatter
 {
     private IntlDateFormatterRepository $formatters;

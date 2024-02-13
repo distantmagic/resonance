@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\Command;
 
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
+use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\CoroutineCommand;
@@ -22,6 +23,8 @@ use Symfony\Component\Console\Output\OutputInterface;
     name: 'postfix:bounce',
     description: 'Handles email bounces (requires mailparse)'
 )]
+#[RequiresPhpExtension('http')]
+#[RequiresPhpExtension('mailparse')]
 #[WantsFeature(Feature::Postfix)]
 final class PostfixBounce extends CoroutineCommand
 {
@@ -36,10 +39,6 @@ final class PostfixBounce extends CoroutineCommand
 
     protected function executeInCoroutine(InputInterface $input, OutputInterface $output): int
     {
-        if (!extension_loaded('mailparse') || !extension_loaded('http')) {
-            throw new RuntimeException('You need to install "http" and "mailparse" extensions');
-        }
-
         $content = stream_get_contents(STDIN);
 
         if (false === $content || empty($content)) {
