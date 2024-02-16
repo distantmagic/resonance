@@ -164,7 +164,7 @@ a:active,
   display: flex;
   padding: 20px;
   position: sticky;
-  top: 0;
+  top: -100%;
 }
 
 .primary-banner > a {
