@@ -8,7 +8,7 @@ description: >
     Use Resonance to connect with llama.cpp server.
 ---
 
-## llama.cpp
+# llama.cpp
 
 [llama.cpp](https://github.com/ggerganov/llama.cpp) is an open source framework
 capable of running various LLM models.

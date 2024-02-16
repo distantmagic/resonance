@@ -38,6 +38,52 @@ description: >
         <ul class="homepage__examples">
             <li class="formatted-content homepage__example">
                 <h2 class="homepage__example__title">
+                    Chat with Open-Source LLMs
+                </h2>
+                <div class="homepage__example__description">
+                    <p>
+                        Integrate your application with self-hosted open-source 
+                        LLMs.
+                    </p>
+                    <p>
+                        Use your own Machine Learning models in production.
+                    </p>
+                    <a 
+                        class="homepage__cta homepage__cta--example"
+                        href="/docs/features/ai/"
+                    >
+                        Learn More
+                    </a>
+                </div>
+                <pre class="homepage__example__code fenced-code"><code 
+                        class="language-php"
+                        data-controller="hljs"
+                        data-hljs-language-value="php"
+                    >#[RespondsToPromptSubject(
+    action: 'adopt',
+    subject: 'cat',
+)]
+#[Singleton(collection: SingletonCollection::PromptSubjectResponder)]
+readonly class CatAdopt implements PromptSubjectResponderInterface
+{
+    public function respondToPromptSubject(PromptSubjectRequest $request, PromptSubjectResponse $response): void
+    {
+        // Pipes message through WebSocket... 
+
+        $response->write("Here you go:\n\n");
+        $response->write("   |\_._/|\n");
+        $response->write("   | o o |\n");
+        $response->write("   (  T  )\n");
+        $response->write("  .^`-^-`^.\n");
+        $response->write("  `.  ;  .`\n");
+        $response->write("  | | | | |\n");
+        $response->write(" ((_((|))_))\n");
+        $response->end();
+    }
+}</code></pre>
+            </li>
+            <li class="formatted-content homepage__example">
+                <h2 class="homepage__example__title">
                     Artificial Intelligence
                 </h2>
                 <div class="homepage__example__description">

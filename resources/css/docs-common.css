@@ -10,7 +10,8 @@
   --color-inline-code-background: #0080ff30;
   --color-link-active: #ffc000;
   --color-link-decoration: var(--color-link-active);
-  --color-primary-banner-background: var(--color-body-background);
+  --color-primary-banner-background: var(--color-body-font);
+  --color-primary-banner-font: var(--color-body-background);
   --color-primary-footer-background: var(--color-body-background);
   --color-primary-navigation-background: var(--color-body-background);
   --color-text-decoration-highlight: var(--color-body-font);
@@ -158,11 +159,20 @@ a:active,
 .primary-banner {
   align-items: center;
   background-color: var(--color-primary-banner-background);
+  color: var(--color-primary-banner-font);
   border-bottom: 1px solid var(--color-border);
   display: flex;
   padding: 20px;
   position: sticky;
   top: 0;
+}
+
+.primary-banner > a {
+  text-decoration: none;
+}
+
+.primary-banner__new {
+  display: inline-flex;
 }
 
 /**

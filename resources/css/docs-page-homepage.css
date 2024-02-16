@@ -21,8 +21,14 @@
   flex-direction: column;
   max-width: 1480px;
   padding: 0 20px 160px 20px;
-  row-gap: 120px;
   width: 100%;
+
+  @media screen and (max-width: 1023px) {
+    row-gap: 20px;
+  }
+  @media screen and (min-width: 1024px) {
+    row-gap: 120px;
+  }
 }
 
 .homepage__example {
@@ -69,7 +75,13 @@ h2.homepage__example__title {
 .homepage__examples {
   display: flex;
   flex-direction: column;
-  row-gap: 160px;
+
+  @media screen and (max-width: 1023px) {
+    row-gap: 80px;
+  }
+  @media screen and (min-width: 1024px) {
+    row-gap: 160px;
+  }
 }
 
 .homepage__title {
@@ -125,7 +137,7 @@ h2.homepage__example__title {
   line-height: 1;
 
   @media screen and (max-width: 1023px) {
-    font-size: 3.5em;
+    font-size: 60px;
   }
   @media screen and (min-width: 1024px) {
     font-size: 8em;
