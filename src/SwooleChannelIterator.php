@@ -44,10 +44,13 @@ readonly class SwooleChannelIterator implements IteratorAggregate
              */
             $data = $this->channel->pop($this->timeout);
 
+            if (SWOOLE_CHANNEL_TIMEOUT === $this->channel->errCode) {
+                throw new RuntimeException('Channel timed out');
+            }
+
             if (false === $data) {
                 switch ($this->channel->errCode) {
                     case SWOOLE_CHANNEL_CLOSED:
-                    case SWOOLE_CHANNEL_TIMEOUT:
                         return;
                     case SWOOLE_CHANNEL_OK:
                         throw new RuntimeException('Using "false" is ambiguous in channels');

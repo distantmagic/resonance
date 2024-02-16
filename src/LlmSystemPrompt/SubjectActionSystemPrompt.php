@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance\LlmSystemPrompt;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\LlmSystemPrompt;
 use Distantmagic\Resonance\PromptSubjectResponderCollection;
+use Distantmagic\Resonance\RespondsToPromptSubjectAttributeCollection;
 use Ds\Set;
 
 #[Singleton]
@@ -19,6 +20,7 @@ readonly class SubjectActionSystemPrompt extends LlmSystemPrompt
 
     public function __construct(
         PromptSubjectResponderCollection $promptSubjectResponderCollection,
+        RespondsToPromptSubjectAttributeCollection $respondsToPromptSubjectAttributeCollection,
     ) {
         /**
          * @var Set<non-empty-string>
@@ -50,6 +52,28 @@ readonly class SubjectActionSystemPrompt extends LlmSystemPrompt
         $subjectsSerialized = implode('", "', $subjects);
         $allowedActionsSerialized = '- '.implode("\n -", $allowedActions);
 
+        /**
+         * @var array<non-empty-string>
+         */
+        $examples = [];
+
+        foreach ($respondsToPromptSubjectAttributeCollection->attributes as $attribute) {
+            foreach ($attribute->examples as $example) {
+                $examples[] = sprintf(
+                    'When user says "%s" then the correct response is "%s %s"',
+                    $example,
+                    $attribute->subject,
+                    $attribute->action,
+                );
+            }
+        }
+
+        if (empty($examples)) {
+            $examplesSerialized = '';
+        } else {
+            $examplesSerialized = "Examples:\n- ".implode("\n -", $examples);
+        }
+
         $this->prompt = <<<PROMPT
         You are a natural language intepreter.
         Never ask for any clarifications.
@@ -76,6 +100,8 @@ readonly class SubjectActionSystemPrompt extends LlmSystemPrompt
 
         Respond in the following format always:
         subject action parameters
+
+        $examplesSerialized
         PROMPT;
     }
 

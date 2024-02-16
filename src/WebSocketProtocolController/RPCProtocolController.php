@@ -149,7 +149,7 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
 
     private function onException(Throwable $exception): void
     {
-        $this->logger->debug((string) $exception);
+        $this->logger->error((string) $exception);
     }
 
     private function onJsonMessage(Server $server, Frame $frame, mixed $jsonMessage): void

@@ -15,6 +15,7 @@ use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server;
+use Throwable;
 
 /**
  * @template-implements ServerPipeMessageHandlerInterface<CloseWebSocketConnection>
@@ -158,7 +159,12 @@ final readonly class WebSocketServerController implements ServerPipeMessageHandl
         $protocolController = $this->protocolControllers->get($frame->fd, null);
 
         if ($protocolController) {
-            $protocolController->onMessage($server, $frame);
+            try {
+                $protocolController->onMessage($server, $frame);
+            } catch (Throwable $exception) {
+                $this->logger->error((string) $exception);
+                $server->disconnect($frame->fd, SWOOLE_WEBSOCKET_CLOSE_SERVER_ERROR);
+            }
         } else {
             $this->logger->error(self::MESSAGE_NO_WEBSOCKET_CONTROLLER);
             $server->disconnect($frame->fd, SWOOLE_WEBSOCKET_CLOSE_SERVER_ERROR);

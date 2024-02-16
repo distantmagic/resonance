@@ -16,9 +16,10 @@ readonly class PromptSubjectResponderAggregate
         private PromptSubjectResponderCollection $promptSubjectResponderCollection,
     ) {}
 
-    public function consumeTokens(
+    public function createResponseFromTokens(
         ?AuthenticatedUser $authenticatedUser,
         LlamaCppCompletionIterator $completion,
+        float $timeout = DM_POOL_CONNECTION_TIMEOUT,
     ): Generator {
         $subjectActionTokenReader = new SubjectActionTokenReader();
 
@@ -36,9 +37,19 @@ readonly class PromptSubjectResponderAggregate
         $subject = $subjectActionTokenReader->getSubject();
 
         if ($subjectActionTokenReader->isUnknown() || !isset($action, $subject)) {
-            yield from $this->respondWithSubjectAction($authenticatedUser, 'unknown', 'unknown');
+            yield from $this->respondWithSubjectAction(
+                $authenticatedUser,
+                'unknown',
+                'unknown',
+                $timeout,
+            );
         } else {
-            yield from $this->respondWithSubjectAction($authenticatedUser, $subject, $action);
+            yield from $this->respondWithSubjectAction(
+                $authenticatedUser,
+                $subject,
+                $action,
+                $timeout,
+            );
         }
     }
 
@@ -50,6 +61,7 @@ readonly class PromptSubjectResponderAggregate
         ?AuthenticatedUser $authenticatedUser,
         string $subject,
         string $action,
+        float $timeout,
     ): Generator {
         $responder = $this
             ->promptSubjectResponderCollection
@@ -69,7 +81,7 @@ readonly class PromptSubjectResponderAggregate
         }
 
         $request = new PromptSubjectRequest($authenticatedUser);
-        $response = new PromptSubjectResponse();
+        $response = new PromptSubjectResponse($timeout);
 
         SwooleCoroutineHelper::mustGo(static function () use ($request, $responder, $response) {
             $responder->respondToPromptSubject($request, $response);

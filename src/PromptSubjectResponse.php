@@ -14,14 +14,26 @@ readonly class PromptSubjectResponse implements IteratorAggregate
 {
     private Channel $channel;
 
-    public function __construct()
-    {
+    public function __construct(
+        private float $timeout,
+    ) {
         $this->channel = new Channel(1);
     }
 
     public function __destruct()
     {
         $this->channel->close();
+    }
+
+    public function end(mixed $payload = null): void
+    {
+        try {
+            if (null !== $payload) {
+                $this->write($payload);
+            }
+        } finally {
+            $this->channel->close();
+        }
     }
 
     /**
@@ -32,14 +44,14 @@ readonly class PromptSubjectResponse implements IteratorAggregate
         /**
          * @var SwooleChannelIterator<mixed>
          */
-        return new SwooleChannelIterator($this->channel);
+        return new SwooleChannelIterator(
+            channel: $this->channel,
+            timeout: $this->timeout,
+        );
     }
 
-    /**
-     * @return mixed because almost every PHP type can be send over websocket
-     */
-    public function write(mixed $payload): bool
+    public function write(mixed $payload): void
     {
-        return $this->channel->push($payload);
+        $this->channel->push($payload);
     }
 }

@@ -17,5 +17,6 @@ final readonly class RespondsToPromptSubject extends BaseAttribute
     public function __construct(
         public string $action,
         public string $subject,
+        public array $examples = [],
     ) {}
 }
