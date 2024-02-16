@@ -1,6 +1,6 @@
 {
     "name": "distantmagic/resonance",
-    "description": "PHP SaaS Framework",
+    "description": "PHP Framework with AI capabilities.",
     "type": "library",
     "license": "MIT",
     "autoload": {

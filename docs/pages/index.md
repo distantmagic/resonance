@@ -23,10 +23,11 @@ description: >
                 messaging between services in your infrastructure and beyond.
             </p>
             <p>
-                Takes full advantage of asynchronous PHP.
+                Provides AI capabilities.
             </p>
             <p>
-                Built on top of Swoole.  
+                Takes full advantage of asynchronous PHP. Built on top of 
+                Swoole.
             </p>
             <a 
                 class="homepage__cta"
@@ -240,8 +241,7 @@ final readonly class InitializeErrorReporting extends EventListener
     {
         // ...
     }
-}
-</code></pre>
+}</code></pre>
             </li>
             <li class="formatted-content homepage__example">
                 <h2 class="homepage__example__title">
