@@ -42,11 +42,12 @@ description: >
                 </h2>
                 <div class="homepage__example__description">
                     <p>
-                        Integrate your application with self-hosted open-source 
-                        LLMs.
+                        Create prompt controllers to directly answer user's 
+                        prompts.
                     </p>
                     <p>
-                        Use your own Machine Learning models in production.
+                        LLM takes care of determining user's intention, you
+                        can focus on taking an appropriate action.
                     </p>
                     <a 
                         class="homepage__cta homepage__cta--example"
