@@ -50,7 +50,7 @@ readonly class WebSocketRPCConnectionHandle
             ->validate($rpcMessage->payload)
         ;
 
-        if ($constraintResult->status->isValid()) {
+        if (!$constraintResult->status->isValid()) {
             return $constraintResult;
         }
 

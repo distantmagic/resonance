@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Ds\Map;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @coversNothing
- *
  * @internal
  */
+#[CoversClass(OAuth2ScopePattern::class)]
 final class OAuth2ScopePatternTest extends TestCase
 {
     public function test_matches(): void

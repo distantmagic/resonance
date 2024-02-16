@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @coversNothing
- *
  * @internal
  */
+#[CoversClass(ArrayFlattenIterator::class)]
 final class ArrayFlattenIteratorTest extends TestCase
 {
     public function test_dotpaths_are_generated(): void

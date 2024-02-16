@@ -27,6 +27,7 @@ enum SingletonCollection implements SingletonCollectionInterface
     case OpenAPIRouteRequestBodyContentExtractor;
     case OpenAPIRouteSecurityRequirementExtractor;
     case PDOPoolConnectionBuilder;
+    case PromptSubjectResponder;
     case ServerPipeMessageHandler;
     case ServerTaskHandler;
     case SiteActionGate;

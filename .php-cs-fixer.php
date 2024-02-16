@@ -56,7 +56,6 @@ return $config->setRules([
         'encoding' => true,
         'ereg_to_preg' => true,
         'explicit_indirect_variable' => true,
-        'final_internal_class' => true,
         'fully_qualified_strict_types' => true,
         'function_declaration' => true,
         'function_to_constant' => true,
@@ -181,7 +180,6 @@ return $config->setRules([
         'php_unit_set_up_tear_down_visibility' => true,
         'php_unit_test_annotation' => true,
         'php_unit_test_case_static_method_calls' => true,
-        'php_unit_test_class_requires_covers' => true,
         'phpdoc_align' => [
             'align' => 'vertical',
         ],

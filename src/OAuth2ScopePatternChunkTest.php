@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @coversNothing
- *
  * @internal
  */
+#[CoversClass(OAuth2ScopePatternChunk::class)]
 final class OAuth2ScopePatternChunkTest extends TestCase
 {
     public function test_is_no_variable(): void

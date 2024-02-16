@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @coversNothing
- *
  * @internal
  */
+#[CoversClass(AcceptHeader::class)]
 final class AcceptHeaderTest extends TestCase
 {
     public function test_request_header_is_parsed(): void

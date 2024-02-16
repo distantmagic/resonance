@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,10 +13,9 @@ use PHPUnit\Framework\TestCase;
 final class SingletonContainerTestFixtureFoo {}
 
 /**
- * @coversNothing
- *
  * @internal
  */
+#[CoversClass(SingletonContainer::class)]
 final class SingletonContainerTest extends TestCase
 {
     public function test_singletons_can_be_set(): void

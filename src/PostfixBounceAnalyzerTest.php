@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @coversNothing
- *
  * @internal
  */
+#[CoversClass(PostfixBounceAnalyzer::class)]
 final class PostfixBounceAnalyzerTest extends TestCase
 {
     use TestsDependencyInectionContainerTrait;

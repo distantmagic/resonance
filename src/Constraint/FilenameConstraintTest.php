@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\Constraint;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @coversNothing
- *
  * @internal
  */
+#[CoversClass(FilenameConstraint::class)]
 final class FilenameConstraintTest extends TestCase
 {
     public function test_invalid(): void

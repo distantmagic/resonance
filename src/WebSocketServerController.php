@@ -65,6 +65,8 @@ final readonly class WebSocketServerController implements ServerPipeMessageHandl
 
     public function onClose(int $fd): void
     {
+        $this->logger->debug(sprintf('websocket_close(%s)', $fd));
+
         $this->webSocketServerConnectionTable->unregisterConnection($fd);
 
         if (!$this->protocolControllers->hasKey($fd)) {
@@ -145,10 +147,14 @@ final readonly class WebSocketServerController implements ServerPipeMessageHandl
         $response->end();
 
         $controllerResolution->controller->onOpen($server, $fd, $authResolution);
+
+        $this->logger->debug(sprintf('websocket_handshake_successful(%s)', $fd));
     }
 
     public function onMessage(Server $server, Frame $frame): void
     {
+        $this->logger->debug(sprintf('websocket_message(%s)', $frame->fd));
+
         $protocolController = $this->protocolControllers->get($frame->fd, null);
 
         if ($protocolController) {

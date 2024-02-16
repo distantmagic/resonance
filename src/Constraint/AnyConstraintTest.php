@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\Constraint;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
 /**
- * @coversNothing
- *
  * @internal
  */
+#[CoversClass(AnyConstraint::class)]
 final class AnyConstraintTest extends TestCase
 {
     public function test_is_converted_optionally_to_json_schema(): void

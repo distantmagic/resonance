@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @coversNothing
- *
  * @internal
  */
+#[CoversClass(WebSocketProtocolIterator::class)]
 final class WebSocketProtocolIteratorTest extends TestCase
 {
     public function test_iterates_over_protocol_values(): void
