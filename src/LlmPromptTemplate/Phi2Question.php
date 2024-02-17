@@ -8,12 +8,9 @@ use Distantmagic\Resonance\LlmPromptTemplate;
 
 readonly class Phi2Question extends LlmPromptTemplate
 {
-    /**
-     * @param non-empty-string $prompt
-     */
     public function __construct(private string $prompt) {}
 
-    public function __toString(): string
+    public function getPromptTemplateContent(): string
     {
         return sprintf(
             "Question: %s\nAnswer: ",

@@ -4,13 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use JsonSerializable;
-use Stringable;
-
-abstract readonly class LlmPromptTemplate implements JsonSerializable, Stringable
+abstract readonly class LlmPromptTemplate
 {
-    public function jsonSerialize(): string
-    {
-        return (string) $this;
-    }
+    abstract public function getPromptTemplateContent(): string;
 }

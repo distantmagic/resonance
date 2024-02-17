@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Distantmagic\Resonance\LlmSystemPrompt;
+namespace Distantmagic\Resonance\LlmPrompt;
 
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\LlmSystemPrompt;
+use Distantmagic\Resonance\LlmPrompt;
 use Distantmagic\Resonance\PromptSubjectResponderCollection;
 use Distantmagic\Resonance\RespondsToPromptSubjectAttributeCollection;
 use Ds\Set;
 
 #[Singleton]
-readonly class SubjectActionSystemPrompt extends LlmSystemPrompt
+readonly class SubjectActionPrompt extends LlmPrompt
 {
     /**
      * @var non-empty-string $prompt

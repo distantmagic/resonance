@@ -8,8 +8,9 @@ use Distantmagic\Resonance\BackusNaurFormGrammar\SubjectActionGrammar;
 use Distantmagic\Resonance\LlamaCppClient;
 use Distantmagic\Resonance\LlamaCppCompletionIterator;
 use Distantmagic\Resonance\LlamaCppCompletionRequest;
+use Distantmagic\Resonance\LlmPrompt\SubjectActionPrompt;
 use Distantmagic\Resonance\LlmPromptTemplate;
-use Distantmagic\Resonance\LlmSystemPrompt\SubjectActionSystemPrompt;
+use Distantmagic\Resonance\LlmPromptTemplate\ChainPrompt;
 use Distantmagic\Resonance\PromptSubjectResponderAggregate;
 use Distantmagic\Resonance\RPCNotification;
 use Distantmagic\Resonance\WebSocketAuthResolution;
@@ -30,23 +31,25 @@ abstract readonly class LlamaCppPromptResponder extends WebSocketRPCResponder
      */
     private WeakMap $runningCompletions;
 
+    /**
+     * @param TPayload $payload
+     */
+    abstract protected function getPromptFromPayload(mixed $payload): string;
+
     abstract protected function onResponseChunk(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
         mixed $responseChunk,
     ): void;
 
-    /**
-     * @param TPayload $payload
-     */
-    abstract protected function toPromptTemplate(mixed $payload): LlmPromptTemplate;
+    abstract protected function toPromptTemplate(string $prompt): LlmPromptTemplate;
 
     public function __construct(
         private LlamaCppClient $llamaCppClient,
         private LoggerInterface $logger,
         private PromptSubjectResponderAggregate $promptSubjectResponderAggregate,
         private SubjectActionGrammar $subjectActionGrammar,
-        private SubjectActionSystemPrompt $subjectActionSystemPrompt,
+        private SubjectActionPrompt $subjectActionPrompt,
     ) {
         /**
          * @var WeakMap<WebSocketConnection,LlamaCppCompletionIterator>
@@ -70,8 +73,10 @@ abstract readonly class LlamaCppPromptResponder extends WebSocketRPCResponder
     ): void {
         $request = new LlamaCppCompletionRequest(
             backusNaurFormGrammar: $this->subjectActionGrammar,
-            llmSystemPrompt: $this->subjectActionSystemPrompt,
-            promptTemplate: $this->toPromptTemplate($rpcNotification->payload),
+            promptTemplate: new ChainPrompt([
+                $this->toPromptTemplate($this->subjectActionPrompt->getPromptContent()),
+                $this->toPromptTemplate($this->getPromptFromPayload($rpcNotification->payload)),
+            ]),
         );
 
         $completion = $this->llamaCppClient->generateCompletion($request);
