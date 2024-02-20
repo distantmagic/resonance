@@ -10,8 +10,8 @@
   --color-inline-code-background: #0080ff30;
   --color-link-active: #ffc000;
   --color-link-decoration: var(--color-link-active);
-  --color-primary-banner-background: var(--color-body-font);
-  --color-primary-banner-font: var(--color-body-background);
+  --color-primary-banner-background: var(--color-body-background);
+  --color-primary-banner-font: var(--color-body-font);
   --color-primary-footer-background: var(--color-body-background);
   --color-primary-navigation-background: var(--color-body-background);
   --color-text-decoration-highlight: var(--color-body-font);

@@ -31,7 +31,7 @@ readonly class EsbuildPreloadablesIterator implements IteratorAggregate
 
         return match ($extension) {
             'css' => EsbuildPreloadableType::Stylesheet,
-            'jpg', 'svg', 'webp' => EsbuildPreloadableType::Image,
+            'jpg', 'png', 'svg', 'webp' => EsbuildPreloadableType::Image,
             'js' => EsbuildPreloadableType::JavaScriptModule,
             'otf', 'ttf' => EsbuildPreloadableType::Font,
             default => throw new RuntimeException('Non-preloadable resource requested: '.$pathname),

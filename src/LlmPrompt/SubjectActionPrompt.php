@@ -75,19 +75,10 @@ readonly class SubjectActionPrompt extends LlmPrompt
         }
 
         $this->prompt = <<<PROMPT
-        You are a natural language intepreter.
-        Never ask for any clarifications.
-        Always interpret user intentions to the best of your ability.
-        Match user intentions the best you can with a set of predefined subjects and actions.
-
-        Always describe everything user says for as one of the
+        Always paraphrase everything user says for as one of the
         "{$allActionsSerialized}" actions with parameters.
 
-        If you cannot determine the action, use "uknown".
-        If you cannot determine the subject, use "uknown".
         If you are unsure, use "unknown".
-        If user says something unrelated to the allowed actions, use "unknown".
-        If user says something unrelated to the allowed subjects, use "unknown".
 
         When user asks how to do something that means they seek help.
 
@@ -103,6 +94,8 @@ readonly class SubjectActionPrompt extends LlmPrompt
 
         $examplesSerialized
         PROMPT;
+
+        var_dump($this->prompt);
     }
 
     public function getPromptContent(): string
