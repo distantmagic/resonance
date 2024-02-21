@@ -61,9 +61,6 @@ abstract readonly class ConfigurationProvider extends SingletonProvider implemen
 
     public function shouldRegister(): bool
     {
-        return array_key_exists(
-            $this->getConfigurationKey(),
-            $this->configurationFile->config,
-        );
+        return true;
     }
 }

@@ -8,6 +8,7 @@ use Distantmagic\Resonance\Attribute\Intercepts;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\ContentType;
 use Distantmagic\Resonance\HttpInterceptor;
+use Distantmagic\Resonance\SecurityPolicyHeaders;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigTemplate;
 use Swoole\Http\Request;
@@ -21,7 +22,10 @@ use Twig\Environment as TwigEnvironment;
 #[Singleton(collection: SingletonCollection::HttpInterceptor)]
 readonly class TwigTemplateInterceptor extends HttpInterceptor
 {
-    public function __construct(private TwigEnvironment $twig) {}
+    public function __construct(
+        private SecurityPolicyHeaders $securityPolicyHeaders,
+        private TwigEnvironment $twig,
+    ) {}
 
     public function intercept(
         Request $request,
@@ -32,6 +36,8 @@ readonly class TwigTemplateInterceptor extends HttpInterceptor
             $intercepted->getTemplatePath(),
             $intercepted->getTemplateData($request, $response),
         );
+
+        $this->securityPolicyHeaders->sendTemplatedPagePolicyHeaders($request, $response);
 
         $response->header('content-type', ContentType::TextHtml->value.';charset=utf-8');
         $response->end($rendered);

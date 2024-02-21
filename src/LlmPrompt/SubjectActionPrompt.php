@@ -41,11 +41,9 @@ readonly class SubjectActionPrompt extends LlmPrompt
             $subjects[] = $subject;
             $allActions = $allActions->merge($actions);
 
-            $allowedActions[] = sprintf(
-                'For "%s" the only allowed actions are: "%s"',
-                $subject,
-                $actions->join('", "'),
-            );
+            foreach ($actions as $action) {
+                $allowedActions[] = sprintf('"%s" "%s"', $subject, $action);
+            }
         }
 
         $allActionsSerialized = implode('", "', $allActions->toArray());
@@ -75,22 +73,17 @@ readonly class SubjectActionPrompt extends LlmPrompt
         }
 
         $this->prompt = <<<PROMPT
-        Always paraphrase everything user says for as one of the
-        "{$allActionsSerialized}" actions with parameters.
+        Summarize and repeat everyting user says using just two words:
+        - the first word being the subject ("{$subjectsSerialized}" or "unknown")
+        - the second word being an action the user mentioned ("{$allActionsSerialized}" or "unknown")
 
-        If you are unsure, use "unknown".
-
-        Summarize and repeat everyting user says using just a few words:
-        - the first one being the subject ("{$subjectsSerialized}" or "unknown")
-        - the second one being an action the user mentioned ("{$allActionsSerialized}" or "unknown")
-
-        Valid combinations of subjects and actions you must adhere to:
+        You must only use the following subject and category combinations:
         {$allowedActionsSerialized}
 
         Respond in the following format always:
-        subject action parameters
+        subject action
 
-        $examplesSerialized
+        {$examplesSerialized}
         PROMPT;
     }
 

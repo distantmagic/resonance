@@ -15,15 +15,22 @@ readonly class ContentSecurityPolicyDirectives implements Stringable
     private Set $directives;
 
     /**
-     * @param array<string> $defaults
+     * @param array<string> $initial
+     * @param array<string> $fallback
      */
-    public function __construct(array $defaults = [])
-    {
-        $this->directives = new Set($defaults);
+    public function __construct(
+        array $initial = [],
+        private array $fallback = [],
+    ) {
+        $this->directives = new Set($initial);
     }
 
     public function __toString(): string
     {
+        if ($this->directives->isEmpty()) {
+            return implode(' ', $this->fallback);
+        }
+
         return $this->directives->join(' ');
     }
 

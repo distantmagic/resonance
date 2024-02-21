@@ -70,6 +70,8 @@ abstract readonly class Turbo extends StaticPageLayout
             <meta property="og:image" content="{$this->staticPageConfiguration->baseUrl}/ogimage.webp">
             <meta property="og:url" content="{$canonicalUrl}">
             <meta property="og:site_name" content="PHP Resonance Framework">
+            <meta name="turbo-refresh-method" content="morph">
+            <meta name="turbo-refresh-scroll" content="preserve">
             <title>{$staticPage->frontMatter->title}</title>
         HTML;
         yield from $this->renderMeta($staticPage);

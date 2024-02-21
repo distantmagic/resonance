@@ -7,7 +7,6 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\ProvidesAuthenticatedUser;
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\Attribute\WantsFeature;
 use Doctrine\ORM\EntityManagerInterface;
 use Ds\Set;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -19,7 +18,6 @@ use WeakMap;
 #[GrantsFeature(Feature::OAuth2)]
 #[ProvidesAuthenticatedUser(1100)]
 #[Singleton(collection: SingletonCollection::AuthenticatedUserStore)]
-#[WantsFeature(Feature::Doctrine)]
 readonly class OAuth2ClaimReader implements AuthenticatedUserStoreInterface
 {
     /**

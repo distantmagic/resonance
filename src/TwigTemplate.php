@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Distantmagic\Resonance\Attribute\ContentSecurityPolicy;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
-#[ContentSecurityPolicy(ContentSecurityPolicyType::Html)]
 final readonly class TwigTemplate implements HttpInterceptableInterface
 {
     /**
