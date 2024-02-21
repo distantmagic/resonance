@@ -12,6 +12,7 @@ use Distantmagic\Resonance\DependencyInjectionContainerException\MissingPhpExten
 use Distantmagic\Resonance\DependencyInjectionContainerException\MissingProvider;
 use Ds\Map;
 use Ds\Set;
+use LogicException;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionFunctionAbstract;
@@ -31,6 +32,16 @@ readonly class DependencyInjectionContainer
      */
     private Map $dependencyProviders;
 
+    /**
+     * @var Set<DependencyProvider<SideEffectProviderInterface>>
+     */
+    private Set $executedSideEffects;
+
+    /**
+     * @var Map<FeatureInterface,Set<DependencyProvider<SideEffectProviderInterface>>>
+     */
+    private Map $sideEffects;
+
     private SingletonContainer $singletons;
 
     /**
@@ -42,7 +53,9 @@ readonly class DependencyInjectionContainer
     {
         $this->collections = new Map();
         $this->dependencyProviders = new Map();
+        $this->executedSideEffects = new Set();
         $this->phpProjectFiles = new PHPProjectFiles();
+        $this->sideEffects = new Map();
         $this->wantedFeatures = new Set();
 
         $this->singletons = new SingletonContainer();
@@ -83,6 +96,21 @@ readonly class DependencyInjectionContainer
     public function enableFeature(FeatureInterface $feature): void
     {
         $this->wantedFeatures->add($feature);
+
+        if (!$this->sideEffects->hasKey($feature)) {
+            return;
+        }
+
+        foreach ($this->sideEffects->get($feature) as $sideEffectDependencyProvider) {
+            if (!$this->executedSideEffects->contains($sideEffectDependencyProvider)) {
+                $this
+                    ->makeSingleton($sideEffectDependencyProvider->providedClassName, new DependencyStack())
+                    ->provideSideEffect()
+                ;
+
+                $this->executedSideEffects->add($sideEffectDependencyProvider);
+            }
+        }
     }
 
     /**
@@ -126,6 +154,24 @@ readonly class DependencyInjectionContainer
                 }
 
                 $this->collections->get($dependencyProvider->collection)->add($dependencyProvider);
+            }
+
+            if ($dependencyProvider->sideEffect) {
+                if (!is_a($dependencyProvider->providedClassName, SideEffectProviderInterface::class, true)) {
+                    throw new LogicException(sprintf(
+                        'Side effect provider must implement "%s" interface',
+                        SideEffectProviderInterface::class,
+                    ));
+                }
+
+                if (!$this->sideEffects->hasKey($dependencyProvider->sideEffect->feature)) {
+                    $this->sideEffects->put($dependencyProvider->sideEffect->feature, new Set());
+                }
+
+                /**
+                 * @var DependencyProvider<SideEffectProviderInterface> $dependencyProvider
+                 */
+                $this->sideEffects->get($dependencyProvider->sideEffect->feature)->add($dependencyProvider);
             }
         }
     }

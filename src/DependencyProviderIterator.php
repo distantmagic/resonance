@@ -6,6 +6,7 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
+use Distantmagic\Resonance\Attribute\SideEffect;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Attribute\WantsFeature;
 use Ds\Set;
@@ -34,6 +35,7 @@ readonly class DependencyProviderIterator implements IteratorAggregate
                 providedClassName: $providedClassName,
                 providerReflectionClass: $reflectionAttribute->reflectionClass,
                 requiredCollections: $this->findRequiredCollections($reflectionClassAttributeManager),
+                sideEffect: $reflectionClassAttributeManager->findAttribute(SideEffect::class),
                 wantsFeatures: $this->pluckFeature($reflectionClassAttributeManager->findAttributes(WantsFeature::class)),
             );
         }
