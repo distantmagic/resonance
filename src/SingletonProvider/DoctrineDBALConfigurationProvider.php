@@ -11,7 +11,9 @@ use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
 use Doctrine\DBAL\Configuration;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Configuration as ORMConfiguration;
+use Symfony\Bridge\Doctrine\Types\UlidType;
 
 /**
  * Reuses the ORM configuration as ORM config is just an extension of the base
@@ -27,6 +29,8 @@ final readonly class DoctrineDBALConfigurationProvider extends SingletonProvider
 
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): Configuration
     {
+        Type::addType('ulid', UlidType::class);
+
         return $this->configuration;
     }
 }

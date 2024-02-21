@@ -59,7 +59,7 @@ final readonly class SessionAuthentication implements AuthenticatedUserStoreInte
     public function setAuthenticatedUser(Request $request, Response $response, UserInterface $user): void
     {
         $session = $this->sessionManager->start($request, $response);
-        $session->data->put('authenticated_user_id', $user->getIdentifier());
+        $session->data->put('authenticated_user_id', (string) $user->getIdentifier());
 
         $this->authenticatedUsers->offsetSet($request, $user);
     }
@@ -76,7 +76,7 @@ final readonly class SessionAuthentication implements AuthenticatedUserStoreInte
             return null;
         }
 
-        $userId = (int) $session->data->get('authenticated_user_id');
+        $userId = (string) $session->data->get('authenticated_user_id');
 
         if (!$userId) {
             return null;

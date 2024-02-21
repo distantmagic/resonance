@@ -55,7 +55,7 @@ class PDOPool extends ConnectionPool
     private function createDSN(string $driver): string
     {
         return match ($driver) {
-            'mysql' => $this->config->hasUnixSocket()
+            'mariadb', 'mysql' => $this->config->hasUnixSocket()
                 ? sprintf(
                     'mysql:unix_socket=%s;dbname=%s;charset=%s',
                     (string) $this->config->getUnixSocket(),

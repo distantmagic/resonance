@@ -59,14 +59,6 @@ readonly class InotifyIterator implements IteratorAggregate
                 if (is_array($events)) {
                     $currentTimeMilis = $this->getCurrentMiliseconds();
 
-                    /**
-                     * @var array{
-                     *   cookie: int,
-                     *   mask: int,
-                     *   name: string,
-                     *   wd: int,
-                     * } $event
-                     */
                     foreach ($events as $event) {
                         $timeDiffMilis = $currentTimeMilis - $previousTimeMilis;
 

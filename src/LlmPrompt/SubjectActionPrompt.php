@@ -80,8 +80,6 @@ readonly class SubjectActionPrompt extends LlmPrompt
 
         If you are unsure, use "unknown".
 
-        When user asks how to do something that means they seek help.
-
         Summarize and repeat everyting user says using just a few words:
         - the first one being the subject ("{$subjectsSerialized}" or "unknown")
         - the second one being an action the user mentioned ("{$allActionsSerialized}" or "unknown")
@@ -94,8 +92,6 @@ readonly class SubjectActionPrompt extends LlmPrompt
 
         $examplesSerialized
         PROMPT;
-
-        var_dump($this->prompt);
     }
 
     public function getPromptContent(): string
