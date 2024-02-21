@@ -28,7 +28,6 @@ readonly class InputValidatorController
      */
     public function validateData(InputValidator $inputValidator, mixed $data): InputValidationResult
     {
-        var_dump($data);
         $constraintResult = $this->cachedConstraints->get($inputValidator)->validate($data);
 
         return $this->castJsonSchemaValidationResult($constraintResult, $inputValidator);
