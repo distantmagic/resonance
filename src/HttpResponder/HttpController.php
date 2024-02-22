@@ -39,8 +39,8 @@ abstract readonly class HttpController extends HttpResponder
      */
     private Map $forwardableMethodReflections;
 
-    private HttpControllerReflectionMethod $handleReflection;
     private HttpControllerParameterResolverAggregate $httpControllerParameterResolverAggregate;
+    private HttpControllerReflectionMethod $invokeReflection;
     private PageNotFound $pageNotFound;
 
     public function __construct(HttpControllerDependencies $controllerDependencies)
@@ -54,13 +54,13 @@ abstract readonly class HttpController extends HttpResponder
 
         $reflectionClass = new ReflectionClass($this);
 
-        $this->handleReflection = $controllerDependencies
+        $this->invokeReflection = $controllerDependencies
             ->httpControllerReflectionMethodCollection
             ->reflectionMethods
             ->get(static::class)
         ;
 
-        foreach ($this->handleReflection->parameters as $parameter) {
+        foreach ($this->invokeReflection->parameters as $parameter) {
             foreach ($parameter->attributes as $attribute) {
                 if ($attribute instanceof OnParameterResolution && !($this->forwardableMethodReflections->hasKey($attribute->forwardTo))) {
                     $forwardableMethodReflection = new ReflectionMethod($this, $attribute->forwardTo);
@@ -80,7 +80,7 @@ abstract readonly class HttpController extends HttpResponder
 
     final public function respond(Request $request, Response $response): null|HttpInterceptableInterface|HttpResponderInterface
     {
-        if ($this->handleReflection->parameters->isEmpty()) {
+        if ($this->invokeReflection->parameters->isEmpty()) {
             /**
              * This method is dynamically built and it's checked in the
              * constructor.
@@ -97,7 +97,7 @@ abstract readonly class HttpController extends HttpResponder
          */
         $resolvedParameterValues = [];
 
-        foreach ($this->handleReflection->parameters as $parameter) {
+        foreach ($this->invokeReflection->parameters as $parameter) {
             $parameterResolution = $this->httpControllerParameterResolverAggregate->resolve(
                 $request,
                 $response,

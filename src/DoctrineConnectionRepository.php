@@ -13,6 +13,7 @@ use Doctrine\DBAL\Driver;
 use Doctrine\DBAL\Logging\Driver as LoggingDriver;
 use Ds\Map;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Swoole\Http\Request;
 use WeakMap;
 
@@ -89,7 +90,11 @@ readonly class DoctrineConnectionRepository
      */
     private function getDriver(string $name): Driver
     {
-        $poolConfiguration = $this->databaseConfiguration->connectionPoolConfiguration->get($name);
+        $poolConfiguration = $this->databaseConfiguration->connectionPoolConfiguration->get($name, null);
+
+        if (is_null($poolConfiguration)) {
+            throw new RuntimeException(sprintf('Connection pool "%s" not found', $name));
+        }
 
         $driver = match ($poolConfiguration->driver) {
             DatabaseConnectionPoolDriverName::MySQL => $this->doctrineMySQLDriver,

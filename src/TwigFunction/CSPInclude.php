@@ -10,7 +10,6 @@ use Distantmagic\Resonance\ContentSecurityPolicyRulesRepository;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigFunction;
 use InvalidArgumentException;
-use Psr\Log\LoggerInterface;
 use Swoole\Http\Request;
 
 #[Singleton(collection: SingletonCollection::TwigFunction)]
@@ -19,7 +18,6 @@ readonly class CSPInclude extends TwigFunction
 {
     public function __construct(
         private ContentSecurityPolicyRulesRepository $contentSecurityPolicyRulesRepository,
-        private LoggerInterface $logger,
     ) {}
 
     public function __invoke(
@@ -28,8 +26,6 @@ readonly class CSPInclude extends TwigFunction
         string $url,
         bool $return = true,
     ): string {
-        $this->logger->debug(sprintf('twig_csp_include("%s", "%s)', $type, $url));
-
         $contentSecurityPolicyRequestRules = $this->contentSecurityPolicyRulesRepository->from($request);
 
         switch ($type) {
