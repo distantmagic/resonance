@@ -88,6 +88,20 @@ about CRUD actions at the {{docs/features/security/authorization/index}} page.
 {% endif %}
 ```
 
+### `csp_include`
+
+Adds an item to {{docs/features/security/content-security-policy/index}} rules.
+
+```twig
+<script src="{{ csp_include(request, 'script-src', 'https://example.com') }}"></script>
+```
+
+You can also suppress the output:
+
+```twig
+{{ csp_include(request, 'frame-src', 'https://frames.example.com', false) }}
+```
+
 ### `csp_nonce`
 
 Generates CSP nonce to be used with Content Security Policy headers. Some 

@@ -10,6 +10,12 @@ title: Changelog
 
 # Changelog
 
+## v0.26.0
+
+- Feature: {{docs/features/ai/prompt-engineering/gemma/index}} prompt template
+- Feature {{docs/features/dependency-injection/index}} side effects
+- Feature {{docs/features/templating/twig/index}} `csp_include` function
+
 ## v0.24.0
 
 - Feature: {{docs/features/grpc/client/index}} client wrapper

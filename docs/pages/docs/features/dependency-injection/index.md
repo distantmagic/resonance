@@ -253,6 +253,69 @@ $foo1 = $container->make(Foo::class);
 $foo2 = $container->make(Foo::class);
 ```
 
+## Features
+
+Sometimes you might want to enable groups of dependencies optionally. For 
+example you might not need to use {{docs/features/websockets/index}} server
+when you only need to generate static pages. You might also want to use some
+singletons as optional dependencies.
+
+To manage features you can use two different annotations:
+
+```php
+use Distnatmagic\Resonance\Feature;
+use Distantmagic\Resonance\Attribute\GrantsFeature;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Attribute\WantsFeature;
+
+// MyClass is only going to be added to the DI container if any other class
+// uses WantsFeature annotation
+#[GrantsFeature(Feature::WebSocket)]]
+#[Singleton]
+class MyClass {}
+
+#[WantsFeature(Feature::WebSocket)]
+#[Singleton]
+class FooClass
+{
+    public function __construct(
+        ?MyClass $myClass = null,
+    )
+    {
+    }
+}
+```
+
+## Side Effects
+
+To execute code when a feature is enabled, you can use side effects.
+
+For example, that class is only going to be executed when `Feature::Doctrine`
+is wanted:
+
+```php
+<?php
+
+namespace App\SideEffectProvider;
+
+use Distantmagic\Resonance\Attribute\SideEffect;
+use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\Feature;
+use Distantmagic\Resonance\SideEffectProvider;
+use Doctrine\DBAL\Types\Type;
+use Symfony\Bridge\Doctrine\Types\UlidType;
+
+#[SideEffect(Feature::Doctrine)]
+#[Singleton]
+readonly class RegisterDoctrineUlidType extends SideEffectProvider
+{
+    public function provideSideEffect(): void
+    {
+        Type::addType('ulid', UlidType::class);
+    }
+}
+```
+
 # Digging Deeper
 
 ## Dependencies Resolution
