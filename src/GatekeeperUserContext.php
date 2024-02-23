@@ -29,4 +29,57 @@ readonly class GatekeeperUserContext
             ->can($this->authenticatedUser, $subject, $crudAction)
         ;
     }
+
+    /**
+     * @param iterable<CrudActionSubjectInterface> $subjects
+     */
+    public function canCrudAll(iterable $subjects, CrudAction $crudAction): bool
+    {
+        foreach ($subjects as $subject) {
+            if (!$this->canCrud($subject, $crudAction)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function canDelete(CrudActionSubjectInterface $subject): bool
+    {
+        return $this->canCrud($subject, CrudAction::Delete);
+    }
+
+    /**
+     * @param iterable<CrudActionSubjectInterface> $subjects
+     */
+    public function canDeleteAll(iterable $subjects): bool
+    {
+        return $this->canCrudAll($subjects, CrudAction::Delete);
+    }
+
+    public function canRead(CrudActionSubjectInterface $subject): bool
+    {
+        return $this->canCrud($subject, CrudAction::Read);
+    }
+
+    /**
+     * @param iterable<CrudActionSubjectInterface> $subjects
+     */
+    public function canReadAll(iterable $subjects): bool
+    {
+        return $this->canCrudAll($subjects, CrudAction::Read);
+    }
+
+    public function canUpdate(CrudActionSubjectInterface $subject): bool
+    {
+        return $this->canCrud($subject, CrudAction::Update);
+    }
+
+    /**
+     * @param iterable<CrudActionSubjectInterface> $subjects
+     */
+    public function canUpdateAll(iterable $subjects): bool
+    {
+        return $this->canCrudAll($subjects, CrudAction::Update);
+    }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Psr\Log\LoggerInterface;
+
 /**
  * @template TResult
  *
@@ -12,7 +14,9 @@ namespace Distantmagic\Resonance;
 abstract readonly class DatabaseQuery implements DatabaseQueryInterface
 {
     public function __construct(
+        private DatabaseConfiguration $databaseConfiguration,
         private DatabaseConnectionPoolRepository $databaseConnectionPoolRepository,
+        private LoggerInterface $logger,
     ) {}
 
     public function isIterable(): bool
@@ -20,8 +24,16 @@ abstract readonly class DatabaseQuery implements DatabaseQueryInterface
         return false;
     }
 
+    /**
+     * @param non-empty-string $name
+     */
     protected function getConnection(string $name = 'default'): DatabaseConnection
     {
-        return new DatabaseConnection($this->databaseConnectionPoolRepository, $name);
+        return new DatabaseConnection(
+            $this->databaseConfiguration,
+            $this->databaseConnectionPoolRepository,
+            $this->logger,
+            $name,
+        );
     }
 }

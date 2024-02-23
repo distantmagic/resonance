@@ -52,13 +52,15 @@ have to create a new object if you want to repeat it.
 
 use Distantmagic\Resonance\DatabaseConnection;
 use Distantmagic\Resonance\DatabaseConnectionPoolRepository;
+use Psr\Log\LoggerInterface;
 
 /**
  * DatabaseConnection grabs one connection from the PDO Pool
  * 
  * @var DatabaseConnectionPoolRepository $databaseConnectionPoolRepository
+ * @var LoggerInterface $logger
  */
-$conn = new DatabaseConnection($databaseConnectionPoolRepository);
+$conn = new DatabaseConnection($databaseConnectionPoolRepository, $logger);
 
 // After returning, when $conn is destroyed by the Garbage Collector
 // database connection is returned back to the pool
@@ -76,8 +78,13 @@ going to use `"readonly"` connection pool:
 
 use Distantmagic\Resonance\DatabaseConnection;
 use Distantmagic\Resonance\DatabaseConnectionPoolRepository;
+use Psr\Log\LoggerInterface;
 
-$conn = new DatabaseConnection($databaseConnectionPoolRepository, 'readonly');
+$conn = new DatabaseConnection(
+    $databaseConnectionPoolRepository, 
+    $logger,
+    'readonly'
+);
 ```
 
 ## Binding Values to Query Parameters
@@ -92,13 +99,15 @@ The primary difference is the Resonance's `bindValue` is chainable:
 
 use Distantmagic\Resonance\DatabaseConnection;
 use Distantmagic\Resonance\DatabaseConnectionPoolRepository;
+use Psr\Log\LoggerInterface;
 
 /**
  * DatabaseConnection grabs one connection from the PDO Pool
  * 
  * @var DatabaseConnectionPoolRepository $databaseConnectionPoolRepository
+ * @var LoggerInterface $logger
  */
-$conn = new DatabaseConnection($databaseConnectionPoolRepository);
+$conn = new DatabaseConnection($databaseConnectionPoolRepository, $logger);
 
 $stmt = $conn->prepare(<<<'SQL'
     INSERT INTO blog_posts

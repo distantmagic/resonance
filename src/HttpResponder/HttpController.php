@@ -16,6 +16,7 @@ use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\HttpResponder\Error\BadRequest;
 use Distantmagic\Resonance\HttpResponder\Error\Forbidden;
 use Distantmagic\Resonance\HttpResponder\Error\PageNotFound;
+use Distantmagic\Resonance\HttpResponder\Error\ServerError;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Ds\Map;
 use LogicException;
@@ -42,6 +43,7 @@ abstract readonly class HttpController extends HttpResponder
     private HttpControllerParameterResolverAggregate $httpControllerParameterResolverAggregate;
     private HttpControllerReflectionMethod $invokeReflection;
     private PageNotFound $pageNotFound;
+    private ServerError $serverError;
 
     public function __construct(HttpControllerDependencies $controllerDependencies)
     {
@@ -51,6 +53,7 @@ abstract readonly class HttpController extends HttpResponder
         $this->forwardableMethodReflections = new Map();
         $this->httpControllerParameterResolverAggregate = $controllerDependencies->httpControllerParameterResolverAggregate;
         $this->pageNotFound = $controllerDependencies->pageNotFound;
+        $this->serverError = $controllerDependencies->serverError;
 
         $reflectionClass = new ReflectionClass($this);
 
@@ -123,6 +126,8 @@ abstract readonly class HttpController extends HttpResponder
                     return $this->pageNotFound;
                 case HttpControllerParameterResolutionStatus::MissingUrlParameterValue:
                     return $this->badRequest;
+                case HttpControllerParameterResolutionStatus::NoResolver:
+                    return $this->serverError;
                 case HttpControllerParameterResolutionStatus::Success:
                     /**
                      * @var mixed explicitly mixed for typechecks

@@ -10,6 +10,7 @@ use Doctrine\DBAL\ParameterType;
 use LogicException;
 use PDO;
 use PDOStatement;
+use Psr\Log\LoggerInterface;
 use Swoole\Database\PDOProxy;
 use Swoole\Database\PDOStatementProxy;
 use Swoole\Event;
@@ -22,13 +23,26 @@ use Swoole\Event;
  */
 readonly class DatabaseConnection implements ServerInfoAwareConnection
 {
+    private DatabaseQueryLogger $databaseQueryLogger;
     private PDO|PDOProxy $pdo;
 
+    /**
+     * @param non-empty-string $connectionPoolName
+     */
     public function __construct(
+        DatabaseConfiguration $databaseConfiguration,
         private DatabaseConnectionPoolRepository $databaseConnectionPoolRepository,
+        LoggerInterface $logger,
         private string $connectionPoolName = 'default',
     ) {
-        $this->pdo = $this->databaseConnectionPoolRepository->getConnection($this->connectionPoolName);
+        $this->databaseQueryLogger = new DatabaseQueryLogger(
+            $databaseConfiguration->connectionPoolConfiguration->get($connectionPoolName),
+            $logger,
+        );
+        $this->pdo = $this
+            ->databaseConnectionPoolRepository
+            ->getConnection($this->connectionPoolName)
+        ;
     }
 
     public function __destruct()
@@ -116,11 +130,17 @@ readonly class DatabaseConnection implements ServerInfoAwareConnection
         $pdoPreparedStatement = $this->pdo->prepare($sql);
         $pdoPreparedStatement = $this->assertNotFalse($pdoPreparedStatement);
 
-        return new DatabasePreparedStatement($pdoPreparedStatement);
+        return new DatabasePreparedStatement(
+            $this->databaseQueryLogger,
+            $pdoPreparedStatement,
+            $sql,
+        );
     }
 
     public function query(string $sql): DatabaseExecutedStatement
     {
+        $this->databaseQueryLogger->onQueryBeforeExecute($sql);
+
         /**
          * @psalm-suppress UndefinedMagicMethod
          *

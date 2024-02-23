@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use LogicException;
+use Psr\Log\LoggerInterface;
 use SensitiveParameter;
 
 trait DoctrineDriverConnectTrait
 {
     public function __construct(
+        private DatabaseConfiguration $databaseConfiguration,
         private DatabaseConnectionPoolRepository $databaseConnectionPoolRepository,
+        private LoggerInterface $logger,
     ) {}
 
     public function connect(
@@ -39,12 +42,14 @@ trait DoctrineDriverConnectTrait
          */
         $connectionPoolName = $driverOptions['connectionPoolName'];
 
-        if (!is_string($connectionPoolName)) {
-            throw new LogicException('Expected driverOptions.connectionPoolName to be a string');
+        if (!is_string($connectionPoolName) || empty($connectionPoolName)) {
+            throw new LogicException('Expected driverOptions.connectionPoolName to be a non-empty-string');
         }
 
         return new DatabaseConnection(
+            $this->databaseConfiguration,
             $this->databaseConnectionPoolRepository,
+            $this->logger,
             $connectionPoolName,
         );
     }

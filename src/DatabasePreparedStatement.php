@@ -14,7 +14,9 @@ use Swoole\Database\PDOStatementProxy;
 readonly class DatabasePreparedStatement implements Statement
 {
     public function __construct(
+        private DatabaseQueryLogger $databaseQueryLogger,
         private PDOStatement|PDOStatementProxy $pdoStatement,
+        private string $sql,
     ) {}
 
     /**
@@ -49,6 +51,8 @@ readonly class DatabasePreparedStatement implements Statement
 
     public function execute($params = null): DatabaseExecutedStatement
     {
+        $this->databaseQueryLogger->onQueryBeforeExecute($this->sql);
+
         /**
          * @var bool
          */

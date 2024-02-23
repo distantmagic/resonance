@@ -36,7 +36,11 @@ readonly class SessionAuthenticatedResolver extends HttpControllerParameterResol
         HttpControllerParameter $parameter,
         Attribute $attribute,
     ): HttpControllerParameterResolution {
-        $user = $this->sessionAuthentication->getAuthenticatedUser($request);
+        $user = $this
+            ->sessionAuthentication
+            ->getAuthenticatedUser($request)
+            ?->user
+        ;
 
         if (!is_null($user)) {
             if ($user instanceof $parameter->className) {
