@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Ds\Map;
+use Psr\Log\LoggerInterface;
 
 readonly class InputValidatorController
 {
@@ -13,7 +14,7 @@ readonly class InputValidatorController
      */
     public Map $cachedConstraints;
 
-    public function __construct()
+    public function __construct(private LoggerInterface $logger)
     {
         $this->cachedConstraints = new Map();
     }
@@ -29,6 +30,13 @@ readonly class InputValidatorController
     public function validateData(InputValidator $inputValidator, mixed $data): InputValidationResult
     {
         $constraintResult = $this->cachedConstraints->get($inputValidator)->validate($data);
+
+        if (ConstraintResultStatus::Invalid === $constraintResult->status) {
+            $this->logger->debug(sprintf(
+                "Input validation failed:\n%s",
+                new ConstraintResultErrorMessage($constraintResult),
+            ));
+        }
 
         return $this->castJsonSchemaValidationResult($constraintResult, $inputValidator);
     }

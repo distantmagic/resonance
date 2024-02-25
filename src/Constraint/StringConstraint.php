@@ -18,6 +18,7 @@ final readonly class StringConstraint extends Constraint
     public function __construct(
         public ?ConstraintStringFormat $format = null,
         ?ConstraintDefaultValue $defaultValue = null,
+        private bool $isEmptyAllowed = false,
         bool $isNullable = false,
         bool $isRequired = true,
     ) {
@@ -28,11 +29,23 @@ final readonly class StringConstraint extends Constraint
         );
     }
 
+    public function allowEmpty(): self
+    {
+        return new self(
+            defaultValue: $this->defaultValue,
+            format: $this->format,
+            isEmptyAllowed: true,
+            isNullable: $this->isNullable,
+            isRequired: $this->isRequired,
+        );
+    }
+
     public function default(mixed $defaultValue): self
     {
         return new self(
             defaultValue: new ConstraintDefaultValue($defaultValue),
             format: $this->format,
+            isEmptyAllowed: $this->isEmptyAllowed,
             isNullable: $this->isNullable,
             isRequired: $this->isRequired,
         );
@@ -43,6 +56,7 @@ final readonly class StringConstraint extends Constraint
         return new self(
             defaultValue: $this->defaultValue ?? new ConstraintDefaultValue(null),
             format: $this->format,
+            isEmptyAllowed: $this->isEmptyAllowed,
             isNullable: true,
             isRequired: $this->isRequired,
         );
@@ -53,6 +67,7 @@ final readonly class StringConstraint extends Constraint
         return new self(
             defaultValue: $this->defaultValue,
             format: $this->format,
+            isEmptyAllowed: $this->isEmptyAllowed,
             isNullable: $this->isNullable,
             isRequired: false,
         );
@@ -62,13 +77,13 @@ final readonly class StringConstraint extends Constraint
     {
         return [
             'type' => 'string',
-            'minLength' => 1,
+            'minLength' => $this->isEmptyAllowed ? 0 : 1,
         ];
     }
 
     protected function doValidate(mixed $notValidatedData, ConstraintPath $path): ConstraintResult
     {
-        if (!is_string($notValidatedData) || empty($notValidatedData)) {
+        if (!is_string($notValidatedData) || (!$this->isEmptyAllowed && empty($notValidatedData))) {
             return new ConstraintResult(
                 castedData: $notValidatedData,
                 path: $path,

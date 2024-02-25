@@ -14,6 +14,20 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(StringConstraint::class)]
 final class StringConstraintTest extends TestCase
 {
+    public function test_allows_empty(): void
+    {
+        $constraint = new StringConstraint();
+
+        self::assertTrue($constraint->allowEmpty()->validate('')->status->isValid());
+    }
+
+    public function test_disallows_empty(): void
+    {
+        $constraint = new StringConstraint();
+
+        self::assertFalse($constraint->validate('')->status->isValid());
+    }
+
     public function test_is_converted_optionally_to_json_schema(): void
     {
         $constraint = new StringConstraint();
