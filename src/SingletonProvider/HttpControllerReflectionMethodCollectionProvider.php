@@ -34,7 +34,7 @@ final readonly class HttpControllerReflectionMethodCollectionProvider extends Si
             if (is_a($httpResponderClassName, HttpController::class, true)) {
                 $reflectionMethod = $httpResponderAttribute
                     ->reflectionClass
-                    ->getMethod('handle')
+                    ->getMethod(HttpController::MAGIC_METHOD_RESPOND)
                 ;
 
                 /**

@@ -6,7 +6,10 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\CurrentRequest;
 use Distantmagic\Resonance\Attribute\CurrentResponse;
+use Distantmagic\Resonance\Attribute\DoctrineEntityManager;
+use Distantmagic\Resonance\Attribute\SessionAuthenticated;
 use Distantmagic\Resonance\HttpResponder\HttpController;
+use Doctrine\ORM\EntityManagerInterface;
 use Ds\Set;
 use Generator;
 use ReflectionAttribute;
@@ -167,10 +170,14 @@ readonly class HttpControllerReflectionMethod
 
         switch (count($routeParameterAttributes)) {
             case 0:
-                if (is_a($className, Request::class, true)) {
+                if (is_a($className, EntityManagerInterface::class, true)) {
+                    $attributes->add(new DoctrineEntityManager());
+                } elseif (is_a($className, Request::class, true)) {
                     $attributes->add(new CurrentRequest());
                 } elseif (is_a($className, Response::class, true)) {
                     $attributes->add(new CurrentResponse());
+                } elseif (is_a($className, UserInterface::class, true)) {
+                    $attributes->add(new SessionAuthenticated());
                 }
 
                 break;

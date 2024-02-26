@@ -27,6 +27,8 @@ use Swoole\Http\Response;
 
 abstract readonly class HttpController extends HttpResponder
 {
+    public const MAGIC_METHOD_RESPOND = 'fsapokfaspfas';
+
     private BadRequest $badRequest;
     private Forbidden $forbidden;
 
@@ -85,14 +87,9 @@ abstract readonly class HttpController extends HttpResponder
     {
         if ($this->invokeReflection->parameters->isEmpty()) {
             /**
-             * This method is dynamically built and it's checked in the
-             * constructor.
-             *
-             * @psalm-suppress UndefinedMethod
-             *
              * @var null|HttpInterceptableInterface|HttpResponderInterface
              */
-            return $this->handle();
+            return $this->{self::MAGIC_METHOD_RESPOND}();
         }
 
         /**
@@ -146,11 +143,9 @@ abstract readonly class HttpController extends HttpResponder
          * This method is dynamically built and it's checked in the
          * constructor.
          *
-         * @psalm-suppress UndefinedMethod
-         *
          * @var null|HttpInterceptableInterface|HttpResponderInterface
          */
-        return $this->handle(...$resolvedParameterValues);
+        return $this->{self::MAGIC_METHOD_RESPOND}(...$resolvedParameterValues);
     }
 
     private function forwardResolvedParameter(

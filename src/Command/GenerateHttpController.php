@@ -85,7 +85,7 @@ final class GenerateHttpController extends Command
         $class->setFinal(true);
         $class->setReadOnly(true);
 
-        $method = $class->addMethod('handle');
+        $method = $class->addMethod(HttpController::MAGIC_METHOD_RESPOND);
         $method->setReturnType(implode('|', [
             'null',
             HttpInterceptableInterface::class,
