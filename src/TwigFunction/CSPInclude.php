@@ -10,7 +10,7 @@ use Distantmagic\Resonance\ContentSecurityPolicyRulesRepository;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigFunction;
 use InvalidArgumentException;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[Singleton(collection: SingletonCollection::TwigFunction)]
 #[TwigFunctionAttribute]
@@ -21,7 +21,7 @@ readonly class CSPInclude extends TwigFunction
     ) {}
 
     public function __invoke(
-        Request $request,
+        ServerRequestInterface $request,
         string $type,
         string $url,
         bool $return = true,

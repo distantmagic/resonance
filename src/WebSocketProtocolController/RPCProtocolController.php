@@ -28,9 +28,9 @@ use Distantmagic\Resonance\WebSocketRPCConnectionHandle;
 use Distantmagic\Resonance\WebSocketRPCResponderAggregate;
 use Ds\Map;
 use JsonException;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Swoole\Http\Request;
 use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server;
 use Throwable;
@@ -47,7 +47,7 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
 
     public function __construct(
         private CSRFManager $csrfManager,
-        private AuthenticatedUserStoreAggregate $authenticatedUserSourceAggregate,
+        private AuthenticatedUserStoreAggregate $authenticatedUserStoreAggregate,
         private Gatekeeper $gatekeeper,
         private InputValidatorController $inputValidatorController,
         private JsonSerializer $jsonSerializer,
@@ -62,15 +62,15 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
         $this->connectionHandles = new Map();
     }
 
-    public function isAuthorizedToConnect(Request $request): WebSocketAuthResolution
+    public function isAuthorizedToConnect(ServerRequestInterface $request): WebSocketAuthResolution
     {
-        if (!is_array($request->get) || !$this->csrfManager->checkToken($request, $request->get)) {
+        if (!$this->csrfManager->checkToken($request, $request->getQueryParams())) {
             $this->logger->debug('WebSocket: Invalid CSRF token');
 
             return new WebSocketAuthResolution(false);
         }
 
-        $user = $this->authenticatedUserSourceAggregate->getAuthenticatedUser($request);
+        $user = $this->authenticatedUserStoreAggregate->getAuthenticatedUser($request);
 
         return new WebSocketAuthResolution(
             $this->gatekeeper->withUser($user)->can(SiteAction::StartWebSocketRPCConnection),

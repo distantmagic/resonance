@@ -14,7 +14,7 @@ use Distantmagic\Resonance\HttpMiddleware;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\SecurityPolicyHeaders;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 /**
@@ -32,7 +32,7 @@ readonly class ContentSecurityPolicyMiddleware extends HttpMiddleware
     ) {}
 
     public function preprocess(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         Attribute $attribute,
         HttpInterceptableInterface|HttpResponderInterface $next,

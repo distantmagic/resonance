@@ -12,15 +12,15 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Ds\Map;
 use LogicException;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Context;
-use Swoole\Http\Request;
 use WeakMap;
 
 readonly class DoctrineEntityManagerRepository
 {
     /**
-     * @var WeakMap<Request,Map<string,EntityManagerInterface>>
+     * @var WeakMap<ServerRequestInterface,Map<string,EntityManagerInterface>>
      */
     private WeakMap $entityManagers;
 
@@ -30,7 +30,7 @@ readonly class DoctrineEntityManagerRepository
         private EventManager $eventManager,
     ) {
         /**
-         * @var WeakMap<Request,Map<string,EntityManagerInterface>>
+         * @var WeakMap<ServerRequestInterface,Map<string,EntityManagerInterface>>
          */
         $this->entityManagers = new WeakMap();
     }
@@ -56,7 +56,7 @@ readonly class DoctrineEntityManagerRepository
     /**
      * @param non-empty-string $name
      */
-    public function getEntityManager(Request $request, string $name = 'default'): EntityManagerInterface
+    public function getEntityManager(ServerRequestInterface $request, string $name = 'default'): EntityManagerInterface
     {
         if (!$this->entityManagers->offsetExists($request)) {
             $this->entityManagers->offsetSet($request, new Map());

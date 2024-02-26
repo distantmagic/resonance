@@ -79,7 +79,7 @@ readonly class SwooleServer
         $this->server->on('beforeShutdown', $this->onBeforeShutdown(...));
         $this->server->on('pipeMessage', $this->serverPipeMessageDispatcher->onPipeMessage(...));
         $this->server->on('finish', $this->serverTaskHandlerDispatcher->onFinish(...));
-        $this->server->on('request', $this->httpResponderAggregate->respond(...));
+        $this->server->on('request', $this->httpResponderAggregate->respondToSwooleRequest(...));
         $this->server->on('start', $this->onStart(...));
         $this->server->on('task', $this->serverTaskHandlerDispatcher->onTask(...));
 

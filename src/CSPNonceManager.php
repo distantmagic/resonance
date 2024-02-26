@@ -5,26 +5,26 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use WeakMap;
 
 #[Singleton]
 final readonly class CSPNonceManager
 {
     /**
-     * @var WeakMap<Request, string>
+     * @var WeakMap<ServerRequestInterface,string>
      */
     private WeakMap $nonces;
 
     public function __construct()
     {
         /**
-         * @var WeakMap<Request, string>
+         * @var WeakMap<ServerRequestInterface,string>
          */
         $this->nonces = new WeakMap();
     }
 
-    public function getRequestNonce(Request $request): string
+    public function getRequestNonce(ServerRequestInterface $request): string
     {
         if ($this->nonces->offsetExists($request)) {
             return $this->nonces->offsetGet($request);

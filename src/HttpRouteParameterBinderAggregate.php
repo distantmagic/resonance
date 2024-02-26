@@ -6,7 +6,7 @@ namespace Distantmagic\Resonance;
 
 use Ds\Map;
 use LogicException;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 readonly class HttpRouteParameterBinderAggregate
@@ -29,7 +29,7 @@ readonly class HttpRouteParameterBinderAggregate
      * @return null|TResult
      */
     public function provide(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         string $className,
         string $routeParameterValue,

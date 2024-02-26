@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 final readonly class TwigTemplate implements HttpInterceptableInterface
@@ -17,7 +17,7 @@ final readonly class TwigTemplate implements HttpInterceptableInterface
         private array $templateData = [],
     ) {}
 
-    public function getTemplateData(Request $request, Response $response): array
+    public function getTemplateData(ServerRequestInterface $request, Response $response): array
     {
         return $this->templateData + [
             'request' => $request,

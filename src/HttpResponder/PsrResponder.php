@@ -6,14 +6,14 @@ namespace Distantmagic\Resonance\HttpResponder;
 
 use Distantmagic\Resonance\HttpResponder;
 use Psr\Http\Message\ResponseInterface;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 readonly class PsrResponder extends HttpResponder
 {
     public function __construct(public ResponseInterface $psrResponse) {}
 
-    public function respond(Request $request, Response $response): null
+    public function respond(ServerRequestInterface $request, Response $response): null
     {
         $response->status(
             $this->psrResponse->getStatusCode(),

@@ -7,7 +7,7 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\ProvidesAuthenticatedUser;
 use Distantmagic\Resonance\Attribute\Singleton;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 use WeakMap;
 
@@ -17,7 +17,7 @@ use WeakMap;
 final readonly class SessionAuthentication implements AuthenticatedUserStoreInterface
 {
     /**
-     * @var WeakMap<Request, ?UserInterface>
+     * @var WeakMap<ServerRequestInterface, ?UserInterface>
      */
     private WeakMap $authenticatedUsers;
 
@@ -26,17 +26,17 @@ final readonly class SessionAuthentication implements AuthenticatedUserStoreInte
         private UserRepositoryInterface $userRepository,
     ) {
         /**
-         * @var WeakMap<Request, ?UserInterface>
+         * @var WeakMap<ServerRequestInterface, ?UserInterface>
          */
         $this->authenticatedUsers = new WeakMap();
     }
 
-    public function clearAuthenticatedUser(Request $request): void
+    public function clearAuthenticatedUser(ServerRequestInterface $request): void
     {
         $this->sessionManager->restoreFromRequest($request)?->data->clear();
     }
 
-    public function getAuthenticatedUser(Request $request): ?AuthenticatedUser
+    public function getAuthenticatedUser(ServerRequestInterface $request): ?AuthenticatedUser
     {
         if ($this->authenticatedUsers->offsetExists($request)) {
             return new AuthenticatedUser(
@@ -56,7 +56,7 @@ final readonly class SessionAuthentication implements AuthenticatedUserStoreInte
         return new AuthenticatedUser(AuthenticatedUserSource::Session, $user);
     }
 
-    public function setAuthenticatedUser(Request $request, Response $response, UserInterface $user): void
+    public function setAuthenticatedUser(ServerRequestInterface $request, Response $response, UserInterface $user): void
     {
         $session = $this->sessionManager->start($request, $response);
         $session->data->put('authenticated_user_id', (string) $user->getIdentifier());
@@ -64,7 +64,7 @@ final readonly class SessionAuthentication implements AuthenticatedUserStoreInte
         $this->authenticatedUsers->offsetSet($request, $user);
     }
 
-    private function doGetAuthenticatedUser(Request $request): ?UserInterface
+    private function doGetAuthenticatedUser(ServerRequestInterface $request): ?UserInterface
     {
         $session = $this->sessionManager->restoreFromRequest($request);
 

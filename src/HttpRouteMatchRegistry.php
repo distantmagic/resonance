@@ -6,26 +6,26 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use OutOfBoundsException;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use WeakMap;
 
 #[Singleton]
 final readonly class HttpRouteMatchRegistry
 {
     /**
-     * @var WeakMap<Request, HttpRouteMatch>
+     * @var WeakMap<ServerRequestInterface,HttpRouteMatch>
      */
     private WeakMap $matchesMap;
 
     public function __construct()
     {
         /**
-         * @var WeakMap<Request, HttpRouteMatch>
+         * @var WeakMap<ServerRequestInterface,HttpRouteMatch>
          */
         $this->matchesMap = new WeakMap();
     }
 
-    public function get(Request $request): HttpRouteMatch
+    public function get(ServerRequestInterface $request): HttpRouteMatch
     {
         if (!$this->matchesMap->offsetExists($request)) {
             throw new OutOfBoundsException('Request does not have a registered route match');
@@ -34,12 +34,12 @@ final readonly class HttpRouteMatchRegistry
         return $this->matchesMap->offsetGet($request);
     }
 
-    public function getVar(Request $request, string $varName): string
+    public function getVar(ServerRequestInterface $request, string $varName): string
     {
         return $this->get($request)->routeVars->get($varName);
     }
 
-    public function set(Request $request, HttpRouteMatch $routeMatch): void
+    public function set(ServerRequestInterface $request, HttpRouteMatch $routeMatch): void
     {
         $this->matchesMap->offsetSet($request, $routeMatch);
     }

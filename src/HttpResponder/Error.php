@@ -14,7 +14,7 @@ use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\JsonErrorTemplateInterface;
 use Distantmagic\Resonance\SecurityPolicyHeaders;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 abstract readonly class Error extends HttpResponder
@@ -39,7 +39,7 @@ abstract readonly class Error extends HttpResponder
         $this->contentTypeResponder->responders->add(ContentType::ApplicationJson);
     }
 
-    public function respond(Request $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
+    public function respond(ServerRequestInterface $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
     {
         return match ($this->contentTypeResponder->best($request)) {
             ContentType::ApplicationJson => $this->sendJson($request, $response),
@@ -48,7 +48,7 @@ abstract readonly class Error extends HttpResponder
         };
     }
 
-    protected function sendJson(Request $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
+    protected function sendJson(ServerRequestInterface $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
     {
         $response->status($this->httpError->code());
         $this->securityPolicyHeaders->sendJsonPagePolicyHeaders($response);
@@ -56,7 +56,7 @@ abstract readonly class Error extends HttpResponder
         return $this->jsonTemplate->renderHttpError($request, $response, $this->httpError);
     }
 
-    private function sendHtml(Request $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
+    private function sendHtml(ServerRequestInterface $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
     {
         $response->status($this->httpError->code());
         $this->securityPolicyHeaders->sendTemplatedPagePolicyHeaders($request, $response);

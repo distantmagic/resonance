@@ -10,8 +10,8 @@ use Distantmagic\Resonance\Gatekeeper;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SiteActionInterface;
 use Distantmagic\Resonance\TwigFunction;
+use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
-use Swoole\Http\Request;
 
 #[Singleton(collection: SingletonCollection::TwigFunction)]
 #[TwigFunctionAttribute]
@@ -20,7 +20,7 @@ readonly class GatekeeperCan extends TwigFunction
     public function __construct(private Gatekeeper $gatekeeper) {}
 
     public function __invoke(
-        Request $request,
+        ServerRequestInterface $request,
         SiteActionInterface|string $siteAction,
     ): bool {
         if (!is_string($siteAction)) {

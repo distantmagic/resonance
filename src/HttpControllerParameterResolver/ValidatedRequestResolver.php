@@ -16,7 +16,7 @@ use Distantmagic\Resonance\InputValidatorCollection;
 use Distantmagic\Resonance\InputValidatorController;
 use Distantmagic\Resonance\SingletonCollection;
 use LogicException;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 /**
@@ -32,7 +32,7 @@ readonly class ValidatedRequestResolver extends HttpControllerParameterResolver
     ) {}
 
     public function resolve(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         HttpControllerParameter $parameter,
         Attribute $attribute,
@@ -46,7 +46,7 @@ readonly class ValidatedRequestResolver extends HttpControllerParameterResolver
         $validator = $this->inputValidatorCollection->inputValidators->get($validatorClassName);
         $validationResult = $this
             ->inputValidatorController
-            ->validateData($validator, $request->post)
+            ->validateData($validator, $request->getParsedBody() ?? [])
         ;
 
         if ($validationResult->inputValidatedData) {

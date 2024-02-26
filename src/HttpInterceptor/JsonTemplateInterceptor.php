@@ -12,7 +12,7 @@ use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\JsonSerializer;
 use Distantmagic\Resonance\JsonTemplate;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 /**
@@ -25,7 +25,7 @@ readonly class JsonTemplateInterceptor extends HttpInterceptor
     public function __construct(private JsonSerializer $jsonSerializer) {}
 
     public function intercept(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         object $intercepted,
     ): HttpResponderInterface {

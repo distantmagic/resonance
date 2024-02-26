@@ -9,7 +9,7 @@ use Distantmagic\Resonance\Attribute\TwigFilter as TwigFilterAttribute;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TranslatorBridge;
 use Distantmagic\Resonance\TwigFilter;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[Singleton(collection: SingletonCollection::TwigFilter)]
 #[TwigFilterAttribute]
@@ -20,7 +20,7 @@ readonly class Trans extends TwigFilter
     /**
      * @param array<string, string> $parameters
      */
-    public function __invoke(string $message, Request $request, array $parameters = []): string
+    public function __invoke(string $message, ServerRequestInterface $request, array $parameters = []): string
     {
         return $this->translatorBridge->trans($request, $message, $parameters);
     }

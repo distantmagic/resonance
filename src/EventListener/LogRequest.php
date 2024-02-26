@@ -34,18 +34,10 @@ final readonly class LogRequest extends EventListener
             return;
         }
 
-        $server = $event->request->server;
-
-        if (!is_array($server)) {
-            $this->logger->debug('request has no server data to log');
-
-            return;
-        }
-
         $this->logger->debug(sprintf(
             '%s: %s',
-            (string) $server['request_method'],
-            (string) $server['path_info'],
+            $event->request->getMethod(),
+            $event->request->getUri()->getPath(),
         ));
     }
 

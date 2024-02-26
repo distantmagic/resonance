@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Ds\Set;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 readonly class AuthenticatedUserStoreAggregate
 {
@@ -22,7 +22,7 @@ readonly class AuthenticatedUserStoreAggregate
         $this->storages = new Set();
     }
 
-    public function getAuthenticatedUser(Request $request): ?AuthenticatedUser
+    public function getAuthenticatedUser(ServerRequestInterface $request): ?AuthenticatedUser
     {
         foreach ($this->storages as $storage) {
             $authenticatedUser = $storage->getAuthenticatedUser($request);

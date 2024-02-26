@@ -14,8 +14,8 @@ use Distantmagic\Resonance\OAuth2AuthorizationCodeFlowControllerInterface;
 use Distantmagic\Resonance\OAuth2AuthorizationRequestSessionStore;
 use Distantmagic\Resonance\OAuth2AuthorizedUser;
 use Distantmagic\Resonance\SessionAuthentication;
+use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
-use Swoole\Http\Request;
 use Swoole\Http\Response;
 
 #[GrantsFeature(Feature::OAuth2)]
@@ -28,7 +28,7 @@ final readonly class PostSessionAuthentication extends HttpResponder
         private SessionAuthentication $sessionAuthentication,
     ) {}
 
-    public function respond(Request $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
+    public function respond(ServerRequestInterface $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
     {
         if (!$this->authorizationRequestSessionStore->has($request, $response)) {
             return $this->authorizationCodeFlowController->redirectToAuthenticatedPage($request, $response);

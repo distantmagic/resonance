@@ -13,11 +13,10 @@ use Distantmagic\Resonance\HttpResponder\PsrResponder;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\OAuth2AuthorizationCodeFlowControllerInterface;
 use Distantmagic\Resonance\OAuth2AuthorizationRequestSessionStore;
-use Distantmagic\Resonance\PsrServerRequestConverter;
 use League\OAuth2\Server\AuthorizationServer as LeagueAuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 #[GrantsFeature(Feature::OAuth2)]
@@ -28,21 +27,15 @@ final readonly class Authorization extends HttpResponder
         private LeagueAuthorizationServer $leagueAuthorizationServer,
         private OAuth2AuthorizationCodeFlowControllerInterface $authorizationCodeFlowController,
         private OAuth2AuthorizationRequestSessionStore $authorizationRequestSessionStore,
-        private PsrServerRequestConverter $psrServerRequestConverter,
         private Psr17Factory $psr17Factory,
     ) {}
 
-    public function respond(Request $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
+    public function respond(ServerRequestInterface $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
     {
-        $serverRequest = $this
-            ->psrServerRequestConverter
-            ->convertToServerRequest($request)
-        ;
-
         try {
             $authRequest = $this
                 ->leagueAuthorizationServer
-                ->validateAuthorizationRequest($serverRequest)
+                ->validateAuthorizationRequest($request)
             ;
 
         } catch (OAuthServerException $exception) {

@@ -12,7 +12,7 @@ use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\InternalLinkBuilder;
 use Distantmagic\Resonance\InternalRedirect;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 /**
@@ -25,7 +25,7 @@ readonly class InternalRedirectInterceptor extends HttpInterceptor
     public function __construct(private InternalLinkBuilder $internalLinkBuilder) {}
 
     public function intercept(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         object $intercepted,
     ): HttpResponderInterface {

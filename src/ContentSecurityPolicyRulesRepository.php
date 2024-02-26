@@ -5,26 +5,26 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use WeakMap;
 
 #[Singleton]
 readonly class ContentSecurityPolicyRulesRepository
 {
     /**
-     * @var WeakMap<Request,ContentSecurityPolicyRequestRules>
+     * @var WeakMap<ServerRequestInterface,ContentSecurityPolicyRequestRules>
      */
     private WeakMap $rules;
 
     public function __construct()
     {
         /**
-         * @var WeakMap<Request,ContentSecurityPolicyRequestRules>
+         * @var WeakMap<ServerRequestInterface,ContentSecurityPolicyRequestRules>
          */
         $this->rules = new WeakMap();
     }
 
-    public function from(Request $request): ContentSecurityPolicyRequestRules
+    public function from(ServerRequestInterface $request): ContentSecurityPolicyRequestRules
     {
         $rules = $this->get($request);
 
@@ -38,7 +38,7 @@ readonly class ContentSecurityPolicyRulesRepository
         return $rules;
     }
 
-    public function get(Request $request): ?ContentSecurityPolicyRequestRules
+    public function get(ServerRequestInterface $request): ?ContentSecurityPolicyRequestRules
     {
         if (!$this->has($request)) {
             return null;
@@ -47,7 +47,7 @@ readonly class ContentSecurityPolicyRulesRepository
         return $this->rules->offsetGet($request);
     }
 
-    public function has(Request $request): bool
+    public function has(ServerRequestInterface $request): bool
     {
         return $this->rules->offsetExists($request);
     }

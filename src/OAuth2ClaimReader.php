@@ -12,7 +12,7 @@ use Ds\Set;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\ResourceServer;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use WeakMap;
 
 #[GrantsFeature(Feature::OAuth2)]
@@ -21,25 +21,24 @@ use WeakMap;
 readonly class OAuth2ClaimReader implements AuthenticatedUserStoreInterface
 {
     /**
-     * @var WeakMap<Request,OAuth2Claim>
+     * @var WeakMap<ServerRequestInterface,OAuth2Claim>
      */
     private WeakMap $claims;
 
     public function __construct(
         private DoctrineEntityManagerRepository $doctrineEntityManagerRepository,
         private OAuth2EntityRepositoryInterface $oAuth2EntityRepository,
-        private PsrServerRequestConverter $psrServerRequestConverter,
         private ResourceServer $resourceServer,
         private UserRepositoryInterface $userRepository,
         private ScopeRepositoryInterface $scopeRepository,
     ) {
         /**
-         * @var WeakMap<Request,OAuth2Claim>
+         * @var WeakMap<ServerRequestInterface,OAuth2Claim>
          */
         $this->claims = new WeakMap();
     }
 
-    public function getAuthenticatedUser(Request $request): ?AuthenticatedUser
+    public function getAuthenticatedUser(ServerRequestInterface $request): ?AuthenticatedUser
     {
         if (!$this->hasClaim($request)) {
             return null;
@@ -51,12 +50,12 @@ readonly class OAuth2ClaimReader implements AuthenticatedUserStoreInterface
         );
     }
 
-    public function hasClaim(Request $request): bool
+    public function hasClaim(ServerRequestInterface $request): bool
     {
-        return isset($request->header['authorization']) && is_string($request->header['authorization']);
+        return $request->hasHeader('authorization');
     }
 
-    public function readClaim(Request $request): OAuth2Claim
+    public function readClaim(ServerRequestInterface $request): OAuth2Claim
     {
         if ($this->claims->offsetExists($request)) {
             return $this->claims->offsetGet($request);
@@ -69,18 +68,17 @@ readonly class OAuth2ClaimReader implements AuthenticatedUserStoreInterface
         return $claim;
     }
 
-    private function doReadClaim(Request $request): OAuth2Claim
+    private function doReadClaim(ServerRequestInterface $request): OAuth2Claim
     {
-        $serverRequest = $this->psrServerRequestConverter->convertToServerRequest($request);
-        $serverRequest = $this
+        $request = $this
             ->resourceServer
-            ->validateAuthenticatedRequest($serverRequest)
+            ->validateAuthenticatedRequest($request)
         ;
 
         return $this
             ->doctrineEntityManagerRepository
-            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($serverRequest): OAuth2Claim {
-                $accessTokenId = $serverRequest->getAttribute('oauth_access_token_id');
+            ->withEntityManager(function (EntityManagerInterface $entityManager) use ($request): OAuth2Claim {
+                $accessTokenId = $request->getAttribute('oauth_access_token_id');
 
                 if (!is_string($accessTokenId)) {
                     throw OAuthServerException::invalidRequest('oauth_access_token_id');
@@ -95,7 +93,7 @@ readonly class OAuth2ClaimReader implements AuthenticatedUserStoreInterface
                     throw OAuthServerException::invalidRequest('oauth_access_token_id');
                 }
 
-                $clientId = $serverRequest->getAttribute('oauth_client_id');
+                $clientId = $request->getAttribute('oauth_client_id');
 
                 if (!is_string($clientId)) {
                     throw OAuthServerException::invalidRequest('oauth_client_id');
@@ -110,7 +108,7 @@ readonly class OAuth2ClaimReader implements AuthenticatedUserStoreInterface
                     throw OAuthServerException::invalidRequest('oauth_client_id');
                 }
 
-                $userId = $serverRequest->getAttribute('oauth_user_id');
+                $userId = $request->getAttribute('oauth_user_id');
 
                 if (!is_string($userId)) {
                     throw OAuthServerException::invalidRequest('oauth_user_id');
@@ -122,7 +120,7 @@ readonly class OAuth2ClaimReader implements AuthenticatedUserStoreInterface
                     throw OAuthServerException::invalidRequest('oauth_user_id');
                 }
 
-                $scopes = $serverRequest->getAttribute('oauth_scopes');
+                $scopes = $request->getAttribute('oauth_scopes');
 
                 if (!is_array($scopes)) {
                     throw OAuthServerException::invalidRequest('oauth_scopes');

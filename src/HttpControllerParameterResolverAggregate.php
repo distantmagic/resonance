@@ -6,7 +6,7 @@ namespace Distantmagic\Resonance;
 
 use Ds\Map;
 use LogicException;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 readonly class HttpControllerParameterResolverAggregate
@@ -22,7 +22,7 @@ readonly class HttpControllerParameterResolverAggregate
     }
 
     public function resolve(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         HttpControllerParameter $parameter,
     ): HttpControllerParameterResolution {

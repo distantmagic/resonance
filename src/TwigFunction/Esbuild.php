@@ -9,7 +9,7 @@ use Distantmagic\Resonance\Attribute\TwigFunction as TwigFunctionAttribute;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigEsbuildContext;
 use Distantmagic\Resonance\TwigFunction;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[Singleton(collection: SingletonCollection::TwigFunction)]
 #[TwigFunctionAttribute]
@@ -17,7 +17,7 @@ readonly class Esbuild extends TwigFunction
 {
     public function __construct(private TwigEsbuildContext $esbuildContext) {}
 
-    public function __invoke(Request $request, string $asset): string
+    public function __invoke(ServerRequestInterface $request, string $asset): string
     {
         $esbuildMetaEntryPoints = $this->esbuildContext->getEntryPoints($request);
 

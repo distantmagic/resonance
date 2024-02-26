@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 interface AuthenticatedUserStoreInterface
 {
-    public function getAuthenticatedUser(Request $request): ?AuthenticatedUser;
+    public function getAuthenticatedUser(ServerRequestInterface $request): ?AuthenticatedUser;
 }

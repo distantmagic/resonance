@@ -9,7 +9,7 @@ use DateTimeInterface;
 use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Attribute\Singleton;
 use IntlDateFormatter;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[Singleton]
 #[RequiresPhpExtension('intl')]
@@ -23,7 +23,7 @@ final readonly class IntlFormatter
     }
 
     public function formatDate(
-        Request $request,
+        ServerRequestInterface $request,
         null|DateTimeInterface|string $date,
         int $dateTimeFormat = IntlDateFormatter::MEDIUM,
         int $timeTypeFormat = IntlDateFormatter::SHORT,

@@ -12,9 +12,9 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver;
 use Doctrine\DBAL\Logging\Driver as LoggingDriver;
 use Ds\Map;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Swoole\Http\Request;
 use WeakMap;
 
 /**
@@ -27,7 +27,7 @@ use WeakMap;
 readonly class DoctrineConnectionRepository
 {
     /**
-     * @var WeakMap<Request,Map<string,Connection>>
+     * @var WeakMap<ServerRequestInterface,Map<string,Connection>>
      */
     public WeakMap $connections;
 
@@ -41,7 +41,7 @@ readonly class DoctrineConnectionRepository
         private LoggerInterface $logger,
     ) {
         /**
-         * @var WeakMap<Request,Map<string,Connection>>
+         * @var WeakMap<ServerRequestInterface,Map<string,Connection>>
          */
         $this->connections = new WeakMap();
     }
@@ -66,7 +66,7 @@ readonly class DoctrineConnectionRepository
     /**
      * @param non-empty-string $name
      */
-    public function getConnection(Request $request, string $name = 'default'): Connection
+    public function getConnection(ServerRequestInterface $request, string $name = 'default'): Connection
     {
         if (!$this->connections->offsetExists($request)) {
             $this->connections->offsetSet($request, new Map());

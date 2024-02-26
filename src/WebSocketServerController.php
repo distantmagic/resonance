@@ -49,7 +49,9 @@ final readonly class WebSocketServerController implements ServerPipeMessageHandl
     private Map $protocolControllers;
 
     public function __construct(
+        private ApplicationConfiguration $applicationConfiguration,
         private LoggerInterface $logger,
+        private SwooleConfiguration $swooleConfiguration,
         private WebSocketProtocolControllerAggregate $protocolControllerAggregate,
         private WebSocketServerConnectionTable $webSocketServerConnectionTable,
     ) {
@@ -111,7 +113,13 @@ final readonly class WebSocketServerController implements ServerPipeMessageHandl
             return;
         }
 
-        $authResolution = $controllerResolution->controller->isAuthorizedToConnect($request);
+        $psrRequest = new SwooleServerRequest(
+            applicationConfiguration: $this->applicationConfiguration,
+            request: $request,
+            swooleConfiguration: $this->swooleConfiguration,
+        );
+
+        $authResolution = $controllerResolution->controller->isAuthorizedToConnect($psrRequest);
 
         if (!$authResolution->isAuthorizedToConnect) {
             $this->logger->debug(self::MESSAGE_NOT_AUTHORIZED);

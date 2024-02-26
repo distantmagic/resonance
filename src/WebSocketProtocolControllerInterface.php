@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server;
 
 interface WebSocketProtocolControllerInterface
 {
-    public function isAuthorizedToConnect(Request $request): WebSocketAuthResolution;
+    public function isAuthorizedToConnect(ServerRequestInterface $request): WebSocketAuthResolution;
 
     public function onClose(int $fd): void;
 

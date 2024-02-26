@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 /**
@@ -16,7 +16,7 @@ interface HttpMiddlewareInterface
      * @param TAttribute $attribute
      */
     public function preprocess(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         Attribute $attribute,
         HttpInterceptableInterface|HttpResponderInterface $next,

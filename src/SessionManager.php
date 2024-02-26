@@ -6,7 +6,7 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 use WeakMap;
 
@@ -15,7 +15,7 @@ use WeakMap;
 final readonly class SessionManager
 {
     /**
-     * @var WeakMap<Request, Session>
+     * @var WeakMap<ServerRequestInterface, Session>
      */
     private WeakMap $sessions;
 
@@ -25,33 +25,32 @@ final readonly class SessionManager
         private SessionConfiguration $sessionConfiguration,
     ) {
         /**
-         * @var WeakMap<Request, Session>
+         * @var WeakMap<ServerRequestInterface, Session>
          */
         $this->sessions = new WeakMap();
     }
 
-    public function persistSession(Request $request): void
+    public function persistSession(ServerRequestInterface $request): void
     {
         $this->restoreFromRequest($request)?->persist();
     }
 
-    public function restoreFromRequest(Request $request): ?Session
+    public function restoreFromRequest(ServerRequestInterface $request): ?Session
     {
         if ($this->sessions->offsetExists($request)) {
             return $this->sessions->offsetGet($request);
         }
 
-        if (
-            !is_array($request->cookie)
-            || !isset($request->cookie[$this->sessionConfiguration->cookieName])
-        ) {
+        $cookies = $request->getCookieParams();
+
+        if (!isset($cookies[$this->sessionConfiguration->cookieName])) {
             return null;
         }
 
         /**
          * @var string
          */
-        $sessionId = $request->cookie[$this->sessionConfiguration->cookieName];
+        $sessionId = $cookies[$this->sessionConfiguration->cookieName];
 
         if (!uuid_is_valid($sessionId)) {
             return null;
@@ -72,7 +71,7 @@ final readonly class SessionManager
         );
     }
 
-    public function start(Request $request, Response $response): Session
+    public function start(ServerRequestInterface $request, Response $response): Session
     {
         $session = $this->restoreFromRequest($request) ?? $this->createSession($request);
 
@@ -81,12 +80,12 @@ final readonly class SessionManager
         return $session;
     }
 
-    private function createSession(Request $request): Session
+    private function createSession(ServerRequestInterface $request): Session
     {
         return $this->freshSession($request, uuid_create());
     }
 
-    private function freshSession(Request $request, string $sessionId): Session
+    private function freshSession(ServerRequestInterface $request, string $sessionId): Session
     {
         $session = new Session(
             $this->redisConfiguration,

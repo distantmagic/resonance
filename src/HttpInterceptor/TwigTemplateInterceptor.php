@@ -11,7 +11,7 @@ use Distantmagic\Resonance\HttpInterceptor;
 use Distantmagic\Resonance\SecurityPolicyHeaders;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigTemplate;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 use Twig\Environment as TwigEnvironment;
 
@@ -28,7 +28,7 @@ readonly class TwigTemplateInterceptor extends HttpInterceptor
     ) {}
 
     public function intercept(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         object $intercepted,
     ): null {

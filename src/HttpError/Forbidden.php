@@ -6,7 +6,7 @@ namespace Distantmagic\Resonance\HttpError;
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpError;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[Singleton]
 final readonly class Forbidden extends HttpError
@@ -16,7 +16,7 @@ final readonly class Forbidden extends HttpError
         return 403;
     }
 
-    public function message(Request $request): string
+    public function message(ServerRequestInterface $request): string
     {
         return $this->translatorBridge->trans($request, 'error.forbidden');
     }

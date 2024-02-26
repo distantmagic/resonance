@@ -6,7 +6,7 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 #[GrantsFeature(Feature::HttpSession)]
@@ -21,7 +21,7 @@ final readonly class CSRFManager
     ) {}
 
     public function checkToken(
-        Request $request,
+        ServerRequestInterface $request,
         ?array $requestData,
     ): bool {
         if (is_null($requestData)) {
@@ -50,7 +50,7 @@ final readonly class CSRFManager
         return $isCorrect;
     }
 
-    public function prepareSessionToken(Request $request, Response $response): string
+    public function prepareSessionToken(ServerRequestInterface $request, Response $response): string
     {
         $session = $this->sessionManager->start($request, $response);
 

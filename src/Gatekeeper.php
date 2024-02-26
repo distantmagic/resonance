@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[Singleton]
 final readonly class Gatekeeper
@@ -24,7 +24,7 @@ final readonly class Gatekeeper
         );
     }
 
-    public function withRequest(Request $request): GatekeeperUserContext
+    public function withRequest(ServerRequestInterface $request): GatekeeperUserContext
     {
         return $this->gatekeeperRequestContext->getUserContext($request);
     }

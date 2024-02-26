@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Ds\Set;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 readonly class ContentTypeResponder
 {
@@ -22,7 +22,7 @@ readonly class ContentTypeResponder
         $this->responders = new Set();
     }
 
-    public function best(Request $request): ?ContentType
+    public function best(ServerRequestInterface $request): ?ContentType
     {
         $acceptHeader = AcceptHeader::mime($request);
 

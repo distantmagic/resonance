@@ -13,7 +13,7 @@ use Distantmagic\Resonance\HttpControllerParameterResolution;
 use Distantmagic\Resonance\HttpControllerParameterResolutionStatus;
 use Distantmagic\Resonance\HttpControllerParameterResolver;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 /**
@@ -24,7 +24,7 @@ use Swoole\Http\Response;
 readonly class CurrentRequestResolver extends HttpControllerParameterResolver
 {
     public function resolve(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         HttpControllerParameter $parameter,
         Attribute $attribute,

@@ -8,7 +8,7 @@ use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use LogicException;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 #[GrantsFeature(Feature::OAuth2)]
@@ -20,7 +20,7 @@ readonly class OAuth2AuthorizationRequestSessionStore
         private SessionManager $sessionManager,
     ) {}
 
-    public function clear(Request $request, Response $response): void
+    public function clear(ServerRequestInterface $request, Response $response): void
     {
         $this
             ->sessionManager
@@ -33,7 +33,7 @@ readonly class OAuth2AuthorizationRequestSessionStore
         ;
     }
 
-    public function get(Request $request, Response $response): AuthorizationRequest
+    public function get(ServerRequestInterface $request, Response $response): AuthorizationRequest
     {
         $authorizationRequest = $this->doGetFromSession($request, $response);
 
@@ -44,7 +44,7 @@ readonly class OAuth2AuthorizationRequestSessionStore
         return $authorizationRequest;
     }
 
-    public function has(Request $request, Response $response): bool
+    public function has(ServerRequestInterface $request, Response $response): bool
     {
         $authorizationRequest = $this->doGetFromSession($request, $response);
 
@@ -52,7 +52,7 @@ readonly class OAuth2AuthorizationRequestSessionStore
     }
 
     public function store(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         AuthorizationRequest $authorizationRequest,
     ): void {
@@ -67,7 +67,7 @@ readonly class OAuth2AuthorizationRequestSessionStore
         ;
     }
 
-    private function doGetFromSession(Request $request, Response $response): ?AuthorizationRequest
+    private function doGetFromSession(ServerRequestInterface $request, Response $response): ?AuthorizationRequest
     {
         $session = $this->sessionManager->start($request, $response);
 

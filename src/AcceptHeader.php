@@ -6,7 +6,7 @@ namespace Distantmagic\Resonance;
 
 use Ds\PriorityQueue;
 use Ds\Set;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 final readonly class AcceptHeader
 {
@@ -17,19 +17,14 @@ final readonly class AcceptHeader
      */
     public Set $sorted;
 
-    public static function fromRequest(Request $request, string $name, string $default): self
+    public static function fromRequest(ServerRequestInterface $request, string $name, string $default): self
     {
-        /**
-         * @var string $header
-         */
-        $header = isset($request->header[$name]) && is_string($request->header[$name])
-            ? $request->header[$name]
-            : $default;
+        $header = $request->getHeaderLine($name) ?: $default;
 
         return new self($header);
     }
 
-    public static function mime(Request $request): self
+    public static function mime(ServerRequestInterface $request): self
     {
         return self::fromRequest($request, 'accept', '*/*');
     }

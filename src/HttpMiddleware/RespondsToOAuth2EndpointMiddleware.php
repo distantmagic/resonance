@@ -16,7 +16,7 @@ use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\OAuth2AuthorizationCodeFlowControllerInterface;
 use Distantmagic\Resonance\OAuth2Endpoint;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 /**
@@ -35,7 +35,7 @@ readonly class RespondsToOAuth2EndpointMiddleware extends HttpMiddleware
     ) {}
 
     public function preprocess(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         Attribute $attribute,
         HttpInterceptableInterface|HttpResponderInterface $next,

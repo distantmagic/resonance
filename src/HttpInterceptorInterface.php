@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 /**
@@ -16,7 +16,7 @@ interface HttpInterceptorInterface
      * @param TClass $intercepted
      */
     public function intercept(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         object $intercepted,
     ): null|HttpInterceptableInterface|HttpResponderInterface;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 readonly class GatekeeperRequestContext
 {
@@ -14,7 +14,7 @@ readonly class GatekeeperRequestContext
         private SiteActionGateAggregate $siteActionGateAggregate,
     ) {}
 
-    public function getUserContext(Request $request): GatekeeperUserContext
+    public function getUserContext(ServerRequestInterface $request): GatekeeperUserContext
     {
         return new GatekeeperUserContext(
             $this->crudActionGateAggregate,

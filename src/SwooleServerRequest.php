@@ -13,6 +13,8 @@ use Swoole\Http\Request;
 
 readonly class SwooleServerRequest implements ServerRequestInterface
 {
+    private SwooleServerRequestStream $body;
+
     /**
      * @var array<array-key,array<string>>
      */
@@ -41,6 +43,7 @@ readonly class SwooleServerRequest implements ServerRequestInterface
             }
         }
 
+        $this->body = new SwooleServerRequestStream($request);
         $this->psrHeaders = $psrHeaders;
         $this->server = new SwooleServerRequestServer($request);
         $this->uri = new SwooleServerRequestUri(
@@ -60,9 +63,9 @@ readonly class SwooleServerRequest implements ServerRequestInterface
         return [];
     }
 
-    public function getBody(): never
+    public function getBody(): StreamInterface
     {
-        throw new LogicException('Body is not streamable');
+        return $this->body;
     }
 
     public function getCookieParams(): array

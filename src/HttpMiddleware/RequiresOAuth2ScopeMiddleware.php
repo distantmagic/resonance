@@ -23,7 +23,7 @@ use Distantmagic\Resonance\OAuth2ScopeCollection;
 use Distantmagic\Resonance\SingletonCollection;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 /**
@@ -47,7 +47,7 @@ readonly class RequiresOAuth2ScopeMiddleware extends HttpMiddleware
     ) {}
 
     public function preprocess(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         Attribute $attribute,
         HttpInterceptableInterface|HttpResponderInterface $next,

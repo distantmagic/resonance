@@ -15,7 +15,7 @@ use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\HttpResponder\Error\BadRequest;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\JsonTemplate;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 #[Singleton]
@@ -27,13 +27,9 @@ final readonly class GraphQL extends HttpResponder
         private GraphQLAdapter $graphQLAdapter,
     ) {}
 
-    public function respond(Request $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
+    public function respond(ServerRequestInterface $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
     {
-        $requestContent = $request->getContent();
-
-        if (false === $requestContent) {
-            return $this->badRequest;
-        }
+        $requestContent = $request->getBody()->getContents();
 
         $requestInput = json_decode(
             json: $requestContent,

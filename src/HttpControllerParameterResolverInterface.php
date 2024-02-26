@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 /**
@@ -17,7 +17,7 @@ interface HttpControllerParameterResolverInterface
      * @param TAttribute                          $attribute
      */
     public function resolve(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         HttpControllerParameter $parameter,
         Attribute $attribute,

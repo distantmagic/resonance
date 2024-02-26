@@ -11,8 +11,8 @@ use League\OAuth2\Server\AuthorizationServer as LeagueAuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
-use Swoole\Http\Request;
 use Swoole\Http\Response;
 
 #[GrantsFeature(Feature::OAuth2)]
@@ -28,8 +28,11 @@ readonly class OAuth2AuthorizationCodeFlowController implements OAuth2Authorizat
         private SessionAuthentication $sessionAuthentication,
     ) {}
 
-    public function completeConsentRequest(Request $request, Response $response, bool $userConsented): HttpResponderInterface
-    {
+    public function completeConsentRequest(
+        ServerRequestInterface $request,
+        Response $response,
+        bool $userConsented,
+    ): HttpResponderInterface {
         $authorizationRequest = $this->authorizationRequestSessionStore->get($request, $response);
         $authorizationRequest->setAuthorizationApproved($userConsented);
 
@@ -52,8 +55,11 @@ readonly class OAuth2AuthorizationCodeFlowController implements OAuth2Authorizat
         }
     }
 
-    public function obtainSessionAuthenticatedUser(Request $request, Response $response, AuthorizationRequest $authorizationRequest): null|HttpInterceptableInterface|HttpResponderInterface
-    {
+    public function obtainSessionAuthenticatedUser(
+        ServerRequestInterface $request,
+        Response $response,
+        AuthorizationRequest $authorizationRequest,
+    ): null|HttpInterceptableInterface|HttpResponderInterface {
         $authenticatedUser = $this->sessionAuthentication->getAuthenticatedUser($request);
 
         if ($authenticatedUser) {
@@ -65,8 +71,10 @@ readonly class OAuth2AuthorizationCodeFlowController implements OAuth2Authorizat
         return $this->redirectToLoginPage($request, $response, $authorizationRequest);
     }
 
-    public function prepareConsentRequest(Request $request, Response $response): void
-    {
+    public function prepareConsentRequest(
+        ServerRequestInterface $request,
+        Response $response,
+    ): void {
         if (!$this->authorizationRequestSessionStore->has($request, $response)) {
             throw new RuntimeException('Authorization request is not in progress');
         }
@@ -91,7 +99,7 @@ readonly class OAuth2AuthorizationCodeFlowController implements OAuth2Authorizat
     }
 
     public function redirectToAuthenticatedPage(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
     ): HttpInterceptableInterface {
         $routeSymbol = $this
@@ -103,7 +111,7 @@ readonly class OAuth2AuthorizationCodeFlowController implements OAuth2Authorizat
     }
 
     public function redirectToClientScopeConsentPage(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         AuthorizationRequest $authorizationRequest,
     ): HttpInterceptableInterface {
@@ -116,7 +124,7 @@ readonly class OAuth2AuthorizationCodeFlowController implements OAuth2Authorizat
     }
 
     public function redirectToLoginPage(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         AuthorizationRequest $authorizationRequest,
     ): HttpInterceptableInterface {

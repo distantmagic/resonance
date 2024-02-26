@@ -9,7 +9,7 @@ use Distantmagic\Resonance\TranslationException\MissingTranslationParameterExcep
 use Distantmagic\Resonance\TranslationException\PhraseNotFoundException;
 use Ds\Map;
 use Ds\Vector;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 readonly class TranslatorBridge
 {
@@ -34,7 +34,7 @@ readonly class TranslatorBridge
     /**
      * @param array<string, string> $parameters
      */
-    public function trans(Request $request, string $phrase, array $parameters = []): string
+    public function trans(ServerRequestInterface $request, string $phrase, array $parameters = []): string
     {
         $language = $this->languageDetector->detectPrimaryLanguage($request);
 

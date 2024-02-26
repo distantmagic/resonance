@@ -10,7 +10,7 @@ use Distantmagic\Resonance\EsbuildMetaPreloadsRenderer;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigEsbuildContext;
 use Distantmagic\Resonance\TwigFunction;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[Singleton(collection: SingletonCollection::TwigFunction)]
 #[TwigFunctionAttribute]
@@ -18,7 +18,7 @@ readonly class EsbuildRenderPreloads extends TwigFunction
 {
     public function __construct(private TwigEsbuildContext $esbuildContext) {}
 
-    public function __invoke(Request $request): string
+    public function __invoke(ServerRequestInterface $request): string
     {
         $entryPoints = $this->esbuildContext->getEntryPoints($request);
         $renderer = new EsbuildMetaPreloadsRenderer($entryPoints);

@@ -5,41 +5,41 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 interface OAuth2AuthorizationCodeFlowControllerInterface
 {
     public function completeConsentRequest(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         bool $userConsented,
     ): HttpInterceptableInterface|HttpResponderInterface;
 
     public function obtainSessionAuthenticatedUser(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         AuthorizationRequest $authorizationRequest,
     ): null|HttpInterceptableInterface|HttpResponderInterface;
 
     public function prepareConsentRequest(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
     ): void;
 
     public function redirectToAuthenticatedPage(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
     ): HttpInterceptableInterface|HttpResponderInterface;
 
     public function redirectToClientScopeConsentPage(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         AuthorizationRequest $authorizationRequest,
     ): HttpInterceptableInterface|HttpResponderInterface;
 
     public function redirectToLoginPage(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         AuthorizationRequest $authorizationRequest,
     ): HttpInterceptableInterface|HttpResponderInterface;

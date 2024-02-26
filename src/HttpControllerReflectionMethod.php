@@ -12,6 +12,7 @@ use Distantmagic\Resonance\HttpResponder\HttpController;
 use Doctrine\ORM\EntityManagerInterface;
 use Ds\Set;
 use Generator;
+use Psr\Http\Message\ServerRequestInterface;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionIntersectionType;
@@ -20,7 +21,6 @@ use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionType;
 use ReflectionUnionType;
-use Swoole\Http\Request;
 use Swoole\Http\Response;
 
 readonly class HttpControllerReflectionMethod
@@ -172,7 +172,7 @@ readonly class HttpControllerReflectionMethod
             case 0:
                 if (is_a($className, EntityManagerInterface::class, true)) {
                     $attributes->add(new DoctrineEntityManager());
-                } elseif (is_a($className, Request::class, true)) {
+                } elseif (is_a($className, ServerRequestInterface::class, true)) {
                     $attributes->add(new CurrentRequest());
                 } elseif (is_a($className, Response::class, true)) {
                     $attributes->add(new CurrentResponse());

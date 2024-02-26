@@ -12,7 +12,7 @@ use Distantmagic\Resonance\HttpResponder\Error\PageNotFound;
 use Distantmagic\Resonance\HttpResponder\Error\ServerError;
 use DomainException;
 use LogicException;
-use RuntimeException;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
@@ -34,10 +34,11 @@ readonly class HttpResponderAggregate
         private PageNotFound $pageNotFound,
         private RequestContext $requestContext,
         private ServerError $serverError,
+        private SwooleConfiguration $swooleConfiguration,
         private UrlMatcher $urlMatcher,
     ) {}
 
-    public function respond(Request $request, Response $response): void
+    public function respondToPsrRequest(ServerRequestInterface $request, Response $response): void
     {
         $responder = $this->selectResponder($request);
 
@@ -53,6 +54,18 @@ readonly class HttpResponderAggregate
         } finally {
             $this->eventDispatcher->dispatch(new HttpResponseReady($responder, $request));
         }
+    }
+
+    public function respondToSwooleRequest(Request $request, Response $response): void
+    {
+        $this->respondToPsrRequest(
+            new SwooleServerRequest(
+                applicationConfiguration: $this->applicationConfiguration,
+                request: $request,
+                swooleConfiguration: $this->swooleConfiguration,
+            ),
+            $response,
+        );
     }
 
     /**
@@ -71,34 +84,24 @@ readonly class HttpResponderAggregate
         };
     }
 
-    private function matchRoute(Request $request): HttpRouteMatch
+    private function matchRoute(ServerRequestInterface $request): HttpRouteMatch
     {
-        if (!is_array($request->server)) {
-            throw new RuntimeException('Unable to determine the request server vars');
-        }
-
-        if (!isset($request->server['request_method']) || !is_string($request->server['request_method'])) {
-            throw new RuntimeException('Unable to determine the request method');
-        }
-
-        if (!isset($request->server['request_uri']) || !is_string($request->server['request_uri'])) {
-            throw new RuntimeException('Unable to determine the request uri');
-        }
+        $requestUri = $request->getUri();
 
         $this
             ->requestContext
-            ->setMethod($request->server['request_method'])
-            ->setPathInfo((string) $request->server['path_info'])
-            ->setHost((string) $request->server['remote_addr'])
-            ->setHttpsPort((int) $request->server['server_port'])
-            ->setScheme($this->applicationConfiguration->scheme)
+            ->setMethod($request->getMethod())
+            ->setPathInfo($requestUri->getPath())
+            ->setHost($requestUri->getHost())
+            ->setHttpsPort($this->swooleConfiguration->port)
+            ->setScheme($requestUri->getScheme())
         ;
 
         try {
             /**
              * @var array<string,string>
              */
-            $routeMatch = $this->urlMatcher->match((string) $request->server['path_info']);
+            $routeMatch = $this->urlMatcher->match($requestUri->getPath());
             $responderClass = $routeMatch['_route'];
 
             if (!is_a($responderClass, HttpResponderInterface::class, true)) {
@@ -131,7 +134,7 @@ readonly class HttpResponderAggregate
         return $this->httpResponderCollection->httpResponders->get($responderClass);
     }
 
-    private function selectResponder(Request $request): HttpResponderInterface
+    private function selectResponder(ServerRequestInterface $request): HttpResponderInterface
     {
         $routeMatchingStatus = $this->matchRoute($request);
         $this->routeMatchRegistry->set($request, $routeMatchingStatus);

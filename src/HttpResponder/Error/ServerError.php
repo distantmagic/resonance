@@ -13,8 +13,8 @@ use Distantmagic\Resonance\HttpError\ServerError as ServerErrorEntity;
 use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpResponder\Error;
 use Distantmagic\Resonance\HttpResponderInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
-use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Throwable;
 
@@ -30,7 +30,7 @@ final readonly class ServerError extends Error
     }
 
     public function sendThrowable(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         Throwable $throwable,
     ): null|HttpInterceptableInterface|HttpResponderInterface {

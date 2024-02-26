@@ -11,7 +11,7 @@ use Distantmagic\Resonance\CrudActionSubjectInterface;
 use Distantmagic\Resonance\Gatekeeper;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigFunction;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[Singleton(collection: SingletonCollection::TwigFunction)]
 #[TwigFunctionAttribute]
@@ -20,7 +20,7 @@ readonly class GatekeeperCanCrud extends TwigFunction
     public function __construct(private Gatekeeper $gatekeeper) {}
 
     public function __invoke(
-        Request $request,
+        ServerRequestInterface $request,
         CrudActionSubjectInterface $subject,
         CrudAction $crudAction,
     ): bool {

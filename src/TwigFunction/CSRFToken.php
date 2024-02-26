@@ -11,7 +11,7 @@ use Distantmagic\Resonance\CSRFManager;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigFunction;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 #[GrantsFeature(Feature::HttpSession)]
@@ -21,7 +21,7 @@ readonly class CSRFToken extends TwigFunction
 {
     public function __construct(private CSRFManager $csrfManager) {}
 
-    public function __invoke(Request $request, Response $response): string
+    public function __invoke(ServerRequestInterface $request, Response $response): string
     {
         return $this->csrfManager->prepareSessionToken($request, $response);
     }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 #[Singleton]
@@ -27,7 +27,7 @@ final readonly class SecurityPolicyHeaders
         $response->header('x-service-worker-cache', 'true');
     }
 
-    public function sendContentSecurityPolicyHeader(Request $request, Response $response): void
+    public function sendContentSecurityPolicyHeader(ServerRequestInterface $request, Response $response): void
     {
         $contentSecurityPolicyRequestRules = $this->contentSecurityPolicyRulesRepository->from($request);
 
@@ -60,7 +60,7 @@ final readonly class SecurityPolicyHeaders
         $this->sendXPolicies($response);
     }
 
-    public function sendTemplatedPagePolicyHeaders(Request $request, Response $response): void
+    public function sendTemplatedPagePolicyHeaders(ServerRequestInterface $request, Response $response): void
     {
         $this->sendContentSecurityPolicyHeader($request, $response);
         $this->sendCrossOriginPolicies($response);
@@ -69,7 +69,7 @@ final readonly class SecurityPolicyHeaders
         $this->sendXPolicies($response);
     }
 
-    private function getHeaderNonce(Request $request): string
+    private function getHeaderNonce(ServerRequestInterface $request): string
     {
         $nonce = $this->cspNonceManager->getRequestNonce($request);
 

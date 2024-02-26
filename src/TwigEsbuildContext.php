@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
-use Swoole\Http\Request;
 use WeakMap;
 
 #[Singleton]
 readonly class TwigEsbuildContext
 {
     /**
-     * @var WeakMap<Request,EsbuildMetaEntryPoints>
+     * @var WeakMap<ServerRequestInterface,EsbuildMetaEntryPoints>
      */
     private WeakMap $entryPoints;
 
@@ -24,7 +24,7 @@ readonly class TwigEsbuildContext
         EsbuildMetaBuilder $esbuildMetaBuilder,
     ) {
         /**
-         * @var WeakMap<Request,EsbuildMetaEntryPoints>
+         * @var WeakMap<ServerRequestInterface,EsbuildMetaEntryPoints>
          */
         $this->entryPoints = new WeakMap();
         $this->esbuildMeta = is_string($applicationConfiguration->esbuildMetafile)
@@ -32,7 +32,7 @@ readonly class TwigEsbuildContext
             : null;
     }
 
-    public function getEntryPoints(Request $request): EsbuildMetaEntryPoints
+    public function getEntryPoints(ServerRequestInterface $request): EsbuildMetaEntryPoints
     {
         if (is_null($this->esbuildMeta)) {
             throw new RuntimeException("You need to provide application's esbuild metafile to use esbuild in Twig");

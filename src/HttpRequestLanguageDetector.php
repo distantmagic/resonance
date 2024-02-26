@@ -5,26 +5,26 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use WeakMap;
 
 #[Singleton]
 final readonly class HttpRequestLanguageDetector
 {
     /**
-     * @var WeakMap<Request, string>
+     * @var WeakMap<ServerRequestInterface,string>
      */
     private WeakMap $languages;
 
     public function __construct(private TranslatorConfiguration $translatorConfiguration)
     {
         /**
-         * @var WeakMap<Request, string>
+         * @var WeakMap<ServerRequestInterface,string>
          */
         $this->languages = new WeakMap();
     }
 
-    public function detectPrimaryLanguage(Request $request): string
+    public function detectPrimaryLanguage(ServerRequestInterface $request): string
     {
         if ($this->languages->offsetExists($request)) {
             return $this->languages->offsetGet($request);
@@ -37,16 +37,15 @@ final readonly class HttpRequestLanguageDetector
         return $language;
     }
 
-    private function doDetectPrimaryLanguage(Request $request): string
+    private function doDetectPrimaryLanguage(ServerRequestInterface $request): string
     {
-        if (!is_array($request->header)
-            || !isset($request->header['accept-language'])
-            || !is_string($request->header['accept-language'])
-        ) {
+        $acceptLanguage = $request->getHeaderLine('accept-language');
+
+        if (empty($acceptLanguage)) {
             return $this->translatorConfiguration->defaultPrimaryLanguage;
         }
 
-        $acceptHeader = new AcceptHeader($request->header['accept-language']);
+        $acceptHeader = new AcceptHeader($acceptLanguage);
 
         foreach ($acceptHeader->sorted as $language) {
             $primaryLanguage = $this->extractPrimaryLanguageFromString($language);

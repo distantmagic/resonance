@@ -6,7 +6,7 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use LogicException;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
 /**
@@ -22,7 +22,7 @@ final readonly class HttpRecursiveResponder
     ) {}
 
     public function respondRecursive(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         null|HttpInterceptableInterface|HttpResponderInterface $responder,
     ): void {
@@ -54,7 +54,7 @@ final readonly class HttpRecursiveResponder
     }
 
     private function processInterceptors(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         HttpInterceptableInterface $responder,
     ): null|HttpInterceptableInterface|HttpResponderInterface {
@@ -78,7 +78,7 @@ final readonly class HttpRecursiveResponder
     }
 
     private function processMiddlewares(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         HttpInterceptableInterface|HttpResponderInterface $responder,
     ): null|HttpInterceptableInterface|HttpResponderInterface {

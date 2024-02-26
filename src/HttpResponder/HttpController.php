@@ -20,9 +20,9 @@ use Distantmagic\Resonance\HttpResponder\Error\ServerError;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Ds\Map;
 use LogicException;
+use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 use ReflectionMethod;
-use Swoole\Http\Request;
 use Swoole\Http\Response;
 
 abstract readonly class HttpController extends HttpResponder
@@ -83,7 +83,7 @@ abstract readonly class HttpController extends HttpResponder
         }
     }
 
-    final public function respond(Request $request, Response $response): null|HttpInterceptableInterface|HttpResponderInterface
+    final public function respond(ServerRequestInterface $request, Response $response): null|HttpInterceptableInterface|HttpResponderInterface
     {
         if ($this->invokeReflection->parameters->isEmpty()) {
             /**
@@ -149,7 +149,7 @@ abstract readonly class HttpController extends HttpResponder
     }
 
     private function forwardResolvedParameter(
-        Request $request,
+        ServerRequestInterface $request,
         Response $response,
         HttpControllerReflectionMethod $handleValidationErrorsReflection,
         Closure $handleValidationErrorsCallback,
@@ -166,7 +166,7 @@ abstract readonly class HttpController extends HttpResponder
              */
             $resolvedValidationHandlerParameters[$parameter->name] = match (true) {
                 is_a($parameter->className, HttpControllerParameterResolution::class, true) => $httpControllerParameterResolution,
-                is_a($parameter->className, Request::class, true) => $request,
+                is_a($parameter->className, ServerRequestInterface::class, true) => $request,
                 is_a($parameter->className, Response::class, true) => $response,
                 default => throw new LogicException('ForwardedTo handlers can only use parameters that are already resolved in the handler: '.$parameter->name),
             };
