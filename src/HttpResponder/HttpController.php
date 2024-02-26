@@ -20,14 +20,15 @@ use Distantmagic\Resonance\HttpResponder\Error\ServerError;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Ds\Map;
 use LogicException;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionMethod;
-use Swoole\Http\Response;
 
 abstract readonly class HttpController extends HttpResponder
 {
-    public const MAGIC_METHOD_RESPOND = 'fsapokfaspfas';
+    public const MAGIC_METHOD_RESPOND = 'createResponse';
 
     private BadRequest $badRequest;
     private Forbidden $forbidden;
@@ -44,6 +45,7 @@ abstract readonly class HttpController extends HttpResponder
 
     private HttpControllerParameterResolverAggregate $httpControllerParameterResolverAggregate;
     private HttpControllerReflectionMethod $invokeReflection;
+    private LoggerInterface $logger;
     private PageNotFound $pageNotFound;
     private ServerError $serverError;
 
@@ -54,6 +56,7 @@ abstract readonly class HttpController extends HttpResponder
         $this->forwardableMethodCallbacks = new Map();
         $this->forwardableMethodReflections = new Map();
         $this->httpControllerParameterResolverAggregate = $controllerDependencies->httpControllerParameterResolverAggregate;
+        $this->logger = $controllerDependencies->logger;
         $this->pageNotFound = $controllerDependencies->pageNotFound;
         $this->serverError = $controllerDependencies->serverError;
 
@@ -83,11 +86,11 @@ abstract readonly class HttpController extends HttpResponder
         }
     }
 
-    final public function respond(ServerRequestInterface $request, Response $response): null|HttpInterceptableInterface|HttpResponderInterface
+    final public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface
     {
         if ($this->invokeReflection->parameters->isEmpty()) {
             /**
-             * @var null|HttpInterceptableInterface|HttpResponderInterface
+             * @var HttpInterceptableInterface|HttpResponderInterface|ResponseInterface
              */
             return $this->{self::MAGIC_METHOD_RESPOND}();
         }
@@ -124,6 +127,8 @@ abstract readonly class HttpController extends HttpResponder
                 case HttpControllerParameterResolutionStatus::MissingUrlParameterValue:
                     return $this->badRequest;
                 case HttpControllerParameterResolutionStatus::NoResolver:
+                    $this->logger->error(sprintf('http_controller_no_resolver("%s", "$%s")', $this::class, $parameter->name));
+
                     return $this->serverError;
                 case HttpControllerParameterResolutionStatus::Success:
                     /**
@@ -143,18 +148,18 @@ abstract readonly class HttpController extends HttpResponder
          * This method is dynamically built and it's checked in the
          * constructor.
          *
-         * @var null|HttpInterceptableInterface|HttpResponderInterface
+         * @var HttpInterceptableInterface|HttpResponderInterface|ResponseInterface
          */
         return $this->{self::MAGIC_METHOD_RESPOND}(...$resolvedParameterValues);
     }
 
     private function forwardResolvedParameter(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         HttpControllerReflectionMethod $handleValidationErrorsReflection,
         Closure $handleValidationErrorsCallback,
         HttpControllerParameterResolution $httpControllerParameterResolution,
-    ): null|HttpInterceptableInterface|HttpResponderInterface {
+    ): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface {
         /**
          * @var array <string,mixed>
          */
@@ -167,13 +172,13 @@ abstract readonly class HttpController extends HttpResponder
             $resolvedValidationHandlerParameters[$parameter->name] = match (true) {
                 is_a($parameter->className, HttpControllerParameterResolution::class, true) => $httpControllerParameterResolution,
                 is_a($parameter->className, ServerRequestInterface::class, true) => $request,
-                is_a($parameter->className, Response::class, true) => $response,
+                is_a($parameter->className, ResponseInterface::class, true) => $response,
                 default => throw new LogicException('ForwardedTo handlers can only use parameters that are already resolved in the handler: '.$parameter->name),
             };
         }
 
         /**
-         * @var null|HttpInterceptableInterface|HttpResponderInterface
+         * @var HttpInterceptableInterface|HttpResponderInterface
          */
         return $handleValidationErrorsCallback(...$resolvedValidationHandlerParameters);
     }

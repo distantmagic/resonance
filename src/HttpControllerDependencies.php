@@ -9,6 +9,7 @@ use Distantmagic\Resonance\HttpResponder\Error\BadRequest;
 use Distantmagic\Resonance\HttpResponder\Error\Forbidden;
 use Distantmagic\Resonance\HttpResponder\Error\PageNotFound;
 use Distantmagic\Resonance\HttpResponder\Error\ServerError;
+use Psr\Log\LoggerInterface;
 
 #[Singleton]
 readonly class HttpControllerDependencies
@@ -18,6 +19,7 @@ readonly class HttpControllerDependencies
         public Forbidden $forbidden,
         public HttpControllerReflectionMethodCollection $httpControllerReflectionMethodCollection,
         public HttpControllerParameterResolverAggregate $httpControllerParameterResolverAggregate,
+        public LoggerInterface $logger,
         public PageNotFound $pageNotFound,
         public ServerError $serverError,
     ) {}

@@ -7,7 +7,7 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpResponder\Error\PageNotFound;
 use Ds\Map;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -42,22 +42,16 @@ readonly class AssetFileRegistry
         }
     }
 
-    public function sendAsset(Response $response, string $asset): ?HttpResponderInterface
+    public function sendAsset(ResponseInterface $response, string $asset): HttpResponderInterface|ResponseInterface
     {
-        if (empty($asset)) {
+        if (empty($asset) || !$this->files->hasKey($asset)) {
             return $this->pageNotFound;
         }
 
-        if (!$this->files->hasKey($asset)) {
-            return $this->pageNotFound;
-        }
-
-        $this->securityPolicyHeaders->sendAssetHeaders($response);
-
-        if ($response->sendfile($this->files->get($asset))) {
-            return null;
-        }
-
-        return $this->pageNotFound;
+        return $this
+            ->securityPolicyHeaders
+            ->sendAssetHeaders($response)
+            ->withHeader('x-sendfile', $this->files->get($asset))
+        ;
     }
 }

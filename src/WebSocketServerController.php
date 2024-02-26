@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\HandlesServerPipeMessage;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\PsrMessage\SwooleServerRequest;
 use Distantmagic\Resonance\ServerPipeMessage\CloseWebSocketConnection;
 use Ds\Map;
 use Psr\Log\LoggerInterface;

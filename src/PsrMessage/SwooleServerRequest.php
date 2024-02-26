@@ -2,8 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Distantmagic\Resonance;
+namespace Distantmagic\Resonance\PsrMessage;
 
+use Distantmagic\Resonance\ApplicationConfiguration;
+use Distantmagic\Resonance\PsrMessage;
+use Distantmagic\Resonance\PsrStringStream;
+use Distantmagic\Resonance\SwooleConfiguration;
+use Distantmagic\Resonance\SwooleServerRequestServer;
+use Distantmagic\Resonance\SwooleServerRequestUri;
+use InvalidArgumentException;
 use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
@@ -11,9 +18,9 @@ use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 use Swoole\Http\Request;
 
-readonly class SwooleServerRequest implements ServerRequestInterface
+readonly class SwooleServerRequest extends PsrMessage implements ServerRequestInterface
 {
-    private SwooleServerRequestStream $body;
+    private PsrStringStream $body;
 
     /**
      * @var array<array-key,array<string>>
@@ -43,7 +50,13 @@ readonly class SwooleServerRequest implements ServerRequestInterface
             }
         }
 
-        $this->body = new SwooleServerRequestStream($request);
+        $requestContents = $request->getContent();
+
+        if (!is_string($requestContents)) {
+            throw new InvalidArgumentException('Request content is not a string');
+        }
+
+        $this->body = new PsrStringStream($requestContents);
         $this->psrHeaders = $psrHeaders;
         $this->server = new SwooleServerRequestServer($request);
         $this->uri = new SwooleServerRequestUri(
@@ -165,76 +178,76 @@ readonly class SwooleServerRequest implements ServerRequestInterface
 
     public function withAddedHeader($name, $value): never
     {
-        $this->throwNotExtendable();
+        $this->throwReadOnly();
     }
 
     public function withAttribute(string $name, mixed $value): never
     {
-        $this->throwNotExtendable();
+        $this->throwReadOnly();
     }
 
     public function withBody(StreamInterface $body): never
     {
-        $this->throwNotExtendable();
+        $this->throwReadOnly();
     }
 
     public function withCookieParams(array $cookies): never
     {
-        $this->throwNotExtendable();
+        $this->throwReadOnly();
     }
 
     public function withHeader($name, $value): never
     {
-        $this->throwNotExtendable();
+        $this->throwReadOnly();
     }
 
     public function withMethod($method): never
     {
-        $this->throwNotExtendable();
+        $this->throwReadOnly();
     }
 
     public function withoutAttribute(string $name): never
     {
-        $this->throwNotExtendable();
+        $this->throwReadOnly();
     }
 
     public function withoutHeader($name): never
     {
-        $this->throwNotExtendable();
+        $this->throwReadOnly();
     }
 
     public function withParsedBody($data): never
     {
-        $this->throwNotExtendable();
+        $this->throwReadOnly();
     }
 
     public function withProtocolVersion($version): never
     {
-        $this->throwNotExtendable();
+        $this->throwReadOnly();
     }
 
     public function withQueryParams(array $query): never
     {
-        $this->throwNotExtendable();
+        $this->throwReadOnly();
     }
 
     public function withRequestTarget($requestTarget): never
     {
-        $this->throwNotExtendable();
+        $this->throwReadOnly();
     }
 
     public function withUploadedFiles(array $uploadedFiles): never
     {
-        $this->throwNotExtendable();
+        $this->throwReadOnly();
     }
 
     public function withUri(UriInterface $uri, $preserveHost = false): never
     {
-        $this->throwNotExtendable();
+        $this->throwReadOnly();
     }
 
-    private function throwNotExtendable(): never
+    private function throwReadOnly(): never
     {
-        throw new LogicException('This request is not extendable');
+        throw new LogicException('This request is readonly');
     }
 }

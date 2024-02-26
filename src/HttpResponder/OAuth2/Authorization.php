@@ -9,15 +9,13 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpResponder;
-use Distantmagic\Resonance\HttpResponder\PsrResponder;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\OAuth2AuthorizationCodeFlowControllerInterface;
 use Distantmagic\Resonance\OAuth2AuthorizationRequestSessionStore;
 use League\OAuth2\Server\AuthorizationServer as LeagueAuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 #[GrantsFeature(Feature::OAuth2)]
 #[Singleton]
@@ -27,26 +25,22 @@ final readonly class Authorization extends HttpResponder
         private LeagueAuthorizationServer $leagueAuthorizationServer,
         private OAuth2AuthorizationCodeFlowControllerInterface $authorizationCodeFlowController,
         private OAuth2AuthorizationRequestSessionStore $authorizationRequestSessionStore,
-        private Psr17Factory $psr17Factory,
     ) {}
 
-    public function respond(ServerRequestInterface $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface
     {
         try {
             $authRequest = $this
                 ->leagueAuthorizationServer
                 ->validateAuthorizationRequest($request)
             ;
-
         } catch (OAuthServerException $exception) {
-            $psrResponse = $this->psr17Factory->createResponse();
-
-            return new PsrResponder($exception->generateHttpResponse($psrResponse));
+            return $exception->generateHttpResponse($response);
         }
 
         $this
             ->authorizationRequestSessionStore
-            ->store($request, $response, $authRequest)
+            ->store($request, $authRequest)
         ;
 
         $authUserResponse = $this
@@ -60,7 +54,7 @@ final readonly class Authorization extends HttpResponder
 
         return $this
             ->authorizationCodeFlowController
-            ->redirectToClientScopeConsentPage($request, $response, $authRequest)
+            ->redirectToClientScopeConsentPage($request, $response)
         ;
     }
 }

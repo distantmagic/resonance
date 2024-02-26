@@ -9,7 +9,6 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 #[GrantsFeature(Feature::OAuth2)]
 #[Singleton]
@@ -20,22 +19,17 @@ readonly class OAuth2AuthorizationRequestSessionStore
         private SessionManager $sessionManager,
     ) {}
 
-    public function clear(ServerRequestInterface $request, Response $response): void
+    public function clear(ServerRequestInterface $request): void
     {
-        $this
-            ->sessionManager
-            ->start($request, $response)
-            ->data
-            ->remove(
-                $this->oAuth2Configuration->sessionKeyAuthorizationRequest,
-                null,
-            )
-        ;
+        $this->sessionManager->start($request)->data->remove(
+            $this->oAuth2Configuration->sessionKeyAuthorizationRequest,
+            null,
+        );
     }
 
-    public function get(ServerRequestInterface $request, Response $response): AuthorizationRequest
+    public function get(ServerRequestInterface $request): AuthorizationRequest
     {
-        $authorizationRequest = $this->doGetFromSession($request, $response);
+        $authorizationRequest = $this->doGetFromSession($request);
 
         if (!$authorizationRequest) {
             throw new LogicException('Authorization request is not in session.');
@@ -44,32 +38,26 @@ readonly class OAuth2AuthorizationRequestSessionStore
         return $authorizationRequest;
     }
 
-    public function has(ServerRequestInterface $request, Response $response): bool
+    public function has(ServerRequestInterface $request): bool
     {
-        $authorizationRequest = $this->doGetFromSession($request, $response);
+        $authorizationRequest = $this->doGetFromSession($request);
 
         return $authorizationRequest instanceof AuthorizationRequest;
     }
 
     public function store(
         ServerRequestInterface $request,
-        Response $response,
         AuthorizationRequest $authorizationRequest,
     ): void {
-        $this
-            ->sessionManager
-            ->start($request, $response)
-            ->data
-            ->put(
-                $this->oAuth2Configuration->sessionKeyAuthorizationRequest,
-                $authorizationRequest,
-            )
-        ;
+        $this->sessionManager->start($request)->data->put(
+            $this->oAuth2Configuration->sessionKeyAuthorizationRequest,
+            $authorizationRequest,
+        );
     }
 
-    private function doGetFromSession(ServerRequestInterface $request, Response $response): ?AuthorizationRequest
+    private function doGetFromSession(ServerRequestInterface $request): ?AuthorizationRequest
     {
-        $session = $this->sessionManager->start($request, $response);
+        $session = $this->sessionManager->start($request);
 
         /**
          * @var mixed explicitly mixed for typechecks

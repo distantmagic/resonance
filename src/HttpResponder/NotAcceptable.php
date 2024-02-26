@@ -7,19 +7,19 @@ namespace Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\ContentType;
 use Distantmagic\Resonance\HttpResponder;
-use Distantmagic\Resonance\HttpResponderInterface;
+use Distantmagic\Resonance\PsrStringStream;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 #[Singleton]
 final readonly class NotAcceptable extends HttpResponder
 {
-    public function respond(ServerRequestInterface $request, Response $response): ?HttpResponderInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $response->status(406);
-        $response->header('content-type', ContentType::TextPlain->value);
-        $response->end('406');
-
-        return null;
+        return $response
+            ->withStatus(406)
+            ->withHeader('content-type', ContentType::TextPlain->value)
+            ->withBody(new PsrStringStream('406'))
+        ;
     }
 }

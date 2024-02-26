@@ -13,9 +13,10 @@ use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpMiddleware;
 use Distantmagic\Resonance\HttpResponder\Error\BadRequest;
 use Distantmagic\Resonance\HttpResponderInterface;
+use Distantmagic\Resonance\RequestDataSource;
 use Distantmagic\Resonance\SingletonCollection;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 /**
  * @template-extends HttpMiddleware<ValidatesCSRFToken>
@@ -34,11 +35,14 @@ readonly class ValidatesCSRFTokenMiddleware extends HttpMiddleware
 
     public function preprocess(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         Attribute $attribute,
         HttpInterceptableInterface|HttpResponderInterface $next,
-    ): HttpInterceptableInterface|HttpResponderInterface {
-        $requestData = $request->{$attribute->requestDataSource->value};
+    ): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface {
+        $requestData = match ($attribute->requestDataSource) {
+            RequestDataSource::Get => $request->getQueryParams(),
+            RequestDataSource::Post => $request->getParsedBody(),
+        };
 
         if (!is_array($requestData) || !$this->csrfManager->checkToken($request, $requestData)) {
             return $this->badRequest;

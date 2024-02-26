@@ -18,8 +18,8 @@ use Distantmagic\Resonance\HttpRouteMatchRegistry;
 use Distantmagic\Resonance\HttpRouteParameterBinderAggregate;
 use Distantmagic\Resonance\SingletonCollection;
 use LogicException;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 /**
  * @template-extends HttpControllerParameterResolver<RouteParameter>
@@ -36,7 +36,7 @@ readonly class RouteParameterResolver extends HttpControllerParameterResolver
 
     public function resolve(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         HttpControllerParameter $parameter,
         Attribute $attribute,
     ): HttpControllerParameterResolution {

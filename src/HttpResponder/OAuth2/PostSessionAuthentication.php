@@ -14,9 +14,9 @@ use Distantmagic\Resonance\OAuth2AuthorizationCodeFlowControllerInterface;
 use Distantmagic\Resonance\OAuth2AuthorizationRequestSessionStore;
 use Distantmagic\Resonance\OAuth2AuthorizedUser;
 use Distantmagic\Resonance\SessionAuthentication;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
-use Swoole\Http\Response;
 
 #[GrantsFeature(Feature::OAuth2)]
 #[Singleton]
@@ -28,9 +28,9 @@ final readonly class PostSessionAuthentication extends HttpResponder
         private SessionAuthentication $sessionAuthentication,
     ) {}
 
-    public function respond(ServerRequestInterface $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface
     {
-        if (!$this->authorizationRequestSessionStore->has($request, $response)) {
+        if (!$this->authorizationRequestSessionStore->has($request)) {
             return $this->authorizationCodeFlowController->redirectToAuthenticatedPage($request, $response);
         }
 
@@ -40,16 +40,12 @@ final readonly class PostSessionAuthentication extends HttpResponder
             throw new RuntimeException('Expected authenticated user to be stored in session');
         }
 
-        $authRequest = $this
-            ->authorizationRequestSessionStore
-            ->get($request, $response)
-        ;
-
+        $authRequest = $this->authorizationRequestSessionStore->get($request);
         $authRequest->setUser(new OAuth2AuthorizedUser($authenticatedUser->user->getIdentifier()));
 
         return $this
             ->authorizationCodeFlowController
-            ->redirectToClientScopeConsentPage($request, $response, $authRequest)
+            ->redirectToClientScopeConsentPage($request, $response)
         ;
     }
 }

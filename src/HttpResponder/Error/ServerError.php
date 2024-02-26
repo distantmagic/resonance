@@ -13,9 +13,9 @@ use Distantmagic\Resonance\HttpError\ServerError as ServerErrorEntity;
 use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpResponder\Error;
 use Distantmagic\Resonance\HttpResponderInterface;
+use Distantmagic\Resonance\PsrStringStream;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use RuntimeException;
-use Swoole\Http\Response;
 use Throwable;
 
 #[Singleton]
@@ -31,21 +31,17 @@ final readonly class ServerError extends Error
 
     public function sendThrowable(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         Throwable $throwable,
-    ): null|HttpInterceptableInterface|HttpResponderInterface {
-        if (!$response->isWritable()) {
-            throw new RuntimeException('Server response in not writable. Unable to report error', 0, $throwable);
-        }
-
+    ): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface {
         if (Environment::Development !== $this->applicationConfiguration->environment) {
             return $this->respond($request, $response);
         }
 
-        $response->status(500);
-        $response->header('content-type', ContentType::TextPlain->value);
-        $response->end((string) $throwable);
-
-        return null;
+        return $response
+            ->withStatus(500)
+            ->withHeader('content-type', ContentType::TextPlain->value)
+            ->withBody(new PsrStringStream((string) $throwable))
+        ;
     }
 }

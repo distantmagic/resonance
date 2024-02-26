@@ -119,7 +119,7 @@ readonly class HelloInterceptor extends HttpInterceptor
         Request $request,
         Response $response,
         object $intercepted,
-    ): null|HttpInterceptableInterface|HttpResponderInterface {
+    ): HttpInterceptableInterface|HttpResponderInterface {
         $response->header('content-type', 'text/plain');
         $response->end('Hello, '.$intercepted->message.'!');
 

@@ -8,11 +8,12 @@ use Distantmagic\Resonance\Attribute\Intercepts;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\ContentType;
 use Distantmagic\Resonance\HttpInterceptor;
+use Distantmagic\Resonance\PsrStringStream;
 use Distantmagic\Resonance\SecurityPolicyHeaders;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigTemplate;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 use Twig\Environment as TwigEnvironment;
 
 /**
@@ -29,19 +30,19 @@ readonly class TwigTemplateInterceptor extends HttpInterceptor
 
     public function intercept(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         object $intercepted,
-    ): null {
+    ): ResponseInterface {
         $rendered = $this->twig->render(
             $intercepted->getTemplatePath(),
             $intercepted->getTemplateData($request, $response),
         );
 
-        $this->securityPolicyHeaders->sendTemplatedPagePolicyHeaders($request, $response);
-
-        $response->header('content-type', ContentType::TextHtml->value.';charset=utf-8');
-        $response->end($rendered);
-
-        return null;
+        return $this
+            ->securityPolicyHeaders
+            ->sendTemplatedPagePolicyHeaders($request, $response)
+            ->withHeader('content-type', ContentType::TextHtml->value.';charset=utf-8')
+            ->withBody(new PsrStringStream($rendered))
+        ;
     }
 }

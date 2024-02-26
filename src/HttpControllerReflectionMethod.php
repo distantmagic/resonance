@@ -12,6 +12,7 @@ use Distantmagic\Resonance\HttpResponder\HttpController;
 use Doctrine\ORM\EntityManagerInterface;
 use Ds\Set;
 use Generator;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionAttribute;
 use ReflectionClass;
@@ -21,7 +22,6 @@ use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionType;
 use ReflectionUnionType;
-use Swoole\Http\Response;
 
 readonly class HttpControllerReflectionMethod
 {
@@ -174,7 +174,7 @@ readonly class HttpControllerReflectionMethod
                     $attributes->add(new DoctrineEntityManager());
                 } elseif (is_a($className, ServerRequestInterface::class, true)) {
                     $attributes->add(new CurrentRequest());
-                } elseif (is_a($className, Response::class, true)) {
+                } elseif (is_a($className, ResponseInterface::class, true)) {
                     $attributes->add(new CurrentResponse());
                 } elseif (is_a($className, UserInterface::class, true)) {
                     $attributes->add(new SessionAuthenticated());

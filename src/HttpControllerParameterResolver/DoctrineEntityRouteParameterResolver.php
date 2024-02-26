@@ -20,8 +20,8 @@ use Distantmagic\Resonance\HttpControllerParameterResolver;
 use Distantmagic\Resonance\HttpRouteMatchRegistry;
 use Distantmagic\Resonance\SingletonCollection;
 use LogicException;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 /**
  * @template-extends HttpControllerParameterResolver<DoctrineEntityRouteParameter>
@@ -39,7 +39,7 @@ readonly class DoctrineEntityRouteParameterResolver extends HttpControllerParame
 
     public function resolve(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         HttpControllerParameter $parameter,
         Attribute $attribute,
     ): HttpControllerParameterResolution {

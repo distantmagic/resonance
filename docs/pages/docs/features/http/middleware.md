@@ -179,7 +179,7 @@ readonly class CanMiddleware extends HttpMiddleware
         Response $response,
         Attribute $attribute,
         HttpInterceptableInterface|HttpResponderInterface $next,
-    ): null|HttpInterceptableInterface|HttpResponderInterface {
+    ): HttpInterceptableInterface|HttpResponderInterface {
         return $next;
     }
 }

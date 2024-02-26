@@ -6,14 +6,12 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\HttpResponder\PsrResponder;
 use League\OAuth2\Server\AuthorizationServer as LeagueAuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
-use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
-use Swoole\Http\Response;
 
 #[GrantsFeature(Feature::OAuth2)]
 #[Singleton(provides: OAuth2AuthorizationCodeFlowControllerInterface::class)]
@@ -24,42 +22,34 @@ readonly class OAuth2AuthorizationCodeFlowController implements OAuth2Authorizat
         private LeagueAuthorizationServer $leagueAuthorizationServer,
         private OAuth2AuthorizationRequestSessionStore $authorizationRequestSessionStore,
         private OAuth2EndpointResponderAggregate $oAuth2EndpointResponderAggregate,
-        private Psr17Factory $psr17Factory,
         private SessionAuthentication $sessionAuthentication,
     ) {}
 
     public function completeConsentRequest(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         bool $userConsented,
-    ): HttpResponderInterface {
-        $authorizationRequest = $this->authorizationRequestSessionStore->get($request, $response);
+    ): ResponseInterface {
+        $authorizationRequest = $this->authorizationRequestSessionStore->get($request);
         $authorizationRequest->setAuthorizationApproved($userConsented);
 
-        $this->authorizationRequestSessionStore->clear($request, $response);
+        $this->authorizationRequestSessionStore->clear($request);
 
         try {
-            $psrResponse = $this
-                ->leagueAuthorizationServer
-                ->completeAuthorizationRequest(
-                    $authorizationRequest,
-                    $this->psr17Factory->createResponse(),
-                )
-            ;
-
-            return new PsrResponder($psrResponse);
+            return $this->leagueAuthorizationServer->completeAuthorizationRequest(
+                $authorizationRequest,
+                $response,
+            );
         } catch (OAuthServerException $exception) {
-            $psrResponse = $this->psr17Factory->createResponse();
-
-            return new PsrResponder($exception->generateHttpResponse($psrResponse));
+            return $exception->generateHttpResponse($response);
         }
     }
 
     public function obtainSessionAuthenticatedUser(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         AuthorizationRequest $authorizationRequest,
-    ): null|HttpInterceptableInterface|HttpResponderInterface {
+    ): null|HttpInterceptableInterface|HttpResponderInterface|ResponseInterface {
         $authenticatedUser = $this->sessionAuthentication->getAuthenticatedUser($request);
 
         if ($authenticatedUser) {
@@ -68,18 +58,16 @@ readonly class OAuth2AuthorizationCodeFlowController implements OAuth2Authorizat
             return null;
         }
 
-        return $this->redirectToLoginPage($request, $response, $authorizationRequest);
+        return $this->redirectToLoginPage($request, $response);
     }
 
-    public function prepareConsentRequest(
-        ServerRequestInterface $request,
-        Response $response,
-    ): void {
-        if (!$this->authorizationRequestSessionStore->has($request, $response)) {
+    public function prepareConsentRequest(ServerRequestInterface $request): void
+    {
+        if (!$this->authorizationRequestSessionStore->has($request)) {
             throw new RuntimeException('Authorization request is not in progress');
         }
 
-        $authorizationRequest = $this->authorizationRequestSessionStore->get($request, $response);
+        $authorizationRequest = $this->authorizationRequestSessionStore->get($request);
 
         $formAction = $this
             ->contentSecurityPolicyRulesRepository
@@ -100,39 +88,37 @@ readonly class OAuth2AuthorizationCodeFlowController implements OAuth2Authorizat
 
     public function redirectToAuthenticatedPage(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
     ): HttpInterceptableInterface {
         $routeSymbol = $this
             ->oAuth2EndpointResponderAggregate
             ->getHttpRouteSymbolForEndpoint(OAuth2Endpoint::AuthenticatedPage)
         ;
 
-        return new InternalRedirect($routeSymbol);
+        return new InternalRedirect($request, $response, $routeSymbol);
     }
 
     public function redirectToClientScopeConsentPage(
         ServerRequestInterface $request,
-        Response $response,
-        AuthorizationRequest $authorizationRequest,
+        ResponseInterface $response,
     ): HttpInterceptableInterface {
         $routeSymbol = $this
             ->oAuth2EndpointResponderAggregate
             ->getHttpRouteSymbolForEndpoint(OAuth2Endpoint::ClientScopeConsentForm)
         ;
 
-        return new InternalRedirect($routeSymbol);
+        return new InternalRedirect($request, $response, $routeSymbol);
     }
 
     public function redirectToLoginPage(
         ServerRequestInterface $request,
-        Response $response,
-        AuthorizationRequest $authorizationRequest,
+        ResponseInterface $response,
     ): HttpInterceptableInterface {
         $routeSymbol = $this
             ->oAuth2EndpointResponderAggregate
             ->getHttpRouteSymbolForEndpoint(OAuth2Endpoint::LoginForm)
         ;
 
-        return new InternalRedirect($routeSymbol);
+        return new InternalRedirect($request, $response, $routeSymbol);
     }
 }

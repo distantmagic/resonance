@@ -16,8 +16,8 @@ use Distantmagic\Resonance\HttpControllerParameterResolution;
 use Distantmagic\Resonance\HttpControllerParameterResolutionStatus;
 use Distantmagic\Resonance\HttpControllerParameterResolver;
 use Distantmagic\Resonance\SingletonCollection;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 /**
  * @template-extends HttpControllerParameterResolver<DoctrineEntityRepository>
@@ -33,7 +33,7 @@ readonly class DoctrineEntityRepositoryResolver extends HttpControllerParameterR
 
     public function resolve(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         HttpControllerParameter $parameter,
         Attribute $attribute,
     ): HttpControllerParameterResolution {

@@ -16,8 +16,8 @@ use Distantmagic\Resonance\InputValidatorCollection;
 use Distantmagic\Resonance\InputValidatorController;
 use Distantmagic\Resonance\SingletonCollection;
 use LogicException;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 /**
  * @template-extends HttpControllerParameterResolver<ValidatedRequest>
@@ -33,7 +33,7 @@ readonly class ValidatedRequestResolver extends HttpControllerParameterResolver
 
     public function resolve(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         HttpControllerParameter $parameter,
         Attribute $attribute,
     ): HttpControllerParameterResolution {

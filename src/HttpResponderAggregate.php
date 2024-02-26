@@ -10,9 +10,14 @@ use Distantmagic\Resonance\Event\UnhandledException;
 use Distantmagic\Resonance\HttpResponder\Error\MethodNotAllowed;
 use Distantmagic\Resonance\HttpResponder\Error\PageNotFound;
 use Distantmagic\Resonance\HttpResponder\Error\ServerError;
+use Distantmagic\Resonance\PsrMessage\SwooleServerRequest;
+use Distantmagic\Resonance\PsrMessage\SwooleServerResponse;
 use DomainException;
 use LogicException;
+use Nyholm\Psr7\Response as Psr7Response;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
@@ -22,7 +27,7 @@ use Symfony\Component\Routing\RequestContext;
 use Throwable;
 
 #[Singleton]
-readonly class HttpResponderAggregate
+readonly class HttpResponderAggregate implements RequestHandlerInterface
 {
     public function __construct(
         private ApplicationConfiguration $applicationConfiguration,
@@ -32,21 +37,36 @@ readonly class HttpResponderAggregate
         private HttpRouteMatchRegistry $routeMatchRegistry,
         private MethodNotAllowed $methodNotAllowed,
         private PageNotFound $pageNotFound,
+        private PsrSwooleResponder $psrSwooleResponder,
         private RequestContext $requestContext,
         private ServerError $serverError,
         private SwooleConfiguration $swooleConfiguration,
         private UrlMatcher $urlMatcher,
     ) {}
 
-    public function respondToPsrRequest(ServerRequestInterface $request, Response $response): void
+    /**
+     * @see https://bref.sh/docs/use-cases/http/advanced-use-cases#with-the-event-driven-function-runtime
+     */
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        return $this->respondToPsrRequest(
+            $request,
+            new Psr7Response(),
+        );
+    }
+
+    public function respondToPsrRequest(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+    ): ResponseInterface {
         $responder = $this->selectResponder($request);
 
         try {
-            $this->recursiveResponder->respondRecursive($request, $response, $responder);
+            return $this->recursiveResponder->respondRecursive($request, $response, $responder);
         } catch (Throwable $throwable) {
             $this->eventDispatcher->dispatch(new UnhandledException($throwable));
-            $this->recursiveResponder->respondRecursive(
+
+            return $this->recursiveResponder->respondRecursive(
                 $request,
                 $response,
                 $this->serverError->sendThrowable($request, $response, $throwable),
@@ -58,13 +78,16 @@ readonly class HttpResponderAggregate
 
     public function respondToSwooleRequest(Request $request, Response $response): void
     {
-        $this->respondToPsrRequest(
-            new SwooleServerRequest(
-                applicationConfiguration: $this->applicationConfiguration,
-                request: $request,
-                swooleConfiguration: $this->swooleConfiguration,
-            ),
+        $this->psrSwooleResponder->respondWithPsrResponse(
             $response,
+            $this->respondToPsrRequest(
+                new SwooleServerRequest(
+                    applicationConfiguration: $this->applicationConfiguration,
+                    request: $request,
+                    swooleConfiguration: $this->swooleConfiguration,
+                ),
+                new SwooleServerResponse($response),
+            ),
         );
     }
 

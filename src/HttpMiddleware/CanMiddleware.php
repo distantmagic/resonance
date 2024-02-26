@@ -15,8 +15,8 @@ use Distantmagic\Resonance\HttpResponder\Error\Forbidden;
 use Distantmagic\Resonance\HttpResponderCollection;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\SingletonCollection;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 /**
  * @template-extends HttpMiddleware<Can>
@@ -36,7 +36,7 @@ readonly class CanMiddleware extends HttpMiddleware
 
     public function preprocess(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         Attribute $attribute,
         HttpInterceptableInterface|HttpResponderInterface $next,
     ): HttpInterceptableInterface|HttpResponderInterface {

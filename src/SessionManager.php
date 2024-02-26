@@ -7,7 +7,7 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
+use Symfony\Component\HttpFoundation\Cookie;
 use WeakMap;
 
 #[GrantsFeature(Feature::HttpSession)]
@@ -15,17 +15,18 @@ use WeakMap;
 final readonly class SessionManager
 {
     /**
-     * @var WeakMap<ServerRequestInterface, Session>
+     * @var WeakMap<ServerRequestInterface,Session>
      */
     private WeakMap $sessions;
 
     public function __construct(
+        private CookieManager $cookieManager,
         private RedisConfiguration $redisConfiguration,
         private RedisConnectionPoolRepository $redisConnectionPoolRepository,
         private SessionConfiguration $sessionConfiguration,
     ) {
         /**
-         * @var WeakMap<ServerRequestInterface, Session>
+         * @var WeakMap<ServerRequestInterface,Session>
          */
         $this->sessions = new WeakMap();
     }
@@ -59,23 +60,26 @@ final readonly class SessionManager
         return $this->freshSession($request, $sessionId);
     }
 
-    public function setSessionCookie(Response $response, Session $session): void
+    public function setSessionCookie(ServerRequestInterface $request, Session $session): void
     {
-        $response->cookie(
-            expires: time() + $this->sessionConfiguration->cookieLifespan,
-            httponly: true,
-            name: $this->sessionConfiguration->cookieName,
-            samesite: $this->sessionConfiguration->cookieSameSite,
-            secure: true,
-            value: $session->id,
+        $this->cookieManager->addCookieToResponse(
+            $request,
+            new Cookie(
+                name: $this->sessionConfiguration->cookieName,
+                value: $session->id,
+                expire: time() + $this->sessionConfiguration->cookieLifespan,
+                secure: true,
+                httpOnly: true,
+                sameSite: $this->sessionConfiguration->cookieSameSite,
+            ),
         );
     }
 
-    public function start(ServerRequestInterface $request, Response $response): Session
+    public function start(ServerRequestInterface $request): Session
     {
         $session = $this->restoreFromRequest($request) ?? $this->createSession($request);
 
-        $this->setSessionCookie($response, $session);
+        $this->setSessionCookie($request, $session);
 
         return $session;
     }

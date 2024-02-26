@@ -8,7 +8,6 @@ use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\ProvidesAuthenticatedUser;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 use WeakMap;
 
 #[GrantsFeature(Feature::HttpSession)]
@@ -17,7 +16,7 @@ use WeakMap;
 final readonly class SessionAuthentication implements AuthenticatedUserStoreInterface
 {
     /**
-     * @var WeakMap<ServerRequestInterface, ?UserInterface>
+     * @var WeakMap<ServerRequestInterface,?UserInterface>
      */
     private WeakMap $authenticatedUsers;
 
@@ -26,7 +25,7 @@ final readonly class SessionAuthentication implements AuthenticatedUserStoreInte
         private UserRepositoryInterface $userRepository,
     ) {
         /**
-         * @var WeakMap<ServerRequestInterface, ?UserInterface>
+         * @var WeakMap<ServerRequestInterface,?UserInterface>
          */
         $this->authenticatedUsers = new WeakMap();
     }
@@ -56,9 +55,9 @@ final readonly class SessionAuthentication implements AuthenticatedUserStoreInte
         return new AuthenticatedUser(AuthenticatedUserSource::Session, $user);
     }
 
-    public function setAuthenticatedUser(ServerRequestInterface $request, Response $response, UserInterface $user): void
+    public function setAuthenticatedUser(ServerRequestInterface $request, UserInterface $user): void
     {
-        $session = $this->sessionManager->start($request, $response);
+        $session = $this->sessionManager->start($request);
         $session->data->put('authenticated_user_id', (string) $user->getIdentifier());
 
         $this->authenticatedUsers->offsetSet($request, $user);

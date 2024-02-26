@@ -19,7 +19,7 @@ use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
  * @template-extends ConfigurationProvider<SessionConfiguration, array{
  *     cookie_lifespan: int,
  *     cookie_name: non-empty-string,
- *     cookie_samesite: string,
+ *     cookie_samesite: 'lax'|'none'|'strict',
  *     redis_connection_pool: string,
  * }>
  */

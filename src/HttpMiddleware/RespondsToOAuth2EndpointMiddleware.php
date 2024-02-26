@@ -16,8 +16,8 @@ use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\OAuth2AuthorizationCodeFlowControllerInterface;
 use Distantmagic\Resonance\OAuth2Endpoint;
 use Distantmagic\Resonance\SingletonCollection;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 /**
  * @template-extends HttpMiddleware<RespondsToOAuth2Endpoint>
@@ -36,15 +36,12 @@ readonly class RespondsToOAuth2EndpointMiddleware extends HttpMiddleware
 
     public function preprocess(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         Attribute $attribute,
         HttpInterceptableInterface|HttpResponderInterface $next,
     ): HttpInterceptableInterface|HttpResponderInterface {
         if (OAuth2Endpoint::ClientScopeConsentForm === $attribute->endpoint) {
-            $this
-                ->authorizationCodeFlowController
-                ->prepareConsentRequest($request, $response)
-            ;
+            $this->authorizationCodeFlowController->prepareConsentRequest($request);
         }
 
         return $next;

@@ -17,8 +17,8 @@ use Distantmagic\Resonance\HttpControllerParameterResolver;
 use Distantmagic\Resonance\SessionAuthentication;
 use Distantmagic\Resonance\SingletonCollection;
 use LogicException;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 /**
  * @template-extends HttpControllerParameterResolver<SessionAuthenticated>
@@ -32,15 +32,11 @@ readonly class SessionAuthenticatedResolver extends HttpControllerParameterResol
 
     public function resolve(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         HttpControllerParameter $parameter,
         Attribute $attribute,
     ): HttpControllerParameterResolution {
-        $user = $this
-            ->sessionAuthentication
-            ->getAuthenticatedUser($request)
-            ?->user
-        ;
+        $user = $this->sessionAuthentication->getAuthenticatedUser($request)?->user;
 
         if (!is_null($user)) {
             if ($user instanceof $parameter->className) {

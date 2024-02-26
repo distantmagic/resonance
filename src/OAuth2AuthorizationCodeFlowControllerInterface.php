@@ -5,42 +5,37 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 interface OAuth2AuthorizationCodeFlowControllerInterface
 {
     public function completeConsentRequest(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         bool $userConsented,
-    ): HttpInterceptableInterface|HttpResponderInterface;
+    ): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface;
 
     public function obtainSessionAuthenticatedUser(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         AuthorizationRequest $authorizationRequest,
-    ): null|HttpInterceptableInterface|HttpResponderInterface;
+    ): null|HttpInterceptableInterface|HttpResponderInterface|ResponseInterface;
 
-    public function prepareConsentRequest(
-        ServerRequestInterface $request,
-        Response $response,
-    ): void;
+    public function prepareConsentRequest(ServerRequestInterface $request): void;
 
     public function redirectToAuthenticatedPage(
         ServerRequestInterface $request,
-        Response $response,
-    ): HttpInterceptableInterface|HttpResponderInterface;
+        ResponseInterface $response,
+    ): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface;
 
     public function redirectToClientScopeConsentPage(
         ServerRequestInterface $request,
-        Response $response,
-        AuthorizationRequest $authorizationRequest,
-    ): HttpInterceptableInterface|HttpResponderInterface;
+        ResponseInterface $response,
+    ): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface;
 
     public function redirectToLoginPage(
         ServerRequestInterface $request,
-        Response $response,
-        AuthorizationRequest $authorizationRequest,
-    ): HttpInterceptableInterface|HttpResponderInterface;
+        ResponseInterface $response,
+    ): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface;
 }

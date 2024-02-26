@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\HttpResponder;
 
 use Distantmagic\Resonance\HttpResponder;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 readonly class Redirect extends HttpResponder
 {
@@ -15,11 +15,11 @@ readonly class Redirect extends HttpResponder
         private int $code = 303,
     ) {}
 
-    public function respond(ServerRequestInterface $request, Response $response): null
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $response->status($this->code);
-        $response->header('location', $this->location);
-
-        return null;
+        return $response
+            ->withStatus($this->code)
+            ->withHeader('location', $this->location)
+        ;
     }
 }

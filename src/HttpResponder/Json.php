@@ -6,18 +6,20 @@ namespace Distantmagic\Resonance\HttpResponder;
 
 use Distantmagic\Resonance\ContentType;
 use Distantmagic\Resonance\HttpResponder;
+use Distantmagic\Resonance\PsrStringStream;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 readonly class Json extends HttpResponder
 {
     public function __construct(private string $json) {}
 
-    public function respond(ServerRequestInterface $request, Response $response): null
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $response->header('content-type', ContentType::ApplicationJson->value);
-        $response->end($this->json);
-
-        return null;
+        return $response
+            ->withStatus(200)
+            ->withHeader('content-type', ContentType::ApplicationJson->value)
+            ->withBody(new PsrStringStream($this->json))
+        ;
     }
 }

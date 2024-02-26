@@ -4,24 +4,11 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
-use Swoole\Http\Request;
 
-readonly class SwooleServerRequestStream implements StreamInterface
+readonly class PsrStringStream implements StreamInterface
 {
-    private string $contents;
-
-    public function __construct(Request $request)
-    {
-        $content = $request->getContent();
-
-        if (!is_string($content)) {
-            throw new InvalidArgumentException('Request content is not a string');
-        }
-
-        $this->contents = $content;
-    }
+    public function __construct(private string $contents) {}
 
     public function __toString(): string
     {

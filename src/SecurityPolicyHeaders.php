@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 #[Singleton]
 final readonly class SecurityPolicyHeaders
@@ -16,22 +16,24 @@ final readonly class SecurityPolicyHeaders
         private CSPNonceManager $cspNonceManager,
     ) {}
 
-    public function sendAssetHeaders(Response $response): void
+    public function sendAssetHeaders(ResponseInterface $response): ResponseInterface
     {
-        $this->sendCrossOriginPolicies($response);
-        $this->sendRefererPolicies($response);
-        $this->sendXPolicies($response);
-
-        $response->header('cache-control', 'public, max-age=31536000, immutable');
-        $response->header('service-worker-allowed', '/');
-        $response->header('x-service-worker-cache', 'true');
+        return $this->sendCrossOriginPolicies(
+            $this->sendRefererPolicies(
+                $this->sendXPolicies($response)
+            )
+        )
+            ->withHeader('cache-control', 'public, max-age=31536000, immutable')
+            ->withHeader('service-worker-allowed', '/')
+            ->withHeader('x-service-worker-cache', 'true')
+        ;
     }
 
-    public function sendContentSecurityPolicyHeader(ServerRequestInterface $request, Response $response): void
+    public function sendContentSecurityPolicyHeader(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $contentSecurityPolicyRequestRules = $this->contentSecurityPolicyRulesRepository->from($request);
 
-        $response->header('content-security-policy', implode(';', [
+        return $response->withHeader('content-security-policy', implode(';', [
             "default-src 'none'",
 
             "base-uri 'none'",
@@ -53,20 +55,27 @@ final readonly class SecurityPolicyHeaders
         ]));
     }
 
-    public function sendJsonPagePolicyHeaders(Response $response): void
+    public function sendJsonPagePolicyHeaders(ResponseInterface $response): ResponseInterface
     {
-        $this->sendRefererPolicies($response);
-        $this->sendServer($response);
-        $this->sendXPolicies($response);
+        return $this->sendRefererPolicies(
+            $this->sendServer(
+                $this->sendXPolicies($response)
+            )
+        );
     }
 
-    public function sendTemplatedPagePolicyHeaders(ServerRequestInterface $request, Response $response): void
+    public function sendTemplatedPagePolicyHeaders(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $this->sendContentSecurityPolicyHeader($request, $response);
-        $this->sendCrossOriginPolicies($response);
-        $this->sendRefererPolicies($response);
-        $this->sendServer($response);
-        $this->sendXPolicies($response);
+        return $this->sendContentSecurityPolicyHeader(
+            $request,
+            $this->sendCrossOriginPolicies(
+                $this->sendRefererPolicies(
+                    $this->sendServer(
+                        $this->sendXPolicies($response)
+                    )
+                )
+            ),
+        );
     }
 
     private function getHeaderNonce(ServerRequestInterface $request): string
@@ -76,28 +85,33 @@ final readonly class SecurityPolicyHeaders
         return "'nonce-".$nonce."'";
     }
 
-    private function sendCrossOriginPolicies(Response $response): void
+    private function sendCrossOriginPolicies(ResponseInterface $response): ResponseInterface
     {
-        $response->header('cross-origin-embedder-policy', 'require-corp');
-        $response->header('cross-origin-opener-policy', 'same-origin');
+
+        return $response
+            ->withHeader('cross-origin-embedder-policy', 'require-corp')
+            ->withHeader('cross-origin-opener-policy', 'same-origin')
+        ;
     }
 
-    private function sendRefererPolicies(Response $response): void
+    private function sendRefererPolicies(ResponseInterface $response): ResponseInterface
     {
-        $response->header('referrer-policy', 'no-referrer');
+        return $response->withHeader('x-referrer-policy', 'no-referrer');
     }
 
-    private function sendServer(Response $response): void
+    private function sendServer(ResponseInterface $response): ResponseInterface
     {
         // https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html#server
         // Remove this header or set non-informative values.
-        $response->header('server', 'server');
+        return $response->withHeader('server', 'server');
     }
 
-    private function sendXPolicies(Response $response): void
+    private function sendXPolicies(ResponseInterface $response): ResponseInterface
     {
-        $response->header('x-content-type-options', 'nosniff');
-        $response->header('x-frame-options', 'deny');
-        $response->header('x-permitted-cross-domain-policies', 'deny');
+        return $response
+            ->withHeader('x-content-type-options', 'nosniff')
+            ->withHeader('x-frame-options', 'deny')
+            ->withHeader('x-permitted-cross-domain-policies', 'deny')
+        ;
     }
 }

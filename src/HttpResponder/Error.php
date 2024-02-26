@@ -14,8 +14,8 @@ use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\JsonErrorTemplateInterface;
 use Distantmagic\Resonance\SecurityPolicyHeaders;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 abstract readonly class Error extends HttpResponder
 {
@@ -39,7 +39,7 @@ abstract readonly class Error extends HttpResponder
         $this->contentTypeResponder->responders->add(ContentType::ApplicationJson);
     }
 
-    public function respond(ServerRequestInterface $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface
     {
         return match ($this->contentTypeResponder->best($request)) {
             ContentType::ApplicationJson => $this->sendJson($request, $response),
@@ -48,19 +48,27 @@ abstract readonly class Error extends HttpResponder
         };
     }
 
-    protected function sendJson(ServerRequestInterface $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
+    protected function sendJson(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface
     {
-        $response->status($this->httpError->code());
-        $this->securityPolicyHeaders->sendJsonPagePolicyHeaders($response);
-
-        return $this->jsonTemplate->renderHttpError($request, $response, $this->httpError);
+        return $this->jsonTemplate->renderHttpError(
+            $request,
+            $this
+                ->securityPolicyHeaders
+                ->sendJsonPagePolicyHeaders($response)
+                ->withStatus($this->httpError->code()),
+            $this->httpError,
+        );
     }
 
-    private function sendHtml(ServerRequestInterface $request, Response $response): HttpInterceptableInterface|HttpResponderInterface
+    private function sendHtml(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface
     {
-        $response->status($this->httpError->code());
-        $this->securityPolicyHeaders->sendTemplatedPagePolicyHeaders($request, $response);
-
-        return $this->htmlTemplate->renderHttpError($request, $response, $this->httpError);
+        return $this->htmlTemplate->renderHttpError(
+            $request,
+            $this
+                ->securityPolicyHeaders
+                ->sendTemplatedPagePolicyHeaders($request, $response)
+                ->withStatus($this->httpError->code()),
+            $this->httpError
+        );
     }
 }

@@ -6,8 +6,8 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use LogicException;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 /**
  * Each time the responder swaps to a adifferent one, start processing from
@@ -23,27 +23,17 @@ final readonly class HttpRecursiveResponder
 
     public function respondRecursive(
         ServerRequestInterface $request,
-        Response $response,
-        null|HttpInterceptableInterface|HttpResponderInterface $responder,
-    ): void {
-        while ($responder) {
+        ResponseInterface $response,
+        HttpInterceptableInterface|HttpResponderInterface|ResponseInterface $responder,
+    ): ResponseInterface {
+        while (!($responder instanceof ResponseInterface)) {
             $responder = $this->processMiddlewares($request, $response, $responder);
-
-            if (!$responder) {
-                return;
-            }
 
             if ($responder instanceof HttpResponderInterface) {
                 $forwardedResponder = $responder->respond($request, $response);
 
-                if (!$forwardedResponder) {
-                    return;
-                }
-
                 if ($forwardedResponder !== $responder) {
-                    $this->respondRecursive($request, $response, $forwardedResponder);
-
-                    return;
+                    return $this->respondRecursive($request, $response, $forwardedResponder);
                 }
             }
 
@@ -51,13 +41,15 @@ final readonly class HttpRecursiveResponder
                 $responder = $this->processInterceptors($request, $response, $responder);
             }
         }
+
+        return $responder;
     }
 
     private function processInterceptors(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         HttpInterceptableInterface $responder,
-    ): null|HttpInterceptableInterface|HttpResponderInterface {
+    ): HttpInterceptableInterface|ResponseInterface {
         $interceptor = $this
             ->httpInterceptorAggregate
             ->interceptors
@@ -79,9 +71,9 @@ final readonly class HttpRecursiveResponder
 
     private function processMiddlewares(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         HttpInterceptableInterface|HttpResponderInterface $responder,
-    ): null|HttpInterceptableInterface|HttpResponderInterface {
+    ): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface {
         $middlewareAttributes = $this
             ->httpMiddlewareAggregate
             ->middlewares
@@ -99,10 +91,6 @@ final readonly class HttpRecursiveResponder
                 $middlewareAttribute->attribute,
                 $responder,
             );
-
-            if (!$middlewareResponder) {
-                return null;
-            }
 
             if ($middlewareResponder !== $responder) {
                 return $this->respondRecursive($request, $response, $middlewareResponder);

@@ -15,16 +15,14 @@ use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpMiddleware;
 use Distantmagic\Resonance\HttpResponder\Error\Forbidden;
-use Distantmagic\Resonance\HttpResponder\PsrResponder;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\HttpRouteMatchRegistry;
 use Distantmagic\Resonance\OAuth2ClaimReader;
 use Distantmagic\Resonance\OAuth2ScopeCollection;
 use Distantmagic\Resonance\SingletonCollection;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 /**
  * @template-extends HttpMiddleware<RequiresOAuth2Scope>
@@ -43,15 +41,14 @@ readonly class RequiresOAuth2ScopeMiddleware extends HttpMiddleware
         private HttpRouteMatchRegistry $routeMatchRegistry,
         private OAuth2ClaimReader $oAuth2ClaimReader,
         private OAuth2ScopeCollection $oAuth2ScopeCollection,
-        private Psr17Factory $psr17Factory,
     ) {}
 
     public function preprocess(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         Attribute $attribute,
         HttpInterceptableInterface|HttpResponderInterface $next,
-    ): HttpInterceptableInterface|HttpResponderInterface {
+    ): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface {
         $authenticatedUser = $this
             ->authenticatedUserSourceAggregate
             ->getAuthenticatedUser($request)
@@ -81,9 +78,7 @@ readonly class RequiresOAuth2ScopeMiddleware extends HttpMiddleware
                 }
             }
         } catch (OAuthServerException $exception) {
-            $psrResponse = $this->psr17Factory->createResponse();
-
-            return new PsrResponder($exception->generateHttpResponse($psrResponse));
+            return $exception->generateHttpResponse($response);
         }
 
         return $this->forbidden;

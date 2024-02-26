@@ -12,8 +12,8 @@ use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\JsonSerializer;
 use Distantmagic\Resonance\JsonTemplate;
 use Distantmagic\Resonance\SingletonCollection;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
 
 /**
  * @template-extends HttpInterceptor<JsonTemplate>
@@ -26,7 +26,7 @@ readonly class JsonTemplateInterceptor extends HttpInterceptor
 
     public function intercept(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         object $intercepted,
     ): HttpResponderInterface {
         return new Json($this->jsonSerializer->serialize($intercepted->data));

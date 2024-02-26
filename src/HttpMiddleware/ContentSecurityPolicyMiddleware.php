@@ -11,11 +11,13 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\ContentSecurityPolicyType;
 use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpMiddleware;
+use Distantmagic\Resonance\HttpResponder\Override;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\SecurityPolicyHeaders;
 use Distantmagic\Resonance\SingletonCollection;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Response;
+use RuntimeException;
 
 /**
  * @template-extends HttpMiddleware<ContentSecurityPolicy>
@@ -33,15 +35,28 @@ readonly class ContentSecurityPolicyMiddleware extends HttpMiddleware
 
     public function preprocess(
         ServerRequestInterface $request,
-        Response $response,
+        ResponseInterface $response,
         Attribute $attribute,
         HttpInterceptableInterface|HttpResponderInterface $next,
     ): HttpInterceptableInterface|HttpResponderInterface {
-        match ($attribute->contentSecurityPolicyType) {
-            ContentSecurityPolicyType::Html => $this->securityPolicyHeaders->sendTemplatedPagePolicyHeaders($request, $response),
-            ContentSecurityPolicyType::Json => $this->securityPolicyHeaders->sendJsonPagePolicyHeaders($response),
-        };
+        if (!($next instanceof HttpResponderInterface)) {
+            return $next;
 
-        return $next;
+            throw new RuntimeException(sprintf(
+                '"%s" can only handle "%s", got: "%s"',
+                self::class,
+                HttpResponderInterface::class,
+                $next::class,
+            ));
+        }
+
+        return new Override(
+            responder: $next,
+            request: $request,
+            response: match ($attribute->contentSecurityPolicyType) {
+                ContentSecurityPolicyType::Html => $this->securityPolicyHeaders->sendTemplatedPagePolicyHeaders($request, $response),
+                ContentSecurityPolicyType::Json => $this->securityPolicyHeaders->sendJsonPagePolicyHeaders($response),
+            },
+        );
     }
 }
