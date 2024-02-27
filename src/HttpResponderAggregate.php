@@ -18,6 +18,7 @@ use Nyholm\Psr7\Response as Psr7Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
@@ -35,6 +36,7 @@ readonly class HttpResponderAggregate implements RequestHandlerInterface
         private HttpRecursiveResponder $recursiveResponder,
         private HttpResponderCollection $httpResponderCollection,
         private HttpRouteMatchRegistry $routeMatchRegistry,
+        private LoggerInterface $logger,
         private MethodNotAllowed $methodNotAllowed,
         private PageNotFound $pageNotFound,
         private PsrSwooleResponder $psrSwooleResponder,
@@ -59,36 +61,53 @@ readonly class HttpResponderAggregate implements RequestHandlerInterface
         ServerRequestInterface $request,
         ResponseInterface $response,
     ): ResponseInterface {
-        $responder = $this->selectResponder($request);
-
         try {
-            return $this->recursiveResponder->respondRecursive($request, $response, $responder);
-        } catch (Throwable $throwable) {
-            $this->eventDispatcher->dispatch(new UnhandledException($throwable));
+            $responder = $this->selectResponder($request);
 
-            return $this->recursiveResponder->respondRecursive(
-                $request,
-                $response,
-                $this->serverError->sendThrowable($request, $response, $throwable),
-            );
-        } finally {
-            $this->eventDispatcher->dispatch(new HttpResponseReady($responder, $request));
+            try {
+                return $this->recursiveResponder->respondRecursive($request, $response, $responder);
+            } catch (Throwable $throwable) {
+                $this->eventDispatcher->dispatch(new UnhandledException($throwable));
+
+                return $this->recursiveResponder->respondRecursive(
+                    $request,
+                    $response,
+                    $this->serverError->sendThrowable($request, $response, $throwable),
+                );
+            } finally {
+                $this->eventDispatcher->dispatch(new HttpResponseReady($responder, $request));
+            }
+        } catch (Throwable $throwable) {
+            $this->logger->error(sprintf(
+                'http_psr_responder_failure(%s)',
+                (string) $throwable,
+            ));
         }
     }
 
     public function respondToSwooleRequest(Request $request, Response $response): void
     {
-        $this->psrSwooleResponder->respondWithPsrResponse(
-            $response,
-            $this->respondToPsrRequest(
-                new SwooleServerRequest(
-                    applicationConfiguration: $this->applicationConfiguration,
-                    request: $request,
-                    swooleConfiguration: $this->swooleConfiguration,
+        try {
+            $psrRequest = new SwooleServerRequest(
+                applicationConfiguration: $this->applicationConfiguration,
+                request: $request,
+                swooleConfiguration: $this->swooleConfiguration,
+            );
+
+            $this->psrSwooleResponder->respondWithPsrResponse(
+                $psrRequest,
+                $response,
+                $this->respondToPsrRequest(
+                    $psrRequest,
+                    new SwooleServerResponse($response),
                 ),
-                new SwooleServerResponse($response),
-            ),
-        );
+            );
+        } catch (Throwable $throwable) {
+            $this->logger->error(sprintf(
+                'http_swoole_responder_failure(%s)',
+                (string) $throwable,
+            ));
+        }
     }
 
     /**

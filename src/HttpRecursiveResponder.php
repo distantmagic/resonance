@@ -30,11 +30,11 @@ final readonly class HttpRecursiveResponder
             $responder = $this->processMiddlewares($request, $response, $responder);
 
             if ($responder instanceof HttpResponderInterface) {
-                $forwardedResponder = $responder->respond($request, $response);
-
-                if ($forwardedResponder !== $responder) {
-                    return $this->respondRecursive($request, $response, $forwardedResponder);
-                }
+                return $this->respondRecursive(
+                    $request,
+                    $response,
+                    $responder->respond($request, $response),
+                );
             }
 
             if ($responder instanceof HttpInterceptableInterface) {

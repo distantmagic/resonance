@@ -69,13 +69,13 @@ final readonly class WebSocketServerController implements ServerPipeMessageHandl
 
     public function onClose(int $fd): void
     {
-        $this->logger->debug(sprintf('websocket_close(%s)', $fd));
-
         $this->webSocketServerConnectionTable->unregisterConnection($fd);
 
         if (!$this->protocolControllers->hasKey($fd)) {
             return;
         }
+
+        $this->logger->debug(sprintf('websocket_close(%s)', $fd));
 
         $this->protocolControllers->get($fd)->onClose($fd);
         $this->protocolControllers->remove($fd);

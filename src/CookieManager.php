@@ -36,4 +36,14 @@ readonly class CookieManager
 
         $this->cookies->offsetGet($request)->add($cookie);
     }
+
+    /**
+     * @return Set<Cookie>
+     */
+    public function getRequestCookies(ServerRequestInterface $request): Set
+    {
+        return $this->cookies->offsetExists($request)
+            ? $this->cookies->offsetGet($request)
+            : new Set();
+    }
 }
