@@ -13,7 +13,6 @@ use Distantmagic\Resonance\HttpError\ServerError as ServerErrorEntity;
 use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpResponder\Error;
 use Distantmagic\Resonance\HttpResponderInterface;
-use Distantmagic\Resonance\PsrStringStream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -41,7 +40,7 @@ final readonly class ServerError extends Error
         return $response
             ->withStatus(500)
             ->withHeader('content-type', ContentType::TextPlain->value)
-            ->withBody(new PsrStringStream((string) $throwable))
+            ->withBody($this->createStream($throwable))
         ;
     }
 }

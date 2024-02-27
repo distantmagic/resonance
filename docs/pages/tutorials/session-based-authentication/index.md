@@ -159,7 +159,6 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\DoctrineEntityManagerRepository;
 use Distantmagic\Resonance\UserInterface;
 use Distantmagic\Resonance\UserRepositoryInterface;
-use Swoole\Http\Request;
 
 #[Singleton(provides: UserRepositoryInterface::class)]
 readonly class UserRepository implements UserRepositoryInterface
@@ -243,8 +242,8 @@ use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigTemplate;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
@@ -254,9 +253,9 @@ use Swoole\Http\Response;
 #[Singleton(collection: SingletonCollection::HttpResponder)]
 final readonly class LoginForm extends HttpResponder
 {
-    public function respond(Request $request, Response $response): HttpInterceptableInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface
     {
-        return new TwigTemplate('auth/login_form.twig');
+        return new TwigTemplate($request, $response, 'auth/login_form.twig');
     }
 }
 ```
@@ -430,8 +429,8 @@ use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigTemplate;
 use Doctrine\ORM\EntityRepository;
 use Ds\Map;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::POST,
@@ -449,14 +448,14 @@ final readonly class LoginValidation extends HttpController
         parent::__construct($controllerDependencies);
     }
 
-    public function handle(
-        Request $request,
-        Response $response,
+    public function createResponse(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
         #[ValidatedRequest(UsernamePasswordValidator::class)]
         UsernamePassword $usernamePassword,
         #[DoctrineEntityRepository(User::class)]
         EntityRepository $users,
-    ): null|HttpInterceptableInterface {
+    ): HttpInterceptableInterface|ResponseInterface {
         /**
          * @var null|User
          */
@@ -465,9 +464,7 @@ final readonly class LoginValidation extends HttpController
         ]);
 
         if (!$user || !password_verify($usernamePassword->password, $user->getPasswordHash())) {
-            $response->status(403);
-
-            return;
+            return $response->withStatus(403);
         }
 
         $this->sessionAuthentication->setAuthenticatedUser(
@@ -476,7 +473,7 @@ final readonly class LoginValidation extends HttpController
             $user->user,
         );
 
-        return new InternalRedirect(HttpRouteSymbol::Homepage);
+        return new InternalRedirect($request, $response, HttpRouteSymbol::Homepage);
     }
 }
 ```
@@ -502,8 +499,8 @@ use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigTemplate;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
@@ -513,9 +510,9 @@ use Swoole\Http\Response;
 #[Singleton(collection: SingletonCollection::HttpResponder)]
 final readonly class LogoutForm extends HttpResponder
 {
-    public function respond(Request $request, Response $response): HttpInterceptableInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface
     {
-        return new TwigTemplate('auth/logout_form.twig');
+        return new TwigTemplate($request, $response, 'auth/logout_form.twig');
     }
 }
 ```
@@ -552,8 +549,8 @@ use Distantmagic\Resonance\InternalRedirect;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SessionAuthentication;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::POST,
@@ -568,13 +565,15 @@ final readonly class LogoutValidation extends HttpResponder
         private SessionAuthentication $sessionAuthentication,
     ) {}
 
-    public function respond(Request $request, Response $response): HttpInterceptableInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface
     {
         $this->sessionAuthentication->clearAuthenticatedUser($request);
 
-        $response->header('clear-site-data', '*');
-
-        return new InternalRedirect(HttpRouteSymbol::Homepage);
+        return new InternalRedirect(
+            $request,
+            $response->header('clear-site-data', '*');
+            HttpRouteSymbol::Homepage,
+        );
     }
 }
 ```

@@ -7,7 +7,6 @@ namespace Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\ContentType;
 use Distantmagic\Resonance\HttpResponder;
-use Distantmagic\Resonance\PsrStringStream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -19,7 +18,7 @@ final readonly class NotAcceptable extends HttpResponder
         return $response
             ->withStatus(406)
             ->withHeader('content-type', ContentType::TextPlain->value)
-            ->withBody(new PsrStringStream('406'))
+            ->withBody($this->createStream('406'))
         ;
     }
 }

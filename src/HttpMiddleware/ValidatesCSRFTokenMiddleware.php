@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\HttpMiddleware;
 
 use Distantmagic\Resonance\Attribute;
+use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\HandlesMiddlewareAttribute;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Attribute\ValidatesCSRFToken;
 use Distantmagic\Resonance\CSRFManager;
+use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpMiddleware;
 use Distantmagic\Resonance\HttpResponder\Error\BadRequest;
@@ -21,6 +23,7 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * @template-extends HttpMiddleware<ValidatesCSRFToken>
  */
+#[GrantsFeature(Feature::HttpSession)]
 #[HandlesMiddlewareAttribute(
     attribute: ValidatesCSRFToken::class,
     priority: 1100,

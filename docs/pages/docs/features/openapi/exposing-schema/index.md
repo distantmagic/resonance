@@ -34,8 +34,8 @@ use Distantmagic\Resonance\OpenAPISchemaBuilder;
 use Distantmagic\Resonance\OpenAPISchemaSymbol;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
@@ -51,7 +51,7 @@ readonly class OpenAPISchema implements HttpResponderInterface
         $this->schema = $openAPISchemaBuilder->toJsonResponse(OpenAPISchemaSymbol::All);
     }
 
-    public function respond(Request $request, Response $response): HttpResponderInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpResponderInterface
     {
         return $this->schema;
     }

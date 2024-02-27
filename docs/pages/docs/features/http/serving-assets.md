@@ -47,8 +47,8 @@ use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\HttpRouteMatchRegistry;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
@@ -66,7 +66,7 @@ final readonly class Asset extends HttpResponder
         private HttpRouteMatchRegistry $routeMatchRegistry,
     ) {}
 
-    public function respond(Request $request, Response $response): ?HttpResponderInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpResponderInterface|ResponseInterface
     {
         return $this->assetFileRegistry->sendAsset(
             $response, 

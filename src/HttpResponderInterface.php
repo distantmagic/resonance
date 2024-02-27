@@ -6,9 +6,8 @@ namespace Distantmagic\Resonance;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 
-interface HttpResponderInterface extends RequestHandlerInterface
+interface HttpResponderInterface
 {
     public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface|ResponseInterface|self;
 }

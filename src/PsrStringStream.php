@@ -5,10 +5,16 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Psr\Http\Message\StreamInterface;
+use Stringable;
 
 readonly class PsrStringStream implements StreamInterface
 {
-    public function __construct(private string $contents) {}
+    private string $contents;
+
+    public function __construct(string|Stringable $contents)
+    {
+        $this->contents = (string) $contents;
+    }
 
     public function __toString(): string
     {

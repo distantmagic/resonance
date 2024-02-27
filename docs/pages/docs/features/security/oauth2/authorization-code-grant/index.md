@@ -85,8 +85,8 @@ use Distantmagic\Resonance\HttpResponder\OAuth2\Authorization;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::POST,
@@ -98,7 +98,7 @@ final readonly class OAuth2AuthorizationServer extends HttpResponder
 {
     public function __construct(private Authorization $authorizationServer) {}
 
-    public function respond(Request $request, Response $response): HttpResponderInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpResponderInterface
     {
         return $this->authorizationServer;
     }

@@ -94,9 +94,9 @@ advantage of the asynchronous environment.
 #[Singleton(collection: SingletonCollection::HttpResponder)]
 readonly class Homepage implements HttpResponderInterface
 {
-    public function respond(Request $request, Response $response): TwigTemplate
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): TwigTemplate
     {
-        return new TwigTemplate('website/homepage.twig');
+        return new TwigTemplate($request, $response, 'website/homepage.twig');
     }
 }
 ```

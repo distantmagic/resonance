@@ -39,11 +39,11 @@ Template file:
 ```php
 <?php
 
-use Distantmagic\Resonance\HttpResponderInterface;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Distantmagic\Resonance\HttpResponder;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
-readonly class MyBlogPostTemplate implements HttpResponderInterface
+readonly class MyBlogPostTemplate extends HttpResponder
 {
     public function __construct(
         private string $title, 
@@ -52,9 +52,9 @@ readonly class MyBlogPostTemplate implements HttpResponderInterface
     {
     }
 
-    public function respond(Request $request, Response $response): null
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $response->end(<<<HTML
+        return $response->with($this->createStream(<<<HTML
         <html>
             <head></head>
             <body>
@@ -62,9 +62,7 @@ readonly class MyBlogPostTemplate implements HttpResponderInterface
                 <p>{$this->content}</p>
             </body>
         </html>
-        HTML);
-
-        return null;
+        HTML));
     }
 }
 ```
@@ -75,12 +73,12 @@ Responder:
 <?php
 
 use Distantmagic\Resonance\HttpResponderInterface;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 readonly class MyResponder implements HttpResponderInterface
 {
-    public function respond(Request $request, Response $response): HttpResponderInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpResponderInterface
     {
         return new MyTemplate('title', 'content');
     }
@@ -103,17 +101,17 @@ kind of performance.
 ```php
 <?php
 
-use Distantmagic\Resonance\HttpResponderInterface;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Distantmagic\Resonance\HttpResponder;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
-abstract readonly class MyBaseTemplate implements HttpResponderInterface
+abstract readonly class MyBaseTemplate extends HttpResponder
 {
     abstract protected function renderBodyContent(Request $request, Response $response): string;
 
-    public function respond(Request $request, Response $response): null
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $response->end(<<<HTML
+        return $response->withBody($this->createStream(<<<HTML
         <html>
             <head></head>
             <body>
@@ -121,9 +119,7 @@ abstract readonly class MyBaseTemplate implements HttpResponderInterface
                 {$this->renderBodyContent($request, $response)}
             </body>
         </html>
-        HTML);
-
-        return null;
+        HTML));
     }
 }
 ```
@@ -133,12 +129,12 @@ Then in other pages:
 ```php
 <?php
 
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 readonly class MyBlogPost extends MyBaseTemplate
 {
-    protected function renderBodyContent(Request $request, Response $response): string
+    protected function renderBodyContent(ServerRequestInterface $request, ResponseInterface $response): string
     {
         return 'Hello!';
     }

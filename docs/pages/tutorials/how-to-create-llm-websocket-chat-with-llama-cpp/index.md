@@ -98,8 +98,8 @@ use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SiteAction;
 use Distantmagic\Resonance\TwigTemplate;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[Can(SiteAction::StartWebSocketRPCConnection)]
 #[RespondsToHttp(
@@ -111,9 +111,9 @@ use Swoole\Http\Response;
 #[WantsFeature(Feature::WebSocket)]
 final readonly class LlmChat extends HttpResponder
 {
-    public function respond(Request $request, Response $response): HttpInterceptableInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface
     {
-        return new TwigTemplate('turbo/llmchat/index.twig');
+        return new TwigTemplate($request, $response, 'turbo/llmchat/index.twig');
     }
 }
 ```

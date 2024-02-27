@@ -283,8 +283,8 @@ use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
@@ -310,12 +310,15 @@ final readonly class Manifest extends HttpResponder
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
-    public function respond(Request $request, Response $response): ?HttpResponderInterface
+    public function respond(
+        ServerRequestInterface $request, 
+        ResponseInterface $response,
+    ): ResponseInterface
     {
-        $response->header('content-type', ContentType::ApplicationJson->value);
-        $response->end($this->manifest);
-
-        return null;
+        return $response
+            ->withHeader('content-type', ContentType::ApplicationJson->value)
+            ->withBody($this->createStream($this->manifest))
+        ;
     }
 }
 ```

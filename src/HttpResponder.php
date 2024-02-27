@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use LogicException;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamInterface;
+use Stringable;
 
 abstract readonly class HttpResponder implements HttpResponderInterface
 {
-    public function handle(ServerRequestInterface $request): ResponseInterface
+    public function createStream(string|Stringable $contents): StreamInterface
     {
-        throw new LogicException('This method should not be called');
+        return new PsrStringStream($contents);
     }
 }

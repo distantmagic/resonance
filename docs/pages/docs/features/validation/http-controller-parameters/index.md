@@ -33,7 +33,7 @@ going to inject the data model into the parameter:
 ```php
 // ...
 
-public function handle(
+public function createResponse(
     #[ValidatedRequest(MyValidator::class)]
     MyValidatedData $data,
 ) {
@@ -82,8 +82,8 @@ use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
 use Ds\Map;
 use Ds\Set;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::POST,
@@ -93,7 +93,7 @@ use Swoole\Http\Response;
 #[Singleton(collection: SingletonCollection::HttpResponder)]
 final readonly class BlogPostStore extends HttpController
 {
-    public function handle(
+    public function createResponse(
         #[ValidatedRequest(BlogPostFormValidator::class)]
         #[OnParameterResolution(
             status: HttpControllerParameterResolutionStatus::ValidationErrors,
@@ -109,11 +109,11 @@ final readonly class BlogPostStore extends HttpController
      * @param Map<string,Set<string>> $errors
      */
     public function handleValidationErrors(
-        Request $request,
-        Response $response,
+        ServerRequestInterface $request,
+        ResponseInterface $response,
         HttpControllerParameterResolution $resolution,
     ): HttpResponderInterface {
-        $response->status(400);
+        $response = $response->withStatus(400);
 
         /* render form with errors  */
         /* ... */

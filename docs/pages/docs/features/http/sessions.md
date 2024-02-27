@@ -77,10 +77,10 @@ The typical usage follows the 'start -> modify -> persist' pattern:
  * `$sessionManager->start()` also sets the session cookie in the response.
  * 
  * @var Resonance\Session $session
- * @var Swoole\Http\Request $request
+ * @var Psr\Http\Message\ServerRequestInterface $request
  * @var Swoole\Http\Response $response
  */
-$session = $sessionManager->start($request, $response);
+$session = $sessionManager->start($request);
 
 /**
  * Anything that is serializable by igbinary can be used as a value.

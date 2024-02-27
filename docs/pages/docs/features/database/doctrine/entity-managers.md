@@ -90,8 +90,8 @@ use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigTemplate;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
@@ -105,15 +105,23 @@ final readonly class Blog extends HttpResponder
         private DoctrineEntityManagerRepository $doctrineEntityManagerRepository,
     ) {}
 
-    public function respond(Request $request, Response $response): HttpInterceptableInterface
+    public function respond(
+        ServerRequestInterface $request, 
+        ResponseInterface $response,
+    ): HttpInterceptableInterface
     {
         $entityManager = $this->doctrineEntityManagerRepository->getEntityManager($request);
 
         $blogPostsRepository = $entityManager->getRepository(BlogPost::class);
 
-        return new TwigTemplate('turbo/website/blog.twig', [
-            'blog_posts' => $blogPostsRepository->findAll(),
-        ]);
+        return new TwigTemplate(
+            $request,
+            $response,
+            'turbo/website/blog.twig', 
+            [
+                'blog_posts' => $blogPostsRepository->findAll(),
+            ]
+        );
     }
 }
 ```
@@ -147,6 +155,8 @@ use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigTemplate;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
@@ -156,15 +166,22 @@ use Doctrine\ORM\EntityRepository;
 #[Singleton(collection: SingletonCollection::HttpResponder)]
 final readonly class Blog extends HttpController
 {
-    public function handle(
+    public function createResponse(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
         #[DoctrineEntityManager]
         EntityManager $entityManager,
         #[DoctrineEntityRepository(BlogPost::class)]
         EntityRepository $blogPosts,
     ): HttpInterceptableInterface {
-        return new TwigTemplate('website/blog.twig', [
-            'blog_posts' => $blogPosts->findAll(),
-        ]);
+        return new TwigTemplate(
+            $request,
+            $response,
+            'website/blog.twig', 
+            [
+                'blog_posts' => $blogPosts->findAll(),
+            ]
+        );
     }
 }
 ```

@@ -27,8 +27,8 @@ use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigTemplate;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
@@ -38,9 +38,9 @@ use Swoole\Http\Response;
 #[Singleton(collection: SingletonCollection::HttpResponder)]
 final readonly class Twig extends HttpResponder
 {
-    public function respond(Request $request, Response $response): HttpInterceptableInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface
     {
-        return new TwigTemplate('test.twig');
+        return new TwigTemplate($request, $response, 'test.twig');
     }
 }
 ```

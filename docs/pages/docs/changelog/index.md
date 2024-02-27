@@ -81,5 +81,5 @@ title: Changelog
 ## v0.10.0
 
 - Added {{docs/features/security/oauth2/index}} support.
-- Added {{docs/features/http/psr-http-messages}} wrapper.
+- Added PSR Http Messages wrapper.
 - Added `EntityManagerWeakReference` to {{docs/features/database/doctrine/index}} integration.

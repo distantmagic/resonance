@@ -58,8 +58,8 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
@@ -69,11 +69,9 @@ use Swoole\Http\Response;
 #[Singleton(collection: SingletonCollection::HttpResponder)]
 final readonly class Homepage implements HttpResponderInterface
 {
-    public function respond(Request $request, Response $response): ?HttpResponderInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $response->end('Hello, world!');
-
-        return null;
+        return $response->withBody($this->createStream('Hello, world!'));
     }
 }
 ```
@@ -90,14 +88,14 @@ For example:
 
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\HttpResponder\Redirect;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class MyResponder implements HttpResponderInterface
 {
     // (...)
 
-    public function respond(Request $request, Response $response): HttpResponderInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpResponderInterface
     {
         return new Redirect('/blog');
     }
@@ -110,18 +108,16 @@ You can even use anonymous classes:
 <?php
 
 use Distantmagic\Resonance\HttpResponderInterface;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class MyResponder implements HttpResponderInterface
 {
     public function respond(Request $request, Response $response): ?HttpResponderInterface
     {
         return new class implements HttpResponderInterface {
-            public function respond (Request $request, Response $response): null {
-                $response->end('Hello!');
-
-                return null;
+            public function respond (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface {
+                return $response->withBody($this->createStream('Hello!'));
             }
         };
     }

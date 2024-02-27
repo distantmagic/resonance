@@ -59,7 +59,7 @@ To use nonces manually, you need to use the CSP Nonce Manager:
 ```php
 /**
  * @var \Distantmagic\Resonance\CSPNonceManager $cspNonceManager
- * @var \Swoole\Http\Request $request
+ * @var \Psr\Http\Message\ServerRequestInterface $request
  */
 $cspNonceManager->getRequestNonce($request);
 ```

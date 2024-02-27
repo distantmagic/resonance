@@ -103,14 +103,14 @@ response and the `respond` method will not be called.
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Attribute\ValidatesCSRFToken;
 use Distantmagic\Resonance\HttpResponderInterface;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[Singleton]
 #[ValidatesCSRFToken]
 final readonly class MyResponder implements HttpResponderInterface
 {
-    public function respond(Request $request, Response $response): void 
+    public function respond(ServerRequestInterface $request, ResponseInterfaced $response): void 
     {
         // CSRF token is valid...
     }
@@ -124,24 +124,24 @@ final readonly class MyResponder implements HttpResponderInterface
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\CSRFManager;
-use Distantmagic\Resonance\HttpResponderInterface;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Distantmagic\Resonance\HttpResponder;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[Singleton]
-final readonly class MyResponder implements HttpResponderInterface
+final readonly class MyResponder extends HttpResponder
 {
     public function __construct(private CSRFManager $csrfManager) 
     {
     }
 
-    public function respond(Request $request, Response $response): void 
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        if (!$this->csrfManager->checkToken($request, $request->post)) {
-            $response->status(400);
-            $response->end('Bad Request: CSRF Token is invalid.');
-
-            return;
+        if (!$this->csrfManager->checkToken($request, $request->getParsedBody())) {
+            return $response
+                ->withStatus(400)
+                ->withBody($this->createStream('Bad Request: CSRF Token is invalid.'))
+            ;
         }
 
         // CSRF token is valid...

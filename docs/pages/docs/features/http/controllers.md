@@ -22,7 +22,8 @@ Controllers aim to automate these repetitive tasks as much as possible.
 ## Writing Controllers
 
 Unlike {{docs/features/http/responders}}, Controllers do not use the `respond` 
-method. Instead, they rely on the `handle` method to manage incoming requests. 
+method. Instead, they rely on the `createResponse` method to manage incoming 
+requests. 
 
 The `respond` method is used internally for handling tasks like parameter 
 binding, so you should not override it.
@@ -52,8 +53,8 @@ Using the `RouteParameter` might require to create a Crud Gate. See more at
 the {{docs/features/security/authorization/index}} page.
 :::
 
-Remember that the framework resolves parameters assigned to the `handle` method 
-on runtime during the request lifecycle.
+Remember that the framework resolves parameters assigned to the 
+`createResponse` method on runtime during the request lifecycle.
 
 The above is contrary to the constructor arguments, which the framework 
 resolves during the application bootstrap phase thanks to the 
@@ -78,7 +79,7 @@ use Distantmagic\Resonance\HttpResponder\HttpController;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
@@ -88,13 +89,13 @@ use Swoole\Http\Response;
 #[Singleton(collection: SingletonCollection::HttpResponder)]
 final readonly class BlogPostShow extends HttpController
 {
-    public function handle(
+    public function createResponse(
         #[RouteParameter(
             from: 'blog_post_slug', 
             intent: CrudAction::Read,
         )]
         BlogPost $blogPost,
-        Response $response,
+        ResponseInterface $response,
     ): HttpResponderInterface {
         // ...
     }
@@ -142,8 +143,8 @@ final readonly class BlogPostBinder implements HttpRouteParameterBinderInterface
 ### Providing the Authenticated User (Session)
 
 If you need to fetch the authenticated user in your controller, you can add 
-a parameter with the `#[SessionAuthenticated]` attribute to the `handle` 
-method.
+a parameter with the `#[SessionAuthenticated]` attribute to the 
+`createResponse` method.
 
 The controller fetches an authenticated user through 
 {{docs/features/http/sessions}}.
@@ -162,7 +163,6 @@ use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\UserInterface;
-use Swoole\Http\Response;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
@@ -172,7 +172,7 @@ use Swoole\Http\Response;
 #[Singleton(collection: SingletonCollection::HttpResponder)]
 final readonly class MyController extends HttpController
 {
-    public function handle(
+    public function createResponse(
         // If you make this parameter required, then the framework will
         // return 403 page when user is unauthenticated.
         #[SessionAuthenticated]
@@ -201,8 +201,8 @@ use Distantmagic\Resonance\HttpControllerParameterResolution;
 use Distantmagic\Resonance\HttpControllerParameterResolutionStatus;
 use Distantmagic\Resonance\HttpControllerParameterResolver;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @template-extends HttpControllerParameterResolver<MyAttribute>
@@ -212,8 +212,8 @@ use Swoole\Http\Response;
 readonly class RouteParameterResolver extends HttpControllerParameterResolver
 {
     public function resolve(
-        Request $request,
-        Response $response,
+        ServerRequestInterface $request,
+        ResponseInterface $response,
         HttpControllerParameter $httpControllerParameter,
         Attribute $attribute,
     ): HttpControllerParameterResolution {
@@ -248,7 +248,7 @@ readonly class MyHttpController extends HttpController
         parent::__construct($httpControllerDependencies);
     }
 
-    public function handle()
+    public function createResponse()
     {
         // ...
     }

@@ -92,13 +92,15 @@ use Distantmagic\Resonance\Attribute\ValidatesCSRFToken;
 #[ValidatesCSRFToken]
 final readonly class BlogPostDestroy extends HttpController
 {
-    public function handle(
+    public function createResponse(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
         #[RouteParameter(from: 'blog_post_slug', intent: CrudAction::Delete)]
         BlogPost $blogPost,
     ): HttpInterceptableInterface {
         // ...
 
-        return new InternalRedirect(HttpRouteSymbol::Blog);
+        return new InternalRedirect($request, $response, HttpRouteSymbol::Blog);
     }
 }
 
@@ -161,8 +163,8 @@ use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpMiddleware;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @template-extends HttpMiddleware<MyAttribute>
@@ -175,8 +177,8 @@ use Swoole\Http\Response;
 readonly class CanMiddleware extends HttpMiddleware
 {
     public function preprocess(
-        Request $request,
-        Response $response,
+        ServerRequestInterface $request,
+        ResponseInterface $response,
         Attribute $attribute,
         HttpInterceptableInterface|HttpResponderInterface $next,
     ): HttpInterceptableInterface|HttpResponderInterface {

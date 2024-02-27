@@ -51,8 +51,8 @@ use Distantmagic\Resonance\HttpResponder\OAuth2\AccessToken;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::POST,
@@ -64,7 +64,7 @@ final readonly class OAuth2AccessToken extends HttpResponder
 {
     public function __construct(private AccessToken $accessTokenResponder) {}
 
-    public function respond(Request $request, Response $response): HttpResponderInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpResponderInterface
     {
         return $this->accessTokenResponder;
     }
@@ -88,8 +88,8 @@ use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\PsrServerRequestConverter;
 use League\OAuth2\Server\AuthorizationServer as LeagueAuthorizationServer;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[Singleton]
 readonly class MyOAuth2Server extends HttpResponder
@@ -100,7 +100,7 @@ readonly class MyOAuth2Server extends HttpResponder
         private Psr17Factory $psr17Factory,
     ) {}
 
-    public function respond(Request $request, Response $response): HttpResponderInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpResponderInterface
     {
         /**
          * Convert Swoole http request to PSR Server request object

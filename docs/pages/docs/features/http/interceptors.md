@@ -105,8 +105,8 @@ use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpInterceptor;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @template-extends HttpInterceptor<Hello>
@@ -116,14 +116,14 @@ use Swoole\Http\Response;
 readonly class HelloInterceptor extends HttpInterceptor
 {
     public function intercept(
-        Request $request,
-        Response $response,
+        ServerRequestInterface $request,
+        ResponseInterface $response,
         object $intercepted,
     ): HttpInterceptableInterface|HttpResponderInterface {
-        $response->header('content-type', 'text/plain');
-        $response->end('Hello, '.$intercepted->message.'!');
-
-        return null;
+        return $response
+            ->withHeader('content-type', 'text/plain')
+            ->withBody($this->createStream('Hello, '.$intercepted->message.'!'))
+        ;
     }
 }
 ```
@@ -143,8 +143,8 @@ use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
@@ -154,7 +154,7 @@ use Swoole\Http\Response;
 #[Singleton(collection: SingletonCollection::HttpResponder)]
 final readonly class HelloResponder extends HttpResponder
 {
-    public function respond(Request $request, Response $response): HttpInterceptableInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface
     {
         return new Hello('World');
     }

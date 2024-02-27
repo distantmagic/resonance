@@ -105,14 +105,14 @@ You can use `Gatekeeper` in your code to check permissions. For example:
 use App\BlogPostInterface;
 use Distantmagic\Resonance\CrudAction;
 use Distantmagic\Resonance\Gatekeeper;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 readonly class MyClass
 {
     public function __construct(private Gatekeeper $gatekeeper) {}
 
     public function showBlogPost(
-        Request $request,
+        ServerRequestInterface $request,
         BlogPostInterface $blogPost,
     ): string
     {

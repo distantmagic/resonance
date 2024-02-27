@@ -56,7 +56,7 @@ final readonly class LoginValidation extends HttpController
         parent::__construct($controllerDependencies);
     }
 
-    public function handle(Request $request, Response $response): HttpInterceptableInterface {
+    public function createResponse(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface {
         $user = /* obtain user somehow */;
 
         $this->sessionAuthentication->setAuthenticatedUser(
@@ -65,7 +65,7 @@ final readonly class LoginValidation extends HttpController
             $user,
         );
 
-        return new InternalRedirect(HttpRouteSymbol::Homepage);
+        return new InternalRedirect($request, $response, HttpRouteSymbol::Homepage);
     }
 }
 ```
@@ -112,7 +112,7 @@ final readonly class MyController extends HttpController
     /**
      * @param ?UserInterface $user null if not authenticated
      */
-    public function handle(
+    public function createResponse(
         Request $request,
         #[SessionAuthenticated]
         ?UserInterface $user,
@@ -133,13 +133,13 @@ use Distantmagic\Resonance\Attribute\ProvidesAuthenticatedUser;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\AuthenticatedUserStoreInterface;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[ProvidesAuthenticatedUser(1200)]
 #[Singleton(collection: SingletonCollection::AuthenticatedUserStore)]
 readonly class MyAuthentication implements AuthenticatedUserStoreInterface
 {
-    public function getAuthenticatedUser(Request $request): ?AuthenticatedUser
+    public function getAuthenticatedUser(ServerRequestInterface $request): ?AuthenticatedUser
     {
         // ...
     }
@@ -158,7 +158,7 @@ use Distantmagic\Resonance\AuthenticatedUserStoreInterface;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\UserInterface;
 use League\OAuth2\Client\Provider\GenericProvider;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 use function Swoole\Coroutine\Http\get;
 
@@ -166,7 +166,7 @@ use function Swoole\Coroutine\Http\get;
 #[Singleton(collection: SingletonCollection::AuthenticatedUserStore)]
 readonly class MyAuthentication implements AuthenticatedUserStoreInterface
 {
-    public function getAuthenticatedUser(Request $request): ?AuthenticatedUser
+    public function getAuthenticatedUser(ServerRequestInterface $request): ?AuthenticatedUser
     {
         $userData = get('https://your-server.example.com/user', [], [
             'Authorization' => sprintf('Bearer %s', $request->cookie['access_token']),

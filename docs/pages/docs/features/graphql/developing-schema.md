@@ -27,6 +27,7 @@ GraphQL handler.
 
 namespace App\HttpResponder;
 
+use App\HttpRouteSymbol;
 use Distantmagic\Resonance\Attribute\RespondsToHttp;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpResponder;
@@ -34,9 +35,8 @@ use Distantmagic\Resonance\HttpResponder\GraphQL as ResonanceGraphQL;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
-use App\HttpRouteSymbol;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::POST,
@@ -48,7 +48,7 @@ final readonly class GraphQL extends HttpResponder
 {
     public function __construct(private ResonanceGraphQL $graphql) {}
 
-    public function respond(Request $request, Response $response): HttpResponderInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpResponderInterface
     {
         return $this->graphql;
     }

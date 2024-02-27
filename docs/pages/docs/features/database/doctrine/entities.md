@@ -55,6 +55,8 @@ use Distantmagic\Resonance\HttpResponder\HttpController;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigTemplate;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
@@ -64,7 +66,9 @@ use Distantmagic\Resonance\TwigTemplate;
 #[Singleton(collection: SingletonCollection::HttpResponder)]
 final readonly class BlogPostShow extends HttpController
 {
-    public function handle(
+    public function createResponse(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
         #[DoctrineEntityRouteParameter(
             from: 'blog_post_slug', 
             intent: CrudAction::Read,
@@ -72,9 +76,14 @@ final readonly class BlogPostShow extends HttpController
         )]
         BlogPost $blogPost,
     ): HttpInterceptableInterface {
-        return new TwigTemplate('turbo/website/blog_post.twig', [
-            'blog_post' => $blogPost,
-        ]);
+        return new TwigTemplate(
+            $request, 
+            $response, 
+            'turbo/website/blog_post.twig', 
+            [
+                'blog_post' => $blogPost,
+            ],
+        );
     }
 }
 ```

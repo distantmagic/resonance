@@ -6,7 +6,6 @@ namespace Distantmagic\Resonance\HttpResponder;
 
 use Distantmagic\Resonance\ContentType;
 use Distantmagic\Resonance\HttpResponder;
-use Distantmagic\Resonance\PsrStringStream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -19,7 +18,7 @@ readonly class Json extends HttpResponder
         return $response
             ->withStatus(200)
             ->withHeader('content-type', ContentType::ApplicationJson->value)
-            ->withBody(new PsrStringStream($this->json))
+            ->withBody($this->createStream($this->json))
         ;
     }
 }

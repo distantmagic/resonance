@@ -50,7 +50,7 @@ header).
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\TranslatorBridge;
-use Swoole\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[Singleton]
 readonly class MyClass
@@ -59,7 +59,7 @@ readonly class MyClass
     {
     }
 
-    public function doSomething(Request $request): string
+    public function doSomething(ServerRequestInterface $request): string
     {
         return $this->translator->trans(
             $request, 

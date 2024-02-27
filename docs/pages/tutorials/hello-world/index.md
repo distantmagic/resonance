@@ -102,8 +102,8 @@ use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigTemplate;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
@@ -113,9 +113,9 @@ use Swoole\Http\Response;
 #[Singleton(collection: SingletonCollection::HttpResponder)]
 final readonly class Homepage extends HttpResponder
 {
-    public function respond(Request $request, Response $response): HttpInterceptableInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface
     {
-        return new TwigTemplate('homepage.twig');
+        return new TwigTemplate($request, $response, 'homepage.twig');
     }
 }
 ```
@@ -190,8 +190,8 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\ContentSecurityPolicy;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[ContentSecurityPolicy(ContentSecurityPolicyType::Html)]
 final readonly class TwigTemplate implements HttpInterceptableInterface
@@ -201,7 +201,7 @@ final readonly class TwigTemplate implements HttpInterceptableInterface
         private array $templateData = [],
     ) {}
 
-    public function getTemplateData(Request $request, Response $response): array
+    public function getTemplateData(ServerRequestInterface $request, ResponseInterface $response): array
     {
         return $this->templateData + [
             'request' => $request,
