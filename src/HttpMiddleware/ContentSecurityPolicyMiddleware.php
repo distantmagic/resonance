@@ -40,8 +40,6 @@ readonly class ContentSecurityPolicyMiddleware extends HttpMiddleware
         HttpInterceptableInterface|HttpResponderInterface $next,
     ): HttpInterceptableInterface|HttpResponderInterface {
         if (!($next instanceof HttpResponderInterface)) {
-            return $next;
-
             throw new RuntimeException(sprintf(
                 '"%s" can only handle "%s", got: "%s"',
                 self::class,

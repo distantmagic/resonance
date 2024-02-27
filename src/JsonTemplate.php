@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Distantmagic\Resonance\Attribute\ContentSecurityPolicy;
 use JsonSerializable;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Stringable;
 
-#[ContentSecurityPolicy(ContentSecurityPolicyType::Json)]
 final readonly class JsonTemplate implements HttpInterceptableInterface
 {
     public function __construct(
