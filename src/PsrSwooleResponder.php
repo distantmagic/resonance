@@ -36,7 +36,7 @@ readonly class PsrSwooleResponder
             }
         }
 
-        foreach ($this->cookieManager->getRequestCookies($request) as $cookie) {
+        foreach ($this->cookieManager->getCookieJar($request) as $cookie) {
             $response->cookie(
                 name: $cookie->getName(),
                 value: $cookie->getValue() ?? '',

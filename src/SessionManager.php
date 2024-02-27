@@ -62,17 +62,14 @@ final readonly class SessionManager
 
     public function setSessionCookie(ServerRequestInterface $request, Session $session): void
     {
-        $this->cookieManager->addCookieToResponse(
-            $request,
-            new Cookie(
-                name: $this->sessionConfiguration->cookieName,
-                value: $session->id,
-                expire: time() + $this->sessionConfiguration->cookieLifespan,
-                secure: true,
-                httpOnly: true,
-                sameSite: $this->sessionConfiguration->cookieSameSite,
-            ),
-        );
+        $this->cookieManager->getCookieJar($request)->add(new Cookie(
+            name: $this->sessionConfiguration->cookieName,
+            value: $session->id,
+            expire: time() + $this->sessionConfiguration->cookieLifespan,
+            secure: true,
+            httpOnly: true,
+            sameSite: $this->sessionConfiguration->cookieSameSite,
+        ));
     }
 
     public function start(ServerRequestInterface $request): Session

@@ -26,24 +26,15 @@ readonly class CookieManager
         $this->cookies = new WeakMap();
     }
 
-    public function addCookieToResponse(
-        ServerRequestInterface $request,
-        Cookie $cookie,
-    ): void {
+    /**
+     * @return Set<Cookie>
+     */
+    public function getCookieJar(ServerRequestInterface $request): Set
+    {
         if (!$this->cookies->offsetExists($request)) {
             $this->cookies->offsetSet($request, new Set());
         }
 
-        $this->cookies->offsetGet($request)->add($cookie);
-    }
-
-    /**
-     * @return Set<Cookie>
-     */
-    public function getRequestCookies(ServerRequestInterface $request): Set
-    {
-        return $this->cookies->offsetExists($request)
-            ? $this->cookies->offsetGet($request)
-            : new Set();
+        return $this->cookies->offsetGet($request);
     }
 }
