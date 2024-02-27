@@ -61,27 +61,20 @@ readonly class HttpResponderAggregate implements RequestHandlerInterface
         ServerRequestInterface $request,
         ResponseInterface $response,
     ): ResponseInterface {
+        $responder = $this->selectResponder($request);
+
         try {
-            $responder = $this->selectResponder($request);
-
-            try {
-                return $this->recursiveResponder->respondRecursive($request, $response, $responder);
-            } catch (Throwable $throwable) {
-                $this->eventDispatcher->dispatch(new UnhandledException($throwable));
-
-                return $this->recursiveResponder->respondRecursive(
-                    $request,
-                    $response,
-                    $this->serverError->sendThrowable($request, $response, $throwable),
-                );
-            } finally {
-                $this->eventDispatcher->dispatch(new HttpResponseReady($responder, $request));
-            }
+            return $this->recursiveResponder->respondRecursive($request, $response, $responder);
         } catch (Throwable $throwable) {
-            $this->logger->error(sprintf(
-                'http_psr_responder_failure(%s)',
-                (string) $throwable,
-            ));
+            $this->eventDispatcher->dispatch(new UnhandledException($throwable));
+
+            return $this->recursiveResponder->respondRecursive(
+                $request,
+                $response,
+                $this->serverError->sendThrowable($request, $response, $throwable),
+            );
+        } finally {
+            $this->eventDispatcher->dispatch(new HttpResponseReady($responder, $request));
         }
     }
 
@@ -103,10 +96,9 @@ readonly class HttpResponderAggregate implements RequestHandlerInterface
                 ),
             );
         } catch (Throwable $throwable) {
-            $this->logger->error(sprintf(
-                'http_swoole_responder_failure(%s)',
-                (string) $throwable,
-            ));
+            $message = sprintf('http_swoole_responder_failure(%s)', (string) $throwable);
+
+            $this->logger->error($message);
         }
     }
 

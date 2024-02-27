@@ -39,7 +39,7 @@ readonly class PsrSwooleResponder
         foreach ($this->cookieManager->getRequestCookies($request) as $cookie) {
             $response->cookie(
                 name: $cookie->getName(),
-                value: $cookie->getValue(),
+                value: $cookie->getValue() ?? '',
                 expires: $cookie->getExpiresTime(),
                 path: $cookie->getPath(),
                 domain: $cookie->getDomain() ?? '',
