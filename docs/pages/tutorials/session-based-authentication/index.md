@@ -268,7 +268,7 @@ final readonly class LoginForm extends HttpResponder
     <input
         type="hidden"
         name="csrf"
-        value="{{ csrf_token(request, response) }}"
+        value="{{ csrf_token(request) }}"
     >
     <fieldset>
         <input
@@ -524,7 +524,7 @@ final readonly class LogoutForm extends HttpResponder
     <input
         name="csrf"
         type="hidden"
-        value="{{ csrf_token(request, response) }}"
+        value="{{ csrf_token(request) }}"
     >
     <p>Do you want to logout?</p>
     <button>Logout</button>

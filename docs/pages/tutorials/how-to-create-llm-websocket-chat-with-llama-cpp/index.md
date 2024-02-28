@@ -368,7 +368,7 @@ Finally, the HTML:
 
 <div
     data-controller="llmchat"
-    data-llmchat-csrf-token-value="{{ csrf_token(request, response) }}"
+    data-llmchat-csrf-token-value="{{ csrf_token(request) }}"
 >
     <div data-llmchat-target="chatLog"></div>
     <form data-action="submit->llmchat#onFormSubmit">

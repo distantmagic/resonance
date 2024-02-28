@@ -29,12 +29,20 @@ readonly class CSPInclude extends TwigFunction
         $contentSecurityPolicyRequestRules = $this->contentSecurityPolicyRulesRepository->from($request);
 
         switch ($type) {
+            case 'font-src':
+                $contentSecurityPolicyRequestRules->fontSrc->add($url);
+
+                break;
             case 'frame-src':
                 $contentSecurityPolicyRequestRules->frameSrc->add($url);
 
                 break;
             case 'script-src':
                 $contentSecurityPolicyRequestRules->scriptSrc->add($url);
+
+                break;
+            case 'style-src':
+                $contentSecurityPolicyRequestRules->styleSrc->add($url);
 
                 break;
             default:

@@ -38,7 +38,7 @@ final readonly class SecurityPolicyHeaders
 
             "base-uri 'none'",
             "connect-src 'self'",
-            "font-src 'self'",
+            'font-src '.((string) $contentSecurityPolicyRequestRules->fontSrc),
             'form-action '.((string) $contentSecurityPolicyRequestRules->formAction),
             'frame-src '.((string) $contentSecurityPolicyRequestRules->frameSrc),
             "frame-ancestors 'none'",
@@ -47,7 +47,11 @@ final readonly class SecurityPolicyHeaders
             "media-src 'self'",
             "object-src 'none'",
             'script-src '.((string) $contentSecurityPolicyRequestRules->scriptSrc),
-            "style-src 'self' ".$this->getHeaderNonce($request),
+            sprintf(
+                'style-src %s %s',
+                (string) $contentSecurityPolicyRequestRules->styleSrc,
+                $this->getHeaderNonce($request),
+            ),
             "worker-src 'self'",
 
             'upgrade-insecure-requests',

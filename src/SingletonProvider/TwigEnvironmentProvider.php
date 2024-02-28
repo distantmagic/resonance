@@ -41,7 +41,7 @@ final readonly class TwigEnvironmentProvider extends SingletonProvider
     {
         $twigEnvironment = new TwigEnvironment($this->twigChainLoader, [
             'cache' => $this->getCache(),
-            'strict_variables' => false,
+            'strict_variables' => true,
         ]);
 
         foreach ($this->collectExtensions($singletons) as $twigExtensionAttribute) {
