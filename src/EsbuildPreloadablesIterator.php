@@ -33,7 +33,7 @@ readonly class EsbuildPreloadablesIterator implements IteratorAggregate
             'css' => EsbuildPreloadableType::Stylesheet,
             'jpg', 'png', 'svg', 'webp' => EsbuildPreloadableType::Image,
             'js' => EsbuildPreloadableType::JavaScriptModule,
-            'otf', 'ttf' => EsbuildPreloadableType::Font,
+            'otf', 'ttf', 'woff2' => EsbuildPreloadableType::Font,
             default => throw new RuntimeException('Non-preloadable resource requested: '.$pathname),
         };
     }
