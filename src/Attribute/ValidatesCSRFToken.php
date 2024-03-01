@@ -12,6 +12,7 @@ use Distantmagic\Resonance\RequestDataSource;
 final readonly class ValidatesCSRFToken extends BaseAttribute
 {
     public function __construct(
+        public string $name,
         public RequestDataSource $requestDataSource = RequestDataSource::Post,
     ) {}
 }

@@ -47,7 +47,7 @@ readonly class ValidatesCSRFTokenMiddleware extends HttpMiddleware
             RequestDataSource::Post => $request->getParsedBody(),
         };
 
-        if (!is_array($requestData) || !$this->csrfManager->checkToken($request, $requestData)) {
+        if (!is_array($requestData) || !$this->csrfManager->checkToken($request, $attribute->name, $requestData)) {
             return $this->badRequest;
         }
 

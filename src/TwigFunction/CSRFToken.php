@@ -20,9 +20,9 @@ readonly class CSRFToken extends TwigFunction
 {
     public function __construct(private CSRFManager $csrfManager) {}
 
-    public function __invoke(ServerRequestInterface $request): string
+    public function __invoke(ServerRequestInterface $request, string $name): string
     {
-        return $this->csrfManager->prepareSessionToken($request);
+        return $this->csrfManager->prepareSessionToken($request, $name);
     }
 
     public function getName(): string

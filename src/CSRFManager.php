@@ -6,6 +6,7 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Ds\Map;
 use Psr\Http\Message\ServerRequestInterface;
 
 #[GrantsFeature(Feature::HttpSession)]
@@ -21,15 +22,10 @@ final readonly class CSRFManager
 
     public function checkToken(
         ServerRequestInterface $request,
+        string $name,
         ?array $requestData,
     ): bool {
         if (is_null($requestData)) {
-            return false;
-        }
-
-        $session = $this->sessionManager->restoreFromRequest($request);
-
-        if (!$session) {
             return false;
         }
 
@@ -37,26 +33,56 @@ final readonly class CSRFManager
             return false;
         }
 
-        if (!$session->data->hasKey(self::SESSION_KEY)) {
+        $tokenStorage = $this->getTokenStorage($request);
+
+        if (!$tokenStorage->hasKey($name)) {
             return false;
         }
 
-        $isCorrect = $requestData[self::REQUEST_BODY_KEY] === $session->data->get(self::SESSION_KEY);
+        $isCorrect = $requestData[self::REQUEST_BODY_KEY] === $tokenStorage->get($name);
 
         // consume the token so it's not reused
-        $session->data->remove(self::SESSION_KEY);
+        $tokenStorage->remove($name);
 
         return $isCorrect;
     }
 
-    public function prepareSessionToken(ServerRequestInterface $request): string
+    public function prepareSessionToken(
+        ServerRequestInterface $request,
+        string $name,
+    ): string {
+        $csrfToken = bin2hex(random_bytes(20));
+
+        $this->getTokenStorage($request)->put($name, $csrfToken);
+
+        return $csrfToken;
+    }
+
+    /**
+     * @return Map<string,string>
+     */
+    private function getTokenStorage(ServerRequestInterface $request): Map
     {
         $session = $this->sessionManager->start($request);
 
-        $csrfToken = bin2hex(random_bytes(20));
+        if (!$session->data->hasKey(self::SESSION_KEY)) {
+            $session->data->put(self::SESSION_KEY, new Map());
+        }
 
-        $session->data->put(self::SESSION_KEY, $csrfToken);
+        $tokenStore = $session->data->get(self::SESSION_KEY);
 
-        return $csrfToken;
+        if (!($tokenStore instanceof Map)) {
+            $updatedTokenStore = new Map();
+
+            $session->data->remove(self::SESSION_KEY);
+            $session->data->put(self::SESSION_KEY, $updatedTokenStore);
+
+            return $updatedTokenStore;
+        }
+
+        /**
+         * @var Map<string,string>
+         */
+        return $tokenStore;
     }
 }

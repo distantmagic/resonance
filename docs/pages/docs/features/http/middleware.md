@@ -89,7 +89,7 @@ use Distantmagic\Resonance\Attribute\ValidatesCSRFToken;
     routeSymbol: HttpRouteSymbol::BlogPostDestroy,
 )]
 #[Singleton(collection: SingletonCollection::HttpResponder)]
-#[ValidatesCSRFToken]
+#[ValidatesCSRFToken('blog_post_destroy)]
 final readonly class BlogPostDestroy extends HttpController
 {
     public function createResponse(

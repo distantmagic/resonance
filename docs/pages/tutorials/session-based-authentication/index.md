@@ -268,7 +268,7 @@ final readonly class LoginForm extends HttpResponder
     <input
         type="hidden"
         name="csrf"
-        value="{{ csrf_token(request) }}"
+        value="{{ csrf_token(request, 'login_form') }}"
     >
     <fieldset>
         <input
@@ -438,7 +438,7 @@ use Psr\Http\Message\ServerRequestInterface;
     routeSymbol: HttpRouteSymbol::LoginValidation,
 )]
 #[Singleton(collection: SingletonCollection::HttpResponder)]
-#[ValidatesCSRFToken]
+#[ValidatesCSRFToken('login_form')]
 final readonly class LoginValidation extends HttpController
 {
     public function __construct(
@@ -524,7 +524,7 @@ final readonly class LogoutForm extends HttpResponder
     <input
         name="csrf"
         type="hidden"
-        value="{{ csrf_token(request) }}"
+        value="{{ csrf_token(request, 'logout_form') }}"
     >
     <p>Do you want to logout?</p>
     <button>Logout</button>
@@ -558,7 +558,7 @@ use Psr\Http\Message\ServerRequestInterface;
     routeSymbol: HttpRouteSymbol::LogoutValidation,
 )]
 #[Singleton(collection: SingletonCollection::HttpResponder)]
-#[ValidatesCSRFToken]
+#[ValidatesCSRFToken('logout_form')]
 final readonly class LogoutValidation extends HttpResponder
 {
     public function __construct(

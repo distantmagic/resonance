@@ -41,7 +41,7 @@ For example, if you are using {{docs/features/templating/twig/index}}, you can
 put CSRF token into a meta tag:
 
 ```twig
-<meta name="csrf-token" content="{{ csrf_token(request) }}">
+<meta name="csrf-token" content="{{ csrf_token(request, 'turbo') }}">
 ```
 
 Then, in JavaScript:

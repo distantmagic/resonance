@@ -64,7 +64,19 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
 
     public function isAuthorizedToConnect(ServerRequestInterface $request): WebSocketAuthResolution
     {
-        if (!$this->csrfManager->checkToken($request, $request->getQueryParams())) {
+        $requestQueryParams = $request->getQueryParams();
+
+        if (!isset($requestQueryParams['csrf_name']) || !is_string($requestQueryParams['csrf_name'])) {
+            $this->logger->debug('WebSocket: CSRF name not found in query params');
+
+            return new WebSocketAuthResolution(false);
+        }
+
+        if (!$this->csrfManager->checkToken(
+            $request,
+            $requestQueryParams['csrf_name'],
+            $requestQueryParams
+        )) {
             $this->logger->debug('WebSocket: Invalid CSRF token');
 
             return new WebSocketAuthResolution(false);

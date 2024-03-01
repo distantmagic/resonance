@@ -119,7 +119,7 @@ Obtains CSRF token for the current request:
 <input
     type="hidden"
     name="csrf"
-    value="{{ csrf_token(request) }}"
+    value="{{ csrf_token(request, 'default) }}"
 >
 ```
 

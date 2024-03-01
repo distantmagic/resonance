@@ -79,7 +79,7 @@ First, you have to set the CSRF token in your HTML template:
 <html>
     <body>
         <form method="post">
-            <input type="hidden" value="<?= $csrfManager->prepareSessionToken($request, $response) ?>">
+            <input type="hidden" value="<?= $csrfManager->prepareSessionToken($request, 'my_token') ?>">
 
             <textarea name="example">Some example form data</textarea>
 
@@ -107,7 +107,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 #[Singleton]
-#[ValidatesCSRFToken]
+#[ValidatesCSRFToken('my_token')]
 final readonly class MyResponder implements HttpResponderInterface
 {
     public function respond(ServerRequestInterface $request, ResponseInterfaced $response): void 
