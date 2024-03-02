@@ -23,6 +23,7 @@ final readonly class SessionManager
         private CookieManager $cookieManager,
         private RedisConfiguration $redisConfiguration,
         private RedisConnectionPoolRepository $redisConnectionPoolRepository,
+        private SecureIdentifierGenerator $secureIdentifierGenerator,
         private SessionConfiguration $sessionConfiguration,
     ) {
         /**
@@ -53,10 +54,6 @@ final readonly class SessionManager
          */
         $sessionId = $cookies[$this->sessionConfiguration->cookieName];
 
-        if (!uuid_is_valid($sessionId)) {
-            return null;
-        }
-
         return $this->freshSession($request, $sessionId);
     }
 
@@ -83,7 +80,10 @@ final readonly class SessionManager
 
     private function createSession(ServerRequestInterface $request): Session
     {
-        return $this->freshSession($request, uuid_create());
+        return $this->freshSession(
+            $request,
+            $this->secureIdentifierGenerator->generate(128)
+        );
     }
 
     private function freshSession(ServerRequestInterface $request, string $sessionId): Session

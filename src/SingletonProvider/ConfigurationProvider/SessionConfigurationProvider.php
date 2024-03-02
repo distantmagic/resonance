@@ -46,7 +46,7 @@ final readonly class SessionConfigurationProvider extends ConfigurationProvider
             properties: [
                 'cookie_lifespan' => new IntegerConstraint(),
                 'cookie_name' => new StringConstraint(),
-                'cookie_samesite' => (new EnumConstraint(['lax', 'none', 'strict']))->default('lax'),
+                'cookie_samesite' => (new EnumConstraint(['lax', 'none', 'strict']))->default('strict'),
                 'redis_connection_pool' => new EnumConstraint($redisConnectionPools),
             ],
         );

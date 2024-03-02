@@ -17,6 +17,7 @@ final readonly class CSRFManager
     public const SESSION_KEY = 'csrf';
 
     public function __construct(
+        private readonly SecureIdentifierGenerator $secureIdentifierGenerator,
         private readonly SessionManager $sessionManager,
     ) {}
 
@@ -51,7 +52,7 @@ final readonly class CSRFManager
         ServerRequestInterface $request,
         string $name,
     ): string {
-        $csrfToken = bin2hex(random_bytes(20));
+        $csrfToken = $this->secureIdentifierGenerator->generate();
 
         $this->getTokenStorage($request)->put($name, $csrfToken);
 
