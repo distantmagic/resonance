@@ -13,10 +13,12 @@ use Distantmagic\Resonance\LlmPromptTemplate;
 use Distantmagic\Resonance\LlmPromptTemplate\ChainPrompt;
 use Distantmagic\Resonance\PromptSubjectResponderAggregate;
 use Distantmagic\Resonance\RPCNotification;
+use Distantmagic\Resonance\RPCRequest;
 use Distantmagic\Resonance\WebSocketAuthResolution;
 use Distantmagic\Resonance\WebSocketConnection;
 use Distantmagic\Resonance\WebSocketRPCResponder;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use WeakMap;
 
 /**
@@ -39,6 +41,7 @@ abstract readonly class LlamaCppPromptResponder extends WebSocketRPCResponder
     abstract protected function onResponseChunk(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
+        RPCRequest $rpcRequest,
         mixed $responseChunk,
     ): void;
 
@@ -70,12 +73,20 @@ abstract readonly class LlamaCppPromptResponder extends WebSocketRPCResponder
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
         RPCNotification $rpcNotification,
+    ): never {
+        throw new RuntimeException('Unexpected notification');
+    }
+
+    public function onRequest(
+        WebSocketAuthResolution $webSocketAuthResolution,
+        WebSocketConnection $webSocketConnection,
+        RPCRequest $rpcRequest,
     ): void {
         $request = new LlamaCppCompletionRequest(
             backusNaurFormGrammar: $this->subjectActionGrammar,
             promptTemplate: new ChainPrompt([
                 $this->toPromptTemplate($this->subjectActionPrompt->getPromptContent()),
-                $this->toPromptTemplate($this->getPromptFromPayload($rpcNotification->payload)),
+                $this->toPromptTemplate($this->getPromptFromPayload($rpcRequest->payload)),
             ]),
         );
 
@@ -96,7 +107,12 @@ abstract readonly class LlamaCppPromptResponder extends WebSocketRPCResponder
          * @var mixed $responseChunk explicitly mixed for typechecks
          */
         foreach ($response as $responseChunk) {
-            $this->onResponseChunk($webSocketAuthResolution, $webSocketConnection, $responseChunk);
+            $this->onResponseChunk(
+                $webSocketAuthResolution,
+                $webSocketConnection,
+                $rpcRequest,
+                $responseChunk,
+            );
         }
     }
 }
