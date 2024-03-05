@@ -19,6 +19,7 @@
   --color-tag-border: var(--color-body-font);
   --color-tag-font: var(--color-body-font);
   --font-family-body: sans-serif;
+  --font-family-serif: Garamond, Georgia, serif;
   --font-family-monospace: monospace;
   --height-primary-navigation: 70px;
   --height-aside-filter: 70px;
@@ -159,15 +160,35 @@ a:active,
 .primary-banner {
   align-items: center;
   background-color: var(--color-primary-banner-background);
+  background-image:
+    linear-gradient(to bottom, #000000bb, #000000bb),
+    url('../images/intentt_background_small.webp')
+  ;
   color: var(--color-primary-banner-font);
   border-bottom: 1px solid var(--color-border);
   display: flex;
-  padding: 20px;
   position: sticky;
   top: -100%;
+
+  @media screen and (max-width: 1023px) {
+    flex-direction: column;
+    padding: 20px;
+    row-gap: 20px;
+  }
+  @media screen and (min-width: 1024px) {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px 20px;
+  }
 }
 
 .primary-banner > a {
+  background-color: var(--color-body-background);
+  border: 1px solid var(--color-border);
+  font-weight: bold;
+  font-size: 1em;
+  line-height: 1.5;
+  padding: 10px 20px;
   text-decoration: none;
 }
 

@@ -171,13 +171,7 @@ abstract readonly class Turbo extends StaticPageLayout
      */
     protected function renderPrimaryBanner(StaticPage $currentPage): Generator
     {
-        $promptSubjectResponderHref = $this
-            ->staticPages
-            ->get('docs/features/ai/prompt-subject-responders/index')
-            ->getHref()
-        ;
-
-        yield <<<HTML
+        yield <<<'HTML'
             <div class="primary-banner">
                 <iframe
                     frameborder="0"
@@ -188,9 +182,9 @@ abstract readonly class Turbo extends StaticPageLayout
                     title="GitHub"
                     width="130"
                 ></iframe>
-                <a href="{$promptSubjectResponderHref}">
-                    New Feature:
-                    Respond to natural language prompts with LLM Controllers
+                <a href="https://intentt.io" target="_blank">
+                    🚀
+                    Build Conversational Apps with Intentt
                 </a>
             </div>
         HTML;
