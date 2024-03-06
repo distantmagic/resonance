@@ -13,6 +13,21 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(TupleConstraint::class)]
 final class TupleConstraintTest extends TestCase
 {
+    public function test_data_is_mapped(): void
+    {
+        $constraint = new TupleConstraint(
+            items: [
+                new StringConstraint(),
+                new NumberConstraint(),
+            ]
+        );
+
+        $validatedResult = $constraint->validate(['hi', 5]);
+
+        self::assertTrue($validatedResult->status->isValid());
+        self::assertEquals(['hi', 5], $validatedResult->castedData);
+    }
+
     public function test_is_converted_optionally_to_json_schema(): void
     {
         $constraint = new TupleConstraint(

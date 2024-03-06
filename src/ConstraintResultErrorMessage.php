@@ -19,10 +19,11 @@ readonly class ConstraintResultErrorMessage implements Stringable
             $message[] = sprintf('"%s" -> %s', $name, $errorCode);
         }
 
-        // var_dump($constraintResult->castedData);
-
         $this->message = sprintf(
-            '%s',
+            '%s%s',
+            is_string($constraintResult->comment)
+                ? $constraintResult->comment.":\n"
+                : '',
             implode("\n", $message),
         );
     }

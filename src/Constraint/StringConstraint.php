@@ -83,9 +83,10 @@ final readonly class StringConstraint extends Constraint
 
     protected function doValidate(mixed $notValidatedData, ConstraintPath $path): ConstraintResult
     {
-        if (!is_string($notValidatedData) || (!$this->isEmptyAllowed && empty($notValidatedData))) {
+        if (!is_string($notValidatedData) || (!$this->isEmptyAllowed && 0 === strlen($notValidatedData))) {
             return new ConstraintResult(
                 castedData: $notValidatedData,
+                comment: 'Expected string, got '.gettype($notValidatedData),
                 path: $path,
                 reason: ConstraintReason::InvalidDataType,
                 status: ConstraintResultStatus::Invalid,

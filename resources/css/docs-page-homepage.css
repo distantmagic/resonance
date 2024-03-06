@@ -27,7 +27,7 @@
     row-gap: 20px;
   }
   @media screen and (min-width: 1024px) {
-    row-gap: 120px;
+    row-gap: 60px;
   }
 }
 

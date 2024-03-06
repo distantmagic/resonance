@@ -11,7 +11,6 @@ use Distantmagic\Resonance\Constraint\AnyConstraint;
 use Distantmagic\Resonance\Constraint\EnumConstraint;
 use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\Constraint\TupleConstraint;
-use Distantmagic\Resonance\ConstraintStringFormat;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\InputValidatedData\RPCMessage;
 use Distantmagic\Resonance\InputValidator;
@@ -46,7 +45,7 @@ readonly class RPCMessageValidator extends InputValidator
             items: [
                 new EnumConstraint($this->rpcMethodValidator->values()),
                 new AnyConstraint(),
-                (new StringConstraint(format: ConstraintStringFormat::Uuid))->nullable(),
+                (new StringConstraint())->nullable(),
             ],
         );
     }

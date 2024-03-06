@@ -70,7 +70,7 @@ final readonly class EchoResponder extends WebSocketRPCResponder
         RPCRequest $rpcRequest,
     ): void {
         $webSocketConnection->push(new RPCResponse(
-            $rpcRequest->requestId,
+            $rpcRequest,
             $rpcRequest->payload,
         ));
     }

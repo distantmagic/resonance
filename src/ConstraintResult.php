@@ -17,6 +17,7 @@ readonly class ConstraintResult
         public ConstraintResultStatus $status,
         public ConstraintReason $reason,
         public array $nested = [],
+        public ?string $comment = null,
     ) {}
 
     /**

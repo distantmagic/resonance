@@ -9,15 +9,16 @@ use Stringable;
 readonly class RPCResponse implements Stringable
 {
     public function __construct(
-        private string $requestId,
+        private RPCRequest $rpcRequest,
         private mixed $content,
     ) {}
 
     public function __toString(): string
     {
         return json_encode([
-            $this->requestId,
+            $this->rpcRequest->method,
             $this->content,
+            $this->rpcRequest->requestId,
         ]);
     }
 }

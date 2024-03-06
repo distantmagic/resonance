@@ -18,8 +18,8 @@
   --color-tag-background: transparent;
   --color-tag-border: var(--color-body-font);
   --color-tag-font: var(--color-body-font);
-  --font-family-body: sans-serif;
-  --font-family-serif: Garamond, Georgia, serif;
+  --font-family-body: "Noto Sans", sans-serif;
+  --font-family-serif: "Noto Serif", Garamond, Georgia, serif;
   --font-family-monospace: monospace;
   --height-primary-navigation: 70px;
   --height-aside-filter: 70px;
@@ -29,32 +29,19 @@
   --z-index-documentation-aside-filter: 2;
   --z-index-primary-navigation: 3;
   --z-index-edit-on-github: 4;
-}
 
-@media screen and (max-width: 1023px) {
-  :root {
+  @media screen and (max-height: 1199px) {
     --font-size-base: 18px;
     --font-size-code: 16px;
-    --font-size-code-smaller: 14px;
     --font-size-smaller: 16px;
   }
-}
-@media screen and (min-width: 1024px) {
-  :root {
+  @media screen and (min-height: 1200px) {
     --font-size-base: 20px;
     --font-size-code: 18px;
-    --font-size-code-smaller: 18px;
     --font-size-smaller: 18px;
   }
 }
-@media screen and (min-width: 2000px) {
-  :root {
-    --font-size-base: 22px;
-    --font-size-code: 18px;
-    --font-size-code-smaller: 18px;
-    --font-size-smaller: 20px;
-  }
-}
+
 
 ::-webkit-scrollbar {
   background-color: transparent;
