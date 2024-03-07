@@ -43,6 +43,7 @@ abstract readonly class LlamaCppPromptResponder extends WebSocketRPCResponder
         WebSocketConnection $webSocketConnection,
         RPCRequest $rpcRequest,
         mixed $responseChunk,
+        bool $isLastChunk,
     ): void;
 
     abstract protected function toPromptTemplate(string $prompt): LlmPromptTemplate;
@@ -108,11 +109,20 @@ abstract readonly class LlamaCppPromptResponder extends WebSocketRPCResponder
          */
         foreach ($response as $responseChunk) {
             $this->onResponseChunk(
-                $webSocketAuthResolution,
-                $webSocketConnection,
-                $rpcRequest,
-                $responseChunk,
+                webSocketAuthResolution: $webSocketAuthResolution,
+                webSocketConnection: $webSocketConnection,
+                rpcRequest: $rpcRequest,
+                responseChunk: $responseChunk,
+                isLastChunk: false,
             );
         }
+
+        $this->onResponseChunk(
+            webSocketAuthResolution: $webSocketAuthResolution,
+            webSocketConnection: $webSocketConnection,
+            rpcRequest: $rpcRequest,
+            responseChunk: '',
+            isLastChunk: true,
+        );
     }
 }
