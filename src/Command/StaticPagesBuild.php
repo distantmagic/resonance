@@ -7,10 +7,9 @@ namespace Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
 use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Command;
-use Distantmagic\Resonance\CoroutineCommand;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\StaticPageProcessor;
-use Distantmagic\Resonance\SwooleConfiguration;
+use Distantmagic\Resonance\SwooleCoroutineHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -19,18 +18,19 @@ use Symfony\Component\Console\Output\OutputInterface;
     description: 'Generate static pages'
 )]
 #[WantsFeature(Feature::StaticPages)]
-final class StaticPagesBuild extends CoroutineCommand
+final class StaticPagesBuild extends Command
 {
     public function __construct(
         private readonly StaticPageProcessor $staticPageProcessor,
-        SwooleConfiguration $swooleConfiguration,
     ) {
-        parent::__construct($swooleConfiguration);
+        parent::__construct();
     }
 
-    protected function executeInCoroutine(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->staticPageProcessor->process();
+        SwooleCoroutineHelper::mustRun(function () {
+            $this->staticPageProcessor->process();
+        });
 
         return Command::SUCCESS;
     }
