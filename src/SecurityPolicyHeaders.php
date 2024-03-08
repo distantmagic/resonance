@@ -20,7 +20,9 @@ final readonly class SecurityPolicyHeaders
     {
         return $this->sendCrossOriginPolicies(
             $this->sendRefererPolicies(
-                $this->sendXPolicies($response)
+                $this->sendXPolicies(
+                    $this->sendServer($response)
+                )
             )
         )
             ->withHeader('cache-control', 'public, max-age=31536000, immutable')

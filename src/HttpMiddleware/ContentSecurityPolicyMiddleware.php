@@ -17,7 +17,6 @@ use Distantmagic\Resonance\SecurityPolicyHeaders;
 use Distantmagic\Resonance\SingletonCollection;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use RuntimeException;
 
 /**
  * @template-extends HttpMiddleware<ContentSecurityPolicy>
@@ -39,17 +38,8 @@ readonly class ContentSecurityPolicyMiddleware extends HttpMiddleware
         Attribute $attribute,
         HttpInterceptableInterface|HttpResponderInterface $next,
     ): HttpInterceptableInterface|HttpResponderInterface {
-        if (!($next instanceof HttpResponderInterface)) {
-            throw new RuntimeException(sprintf(
-                '"%s" can only handle "%s", got: "%s"',
-                self::class,
-                HttpResponderInterface::class,
-                $next::class,
-            ));
-        }
-
         return new Override(
-            responder: $next,
+            responder: Override::assertResponder($next),
             request: $request,
             response: match ($attribute->contentSecurityPolicyType) {
                 ContentSecurityPolicyType::Html => $this->securityPolicyHeaders->sendTemplatedPagePolicyHeaders($request, $response),
