@@ -17,4 +17,9 @@ readonly class Phi2Question extends LlmPromptTemplate
             $this->prompt,
         );
     }
+
+    public function getStopWords(): array
+    {
+        return ['Question:', 'Answer:'];
+    }
 }

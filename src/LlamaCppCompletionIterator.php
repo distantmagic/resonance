@@ -56,6 +56,7 @@ readonly class LlamaCppCompletionIterator implements IteratorAggregate
             if ($unserializedToken) {
                 yield new LlamaCppCompletionToken(
                     content: $unserializedToken->content,
+                    isLastToken: $unserializedToken->stop,
                 );
             }
         }

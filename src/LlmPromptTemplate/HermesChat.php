@@ -6,20 +6,20 @@ namespace Distantmagic\Resonance\LlmPromptTemplate;
 
 use Distantmagic\Resonance\LlmPromptTemplate;
 
-readonly class MistralInstructChat extends LlmPromptTemplate
+readonly class HermesChat extends LlmPromptTemplate
 {
     public function __construct(private string $prompt) {}
 
     public function getPromptTemplateContent(): string
     {
         return sprintf(
-            '[INST]%s[/INST]',
+            '<|im_start|%s<|im_end|>',
             $this->prompt,
         );
     }
 
     public function getStopWords(): array
     {
-        return ['[INST]', '[/INST]'];
+        return ['<|im_start|>', '<|im_end|>'];
     }
 }

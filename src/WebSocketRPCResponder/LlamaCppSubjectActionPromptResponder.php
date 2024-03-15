@@ -26,7 +26,7 @@ use WeakMap;
  *
  * @template-extends WebSocketRPCResponder<TPayload>
  */
-abstract readonly class LlamaCppPromptResponder extends WebSocketRPCResponder
+abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketRPCResponder
 {
     /**
      * @var WeakMap<WebSocketConnection,LlamaCppCompletionIterator>

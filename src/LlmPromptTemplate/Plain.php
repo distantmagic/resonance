@@ -14,4 +14,9 @@ readonly class Plain extends LlmPromptTemplate
     {
         return $this->prompt;
     }
+
+    public function getStopWords(): array
+    {
+        return [];
+    }
 }

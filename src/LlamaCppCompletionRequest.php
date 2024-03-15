@@ -17,8 +17,10 @@ readonly class LlamaCppCompletionRequest implements JsonSerializable
     public function jsonSerialize(): array
     {
         $parameters = [
-            'n_predict' => 400,
+            'cache_prompt' => true,
+            // 'n_predict' => 200,
             'prompt' => $this->promptTemplate->getPromptTemplateContent(),
+            'stop' => $this->promptTemplate->getStopWords(),
             'stream' => true,
         ];
 

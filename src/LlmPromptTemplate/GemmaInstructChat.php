@@ -21,4 +21,9 @@ readonly class GemmaInstructChat extends LlmPromptTemplate
             $this->prompt,
         );
     }
+
+    public function getStopWords(): array
+    {
+        return ['<start_of_turn>', '<end_of_turn>'];
+    }
 }
