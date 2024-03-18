@@ -25,7 +25,7 @@ readonly class ObservableTaskTable
             new ObservableTaskStatusUpdate(ObservableTaskStatus::Pending, null)
         );
 
-        $this->table = new Table($observableTaskConfiguration->maxTasks);
+        $this->table = new Table(2 * $observableTaskConfiguration->maxTasks);
         $this->table->column('status', Table::TYPE_STRING, $observableTaskConfiguration->serializedStatusSize);
         $this->table->create();
     }

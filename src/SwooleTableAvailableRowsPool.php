@@ -19,7 +19,7 @@ readonly class SwooleTableAvailableRowsPool
     {
         $this->availableRowPointer = new Atomic(0);
 
-        $this->availableRows = new Table($size);
+        $this->availableRows = new Table(2 * $size);
         $this->availableRows->column('index', Table::TYPE_INT);
         $this->availableRows->create();
 
