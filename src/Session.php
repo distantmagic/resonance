@@ -16,6 +16,7 @@ readonly class Session
     public function __construct(
         RedisConfiguration $redisConfiguration,
         private RedisConnectionPoolRepository $redisConnectionPoolRepository,
+        private SerializerInterface $serializer,
         private SessionConfiguration $sessionConfiguration,
         public string $id,
     ) {
@@ -30,7 +31,6 @@ readonly class Session
             ->getConnection($this->sessionConfiguration->redisConnectionPool)
         ;
         $this->redis->setOption(Redis::OPT_PREFIX, $redisPrefix.'session:');
-        $this->redis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_IGBINARY);
 
         $this->data = new Map($this->restoreSessionData());
     }
@@ -47,20 +47,21 @@ readonly class Session
 
     public function persist(): void
     {
-        /**
-         * Because igbinary serves as a serializer, anything compatible with
-         * igbinary can be provided as an argument to Redis::set, including
-         * arrays, objects, and so on.
-         *
-         * @psalm-suppress InvalidArgument
-         * @psalm-suppress InvalidCast
-         */
-        $this->redis->set($this->id, $this->data->toArray());
+        $this->redis->set(
+            $this->id,
+            $this->serializer->serialize($this->data->toArray())
+        );
     }
 
     private function getPersistedData(): mixed
     {
-        return $this->redis->get($this->id);
+        $storedValue = $this->redis->get($this->id);
+
+        if (!is_string($storedValue)) {
+            return null;
+        }
+
+        return $this->serializer->unserialize($storedValue);
     }
 
     private function restoreSessionData(): array

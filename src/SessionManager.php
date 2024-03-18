@@ -24,6 +24,7 @@ final readonly class SessionManager
         private RedisConfiguration $redisConfiguration,
         private RedisConnectionPoolRepository $redisConnectionPoolRepository,
         private SecureIdentifierGenerator $secureIdentifierGenerator,
+        private SerializerInterface $serializer,
         private SessionConfiguration $sessionConfiguration,
     ) {
         /**
@@ -91,6 +92,7 @@ final readonly class SessionManager
         $session = new Session(
             $this->redisConfiguration,
             $this->redisConnectionPoolRepository,
+            $this->serializer,
             $this->sessionConfiguration,
             $sessionId,
         );
