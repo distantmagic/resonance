@@ -22,6 +22,7 @@ use Twig\Cache\FilesystemCache;
 use Twig\Environment as TwigEnvironment;
 use Twig\Error\Error;
 use Twig\Extension\ExtensionInterface;
+use Twig\Loader\FilesystemLoader;
 
 /**
  * @template-extends SingletonProvider<TwigEnvironment>
@@ -80,8 +81,15 @@ final readonly class TwigEnvironmentProvider extends SingletonProvider
 
     private function warmupCache(TwigEnvironment $twigEnvironment): void
     {
-        $viewsDirectory = DM_APP_ROOT.'/views';
+        $this->warmupCacheDirectory($twigEnvironment, DM_APP_ROOT.'/views', FilesystemLoader::MAIN_NAMESPACE);
+        $this->warmupCacheDirectory($twigEnvironment, DM_RESONANCE_ROOT.'/views', 'resonance');
+    }
 
+    private function warmupCacheDirectory(
+        TwigEnvironment $twigEnvironment,
+        string $viewsDirectory,
+        string $namespace,
+    ): void {
         if (!is_dir($viewsDirectory)) {
             return;
         }
@@ -99,7 +107,11 @@ final readonly class TwigEnvironmentProvider extends SingletonProvider
             $relativePathname = $file->getRelativePathname();
 
             try {
-                $twigEnvironment->load($relativePathname);
+                $twigEnvironment->load(sprintf(
+                    '@%s/%s',
+                    $namespace,
+                    $relativePathname,
+                ));
             } catch (Error $error) {
                 $this->logger->warning(sprintf(
                     'twig_cache_warmup_error("%s", %d): %s',

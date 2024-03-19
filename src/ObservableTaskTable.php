@@ -6,11 +6,16 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use Ds\Set;
+use Generator;
+use IteratorAggregate;
 use Swoole\Coroutine\Channel;
 use Swoole\Table;
 
+/**
+ * @template-implements IteratorAggregate<non-empty-string,?ObservableTaskStatusUpdate>
+ */
 #[Singleton]
-readonly class ObservableTaskTable
+readonly class ObservableTaskTable implements IteratorAggregate
 {
     /**
      * @var Set<Channel>
@@ -39,6 +44,20 @@ readonly class ObservableTaskTable
     public function __destruct()
     {
         $this->table->destroy();
+    }
+
+    /**
+     * @return Generator<non-empty-string,?ObservableTaskStatusUpdate>
+     */
+    public function getIterator(): Generator
+    {
+        /**
+         * @var non-empty-string $slotId
+         * @var mixed            $row explicitly mixed for typechecks
+         */
+        foreach ($this->table as $slotId => $row) {
+            yield $slotId => $this->unserializeTableRow($row);
+        }
     }
 
     /**

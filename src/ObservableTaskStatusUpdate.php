@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use JsonSerializable;
+
 /**
  * @template TData
  */
-readonly class ObservableTaskStatusUpdate
+readonly class ObservableTaskStatusUpdate implements JsonSerializable
 {
     /**
      * @param TData $data
@@ -16,4 +18,12 @@ readonly class ObservableTaskStatusUpdate
         public ObservableTaskStatus $status,
         public mixed $data
     ) {}
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'status' => $this->status->value,
+            'data' => $this->data,
+        ];
+    }
 }

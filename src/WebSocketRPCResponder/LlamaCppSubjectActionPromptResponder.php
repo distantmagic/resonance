@@ -11,14 +11,17 @@ use Distantmagic\Resonance\LlamaCppCompletionRequest;
 use Distantmagic\Resonance\LlmPrompt\SubjectActionPrompt;
 use Distantmagic\Resonance\LlmPromptTemplate;
 use Distantmagic\Resonance\LlmPromptTemplate\ChainPrompt;
+use Distantmagic\Resonance\ObservableTask;
+use Distantmagic\Resonance\ObservableTaskStatus;
+use Distantmagic\Resonance\ObservableTaskStatusUpdate;
+use Distantmagic\Resonance\ObservableTaskTable;
 use Distantmagic\Resonance\PromptSubjectResponderAggregate;
-use Distantmagic\Resonance\RPCNotification;
 use Distantmagic\Resonance\RPCRequest;
 use Distantmagic\Resonance\WebSocketAuthResolution;
 use Distantmagic\Resonance\WebSocketConnection;
 use Distantmagic\Resonance\WebSocketRPCResponder;
+use Generator;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 use WeakMap;
 
 /**
@@ -51,6 +54,7 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketRP
     public function __construct(
         private LlamaCppClient $llamaCppClient,
         private LoggerInterface $logger,
+        private ObservableTaskTable $observableTaskTable,
         private PromptSubjectResponderAggregate $promptSubjectResponderAggregate,
         private SubjectActionGrammar $subjectActionGrammar,
         private SubjectActionPrompt $subjectActionPrompt,
@@ -70,15 +74,39 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketRP
         }
     }
 
-    public function onNotification(
+    public function onRequest(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
-        RPCNotification $rpcNotification,
-    ): never {
-        throw new RuntimeException('Unexpected notification');
+        RPCRequest $rpcRequest,
+    ): void {
+        $this->observableTaskTable->observe(new ObservableTask(
+            /**
+             * @return Generator<ObservableTaskStatusUpdate>
+             */
+            function () use (
+                $webSocketAuthResolution,
+                $webSocketConnection,
+                $rpcRequest,
+            ): Generator {
+                yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Running, null);
+
+                try {
+                    $this->onObservableRequest(
+                        $webSocketAuthResolution,
+                        $webSocketConnection,
+                        $rpcRequest,
+                    );
+                } finally {
+                    yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Finished, null);
+                }
+            }
+        ));
     }
 
-    public function onRequest(
+    /**
+     * @param RPCRequest<TPayload> $rpcRequest
+     */
+    private function onObservableRequest(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
         RPCRequest $rpcRequest,
@@ -95,8 +123,7 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketRP
 
         $this->runningCompletions->offsetSet($webSocketConnection, $completion);
 
-        $response = $this
-            ->promptSubjectResponderAggregate
+        $response = $this->promptSubjectResponderAggregate
             ->createResponseFromTokens(
                 authenticatedUser: $webSocketAuthResolution->authenticatedUser,
                 completion: $completion,
