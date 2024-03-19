@@ -22,7 +22,7 @@ readonly class WebSocketServerConnectionTable implements IteratorAggregate
 
     public function __construct(WebSocketConfiguration $webSocketConfiguration)
     {
-        $this->table = new Table($webSocketConfiguration->maxConnections);
+        $this->table = new Table(2 * $webSocketConfiguration->maxConnections);
         $this->table->column('worker_id', Table::TYPE_INT);
         $this->table->create();
     }

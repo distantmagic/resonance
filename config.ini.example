@@ -44,6 +44,10 @@ session_key_authorization_request = oauth2.authorization_request
 session_key_pkce = oauth2.pkce
 session_key_state = oauth2.state
 
+[observable_task]
+max_tasks = 10000
+serialized_status_size = 32768
+
 [openapi]
 description = description
 title = title

@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(SwooleTableAvailableRowsPool::class)]
 final class SwooleTableAvailableRowsPoolTest extends TestCase
 {
-    public function test_address_is_trusted(): void
+    public function test_rows_pool_is_maintained(): void
     {
         $availableRowsPool = new SwooleTableAvailableRowsPool(4);
 

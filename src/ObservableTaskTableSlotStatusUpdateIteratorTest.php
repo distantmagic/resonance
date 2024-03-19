@@ -7,15 +7,14 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Serializer\Vanilla;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\WaitGroup;
 use Swoole\Event;
 
 /**
  * @internal
  */
-#[CoversClass(ObservableTaskTable::class)]
-final class ObservableTaskTableTest extends TestCase
+#[CoversClass(ObservableTaskTableSlotStatusUpdateIterator::class)]
+final class ObservableTaskTableSlotStatusUpdateIteratorTest extends TestCase
 {
     private ?ObservableTaskConfiguration $observableTaskConfiguration = null;
     private ?ObservableTaskTable $observableTaskTable = null;
@@ -41,10 +40,7 @@ final class ObservableTaskTableTest extends TestCase
     public function test_channel_is_observed(): void
     {
         SwooleCoroutineHelper::mustRun(function () {
-            $channel = new Channel();
             $wg = new WaitGroup();
-
-            $this->observableTaskTable?->observableChannels->add($channel);
 
             $observableTask = new ObservableTask(static function () {
                 yield new ObservableTaskStatusUpdate(
@@ -60,17 +56,24 @@ final class ObservableTaskTableTest extends TestCase
 
             $wg->add();
 
-            SwooleCoroutineHelper::mustGo(static function () use ($channel, $wg) {
+            SwooleCoroutineHelper::mustGo(function () use ($wg) {
+                self::assertNotNull($this->observableTaskTable);
+
                 try {
-                    $status1 = $channel->pop();
+                    $iterator = new ObservableTaskTableSlotStatusUpdateIterator($this->observableTaskTable);
 
-                    self::assertInstanceOf(ObservableTaskSlotStatusUpdate::class, $status1);
-                    self::assertSame(ObservableTaskStatus::Running, $status1->observableTaskStatusUpdate->status);
+                    foreach ($iterator as $statusUpdate) {
+                        self::assertInstanceOf(ObservableTaskSlotStatusUpdate::class, $statusUpdate);
+                        self::assertEquals('0', $statusUpdate->slotId);
 
-                    $status2 = $channel->pop();
+                        if (ObservableTaskStatus::Finished === $statusUpdate->observableTaskStatusUpdate->status) {
+                            self::assertEquals('test2', $statusUpdate->observableTaskStatusUpdate->data);
 
-                    self::assertInstanceOf(ObservableTaskSlotStatusUpdate::class, $status2);
-                    self::assertSame(ObservableTaskStatus::Finished, $status2->observableTaskStatusUpdate->status);
+                            break;
+                        }
+
+                        self::assertEquals('test1', $statusUpdate->observableTaskStatusUpdate->data);
+                    }
                 } finally {
                     $wg->done();
                 }
@@ -79,30 +82,6 @@ final class ObservableTaskTableTest extends TestCase
             $this->observableTaskTable?->observe($observableTask);
 
             $wg->wait();
-
-            $this->observableTaskTable?->observableChannels->remove($channel);
         });
-    }
-
-    public function test_task_is_observed(): void
-    {
-        $observableTask = new ObservableTask(static function () {
-            yield new ObservableTaskStatusUpdate(
-                ObservableTaskStatus::Running,
-                'test',
-            );
-        });
-
-        self::assertNull($this->observableTaskTable?->getStatus('0'));
-
-        $slotId = $this->observableTaskTable?->observe($observableTask);
-
-        self::assertSame('0', $slotId);
-
-        $status = $this->observableTaskTable?->getStatus($slotId);
-
-        self::assertInstanceOf(ObservableTaskStatusUpdate::class, $status);
-        self::assertSame(ObservableTaskStatus::Running, $status->status);
-        self::assertSame('test', $status->data);
     }
 }

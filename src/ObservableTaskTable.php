@@ -5,12 +5,18 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
-use Generator;
+use Ds\Set;
+use Swoole\Coroutine\Channel;
 use Swoole\Table;
 
 #[Singleton]
 readonly class ObservableTaskTable
 {
+    /**
+     * @var Set<Channel>
+     */
+    public Set $observableChannels;
+
     private SwooleTableAvailableRowsPool $availableRowsPool;
     private string $serializedPendingStatus;
     private Table $table;
@@ -20,7 +26,7 @@ readonly class ObservableTaskTable
         private SerializerInterface $serializer,
     ) {
         $this->availableRowsPool = new SwooleTableAvailableRowsPool($observableTaskConfiguration->maxTasks);
-
+        $this->observableChannels = new Set();
         $this->serializedPendingStatus = $serializer->serialize(
             new ObservableTaskStatusUpdate(ObservableTaskStatus::Pending, null)
         );
@@ -44,24 +50,6 @@ readonly class ObservableTaskTable
     }
 
     /**
-     * @return Generator<non-empty-string,ObservableTaskStatusUpdate>
-     */
-    public function getStatuses(): Generator
-    {
-        /**
-         * @var non-empty-string $taskId
-         * @var mixed            $row explicitly mixed for typechecks
-         */
-        foreach ($this->table as $taskId => $row) {
-            $status = $this->unserializeTableRow($row);
-
-            if ($status instanceof ObservableTaskStatusUpdate) {
-                yield $taskId => $status;
-            }
-        }
-    }
-
-    /**
      * @return non-empty-string
      */
     public function observe(ObservableTaskInterface $observableTask): string
@@ -78,6 +66,14 @@ readonly class ObservableTaskTable
                     $this->table->set($slotId, [
                         'status' => $this->serializer->serialize($statusUpdate),
                     ]);
+
+                    if (!$this->observableChannels->isEmpty()) {
+                        $slotStatusUpdate = new ObservableTaskSlotStatusUpdate($slotId, $statusUpdate);
+
+                        foreach ($this->observableChannels as $observableChannel) {
+                            $observableChannel->push($slotStatusUpdate);
+                        }
+                    }
 
                     if (ObservableTaskStatus::Running !== $statusUpdate->status) {
                         break;
