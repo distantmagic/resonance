@@ -15,7 +15,7 @@ final readonly class SwooleCoroutineHelper
     /**
      * @param callable() $callback
      */
-    public static function mustGo(callable $callback): void
+    public static function mustGo(callable $callback): int
     {
         /**
          * @var false|int $cid
@@ -25,6 +25,8 @@ final readonly class SwooleCoroutineHelper
         if (!is_int($cid)) {
             throw new RuntimeException('Unable to start a coroutine');
         }
+
+        return $cid;
     }
 
     /**

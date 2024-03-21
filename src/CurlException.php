@@ -11,10 +11,6 @@ class CurlException extends RuntimeException
 {
     public function __construct(CurlHandle $ch)
     {
-        parent::__construct(sprintf(
-            'curl request failed because of error: (%d)"%s"',
-            curl_errno($ch),
-            curl_error($ch),
-        ));
+        parent::__construct((string) new CurlErrorMessage($ch));
     }
 }

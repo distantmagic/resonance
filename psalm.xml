@@ -11,6 +11,10 @@
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
+    <forbiddenFunctions>
+        <function name="dump"/>
+    </forbiddenFunctions>
+
     <projectFiles>
         <directory name="src" />
         <file name="constants.php" />

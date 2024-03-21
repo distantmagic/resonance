@@ -13,6 +13,7 @@ use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Http\Server as HttpServer;
 use Swoole\Server;
+use Swoole\Server\StatusInfo;
 use Swoole\WebSocket\Server as WebSocketServer;
 
 #[GrantsFeature(Feature::SwooleTaskServer)]
@@ -77,11 +78,12 @@ readonly class SwooleServer
         ]);
 
         $this->server->on('beforeShutdown', $this->onBeforeShutdown(...));
-        $this->server->on('pipeMessage', $this->serverPipeMessageDispatcher->onPipeMessage(...));
         $this->server->on('finish', $this->serverTaskHandlerDispatcher->onFinish(...));
+        $this->server->on('pipeMessage', $this->serverPipeMessageDispatcher->onPipeMessage(...));
         $this->server->on('request', $this->httpResponderAggregate->respondToSwooleRequest(...));
         $this->server->on('start', $this->onStart(...));
         $this->server->on('task', $this->serverTaskHandlerDispatcher->onTask(...));
+        $this->server->on('workerError', $this->onWorkerError(...));
 
         if ($this->webSocketServerController) {
             $this->server->on('close', $this->onClose(...));
@@ -134,5 +136,13 @@ readonly class SwooleServer
                 $this->swooleConfiguration->port,
             ));
         }
+    }
+
+    private function onWorkerError(Server $server, StatusInfo $statusInfo): void
+    {
+        $this->logger->error(sprintf(
+            'swoole_worker_error(%s)',
+            print_r($statusInfo, true)
+        ));
     }
 }

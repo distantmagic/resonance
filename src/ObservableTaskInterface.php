@@ -7,8 +7,6 @@ namespace Distantmagic\Resonance;
 use IteratorAggregate;
 
 /**
- * @template TTaskStatus of ObservableTaskStatusUpdate
- *
- * @template-extends IteratorAggregate<TTaskStatus>
+ * @template-extends IteratorAggregate<ObservableTaskStatusUpdate>
  */
 interface ObservableTaskInterface extends IteratorAggregate {}

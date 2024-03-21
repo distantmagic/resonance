@@ -60,7 +60,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^11.0",
-        "swoole/ide-helper": "^5.1"
+        "swoole/ide-helper": "^5.1",
+        "symfony/var-dumper": "^7.0"
     },
     "suggest": {
         "ext-ds": "For better memory management",

@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Serializer\Vanilla;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\WaitGroup;
 use Swoole\Event;
@@ -61,19 +62,19 @@ final class ObservableTaskTableTest extends TestCase
             $wg->add();
 
             SwooleCoroutineHelper::mustGo(static function () use ($channel, $wg) {
-                try {
-                    $status1 = $channel->pop();
-
-                    self::assertInstanceOf(ObservableTaskSlotStatusUpdate::class, $status1);
-                    self::assertSame(ObservableTaskStatus::Running, $status1->observableTaskStatusUpdate->status);
-
-                    $status2 = $channel->pop();
-
-                    self::assertInstanceOf(ObservableTaskSlotStatusUpdate::class, $status2);
-                    self::assertSame(ObservableTaskStatus::Finished, $status2->observableTaskStatusUpdate->status);
-                } finally {
+                Coroutine::defer(static function () use ($wg) {
                     $wg->done();
-                }
+                });
+
+                $status1 = $channel->pop();
+
+                self::assertInstanceOf(ObservableTaskSlotStatusUpdate::class, $status1);
+                self::assertSame(ObservableTaskStatus::Running, $status1->observableTaskStatusUpdate->status);
+
+                $status2 = $channel->pop();
+
+                self::assertInstanceOf(ObservableTaskSlotStatusUpdate::class, $status2);
+                self::assertSame(ObservableTaskStatus::Finished, $status2->observableTaskStatusUpdate->status);
             });
 
             $this->observableTaskTable?->observe($observableTask);

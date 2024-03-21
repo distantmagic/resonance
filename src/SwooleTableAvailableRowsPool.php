@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use OverflowException;
+use RuntimeException;
 use Swoole\Atomic;
 use Swoole\Table;
 use UnderflowException;
@@ -21,18 +22,16 @@ readonly class SwooleTableAvailableRowsPool
 
         $this->availableRows = new Table(2 * $size);
         $this->availableRows->column('index', Table::TYPE_INT);
-        $this->availableRows->create();
+
+        if (!$this->availableRows->create()) {
+            throw new RuntimeException('Unable to allocate table');
+        }
 
         for ($i = 0; $i < $size; ++$i) {
             $this->availableRows->set((string) $i, [
                 'index' => $i,
             ]);
         }
-    }
-
-    public function __destruct()
-    {
-        $this->availableRows->destroy();
     }
 
     /**
@@ -46,12 +45,15 @@ readonly class SwooleTableAvailableRowsPool
             throw new UnderflowException('No available rows');
         }
 
-        $this
-            ->availableRows
-            ->set((string) $availableRowPointerValue, [
-                'index' => (int) $index,
-            ])
-        ;
+        if (
+            !$this
+                ->availableRows
+                ->set((string) $availableRowPointerValue, [
+                    'index' => (int) $index,
+                ])
+        ) {
+            throw new RuntimeException('Unable to free available row');
+        }
     }
 
     /**

@@ -9,7 +9,9 @@ use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Generator;
 use JsonSerializable;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
+use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 
 #[RequiresPhpExtension('curl')]
@@ -20,6 +22,7 @@ readonly class LlamaCppClient
         private JsonSerializer $jsonSerializer,
         private LlamaCppConfiguration $llamaCppConfiguration,
         private LlamaCppLinkBuilder $llamaCppLinkBuilder,
+        private LoggerInterface $logger,
     ) {}
 
     public function generateCompletion(LlamaCppCompletionRequest $request): LlamaCppCompletionIterator
@@ -167,31 +170,34 @@ readonly class LlamaCppClient
         SwooleCoroutineHelper::mustGo(function () use ($channel, $path, $requestData): void {
             $curlHandle = $this->createCurlHandle();
 
-            try {
-                curl_setopt($curlHandle, CURLOPT_POST, true);
-                curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $requestData);
-                curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, false);
-                curl_setopt($curlHandle, CURLOPT_URL, $this->llamaCppLinkBuilder->build($path));
-                curl_setopt($curlHandle, CURLOPT_WRITEFUNCTION, function (CurlHandle $curlHandle, string $data) use ($channel): int {
-                    if ($channel->push($data, $this->llamaCppConfiguration->completionTokenTimeout)) {
-                        return strlen($data);
-                    }
-
-                    return 0;
-                });
-                if (false === curl_exec($curlHandle)) {
-                    $curlErrno = curl_errno($curlHandle);
-
-                    if (CURLE_WRITE_ERROR !== $curlErrno) {
-                        throw new CurlException($curlHandle);
-                    }
-                } else {
-                    $this->assertStatusCode($curlHandle, 200);
-                }
-            } finally {
-                curl_close($curlHandle);
-
+            Coroutine::defer(static function () use ($channel) {
                 $channel->close();
+            });
+
+            Coroutine::defer(static function () use ($curlHandle) {
+                curl_close($curlHandle);
+            });
+
+            curl_setopt($curlHandle, CURLOPT_TIMEOUT, 180);
+            curl_setopt($curlHandle, CURLOPT_POST, true);
+            curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $requestData);
+            curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, false);
+            curl_setopt($curlHandle, CURLOPT_URL, $this->llamaCppLinkBuilder->build($path));
+            curl_setopt($curlHandle, CURLOPT_WRITEFUNCTION, function (CurlHandle $curlHandle, string $data) use ($channel): int {
+                if ($channel->push($data, $this->llamaCppConfiguration->completionTokenTimeout)) {
+                    return strlen($data);
+                }
+
+                return 0;
+            });
+            if (false === curl_exec($curlHandle)) {
+                $curlErrno = curl_errno($curlHandle);
+
+                if (CURLE_WRITE_ERROR !== $curlErrno) {
+                    $this->logger->error(new CurlErrorMessage($curlHandle));
+                }
+            } else {
+                $this->assertStatusCode($curlHandle, 200);
             }
         });
 

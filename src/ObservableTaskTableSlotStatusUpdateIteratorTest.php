@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Serializer\Vanilla;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Swoole\Coroutine;
 use Swoole\Coroutine\WaitGroup;
 use Swoole\Event;
 
@@ -59,23 +60,23 @@ final class ObservableTaskTableSlotStatusUpdateIteratorTest extends TestCase
             SwooleCoroutineHelper::mustGo(function () use ($wg) {
                 self::assertNotNull($this->observableTaskTable);
 
-                try {
-                    $iterator = new ObservableTaskTableSlotStatusUpdateIterator($this->observableTaskTable);
-
-                    foreach ($iterator as $statusUpdate) {
-                        self::assertInstanceOf(ObservableTaskSlotStatusUpdate::class, $statusUpdate);
-                        self::assertEquals('0', $statusUpdate->slotId);
-
-                        if (ObservableTaskStatus::Finished === $statusUpdate->observableTaskStatusUpdate->status) {
-                            self::assertEquals('test2', $statusUpdate->observableTaskStatusUpdate->data);
-
-                            break;
-                        }
-
-                        self::assertEquals('test1', $statusUpdate->observableTaskStatusUpdate->data);
-                    }
-                } finally {
+                Coroutine::defer(static function () use ($wg) {
                     $wg->done();
+                });
+
+                $iterator = new ObservableTaskTableSlotStatusUpdateIterator($this->observableTaskTable);
+
+                foreach ($iterator as $statusUpdate) {
+                    self::assertInstanceOf(ObservableTaskSlotStatusUpdate::class, $statusUpdate);
+                    self::assertEquals('0', $statusUpdate->slotId);
+
+                    if (ObservableTaskStatus::Finished === $statusUpdate->observableTaskStatusUpdate->status) {
+                        self::assertEquals('test2', $statusUpdate->observableTaskStatusUpdate->data);
+
+                        break;
+                    }
+
+                    self::assertEquals('test1', $statusUpdate->observableTaskStatusUpdate->data);
                 }
             });
 

@@ -6,21 +6,32 @@ namespace Distantmagic\Resonance;
 
 use Closure;
 use Generator;
+use Throwable;
 
-/**
- * @template TTaskStatus of ObservableTaskStatusUpdate
- *
- * @template-implements ObservableTaskInterface<TTaskStatus>
- */
 readonly class ObservableTask implements ObservableTaskInterface
 {
     /**
-     * @param Closure():Generator<TTaskStatus> $iterableTask
+     * @var Closure():iterable<ObservableTaskStatusUpdate>
      */
-    public function __construct(private Closure $iterableTask) {}
+    private Closure $iterableTask;
+
+    /**
+     * @param callable():iterable<ObservableTaskStatusUpdate> $iterableTask
+     */
+    public function __construct(callable $iterableTask)
+    {
+        $this->iterableTask = Closure::fromCallable($iterableTask);
+    }
 
     public function getIterator(): Generator
     {
-        yield from ($this->iterableTask)();
+        try {
+            yield from ($this->iterableTask)();
+        } catch (Throwable $throwable) {
+            yield new ObservableTaskStatusUpdate(
+                ObservableTaskStatus::Failed,
+                $throwable,
+            );
+        }
     }
 }

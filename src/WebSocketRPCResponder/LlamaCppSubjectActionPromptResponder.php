@@ -15,6 +15,7 @@ use Distantmagic\Resonance\ObservableTask;
 use Distantmagic\Resonance\ObservableTaskStatus;
 use Distantmagic\Resonance\ObservableTaskStatusUpdate;
 use Distantmagic\Resonance\ObservableTaskTable;
+use Distantmagic\Resonance\ObservableTaskTimeoutIterator;
 use Distantmagic\Resonance\PromptSubjectResponderAggregate;
 use Distantmagic\Resonance\RPCRequest;
 use Distantmagic\Resonance\WebSocketAuthResolution;
@@ -80,26 +81,26 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketRP
         RPCRequest $rpcRequest,
     ): void {
         $this->observableTaskTable->observe(new ObservableTask(
-            /**
-             * @return Generator<ObservableTaskStatusUpdate>
-             */
-            function () use (
-                $webSocketAuthResolution,
-                $webSocketConnection,
-                $rpcRequest,
-            ): Generator {
-                yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Running, null);
+            new ObservableTaskTimeoutIterator(
+                iterableTask: function () use (
+                    $webSocketAuthResolution,
+                    $webSocketConnection,
+                    $rpcRequest,
+                ): Generator {
+                    yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Running, null);
 
-                try {
-                    $this->onObservableRequest(
-                        $webSocketAuthResolution,
-                        $webSocketConnection,
-                        $rpcRequest,
-                    );
-                } finally {
-                    yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Finished, null);
-                }
-            }
+                    try {
+                        $this->onObservableRequest(
+                            $webSocketAuthResolution,
+                            $webSocketConnection,
+                            $rpcRequest,
+                        );
+                    } finally {
+                        yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Finished, null);
+                    }
+                },
+                inactivityTimeout: 1.0,
+            )
         ));
     }
 
@@ -123,7 +124,8 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketRP
 
         $this->runningCompletions->offsetSet($webSocketConnection, $completion);
 
-        $response = $this->promptSubjectResponderAggregate
+        $response = $this
+            ->promptSubjectResponderAggregate
             ->createResponseFromTokens(
                 authenticatedUser: $webSocketAuthResolution->authenticatedUser,
                 completion: $completion,

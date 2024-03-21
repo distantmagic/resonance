@@ -8,6 +8,8 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Ds\Set;
 use Generator;
 use IteratorAggregate;
+use RuntimeException;
+use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 use Swoole\Table;
 
@@ -41,11 +43,6 @@ readonly class ObservableTaskTable implements IteratorAggregate
         $this->table->create();
     }
 
-    public function __destruct()
-    {
-        $this->table->destroy();
-    }
-
     /**
      * @return Generator<non-empty-string,?ObservableTaskStatusUpdate>
      */
@@ -76,30 +73,37 @@ readonly class ObservableTaskTable implements IteratorAggregate
         $slotId = $this->availableRowsPool->nextAvailableRow();
 
         SwooleCoroutineHelper::mustGo(function () use ($slotId, $observableTask) {
-            try {
-                $this->table->set($slotId, [
+            Coroutine::defer(function () use ($slotId) {
+                $this->availableRowsPool->freeAvailableRow($slotId);
+            });
+
+            if (
+                !$this->table->set($slotId, [
                     'status' => $this->serializedPendingStatus,
-                ]);
+                ])
+            ) {
+                throw new RuntimeException('Unable to set an initial slot status');
+            }
 
-                foreach ($observableTask as $statusUpdate) {
-                    $this->table->set($slotId, [
+            foreach ($observableTask as $statusUpdate) {
+                if (!$this->table->set($slotId, [
                         'status' => $this->serializer->serialize($statusUpdate),
-                    ]);
+                    ])
+                ) {
+                    throw new RuntimeException('Unable to update a slot status.');
+                }
 
-                    if (!$this->observableChannels->isEmpty()) {
-                        $slotStatusUpdate = new ObservableTaskSlotStatusUpdate($slotId, $statusUpdate);
+                if (!$this->observableChannels->isEmpty()) {
+                    $slotStatusUpdate = new ObservableTaskSlotStatusUpdate($slotId, $statusUpdate);
 
-                        foreach ($this->observableChannels as $observableChannel) {
-                            $observableChannel->push($slotStatusUpdate);
-                        }
-                    }
-
-                    if (ObservableTaskStatus::Running !== $statusUpdate->status) {
-                        break;
+                    foreach ($this->observableChannels as $observableChannel) {
+                        $observableChannel->push($slotStatusUpdate);
                     }
                 }
-            } finally {
-                $this->availableRowsPool->freeAvailableRow($slotId);
+
+                if (ObservableTaskStatus::Running !== $statusUpdate->status) {
+                    break;
+                }
             }
         });
 

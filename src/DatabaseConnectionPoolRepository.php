@@ -8,6 +8,7 @@ use Ds\Map;
 use OutOfBoundsException;
 use PDO;
 use RuntimeException;
+use Swoole\Database\PDOPool;
 use Swoole\Database\PDOProxy;
 
 readonly class DatabaseConnectionPoolRepository
