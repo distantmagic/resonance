@@ -6,15 +6,15 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Serializer\Vanilla;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\RunClassInSeparateProcess;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine;
-use Swoole\Coroutine\WaitGroup;
 use Swoole\Event;
 
 /**
  * @internal
  */
 #[CoversClass(ObservableTaskTableSlotStatusUpdateIterator::class)]
+#[RunClassInSeparateProcess]
 final class ObservableTaskTableSlotStatusUpdateIteratorTest extends TestCase
 {
     private ?ObservableTaskConfiguration $observableTaskConfiguration = null;
@@ -41,8 +41,6 @@ final class ObservableTaskTableSlotStatusUpdateIteratorTest extends TestCase
     public function test_channel_is_observed(): void
     {
         SwooleCoroutineHelper::mustRun(function () {
-            $wg = new WaitGroup();
-
             $observableTask = new ObservableTask(static function () {
                 yield new ObservableTaskStatusUpdate(
                     ObservableTaskStatus::Running,
@@ -55,14 +53,8 @@ final class ObservableTaskTableSlotStatusUpdateIteratorTest extends TestCase
                 );
             });
 
-            $wg->add();
-
-            SwooleCoroutineHelper::mustGo(function () use ($wg) {
+            SwooleCoroutineHelper::mustGo(function () {
                 self::assertNotNull($this->observableTaskTable);
-
-                Coroutine::defer(static function () use ($wg) {
-                    $wg->done();
-                });
 
                 $iterator = new ObservableTaskTableSlotStatusUpdateIterator($this->observableTaskTable);
 
@@ -81,8 +73,6 @@ final class ObservableTaskTableSlotStatusUpdateIteratorTest extends TestCase
             });
 
             $this->observableTaskTable?->observe($observableTask);
-
-            $wg->wait();
         });
     }
 }
