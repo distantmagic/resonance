@@ -16,7 +16,7 @@ At least `8.2`. Resonance extensively uses the latest PHP features.
 
 ## Required PHP Extensions
 
-With those extensions, running the framework is not possible.
+Without those extensions, running the framework is not possible.
 
 extension | symbol | why?
 -|-|-
