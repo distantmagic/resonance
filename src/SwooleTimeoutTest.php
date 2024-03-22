@@ -13,7 +13,6 @@ use Swoole\Event;
  */
 #[CoversClass(SwooleTimeout::class)]
 #[CoversClass(SwooleTimeoutScheduled::class)]
-#[CoversClass(SwooleTimeoutScheduler::class)]
 final class SwooleTimeoutTest extends TestCase
 {
     protected function tearDown(): void

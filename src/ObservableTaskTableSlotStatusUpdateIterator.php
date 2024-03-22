@@ -40,7 +40,13 @@ readonly class ObservableTaskTableSlotStatusUpdateIterator implements IteratorAg
     {
         $channel = new Channel(1);
 
-        $this->observableTaskTable->observableChannels->add($channel);
+        $observer = static function (ObservableTaskSlotStatusUpdate $statusUpdate) use ($channel): true {
+            $channel->push($statusUpdate);
+
+            return true;
+        };
+
+        $this->observableTaskTable->observers->add($observer);
 
         try {
             $swooleChannelIterator = new SwooleChannelIterator($channel, $this->timeout);
@@ -56,7 +62,7 @@ readonly class ObservableTaskTableSlotStatusUpdateIterator implements IteratorAg
 
             $this->swooleChannelIterators->remove($swooleChannelIterator);
         } finally {
-            $this->observableTaskTable->observableChannels->remove($channel);
+            $this->observableTaskTable->observers->remove($observer);
         }
 
         $channel->close();

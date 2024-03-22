@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;

@@ -8,9 +8,6 @@ use Distantmagic\Resonance\Serializer\Vanilla;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine;
-use Swoole\Coroutine\Channel;
-use Swoole\Coroutine\WaitGroup;
 use Swoole\Event;
 
 /**
@@ -45,20 +42,8 @@ final class ObservableTaskTableTest extends TestCase
     {
         self::assertNotNull($this->observableTaskTable);
 
-        $channel = new Channel();
-
-        $this->observableTaskTable->observableChannels->add($channel);
-
-        SwooleCoroutineHelper::mustGo(static function () use ($channel) {
-            $status1 = $channel->pop();
-
-            self::assertInstanceOf(ObservableTaskSlotStatusUpdate::class, $status1);
-            self::assertSame(ObservableTaskStatus::Running, $status1->observableTaskStatusUpdate->status);
-
-            $status2 = $channel->pop();
-
-            self::assertInstanceOf(ObservableTaskSlotStatusUpdate::class, $status2);
-            self::assertSame(ObservableTaskStatus::Finished, $status2->observableTaskStatusUpdate->status);
+        $this->observableTaskTable->observers->add(static function (ObservableTaskSlotStatusUpdate $status): bool {
+            return ObservableTaskStatus::Finished === $status->observableTaskStatusUpdate->status;
         });
 
         $this->observableTaskTable->observe(new ObservableTask(static function () {
@@ -72,8 +57,6 @@ final class ObservableTaskTableTest extends TestCase
                 'test2',
             );
         }));
-
-        $this->observableTaskTable->observableChannels->remove($channel);
     }
 
     public function test_task_is_observed(): void

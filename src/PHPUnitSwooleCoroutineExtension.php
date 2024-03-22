@@ -29,7 +29,12 @@ final class PHPUnitSwooleCoroutineExtension implements Extension
 
     public function executeAfterLastTest(): void
     {
-        while (Coroutine::stats()['coroutine_num'] > 1) {
+        /**
+         * @var array{ coroutine_num: int } $coroutineStats
+         */
+        $coroutineStats = Coroutine::stats();
+
+        while ($coroutineStats['coroutine_num'] > 1) {
             Coroutine::sleep(0.1);
         }
 
