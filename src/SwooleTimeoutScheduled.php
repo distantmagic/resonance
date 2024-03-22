@@ -6,7 +6,7 @@ namespace Distantmagic\Resonance;
 
 use Closure;
 use RuntimeException;
-use Swoole\Coroutine;
+use Swoole\Timer;
 
 readonly class SwooleTimeoutScheduled
 {
@@ -14,22 +14,17 @@ readonly class SwooleTimeoutScheduled
 
     public function __construct(
         callable $callback,
-        private int $coroutineId,
-        private SwooleTimeoutScheduler $swooleTimeoutScheduler,
+        private int $timeoutId,
     ) {
         $this->callback = Closure::fromCallable($callback);
     }
 
     public function cancel(): bool
     {
-        if (!Coroutine::exists($this->coroutineId)) {
-            return true;
-        }
-
         /**
          * @var bool
          */
-        return Coroutine::cancel($this->coroutineId);
+        return Timer::clear($this->timeoutId);
     }
 
     public function reschedule(float $timeout): self
@@ -40,8 +35,7 @@ readonly class SwooleTimeoutScheduled
 
         return new self(
             $this->callback,
-            $this->swooleTimeoutScheduler->scheduleTimeout($timeout, $this->callback),
-            $this->swooleTimeoutScheduler,
+            Timer::after((int) ($timeout * 1000), $this->callback),
         );
     }
 }

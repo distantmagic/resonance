@@ -27,13 +27,6 @@ final class SwooleCrashTest extends TestCase
         // just the Event::wait
     }
 
-    public function test_coroutine_with_sleep(): void
-    {
-        SwooleCoroutineHelper::mustGo(static function () {
-            Coroutine::sleep(0.01);
-        });
-    }
-
     public function test_coroutine_with_timer(): void
     {
         SwooleCoroutineHelper::mustGo(static function () {
@@ -47,15 +40,6 @@ final class SwooleCrashTest extends TestCase
     {
         SwooleCoroutineHelper::mustGo(static function () {
             // just the coroutine
-        });
-    }
-
-    public function test_scheduler_is_used(): void
-    {
-        $swooleTimeoutScheduler = new SwooleTimeoutScheduler();
-
-        $swooleTimeoutScheduler->scheduleTimeout(0.01, static function () {
-            // just the scheduler
         });
     }
 

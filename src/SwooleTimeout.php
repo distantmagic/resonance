@@ -5,24 +5,22 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Closure;
+use Swoole\Timer;
 
 readonly class SwooleTimeout
 {
     private Closure $callback;
-    private SwooleTimeoutScheduler $swooleTimeoutScheduler;
 
     public function __construct(callable $callback)
     {
         $this->callback = Closure::fromCallable($callback);
-        $this->swooleTimeoutScheduler = new SwooleTimeoutScheduler();
     }
 
     public function setTimeout(float $timeout): SwooleTimeoutScheduled
     {
         return new SwooleTimeoutScheduled(
             $this->callback,
-            $this->swooleTimeoutScheduler->scheduleTimeout($timeout, $this->callback),
-            $this->swooleTimeoutScheduler,
+            Timer::after((int) ($timeout * 1000), $this->callback),
         );
     }
 }

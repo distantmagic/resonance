@@ -11,10 +11,8 @@ use PHPUnit\Runner\Extension\Facade as EventFacade;
 use PHPUnit\Runner\Extension\ParameterCollection;
 use PHPUnit\TextUI\Configuration\Configuration;
 use Swoole\Coroutine;
+use Swoole\Timer;
 
-/**
- * @internal this class is not covered by the backward compatibility promise for counit
- */
 final class PHPUnitSwooleCoroutineExtension implements Extension
 {
     public function bootstrap(Configuration $configuration, EventFacade $facade, ParameterCollection $parameters): void
@@ -29,13 +27,12 @@ final class PHPUnitSwooleCoroutineExtension implements Extension
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function executeAfterLastTest(): void
     {
         while (Coroutine::stats()['coroutine_num'] > 1) {
             Coroutine::sleep(0.1);
         }
+
+        Timer::clearAll();
     }
 }
