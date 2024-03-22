@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  */
 #[CoversClass(PostfixBounceAnalyzer::class)]
+#[RunTestsInSeparateProcesses]
 final class PostfixBounceAnalyzerTest extends TestCase
 {
-    use TestsDependencyInectionContainerTrait;
-
     public const DELIVERY_REPORT = <<<'REPORT'
     From double-bounce@myhost  Sat Feb  3 08:52:39 2024
     Return-Path: <double-bounce@myhost>
@@ -82,7 +82,7 @@ final class PostfixBounceAnalyzerTest extends TestCase
 
     public function test_delivery_report_is_analyzed(): void
     {
-        $analyzer = self::$container->make(PostfixBounceAnalyzer::class);
+        $analyzer = new PostfixBounceAnalyzer();
 
         $report = $analyzer->extractReport(self::DELIVERY_REPORT);
 

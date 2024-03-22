@@ -6,7 +6,7 @@
     bootstrap="phpunit_bootstrap.php"
     colors="true"
     displayDetailsOnTestsThatTriggerWarnings="true"
-    processIsolation="true"
+    processIsolation="false"
 >
     <testsuites>
         <testsuite name="Unit">

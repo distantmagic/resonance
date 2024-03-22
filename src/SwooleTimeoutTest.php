@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
 use Swoole\Event;
 
@@ -14,6 +15,7 @@ use Swoole\Event;
 #[CoversClass(SwooleTimeout::class)]
 #[CoversClass(SwooleTimeoutScheduled::class)]
 #[CoversClass(SwooleTimeoutScheduler::class)]
+#[RunTestsInSeparateProcesses]
 final class SwooleTimeoutTest extends TestCase
 {
     protected function tearDown(): void

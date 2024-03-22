@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine;
@@ -27,18 +26,27 @@ final class SwooleCrashTest extends TestCase
         // just the Event::wait
     }
 
+    public function test_coroutine_with_sleep(): void
+    {
+        SwooleCoroutineHelper::mustGo(static function () {
+            Coroutine::sleep(0.01);
+        });
+    }
+
     public function test_just_coroutine(): void
     {
-        SwooleCoroutineHelper::mustGo(function () {
+        SwooleCoroutineHelper::mustGo(static function () {
             // just the coroutine
         });
     }
 
-    public function test_table_small(): void
+    public function test_scheduler_is_used(): void
     {
-        $table = new Table(100);
-        $table->column('status', Table::TYPE_STRING, 300);
-        $table->create();
+        $swooleTimeoutScheduler = new SwooleTimeoutScheduler();
+
+        $swooleTimeoutScheduler->scheduleTimeout(0.01, static function () {
+            // just the scheduler
+        });
     }
 
     public function test_table(): void
@@ -48,20 +56,11 @@ final class SwooleCrashTest extends TestCase
         $table->create();
     }
 
-    public function test_coroutine_with_sleep(): void
+    public function test_table_small(): void
     {
-        SwooleCoroutineHelper::mustGo(function () {
-            Coroutine::sleep(0.01);
-        });
-    }
-
-    public function test_scheduler_is_used(): void
-    {
-        $swooleTimeoutScheduler = new SwooleTimeoutScheduler();
-
-        $swooleTimeoutScheduler->scheduleTimeout(0.01, function () {
-            // just the scheduler
-        });
+        $table = new Table(100);
+        $table->column('status', Table::TYPE_STRING, 300);
+        $table->create();
     }
 
     public function test_task_is_rescheduled(): void
