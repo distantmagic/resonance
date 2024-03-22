@@ -92,13 +92,19 @@ readonly class ObservableTaskTable implements IteratorAggregate
                     throw new RuntimeException('Unable to update a slot status.');
                 }
 
-                foreach ($this->observers as $observer) {
-                    if (!is_callable($observer)) {
-                        throw new RuntimeException('Observer is not callable');
-                    }
+                if (!$this->observers->isEmpty()) {
+                    $slotStatusUpdate = new ObservableTaskSlotStatusUpdate($slotId, $statusUpdate);
 
-                    if (false === $observer(new ObservableTaskSlotStatusUpdate($slotId, $statusUpdate))) {
-                        $this->observers->remove($observer);
+                    foreach ($this->observers as $observer) {
+                        if (!is_callable($observer)) {
+                            throw new RuntimeException('Observer is not callable');
+                        }
+
+                        SwooleCoroutineHelper::mustGo(function () use ($observer, $slotStatusUpdate) {
+                            if (false === $observer($slotStatusUpdate)) {
+                                $this->observers->remove($observer);
+                            }
+                        });
                     }
                 }
 
