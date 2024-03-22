@@ -11,45 +11,41 @@ use Swoole\Event;
 /**
  * @internal
  */
-// #[CoversClass(SwooleTimeout::class)]
-// #[CoversClass(SwooleTimeoutScheduled::class)]
-// #[CoversClass(SwooleTimeoutScheduler::class)]
-// final class SwooleTimeoutTest extends TestCase
-// {
-//     protected function tearDown(): void
-//     {
-//         Event::wait();
-//     }
+#[CoversClass(SwooleTimeout::class)]
+#[CoversClass(SwooleTimeoutScheduled::class)]
+#[CoversClass(SwooleTimeoutScheduler::class)]
+final class SwooleTimeoutTest extends TestCase
+{
+    protected function tearDown(): void
+    {
+        Event::wait();
+    }
 
-//     public function test_code_executes_after_timeout(): void
-//     {
-//         SwooleCoroutineHelper::mustRun(static function () {
-//             $before = microtime(true);
+    public function test_code_executes_after_timeout(): void
+    {
+        $before = microtime(true);
 
-//             $timeout = new SwooleTimeout(static function () use ($before) {
-//                 $after = microtime(true);
+        $timeout = new SwooleTimeout(static function () use ($before) {
+            $after = microtime(true);
 
-//                 self::assertGreaterThan(0.03, $after - $before);
-//                 self::assertLessThan(0.035, $after - $before);
-//             });
+            self::assertGreaterThan(0.03, $after - $before);
+            self::assertLessThan(0.035, $after - $before);
+        });
 
-//             $timeout->setTimeout(0.03);
-//         });
-//     }
+        $timeout->setTimeout(0.03);
+    }
 
-//     public function test_task_is_rescheduled(): void
-//     {
-//         SwooleCoroutineHelper::mustRun(static function () {
-//             $before = microtime(true);
+    public function test_task_is_rescheduled(): void
+    {
+        $before = microtime(true);
 
-//             $timeout = new SwooleTimeout(static function () use ($before) {
-//                 $after = microtime(true);
+        $timeout = new SwooleTimeout(static function () use ($before) {
+            $after = microtime(true);
 
-//                 self::assertGreaterThan(0.03, $after - $before);
-//                 self::assertLessThan(0.035, $after - $before);
-//             });
+            self::assertGreaterThan(0.03, $after - $before);
+            self::assertLessThan(0.035, $after - $before);
+        });
 
-//             $timeout->setTimeout(0.02)->reschedule(0.03);
-//         });
-//     }
-// }
+        $timeout->setTimeout(0.02)->reschedule(0.03);
+    }
+}

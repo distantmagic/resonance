@@ -39,51 +39,49 @@ final class ObservableTaskTableTest extends TestCase
         Event::wait();
     }
 
-    // public function test_channel_is_observed(): void
-    // {
-    //     SwooleCoroutineHelper::mustRun(function () {
-    //         $channel = new Channel();
-    //         $wg = new WaitGroup();
+    public function test_channel_is_observed(): void
+    {
+        $channel = new Channel();
+        $wg = new WaitGroup();
 
-    //         $this->observableTaskTable?->observableChannels->add($channel);
+        $this->observableTaskTable?->observableChannels->add($channel);
 
-    //         $observableTask = new ObservableTask(static function () {
-    //             yield new ObservableTaskStatusUpdate(
-    //                 ObservableTaskStatus::Running,
-    //                 'test1',
-    //             );
+        $observableTask = new ObservableTask(static function () {
+            yield new ObservableTaskStatusUpdate(
+                ObservableTaskStatus::Running,
+                'test1',
+            );
 
-    //             yield new ObservableTaskStatusUpdate(
-    //                 ObservableTaskStatus::Finished,
-    //                 'test2',
-    //             );
-    //         });
+            yield new ObservableTaskStatusUpdate(
+                ObservableTaskStatus::Finished,
+                'test2',
+            );
+        });
 
-    //         $wg->add();
+        $wg->add();
 
-    //         SwooleCoroutineHelper::mustGo(static function () use ($channel, $wg) {
-    //             Coroutine::defer(static function () use ($wg) {
-    //                 $wg->done();
-    //             });
+        SwooleCoroutineHelper::mustGo(static function () use ($channel, $wg) {
+            Coroutine::defer(static function () use ($wg) {
+                $wg->done();
+            });
 
-    //             $status1 = $channel->pop();
+            $status1 = $channel->pop();
 
-    //             self::assertInstanceOf(ObservableTaskSlotStatusUpdate::class, $status1);
-    //             self::assertSame(ObservableTaskStatus::Running, $status1->observableTaskStatusUpdate->status);
+            self::assertInstanceOf(ObservableTaskSlotStatusUpdate::class, $status1);
+            self::assertSame(ObservableTaskStatus::Running, $status1->observableTaskStatusUpdate->status);
 
-    //             $status2 = $channel->pop();
+            $status2 = $channel->pop();
 
-    //             self::assertInstanceOf(ObservableTaskSlotStatusUpdate::class, $status2);
-    //             self::assertSame(ObservableTaskStatus::Finished, $status2->observableTaskStatusUpdate->status);
-    //         });
+            self::assertInstanceOf(ObservableTaskSlotStatusUpdate::class, $status2);
+            self::assertSame(ObservableTaskStatus::Finished, $status2->observableTaskStatusUpdate->status);
+        });
 
-    //         $this->observableTaskTable?->observe($observableTask);
+        $this->observableTaskTable?->observe($observableTask);
 
-    //         $wg->wait();
+        $wg->wait();
 
-    //         $this->observableTaskTable?->observableChannels->remove($channel);
-    //     });
-    // }
+        $this->observableTaskTable?->observableChannels->remove($channel);
+    }
 
     public function test_task_is_observed(): void
     {
