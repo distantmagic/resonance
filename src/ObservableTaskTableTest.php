@@ -44,7 +44,6 @@ final class ObservableTaskTableTest extends TestCase
     public function test_channel_is_observed(): void
     {
         $channel = new Channel();
-        $wg = new WaitGroup();
 
         $this->observableTaskTable?->observableChannels->add($channel);
 
@@ -60,13 +59,7 @@ final class ObservableTaskTableTest extends TestCase
             );
         });
 
-        $wg->add();
-
-        SwooleCoroutineHelper::mustGo(static function () use ($channel, $wg) {
-            Coroutine::defer(static function () use ($wg) {
-                $wg->done();
-            });
-
+        SwooleCoroutineHelper::mustGo(static function () use ($channel) {
             $status1 = $channel->pop();
 
             self::assertInstanceOf(ObservableTaskSlotStatusUpdate::class, $status1);
@@ -79,9 +72,6 @@ final class ObservableTaskTableTest extends TestCase
         });
 
         $this->observableTaskTable?->observe($observableTask);
-
-        $wg->wait();
-
         $this->observableTaskTable?->observableChannels->remove($channel);
     }
 
