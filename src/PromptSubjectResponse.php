@@ -25,7 +25,7 @@ readonly class PromptSubjectResponse implements IteratorAggregate
         $this->channel->close();
     }
 
-    public function end(mixed $payload = null): void
+    public function end(mixed $payload = ''): void
     {
         try {
             $this->channel->push(new PromptSubjectResponseChunk(

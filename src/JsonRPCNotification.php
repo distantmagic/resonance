@@ -24,9 +24,9 @@ readonly class JsonRPCNotification implements Stringable
     public function __toString(): string
     {
         return json_encode([
-            $this->method->getValue(),
-            $this->payload,
-            null,
+            'jsonrpc' => '2.0',
+            'method' => $this->method->getValue(),
+            'result' => $this->payload,
         ]);
     }
 }

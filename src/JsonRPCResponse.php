@@ -16,9 +16,10 @@ readonly class JsonRPCResponse implements Stringable
     public function __toString(): string
     {
         return json_encode([
-            $this->rpcRequest->method,
-            $this->content,
-            $this->rpcRequest->requestId,
+            'id' => $this->rpcRequest->requestId,
+            'jsonrpc' => '2.0',
+            'method' => $this->rpcRequest->method,
+            'result' => $this->content,
         ]);
     }
 }

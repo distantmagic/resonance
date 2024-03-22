@@ -8,9 +8,10 @@ use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Constraint;
 use Distantmagic\Resonance\Constraint\AnyConstraint;
+use Distantmagic\Resonance\Constraint\ConstConstraint;
 use Distantmagic\Resonance\Constraint\EnumConstraint;
+use Distantmagic\Resonance\Constraint\ObjectConstraint;
 use Distantmagic\Resonance\Constraint\StringConstraint;
-use Distantmagic\Resonance\Constraint\TupleConstraint;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\InputValidatedData\JsonRPCMessage;
 use Distantmagic\Resonance\InputValidator;
@@ -19,9 +20,10 @@ use Distantmagic\Resonance\SingletonCollection;
 
 /**
  * @extends InputValidator<JsonRPCMessage, array{
- *     0: string,
- *     1: mixed,
- *     2: null|string,
+ *     id: null|non-empty-string,
+ *     jsonrpc: '2.0',
+ *     method: non-empty-string,
+ *     params: mixed,
  * }>
  */
 #[GrantsFeature(Feature::WebSocket)]
@@ -33,20 +35,21 @@ readonly class JsonRPCMessageValidator extends InputValidator
     public function castValidatedData(mixed $data): JsonRPCMessage
     {
         return new JsonRPCMessage(
-            $this->rpcMethodValidator->castToRPCMethod($data[0]),
-            $data[1],
-            $data[2],
+            $this->rpcMethodValidator->castToRPCMethod($data['method']),
+            $data['params'],
+            $data['id'],
         );
     }
 
     public function getConstraint(): Constraint
     {
-        return new TupleConstraint(
-            items: [
-                new EnumConstraint($this->rpcMethodValidator->values()),
-                new AnyConstraint(),
-                (new StringConstraint())->nullable(),
-            ],
+        return new ObjectConstraint(
+            properties: [
+                'id' => (new StringConstraint())->optional()->default(null),
+                'jsonrpc' => new ConstConstraint('2.0'),
+                'method' => new EnumConstraint($this->rpcMethodValidator->values()),
+                'params' => new AnyConstraint(),
+            ]
         );
     }
 }
