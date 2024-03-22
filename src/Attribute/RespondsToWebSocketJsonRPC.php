@@ -6,12 +6,12 @@ namespace Distantmagic\Resonance\Attribute;
 
 use Attribute;
 use Distantmagic\Resonance\Attribute as BaseAttribute;
-use Distantmagic\Resonance\RPCMethodInterface;
+use Distantmagic\Resonance\JsonRPCMethodInterface;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-final readonly class RespondsToWebSocketRPC extends BaseAttribute
+final readonly class RespondsToWebSocketJsonRPC extends BaseAttribute
 {
     public function __construct(
-        public RPCMethodInterface $method,
+        public JsonRPCMethodInterface $method,
     ) {}
 }

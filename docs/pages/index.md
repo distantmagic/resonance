@@ -149,9 +149,9 @@ readonly class CatAdopt implements PromptSubjectResponderInterface
                         class="language-php"
                         data-controller="hljs"
                         data-hljs-language-value="php"
-                    >#[RespondsToWebSocketRPC(RPCMethod::Echo)]
-#[Singleton(collection: SingletonCollection::WebSocketRPCResponder)]
-final readonly class EchoResponder extends WebSocketRPCResponder
+                    >#[RespondsToWebSocketJsonRPC(JsonRPCMethod::Echo)]
+#[Singleton(collection: SingletonCollection::WebSocketJsonRPCResponder)]
+final readonly class EchoResponder extends WebSocketJsonRPCResponder
 {
     public function getConstraint(): Constraint
     {

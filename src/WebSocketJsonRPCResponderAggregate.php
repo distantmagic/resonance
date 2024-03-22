@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Distantmagic\Resonance\InputValidatedData\RPCMessage;
+use Distantmagic\Resonance\InputValidatedData\JsonRPCMessage;
 use DomainException;
 use Ds\Map;
 
-readonly class WebSocketRPCResponderAggregate
+readonly class WebSocketJsonRPCResponderAggregate
 {
     /**
-     * @var Map<WebSocketRPCResponderInterface,Constraint>
+     * @var Map<WebSocketJsonRPCResponderInterface,Constraint>
      */
     public Map $cachedConstraints;
 
     /**
-     * @var Map<RPCMethodInterface,WebSocketRPCResponderInterface> $rpcResponders
+     * @var Map<JsonRPCMethodInterface,WebSocketJsonRPCResponderInterface> $rpcResponders
      */
     public Map $rpcResponders;
 
@@ -26,7 +26,7 @@ readonly class WebSocketRPCResponderAggregate
         $this->rpcResponders = new Map();
     }
 
-    public function selectResponder(RPCMessage $rpcMessage): WebSocketRPCResponderInterface
+    public function selectResponder(JsonRPCMessage $rpcMessage): WebSocketJsonRPCResponderInterface
     {
         if (!$this->rpcResponders->hasKey($rpcMessage->method)) {
             throw new DomainException('There is no responder registered for RPC method: '.$rpcMessage->method->getValue());

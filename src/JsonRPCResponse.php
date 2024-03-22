@@ -6,10 +6,10 @@ namespace Distantmagic\Resonance;
 
 use Stringable;
 
-readonly class RPCResponse implements Stringable
+readonly class JsonRPCResponse implements Stringable
 {
     public function __construct(
-        private RPCRequest $rpcRequest,
+        private JsonRPCRequest $rpcRequest,
         private mixed $content,
     ) {}
 

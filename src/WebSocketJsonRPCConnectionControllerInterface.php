@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-interface WebSocketRPCConnectionControllerInterface
+interface WebSocketJsonRPCConnectionControllerInterface
 {
     public function onClose(
         WebSocketAuthResolution $webSocketAuthResolution,

@@ -4,36 +4,39 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\WebSocketProtocolException\UnexpectedNotification;
+use Distantmagic\Resonance\WebSocketProtocolException\UnexpectedRequest;
+
 /**
  * @template TPayload
+ *
+ * @template-implements WebSocketJsonRPCResponderInterface<TPayload>
  */
-interface WebSocketRPCResponderInterface extends ConstraintSourceInterface
+abstract readonly class WebSocketJsonRPCResponder implements WebSocketJsonRPCResponderInterface
 {
     public function onBeforeMessage(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
-    ): void;
+    ): void {}
 
     public function onClose(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
-    ): void;
+    ): void {}
 
-    /**
-     * @param RPCNotification<TPayload> $rpcNotification
-     */
     public function onNotification(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
-        RPCNotification $rpcNotification,
-    ): void;
+        JsonRPCNotification $rpcNotification,
+    ): void {
+        throw new UnexpectedNotification($rpcNotification->method);
+    }
 
-    /**
-     * @param RPCRequest<TPayload> $rpcRequest
-     */
     public function onRequest(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
-        RPCRequest $rpcRequest,
-    ): void;
+        JsonRPCRequest $rpcRequest,
+    ): void {
+        throw new UnexpectedRequest($rpcRequest->method);
+    }
 }

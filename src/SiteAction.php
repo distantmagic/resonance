@@ -8,7 +8,7 @@ enum SiteAction implements SiteActionInterface
 {
     use NameableEnumTrait;
 
-    case StartWebSocketRPCConnection;
+    case StartWebSocketJsonRPCConnection;
     case UseGraphQL;
     case UseOAuth2;
 }

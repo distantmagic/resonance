@@ -6,5 +6,5 @@ namespace Distantmagic\Resonance;
 
 enum WebSocketProtocol: string
 {
-    case RPC = 'dm-rpc';
+    case JsonRPC = 'jsonrpc';
 }

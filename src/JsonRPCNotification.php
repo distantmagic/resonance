@@ -11,13 +11,13 @@ use Stringable;
  *
  * @template TPayload
  */
-readonly class RPCNotification implements Stringable
+readonly class JsonRPCNotification implements Stringable
 {
     /**
      * @param TPayload $payload
      */
     public function __construct(
-        public RPCMethodInterface $method,
+        public JsonRPCMethodInterface $method,
         public mixed $payload,
     ) {}
 

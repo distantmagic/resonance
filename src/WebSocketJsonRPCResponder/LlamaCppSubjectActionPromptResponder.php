@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Distantmagic\Resonance\WebSocketRPCResponder;
+namespace Distantmagic\Resonance\WebSocketJsonRPCResponder;
 
 use Distantmagic\Resonance\BackusNaurFormGrammar\SubjectActionGrammar;
+use Distantmagic\Resonance\JsonRPCRequest;
 use Distantmagic\Resonance\LlamaCppClient;
 use Distantmagic\Resonance\LlamaCppCompletionIterator;
 use Distantmagic\Resonance\LlamaCppCompletionRequest;
@@ -17,10 +18,9 @@ use Distantmagic\Resonance\ObservableTaskStatusUpdate;
 use Distantmagic\Resonance\ObservableTaskTable;
 use Distantmagic\Resonance\ObservableTaskTimeoutIterator;
 use Distantmagic\Resonance\PromptSubjectResponderAggregate;
-use Distantmagic\Resonance\RPCRequest;
 use Distantmagic\Resonance\WebSocketAuthResolution;
 use Distantmagic\Resonance\WebSocketConnection;
-use Distantmagic\Resonance\WebSocketRPCResponder;
+use Distantmagic\Resonance\WebSocketJsonRPCResponder;
 use Generator;
 use Psr\Log\LoggerInterface;
 use WeakMap;
@@ -28,9 +28,9 @@ use WeakMap;
 /**
  * @template TPayload
  *
- * @template-extends WebSocketRPCResponder<TPayload>
+ * @template-extends WebSocketJsonRPCResponder<TPayload>
  */
-abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketRPCResponder
+abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketJsonRPCResponder
 {
     /**
      * @var WeakMap<WebSocketConnection,LlamaCppCompletionIterator>
@@ -45,7 +45,7 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketRP
     abstract protected function onResponseChunk(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
-        RPCRequest $rpcRequest,
+        JsonRPCRequest $rpcRequest,
         mixed $responseChunk,
         bool $isLastChunk,
     ): void;
@@ -78,7 +78,7 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketRP
     public function onRequest(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
-        RPCRequest $rpcRequest,
+        JsonRPCRequest $rpcRequest,
     ): void {
         $this->observableTaskTable->observe(new ObservableTask(
             new ObservableTaskTimeoutIterator(
@@ -105,14 +105,14 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketRP
     }
 
     /**
-     * @param RPCRequest<TPayload> $rpcRequest
+     * @param JsonRPCRequest<TPayload> $rpcRequest
      *
      * @return Generator<ObservableTaskStatusUpdate>
      */
     private function onObservableRequest(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
-        RPCRequest $rpcRequest,
+        JsonRPCRequest $rpcRequest,
     ): Generator {
         $request = new LlamaCppCompletionRequest(
             backusNaurFormGrammar: $this->subjectActionGrammar,

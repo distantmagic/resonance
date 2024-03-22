@@ -11,14 +11,14 @@ description: >
 
 # Protocols
 
-## RPC
+## Json RPC
 
 ```graphviz render
 digraph { 
     Message 
         -> WebSocketServerController 
-        -> RPCProtocolController
-        -> WebSocketRPCResponder
+        -> JsonRPCProtocolController
+        -> WebSocketJsonRPCResponder
     ;
 }
 ```
@@ -34,7 +34,7 @@ const serverUrl = new URL('wss://localhost:9501');
 
 serverUrl.searchParams.append('csrf', /* obtain CSRF token */);
 
-const webSocket = new WebSocket(serverUrl, ['dm-rpc']);
+const webSocket = new WebSocket(serverUrl, ['jsonrpc']);
 ```
 
 For example, if you are using {{docs/features/templating/twig/index}}, you can
@@ -53,31 +53,31 @@ serverUrl.searchParams.append(
 );
 ```
 
-### Writing RPC Responders
+### Writing Json RPC Responders
 
 ```php
 <?php
 
-namespace App\WebSocketRPCResponder;
+namespace App\WebSocketJsonRPCResponder;
 
-use App\RPCMethod;
-use Distantmagic\Resonance\Attribute\RespondsToWebSocketRPC;
+use App\JsonRPCMethod;
+use Distantmagic\Resonance\Attribute\RespondsToWebSocketJsonRPC;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Attribute\WantsFeature;
-use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\Constraint;
 use Distantmagic\Resonance\Constraint\StringConstraint;
-use Distantmagic\Resonance\RPCRequest;
-use Distantmagic\Resonance\RPCResponse;
+use Distantmagic\Resonance\Feature;
+use Distantmagic\Resonance\JsonRPCRequest;
+use Distantmagic\Resonance\JsonRPCResponse;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\WebSocketAuthResolution;
 use Distantmagic\Resonance\WebSocketConnection;
-use Distantmagic\Resonance\WebSocketRPCResponder;
+use Distantmagic\Resonance\WebSocketJsonRPCResponder;
 
-#[RespondsToWebSocketRPC(RPCMethod::Echo)]
-#[Singleton(collection: SingletonCollection::WebSocketRPCResponder)]
+#[RespondsToWebSocketJsonRPC(JsonRPCMethod::Echo)]
+#[Singleton(collection: SingletonCollection::WebSocketJsonRPCResponder)]
 #[WantsFeature(Feature::WebSocket)]
-final readonly class EchoResponder extends WebSocketRPCResponder
+final readonly class EchoResponder extends WebSocketJsonRPCResponder
 {
     public function getConstraint(): Constraint
     {
@@ -87,9 +87,9 @@ final readonly class EchoResponder extends WebSocketRPCResponder
     public function onRequest(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
-        RPCRequest $rpcRequest,
+        JsonRPCRequest $rpcRequest,
     ): void {
-        $webSocketConnection->push(new RPCResponse(
+        $webSocketConnection->push(new JsonRPCResponse(
             $rpcRequest,
             $rpcRequest->payload,
         ));
@@ -101,12 +101,12 @@ final readonly class EchoResponder extends WebSocketRPCResponder
 
 In case you want not only respond to RPC messages, but also be able to push
 notifications to the client at any moment, you can implement 
-`Distantmagic\Resonance\WebSocketRPCConnectionControllerInterface` and 
+`Distantmagic\Resonance\WebSocketJsonRPCConnectionControllerInterface` and 
 register in in the {{docs/features/dependency-injection/index}} container.
 
 For example:
 
-```php file:app/WebSocketRPCConnectionController.php
+```php file:app/WebSocketJsonRPCConnectionController.php
 <?php
 
 namespace App;
@@ -114,14 +114,14 @@ namespace App;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Feature;
-use Distantmagic\Resonance\RPCNotification;
+use Distantmagic\Resonance\JsonRPCNotification;
 use Distantmagic\Resonance\WebSocketAuthResolution;
 use Distantmagic\Resonance\WebSocketConnection;
-use Distantmagic\Resonance\WebSocketRPCConnectionControllerInterface;
+use Distantmagic\Resonance\WebSocketJsonRPCConnectionControllerInterface;
 
-#[Singleton(provides: WebSocketRPCConnectionControllerInterface::class)]
+#[Singleton(provides: WebSocketJsonRPCConnectionControllerInterface::class)]
 #[WantsFeature(Feature::WebSocket)]
-readonly class WebSocketRPCConnectionController implements WebSocketRPCConnectionControllerInterface
+readonly class WebSocketJsonRPCConnectionController implements WebSocketJsonRPCConnectionControllerInterface
 {
     public function onClose(
         WebSocketAuthResolution $webSocketAuthResolution,
@@ -139,8 +139,8 @@ readonly class WebSocketRPCConnectionController implements WebSocketRPCConnectio
             // connection is closed
         }
 
-        $webSocketConnection->push(new RPCNotification(
-            RPCMethod::YourMethod,
+        $webSocketConnection->push(new JsonRPCNotification(
+            JsonRPCMethod::YourMethod,
             [
                 // your payload
             ]

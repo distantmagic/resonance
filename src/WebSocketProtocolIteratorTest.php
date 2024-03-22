@@ -15,11 +15,11 @@ final class WebSocketProtocolIteratorTest extends TestCase
 {
     public function test_iterates_over_protocol_values(): void
     {
-        $iter = new WebSocketProtocolIterator(' foo,         dm-rpc,bar, baz');
+        $iter = new WebSocketProtocolIterator(' foo,         jsonrpc,bar, baz');
         $values = iterator_to_array($iter);
 
         self::assertCount(1, $values);
         self::assertContainsOnlyInstancesOf(WebSocketProtocol::class, $values);
-        self::assertEquals(WebSocketProtocol::RPC, $values[0]);
+        self::assertEquals(WebSocketProtocol::JsonRPC, $values[0]);
     }
 }

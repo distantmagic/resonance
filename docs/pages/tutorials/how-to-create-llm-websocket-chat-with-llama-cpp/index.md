@@ -39,7 +39,7 @@ Once you have both Resonance and
 First, we must create a security gate and decide which users can use our 
 chat. Let's say all authenticated users can do that:
 
-```php file:app/SiteActionGate/StartWebSocketRPCConnectionGate.php
+```php file:app/SiteActionGate/StartWebSocketJsonRPCConnectionGate.php
 <?php
 
 namespace App\SiteActionGate;
@@ -52,9 +52,9 @@ use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SiteAction;
 use Distantmagic\Resonance\SiteActionGate;
 
-#[DecidesSiteAction(SiteAction::StartWebSocketRPCConnection)]
+#[DecidesSiteAction(SiteAction::StartWebSocketJsonRPCConnection)]
 #[Singleton(collection: SingletonCollection::SiteActionGate)]
-final readonly class StartWebSocketRPCConnectionGate extends SiteActionGate
+final readonly class StartWebSocketJsonRPCConnectionGate extends SiteActionGate
 {
     public function can(?AuthenticatedUser $authenticatedUser): bool
     {
@@ -101,7 +101,7 @@ use Distantmagic\Resonance\TwigTemplate;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-#[Can(SiteAction::StartWebSocketRPCConnection)]
+#[Can(SiteAction::StartWebSocketJsonRPCConnection)]
 #[RespondsToHttp(
     method: RequestMethod::GET,
     pattern: '/chat',
@@ -136,9 +136,9 @@ Method, the first field, is validated against `RPCMethodInterface`, through
 namespace App;
 
 use Distantmagic\Resonance\EnumValuesTrait;
-use Distantmagic\Resonance\RPCMethodInterface;
+use Distantmagic\Resonance\JsonRPCMethodInterface;
 
-enum RPCMethod: string implements RPCMethodInterface
+enum JsonRPCMethod: string implements JsonRPCMethodInterface
 {
     use EnumValuesTrait;
 
@@ -160,26 +160,26 @@ namespace App;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Feature;
-use Distantmagic\Resonance\RPCMethodInterface;
-use Distantmagic\Resonance\RPCMethodValidatorInterface;
+use Distantmagic\Resonance\JsonRPCMethodInterface;
+use Distantmagic\Resonance\JsonRPCMethodValidatorInterface;
 
-#[Singleton(provides: RPCMethodValidatorInterface::class)]
+#[Singleton(provides: JsonRPCMethodValidatorInterface::class)]
 #[WantsFeature(Feature::WebSocket)]
-readonly class RPCMethodValidator implements RPCMethodValidatorInterface
+readonly class JsonRPCMethodValidator implements JsonRPCMethodValidatorInterface
 {
     public function cases(): array
     {
-        return RPCMethod::cases();
+        return JsonRPCMethod::cases();
     }
 
-    public function castToRPCMethod(string $methodName): RPCMethodInterface
+    public function castToRPCMethod(string $methodName): JsonRPCMethodInterface
     {
-        return RPCMethod::from($methodName);
+        return JsonRPCMethod::from($methodName);
     }
 
     public function values(): array
     {
-        return RPCMethod::values();
+        return JsonRPCMethod::values();
     }
 }
 ```
@@ -196,33 +196,33 @@ It will then use `LlamaCppClient` to fetch tokens from
 [llama.cpp](https://github.com/ggerganov/llama.cpp) server and forward them
 to the WebSocket connection:
 
-```php file:app/WebSocketRPCResponder/LlmChatPromptResponder.php
+```php file:app/WebSocketJsonRPCResponder/LlmChatPromptResponder.php
 <?php
 
-namespace App\WebSocketRPCResponder;
+namespace App\WebSocketJsonRPCResponder;
 
-use App\RPCMethod;
-use Distantmagic\Resonance\Attribute\RespondsToWebSocketRPC;
+use App\JsonRPCMethod;
+use Distantmagic\Resonance\Attribute\RespondsToWebSocketJsonRPC;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Attribute\WantsFeature;
-use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\Constraint;
 use Distantmagic\Resonance\Constraint\ObjectConstraint;
 use Distantmagic\Resonance\Constraint\StringConstraint;
+use Distantmagic\Resonance\Feature;
+use Distantmagic\Resonance\JsonRPCNotification;
+use Distantmagic\Resonance\JsonRPCRequest;
+use Distantmagic\Resonance\JsonRPCResponse;
 use Distantmagic\Resonance\LlamaCppClient;
 use Distantmagic\Resonance\LlamaCppCompletionRequest;
-use Distantmagic\Resonance\RPCNotification;
-use Distantmagic\Resonance\RPCRequest;
-use Distantmagic\Resonance\RPCResponse;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\WebSocketAuthResolution;
 use Distantmagic\Resonance\WebSocketConnection;
-use Distantmagic\Resonance\WebSocketRPCResponder;
+use Distantmagic\Resonance\WebSocketJsonRPCResponder;
 
-#[RespondsToWebSocketRPC(RPCMethod::LlmChatPrompt)]
-#[Singleton(collection: SingletonCollection::WebSocketRPCResponder)]
+#[RespondsToWebSocketJsonRPC(JsonRPCMethod::LlmChatPrompt)]
+#[Singleton(collection: SingletonCollection::WebSocketJsonRPCResponder)]
 #[WantsFeature(Feature::WebSocket)]
-final readonly class LlmChatPromptResponder extends WebSocketRPCResponder
+final readonly class LlmChatPromptResponder extends WebSocketJsonRPCResponder
 {
     public function __construct(
         private LlamaCppClient $llamaCppClient,
@@ -240,7 +240,7 @@ final readonly class LlmChatPromptResponder extends WebSocketRPCResponder
     public function onNotification(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
-        RPCNotification $rpcNotification,
+        JsonRPCNotification $rpcNotification,
     ): void {
         $request = new LlamaCppCompletionRequest($rpcNotification->payload->prompt);
 
@@ -248,8 +248,8 @@ final readonly class LlmChatPromptResponder extends WebSocketRPCResponder
 
         foreach ($completion as $token) {
             if ($webSocketConnection->status->isOpen()) {
-                $webSocketConnection->push(new RPCNotification(
-                    RPCMethod::LlmToken,
+                $webSocketConnection->push(new JsonRPCNotification(
+                    JsonRPCMethod::LlmToken,
                     $token->content,
                 ));
             } else {
@@ -265,7 +265,7 @@ final readonly class LlmChatPromptResponder extends WebSocketRPCResponder
 [Stimulus](https://stimulus.hotwired.dev/) controller starts WebSocket 
 connection and sends user prompts to the server. Not that WebSocket
 connection uses both {{docs/features/security/csrf-protection/index}} and 
-`dm-rpc` {{docs/features/websockets/protocols}}:
+`jsonrpc` {{docs/features/websockets/protocols}}:
 
 ```typescript file:resources/ts/controller_llmchat.ts
 import { Controller } from "@hotwired/stimulus";
@@ -290,7 +290,7 @@ export class controller_llmchat extends Controller<HTMLElement> {
 
     servertUrl.searchParams.append("csrf", this.csrfTokenValue);
 
-    const webSocket = new WebSocket(servertUrl, ["dm-rpc"]);
+    const webSocket = new WebSocket(servertUrl, ["jsonrpc"]);
 
     webSocket.addEventListener("close", () => {
       this.webSocket = null;
@@ -307,9 +307,7 @@ export class controller_llmchat extends Controller<HTMLElement> {
 
       const parsed: unknown = JSON.parse(evt.data);
 
-      if (Array.isArray(parsed) && "string" === typeof parsed[1]) {
-        this.chatLogTarget.append(parsed[1]);
-      }
+      this.chatLogTarget.append(parsed.result);
     });
   }
 
@@ -322,13 +320,13 @@ export class controller_llmchat extends Controller<HTMLElement> {
 
     this.chatLogTarget.innerHTML = '';
 
-    this.webSocket?.send(JSON.stringify([
-      "llm_chat_prompt",
-      {
-        prompt: this.userInputFieldTarget.value,
-      },
-      null
-    ]));
+    this.webSocket?.send(JSON.stringify({
+        jsonrpc: "2.0",
+        method: "llm_chat_prompt",
+        params: {
+            prompt: this.userInputFieldTarget.value,
+        }
+    }));
 
     this.userInputFieldTarget.value = '';
   }

@@ -55,9 +55,9 @@ You can set up all the asynchronous features using
 attributes. No elaborate configuration is needed.
 
 ```php
-#[RespondsToWebSocketRPC(RPCMethod::Echo)]
-#[Singleton(collection: SingletonCollection::WebSocketRPCResponder)]
-final readonly class EchoResponder extends WebSocketRPCResponder
+#[RespondsToWebSocketJsonRPC(JsonRPCMethod::Echo)]
+#[Singleton(collection: SingletonCollection::WebSocketJsonRPCResponder)]
+final readonly class EchoResponder extends WebSocketJsonJsonRPCResponder
 {
     public function getConstraint(): Constraint
     {
@@ -69,7 +69,7 @@ final readonly class EchoResponder extends WebSocketRPCResponder
         WebSocketConnection $webSocketConnection,
         RPCRequest $rpcRequest,
     ): void {
-        $webSocketConnection->push(new RPCResponse(
+        $webSocketConnection->push(new JsonRPCResponse(
             $rpcRequest,
             $rpcRequest->payload,
         ));

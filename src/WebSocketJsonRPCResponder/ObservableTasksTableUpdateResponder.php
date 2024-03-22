@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Distantmagic\Resonance\WebSocketRPCResponder;
+namespace Distantmagic\Resonance\WebSocketJsonRPCResponder;
 
 use Distantmagic\Resonance\Constraint;
 use Distantmagic\Resonance\Constraint\ObjectConstraint;
+use Distantmagic\Resonance\JsonRPCRequest;
+use Distantmagic\Resonance\JsonRPCResponse;
 use Distantmagic\Resonance\ObservableTaskSlotStatusUpdate;
 use Distantmagic\Resonance\ObservableTaskTable;
-use Distantmagic\Resonance\RPCRequest;
-use Distantmagic\Resonance\RPCResponse;
 use Distantmagic\Resonance\WebSocketAuthResolution;
 use Distantmagic\Resonance\WebSocketConnection;
-use Distantmagic\Resonance\WebSocketRPCResponder;
+use Distantmagic\Resonance\WebSocketJsonRPCResponder;
 
 /**
  * @template TPayload
  *
- * @template-extends WebSocketRPCResponder<TPayload>
+ * @template-extends WebSocketJsonRPCResponder<TPayload>
  */
-readonly class ObservableTasksTableUpdateResponder extends WebSocketRPCResponder
+readonly class ObservableTasksTableUpdateResponder extends WebSocketJsonRPCResponder
 {
     public function __construct(
         private ObservableTaskTable $observableTaskTable,
@@ -33,7 +33,7 @@ readonly class ObservableTasksTableUpdateResponder extends WebSocketRPCResponder
     public function onRequest(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
-        RPCRequest $rpcRequest,
+        JsonRPCRequest $rpcRequest,
     ): void {
         $this->observableTaskTable->observers->add(
             static function (ObservableTaskSlotStatusUpdate $observableTaskSlotStatusUpdate) use (
@@ -44,7 +44,7 @@ readonly class ObservableTasksTableUpdateResponder extends WebSocketRPCResponder
                     return false;
                 }
 
-                return $webSocketConnection->push(new RPCResponse(
+                return $webSocketConnection->push(new JsonRPCResponse(
                     rpcRequest: $rpcRequest,
                     content: $observableTaskSlotStatusUpdate,
                 ));

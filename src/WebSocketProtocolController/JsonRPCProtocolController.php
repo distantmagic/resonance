@@ -12,7 +12,7 @@ use Distantmagic\Resonance\ConstraintResultErrorMessage;
 use Distantmagic\Resonance\CSRFManager;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\Gatekeeper;
-use Distantmagic\Resonance\InputValidator\RPCMessageValidator;
+use Distantmagic\Resonance\InputValidator\JsonRPCMessageValidator;
 use Distantmagic\Resonance\InputValidatorController;
 use Distantmagic\Resonance\JsonSerializer;
 use Distantmagic\Resonance\SingletonCollection;
@@ -20,12 +20,12 @@ use Distantmagic\Resonance\SiteAction;
 use Distantmagic\Resonance\WebSocketAuthResolution;
 use Distantmagic\Resonance\WebSocketConnection;
 use Distantmagic\Resonance\WebSocketConnectionStatus;
+use Distantmagic\Resonance\WebSocketJsonRPCConnectionControllerInterface;
+use Distantmagic\Resonance\WebSocketJsonRPCConnectionHandle;
+use Distantmagic\Resonance\WebSocketJsonRPCResponderAggregate;
 use Distantmagic\Resonance\WebSocketProtocol;
 use Distantmagic\Resonance\WebSocketProtocolController;
 use Distantmagic\Resonance\WebSocketProtocolException;
-use Distantmagic\Resonance\WebSocketRPCConnectionControllerInterface;
-use Distantmagic\Resonance\WebSocketRPCConnectionHandle;
-use Distantmagic\Resonance\WebSocketRPCResponderAggregate;
 use Ds\Map;
 use JsonException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -35,13 +35,13 @@ use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server;
 use Throwable;
 
-#[ControlsWebSocketProtocol(WebSocketProtocol::RPC)]
+#[ControlsWebSocketProtocol(WebSocketProtocol::JsonRPC)]
 #[GrantsFeature(Feature::WebSocket)]
 #[Singleton(collection: SingletonCollection::WebSocketProtocolController)]
-final readonly class RPCProtocolController extends WebSocketProtocolController
+final readonly class JsonRPCProtocolController extends WebSocketProtocolController
 {
     /**
-     * @var Map<int, WebSocketRPCConnectionHandle>
+     * @var Map<int, WebSocketJsonRPCConnectionHandle>
      */
     private Map $connectionHandles;
 
@@ -50,14 +50,14 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
         private AuthenticatedUserStoreAggregate $authenticatedUserStoreAggregate,
         private Gatekeeper $gatekeeper,
         private InputValidatorController $inputValidatorController,
+        private JsonRPCMessageValidator $rpcMessageValidator,
         private JsonSerializer $jsonSerializer,
         private LoggerInterface $logger,
-        private RPCMessageValidator $rpcMessageValidator,
-        private WebSocketRPCResponderAggregate $webSocketRPCResponderAggregate,
-        private ?WebSocketRPCConnectionControllerInterface $webSocketRPCConnectionController = null,
+        private WebSocketJsonRPCResponderAggregate $webSocketJsonRPCResponderAggregate,
+        private ?WebSocketJsonRPCConnectionControllerInterface $webSocketJsonRPCConnectionController = null,
     ) {
         /**
-         * @var Map<int, WebSocketRPCConnectionHandle>
+         * @var Map<int, WebSocketJsonRPCConnectionHandle>
          */
         $this->connectionHandles = new Map();
     }
@@ -85,7 +85,7 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
         $user = $this->authenticatedUserStoreAggregate->getAuthenticatedUser($request);
 
         return new WebSocketAuthResolution(
-            $this->gatekeeper->withUser($user)->can(SiteAction::StartWebSocketRPCConnection),
+            $this->gatekeeper->withUser($user)->can(SiteAction::StartWebSocketJsonRPCConnection),
             $user,
         );
     }
@@ -104,7 +104,7 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
         $connectionHandle->webSocketConnection->status = WebSocketConnectionStatus::Closed;
         $connectionHandle->onClose();
 
-        $this->webSocketRPCConnectionController?->onClose(
+        $this->webSocketJsonRPCConnectionController?->onClose(
             $connectionHandle->webSocketAuthResolution,
             $connectionHandle->webSocketConnection,
         );
@@ -133,13 +133,13 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
     public function onOpen(Server $server, int $fd, WebSocketAuthResolution $webSocketAuthResolution): void
     {
         $webSocketConnection = new WebSocketConnection($server, $fd);
-        $connectionHandle = new WebSocketRPCConnectionHandle(
-            $this->webSocketRPCResponderAggregate,
+        $connectionHandle = new WebSocketJsonRPCConnectionHandle(
+            $this->webSocketJsonRPCResponderAggregate,
             $webSocketAuthResolution,
             $webSocketConnection,
         );
 
-        $this->webSocketRPCConnectionController?->onOpen(
+        $this->webSocketJsonRPCConnectionController?->onOpen(
             $webSocketAuthResolution,
             $webSocketConnection,
         );
@@ -147,7 +147,7 @@ final readonly class RPCProtocolController extends WebSocketProtocolController
         $this->connectionHandles->put($fd, $connectionHandle);
     }
 
-    private function getFrameController(Frame $frame): WebSocketRPCConnectionHandle
+    private function getFrameController(Frame $frame): WebSocketJsonRPCConnectionHandle
     {
         if (!$this->connectionHandles->hasKey($frame->fd)) {
             throw new RuntimeException(sprintf(

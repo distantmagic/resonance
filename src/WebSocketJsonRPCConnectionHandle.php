@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Distantmagic\Resonance\InputValidatedData\RPCMessage;
+use Distantmagic\Resonance\InputValidatedData\JsonRPCMessage;
 use Ds\Set;
 
-readonly class WebSocketRPCConnectionHandle
+readonly class WebSocketJsonRPCConnectionHandle
 {
     /**
-     * @var Set<WebSocketRPCResponderInterface>
+     * @var Set<WebSocketJsonRPCResponderInterface>
      */
     private Set $activeResponders;
 
     public function __construct(
-        public WebSocketRPCResponderAggregate $webSocketRPCResponderAggregate,
+        public WebSocketJsonRPCResponderAggregate $webSocketJsonRPCResponderAggregate,
         public WebSocketAuthResolution $webSocketAuthResolution,
         public WebSocketConnection $webSocketConnection,
     ) {
@@ -36,15 +36,15 @@ readonly class WebSocketRPCConnectionHandle
         }
     }
 
-    public function onRPCMessage(RPCMessage $rpcMessage): ConstraintResult
+    public function onRPCMessage(JsonRPCMessage $rpcMessage): ConstraintResult
     {
         $responder = $this
-            ->webSocketRPCResponderAggregate
+            ->webSocketJsonRPCResponderAggregate
             ->selectResponder($rpcMessage)
         ;
 
         $constraintResult = $this
-            ->webSocketRPCResponderAggregate
+            ->webSocketJsonRPCResponderAggregate
             ->cachedConstraints
             ->get($responder)
             ->validate($rpcMessage->payload)
@@ -65,7 +65,7 @@ readonly class WebSocketRPCConnectionHandle
             $responder->onRequest(
                 $this->webSocketAuthResolution,
                 $this->webSocketConnection,
-                new RPCRequest(
+                new JsonRPCRequest(
                     $rpcMessage->method,
                     $constraintResult->castedData,
                     $rpcMessage->requestId,
@@ -75,7 +75,7 @@ readonly class WebSocketRPCConnectionHandle
             $responder->onNotification(
                 $this->webSocketAuthResolution,
                 $this->webSocketConnection,
-                new RPCNotification(
+                new JsonRPCNotification(
                     $rpcMessage->method,
                     $constraintResult->castedData,
                 )

@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\InputValidatedData;
 
 use Distantmagic\Resonance\InputValidatedData;
-use Distantmagic\Resonance\RPCMethodInterface;
+use Distantmagic\Resonance\JsonRPCMethodInterface;
 
 /**
  * @template TPayload
  */
-readonly class RPCMessage extends InputValidatedData
+readonly class JsonRPCMessage extends InputValidatedData
 {
     /**
      * @param TPayload $payload
      */
     public function __construct(
-        public RPCMethodInterface $method,
+        public JsonRPCMethodInterface $method,
         public mixed $payload,
         public ?string $requestId,
     ) {}

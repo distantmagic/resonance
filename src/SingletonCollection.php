@@ -37,6 +37,6 @@ enum SingletonCollection implements SingletonCollectionInterface
     case TwigFilter;
     case TwigFunction;
     case TwigLoader;
+    case WebSocketJsonRPCResponder;
     case WebSocketProtocolController;
-    case WebSocketRPCResponder;
 }

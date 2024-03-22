@@ -12,13 +12,13 @@ use Distantmagic\Resonance\Constraint\EnumConstraint;
 use Distantmagic\Resonance\Constraint\StringConstraint;
 use Distantmagic\Resonance\Constraint\TupleConstraint;
 use Distantmagic\Resonance\Feature;
-use Distantmagic\Resonance\InputValidatedData\RPCMessage;
+use Distantmagic\Resonance\InputValidatedData\JsonRPCMessage;
 use Distantmagic\Resonance\InputValidator;
-use Distantmagic\Resonance\RPCMethodValidatorInterface;
+use Distantmagic\Resonance\JsonRPCMethodValidatorInterface;
 use Distantmagic\Resonance\SingletonCollection;
 
 /**
- * @extends InputValidator<RPCMessage, array{
+ * @extends InputValidator<JsonRPCMessage, array{
  *     0: string,
  *     1: mixed,
  *     2: null|string,
@@ -26,13 +26,13 @@ use Distantmagic\Resonance\SingletonCollection;
  */
 #[GrantsFeature(Feature::WebSocket)]
 #[Singleton(collection: SingletonCollection::InputValidator)]
-readonly class RPCMessageValidator extends InputValidator
+readonly class JsonRPCMessageValidator extends InputValidator
 {
-    public function __construct(private RPCMethodValidatorInterface $rpcMethodValidator) {}
+    public function __construct(private JsonRPCMethodValidatorInterface $rpcMethodValidator) {}
 
-    public function castValidatedData(mixed $data): RPCMessage
+    public function castValidatedData(mixed $data): JsonRPCMessage
     {
-        return new RPCMessage(
+        return new JsonRPCMessage(
             $this->rpcMethodValidator->castToRPCMethod($data[0]),
             $data[1],
             $data[2],

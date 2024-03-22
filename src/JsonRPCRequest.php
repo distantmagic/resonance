@@ -9,13 +9,13 @@ namespace Distantmagic\Resonance;
  *
  * @template TPayload
  */
-readonly class RPCRequest
+readonly class JsonRPCRequest
 {
     /**
      * @param TPayload $payload
      */
     public function __construct(
-        public RPCMethodInterface $method,
+        public JsonRPCMethodInterface $method,
         public mixed $payload,
         public string $requestId,
     ) {}

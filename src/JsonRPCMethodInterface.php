@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-interface RPCMethodInterface
+interface JsonRPCMethodInterface
 {
     public function getValue(): string;
 }

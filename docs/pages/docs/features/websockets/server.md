@@ -24,18 +24,18 @@ However, they cannot share the same port if they are separated.
 ## Enabling the Server
 
 To enable WebSocket server you need to provide the 
-`RPCMethodValidatorInterface`. For example:
+`JsonRPCMethodValidatorInterface`. For example:
 
-```php file:app\RPCMethod.php
+```php file:app\JsonRPCMethod.php
 <?php
 
 namespace App;
 
 use Distantmagic\Resonance\EnumValuesTrait;
+use Distantmagic\Resonance\JsonRPCMethodInterface;
 use Distantmagic\Resonance\NameableEnumTrait;
-use Distantmagic\Resonance\RPCMethodInterface;
 
-enum RPCMethod: string implements RPCMethodInterface
+enum JsonRPCMethod: string implements JsonRPCMethodInterface
 {
     use EnumValuesTrait;
     use NameableEnumTrait;
@@ -49,7 +49,7 @@ Do not forget about `#[WantsFeature(Feature::WebSocket)` attribute. If added to
 any singleton, it tells Resonance to enable the WebSocket server.
 :::
 
-```php file:app\RPCMethodValidator.php
+```php file:app\JsonRPCMethodValidator.php
 <?php
 
 namespace App;
@@ -57,21 +57,21 @@ namespace App;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Feature;
-use Distantmagic\Resonance\RPCMethodInterface;
-use Distantmagic\Resonance\RPCMethodValidatorInterface;
+use Distantmagic\Resonance\JsonRPCMethodInterface;
+use Distantmagic\Resonance\JsonRPCMethodValidatorInterface;
 
-#[Singleton(provides: RPCMethodValidatorInterface::class)]
+#[Singleton(provides: JsonRPCMethodValidatorInterface::class)]
 #[WantsFeature(Feature::WebSocket)]
-readonly class RPCMethodValidator implements RPCMethodValidatorInterface
+readonly class JsonRPCMethodValidator implements JsonRPCMethodValidatorInterface
 {
     public function cases(): array
     {
-        return RPCMethod::cases();
+        return JsonRPCMethod::cases();
     }
 
-    public function castToRPCMethod(string $methodName): RPCMethodInterface
+    public function castToRPCMethod(string $methodName): JsonRPCMethodInterface
     {
-        return RPCMethod::from($methodName);
+        return JsonRPCMethod::from($methodName);
     }
 
     public function names(): array
