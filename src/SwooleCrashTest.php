@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
 use Swoole\Event;
 
 /**
  * @internal
  */
+#[RunTestsInSeparateProcesses]
 final class SwooleCrashTest extends TestCase
 {
     protected function tearDown(): void
