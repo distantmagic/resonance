@@ -14,7 +14,6 @@ use Swoole\Event;
  * @internal
  */
 #[CoversClass(ObservableTaskTable::class)]
-#[RunTestsInSeparateProcesses]
 final class ObservableTaskTableTest extends TestCase
 {
     private ?ObservableTaskConfiguration $observableTaskConfiguration = null;

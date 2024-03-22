@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Closure;
 use Ds\Set;
 use Generator;
 use IteratorAggregate;
@@ -14,23 +15,24 @@ use Swoole\Coroutine\Channel;
  */
 readonly class ObservableTaskTableSlotStatusUpdateIterator implements IteratorAggregate
 {
-    /**
-     * @var Set<SwooleChannelIterator>
-     */
-    private Set $swooleChannelIterators;
+    private Closure $observer;
+    private Channel $channel;
 
     public function __construct(
         private ObservableTaskTable $observableTaskTable,
         private float $timeout = -1,
     ) {
-        $this->swooleChannelIterators = new Set();
+        $this->channel = new Channel(1);
+        $this->observer = function (ObservableTaskSlotStatusUpdate $statusUpdate): bool {
+            return $this->channel->push($statusUpdate);
+        };
+
+        $this->observableTaskTable->observers->add($this->observer);
     }
 
-    public function close(): void
+    public function __destruct()
     {
-        foreach ($this->swooleChannelIterators as $swooleChannelIterator) {
-            $swooleChannelIterator->close();
-        }
+        $this->observableTaskTable->observers->remove($this->observer);
     }
 
     /**
@@ -38,33 +40,13 @@ readonly class ObservableTaskTableSlotStatusUpdateIterator implements IteratorAg
      */
     public function getIterator(): Generator
     {
-        $channel = new Channel(1);
+        $swooleChannelIterator = new SwooleChannelIterator($this->channel, $this->timeout);
 
-        $observer = static function (ObservableTaskSlotStatusUpdate $statusUpdate) use ($channel): true {
-            $channel->push($statusUpdate);
-
-            return true;
-        };
-
-        $this->observableTaskTable->observers->add($observer);
-
-        try {
-            $swooleChannelIterator = new SwooleChannelIterator($channel, $this->timeout);
-
-            $this->swooleChannelIterators->add($swooleChannelIterator);
-
-            /**
-             * @var ObservableTaskSlotStatusUpdate $observableTaskSlotStatusUpdate
-             */
-            foreach ($swooleChannelIterator as $observableTaskSlotStatusUpdate) {
-                yield $observableTaskSlotStatusUpdate;
-            }
-
-            $this->swooleChannelIterators->remove($swooleChannelIterator);
-        } finally {
-            $this->observableTaskTable->observers->remove($observer);
+        /**
+         * @var ObservableTaskSlotStatusUpdate $observableTaskSlotStatusUpdate
+         */
+        foreach ($swooleChannelIterator as $observableTaskSlotStatusUpdate) {
+            yield $observableTaskSlotStatusUpdate;
         }
-
-        $channel->close();
     }
 }
