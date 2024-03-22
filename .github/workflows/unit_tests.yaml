@@ -31,9 +31,6 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: create esbuild-meta.json
-        run: BUILD_ID=$GITHUB_SHA make esbuild
-
       - name: test
         run: make phpunit
 
