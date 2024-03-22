@@ -145,7 +145,7 @@ php-cs-fixer: tools/php-cs-fixer/vendor/bin/php-cs-fixer
 
 .PHONY: phpunit
 phpunit: config.ini vendor
-	./phpunit_swoole.php
+	./vendor/bin/phpunit
 
 .PHONY: prettier
 prettier: node_modules

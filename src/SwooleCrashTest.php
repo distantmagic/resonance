@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine;
 use Swoole\Event;
 use Swoole\Table;
+use Swoole\Timer;
 
 /**
  * @internal
@@ -30,6 +31,15 @@ final class SwooleCrashTest extends TestCase
     {
         SwooleCoroutineHelper::mustGo(static function () {
             Coroutine::sleep(0.01);
+        });
+    }
+
+    public function test_coroutine_with_timer(): void
+    {
+        SwooleCoroutineHelper::mustGo(static function () {
+            Timer::after(10, static function () {
+                // timer
+            });
         });
     }
 
