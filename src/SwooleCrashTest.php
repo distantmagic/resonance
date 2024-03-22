@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
+use Swoole\Coroutine;
 use Swoole\Event;
 
 /**
@@ -29,6 +30,13 @@ final class SwooleCrashTest extends TestCase
     {
         SwooleCoroutineHelper::mustGo(function () {
             // just the coroutine
+        });
+    }
+
+    public function test_coroutine_with_sleep(): void
+    {
+        SwooleCoroutineHelper::mustGo(function () {
+            Coroutine::sleep(0.01);
         });
     }
 
