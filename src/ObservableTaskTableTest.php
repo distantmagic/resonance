@@ -43,21 +43,11 @@ final class ObservableTaskTableTest extends TestCase
 
     public function test_channel_is_observed(): void
     {
+        self::assertNotNull($this->observableTaskTable);
+
         $channel = new Channel();
 
-        $this->observableTaskTable?->observableChannels->add($channel);
-
-        $observableTask = new ObservableTask(static function () {
-            yield new ObservableTaskStatusUpdate(
-                ObservableTaskStatus::Running,
-                'test1',
-            );
-
-            yield new ObservableTaskStatusUpdate(
-                ObservableTaskStatus::Finished,
-                'test2',
-            );
-        });
+        $this->observableTaskTable->observableChannels->add($channel);
 
         SwooleCoroutineHelper::mustGo(static function () use ($channel) {
             $status1 = $channel->pop();
@@ -71,29 +61,36 @@ final class ObservableTaskTableTest extends TestCase
             self::assertSame(ObservableTaskStatus::Finished, $status2->observableTaskStatusUpdate->status);
         });
 
-        $this->observableTaskTable?->observe($observableTask);
+        $this->observableTaskTable->observe(new ObservableTask(static function () {
+            yield new ObservableTaskStatusUpdate(
+                ObservableTaskStatus::Running,
+                'test1',
+            );
 
-        Event::wait();
+            yield new ObservableTaskStatusUpdate(
+                ObservableTaskStatus::Finished,
+                'test2',
+            );
+        }));
 
-        $this->observableTaskTable?->observableChannels->remove($channel);
+        $this->observableTaskTable->observableChannels->remove($channel);
     }
 
     public function test_task_is_observed(): void
     {
-        $observableTask = new ObservableTask(static function () {
+        self::assertNotNull($this->observableTaskTable);
+        self::assertNull($this->observableTaskTable->getStatus('0'));
+
+        $slotId = $this->observableTaskTable->observe(new ObservableTask(static function () {
             yield new ObservableTaskStatusUpdate(
                 ObservableTaskStatus::Running,
                 'test',
             );
-        });
-
-        self::assertNull($this->observableTaskTable?->getStatus('0'));
-
-        $slotId = $this->observableTaskTable?->observe($observableTask);
+        }));
 
         self::assertSame('0', $slotId);
 
-        $status = $this->observableTaskTable?->getStatus($slotId);
+        $status = $this->observableTaskTable->getStatus($slotId);
 
         self::assertInstanceOf(ObservableTaskStatusUpdate::class, $status);
         self::assertSame(ObservableTaskStatus::Running, $status->status);

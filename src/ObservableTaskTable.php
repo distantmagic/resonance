@@ -94,10 +94,8 @@ readonly class ObservableTaskTable implements IteratorAggregate
                 }
 
                 if (!$this->observableChannels->isEmpty()) {
-                    $slotStatusUpdate = new ObservableTaskSlotStatusUpdate($slotId, $statusUpdate);
-
                     foreach ($this->observableChannels as $observableChannel) {
-                        $observableChannel->push($slotStatusUpdate);
+                        $observableChannel->push(new ObservableTaskSlotStatusUpdate($slotId, $statusUpdate));
                     }
                 }
 
