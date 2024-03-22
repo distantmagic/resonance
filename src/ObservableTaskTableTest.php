@@ -72,6 +72,9 @@ final class ObservableTaskTableTest extends TestCase
         });
 
         $this->observableTaskTable?->observe($observableTask);
+
+        Event::wait();
+
         $this->observableTaskTable?->observableChannels->remove($channel);
     }
 

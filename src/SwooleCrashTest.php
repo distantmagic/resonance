@@ -15,7 +15,6 @@ use Swoole\Timer;
 /**
  * @internal
  */
-#[RunTestsInSeparateProcesses]
 final class SwooleCrashTest extends TestCase
 {
     protected function tearDown(): void
