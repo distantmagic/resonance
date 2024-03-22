@@ -25,6 +25,13 @@ final class SwooleCrashTest extends TestCase
         // just the Event::wait
     }
 
+    public function test_just_coroutine(): void
+    {
+        SwooleCoroutineHelper::mustGo(function () {
+            // just the coroutine
+        });
+    }
+
     public function test_task_is_rescheduled(): void
     {
         $before = microtime(true);
