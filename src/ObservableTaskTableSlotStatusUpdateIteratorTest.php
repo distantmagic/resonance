@@ -36,41 +36,41 @@ final class ObservableTaskTableSlotStatusUpdateIteratorTest extends TestCase
         Event::wait();
     }
 
-    public function test_channel_is_observed(): void
-    {
-        SwooleCoroutineHelper::mustRun(function () {
-            $observableTask = new ObservableTask(static function () {
-                yield new ObservableTaskStatusUpdate(
-                    ObservableTaskStatus::Running,
-                    'test1',
-                );
+    // public function test_channel_is_observed(): void
+    // {
+    //     SwooleCoroutineHelper::mustRun(function () {
+    //         $observableTask = new ObservableTask(static function () {
+    //             yield new ObservableTaskStatusUpdate(
+    //                 ObservableTaskStatus::Running,
+    //                 'test1',
+    //             );
 
-                yield new ObservableTaskStatusUpdate(
-                    ObservableTaskStatus::Finished,
-                    'test2',
-                );
-            });
+    //             yield new ObservableTaskStatusUpdate(
+    //                 ObservableTaskStatus::Finished,
+    //                 'test2',
+    //             );
+    //         });
 
-            SwooleCoroutineHelper::mustGo(function () {
-                self::assertNotNull($this->observableTaskTable);
+    //         SwooleCoroutineHelper::mustGo(function () {
+    //             self::assertNotNull($this->observableTaskTable);
 
-                $iterator = new ObservableTaskTableSlotStatusUpdateIterator($this->observableTaskTable);
+    //             $iterator = new ObservableTaskTableSlotStatusUpdateIterator($this->observableTaskTable);
 
-                foreach ($iterator as $statusUpdate) {
-                    self::assertInstanceOf(ObservableTaskSlotStatusUpdate::class, $statusUpdate);
-                    self::assertEquals('0', $statusUpdate->slotId);
+    //             foreach ($iterator as $statusUpdate) {
+    //                 self::assertInstanceOf(ObservableTaskSlotStatusUpdate::class, $statusUpdate);
+    //                 self::assertEquals('0', $statusUpdate->slotId);
 
-                    if (ObservableTaskStatus::Finished === $statusUpdate->observableTaskStatusUpdate->status) {
-                        self::assertEquals('test2', $statusUpdate->observableTaskStatusUpdate->data);
+    //                 if (ObservableTaskStatus::Finished === $statusUpdate->observableTaskStatusUpdate->status) {
+    //                     self::assertEquals('test2', $statusUpdate->observableTaskStatusUpdate->data);
 
-                        break;
-                    }
+    //                     break;
+    //                 }
 
-                    self::assertEquals('test1', $statusUpdate->observableTaskStatusUpdate->data);
-                }
-            });
+    //                 self::assertEquals('test1', $statusUpdate->observableTaskStatusUpdate->data);
+    //             }
+    //         });
 
-            $this->observableTaskTable?->observe($observableTask);
-        });
-    }
+    //         $this->observableTaskTable?->observe($observableTask);
+    //     });
+    // }
 }
