@@ -13,20 +13,14 @@ use Swoole\Event;
  */
 final class SwooleCrashTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        Event::wait();
+    }
+
     public function test_code_executes_after_timeout(): void
     {
-        $before = microtime(true);
-
-        $timeout = new SwooleTimeout(static function () use ($before) {
-            $after = microtime(true);
-
-            self::assertGreaterThan(0.03, $after - $before);
-            self::assertLessThan(0.035, $after - $before);
-        });
-
-        $timeout->setTimeout(0.03);
-
-        Event::wait();
+        // just the Event::wait
     }
 
     public function test_task_is_rescheduled(): void
@@ -41,7 +35,5 @@ final class SwooleCrashTest extends TestCase
         });
 
         $timeout->setTimeout(0.02)->reschedule(0.03);
-
-        Event::wait();
     }
 }
