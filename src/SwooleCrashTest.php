@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine;
+use Swoole\Coroutine\Channel;
 use Swoole\Event;
 use Swoole\Table;
 use Swoole\Timer;
@@ -20,6 +21,12 @@ final class SwooleCrashTest extends TestCase
     protected function tearDown(): void
     {
         Event::wait();
+    }
+
+    public function test_channel(): void
+    {
+        $channel = new Channel(1);
+        $channel->close();
     }
 
     public function test_code_executes_after_timeout(): void

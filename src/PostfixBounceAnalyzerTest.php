@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  */
 #[CoversClass(PostfixBounceAnalyzer::class)]
-#[RunTestsInSeparateProcesses]
 final class PostfixBounceAnalyzerTest extends TestCase
 {
     public const DELIVERY_REPORT = <<<'REPORT'
