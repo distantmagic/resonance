@@ -6,7 +6,6 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Serializer\Vanilla;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\RunClassInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use Swoole\Event;
 
@@ -14,7 +13,6 @@ use Swoole\Event;
  * @internal
  */
 #[CoversClass(ObservableTaskTableSlotStatusUpdateIterator::class)]
-#[RunClassInSeparateProcess]
 final class ObservableTaskTableSlotStatusUpdateIteratorTest extends TestCase
 {
     private ?ObservableTaskConfiguration $observableTaskConfiguration = null;

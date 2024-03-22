@@ -6,7 +6,6 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Serializer\Vanilla;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\RunClassInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
@@ -17,7 +16,6 @@ use Swoole\Event;
  * @internal
  */
 #[CoversClass(ObservableTaskTable::class)]
-#[RunClassInSeparateProcess]
 final class ObservableTaskTableTest extends TestCase
 {
     private ?ObservableTaskConfiguration $observableTaskConfiguration = null;

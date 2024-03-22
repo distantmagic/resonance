@@ -39,7 +39,6 @@ TS_SOURCES := \
 
 config.ini: config.ini.example
 	cp config.ini.example config.ini;
-	sed -i 's/build_id = "A"/build_id = "$(BUILD_ID)"/g' config.ini;
 
 composer.lock: composer.json
 	${PHP_BIN} ${COMPOSER_BIN} update;
