@@ -32,6 +32,15 @@ final class SwooleCrashTest extends TestCase
         });
     }
 
+    public function test_scheduler_is_used(): void
+    {
+        $swooleTimeoutScheduler = new SwooleTimeoutScheduler();
+
+        $swooleTimeoutScheduler->scheduleTimeout(0.01, function () {
+            // just the scheduler
+        });
+    }
+
     public function test_task_is_rescheduled(): void
     {
         $before = microtime(true);
