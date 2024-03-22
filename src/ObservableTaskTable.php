@@ -10,7 +10,6 @@ use Generator;
 use IteratorAggregate;
 use RuntimeException;
 use Swoole\Coroutine;
-use Swoole\Coroutine\Channel;
 use Swoole\Table;
 
 /**
@@ -20,9 +19,9 @@ use Swoole\Table;
 readonly class ObservableTaskTable implements IteratorAggregate
 {
     /**
-     * @var Set<Channel>
+     * @var Set<callable(ObservableTaskSlotStatusUpdate):bool>
      */
-    public Set $observableChannels;
+    public Set $observers;
 
     private SwooleTableAvailableRowsPool $availableRowsPool;
     private string $serializedPendingStatus;
@@ -33,7 +32,7 @@ readonly class ObservableTaskTable implements IteratorAggregate
         private SerializerInterface $serializer,
     ) {
         $this->availableRowsPool = new SwooleTableAvailableRowsPool($observableTaskConfiguration->maxTasks);
-        $this->observableChannels = new Set();
+        $this->observers = new Set();
         $this->serializedPendingStatus = $serializer->serialize(
             new ObservableTaskStatusUpdate(ObservableTaskStatus::Pending, null)
         );
@@ -87,17 +86,25 @@ readonly class ObservableTaskTable implements IteratorAggregate
 
             foreach ($observableTask as $statusUpdate) {
                 if (!$this->table->set($slotId, [
-                        'status' => $this->serializer->serialize($statusUpdate),
-                    ])
+                    'status' => $this->serializer->serialize($statusUpdate),
+                ])
                 ) {
                     throw new RuntimeException('Unable to update a slot status.');
                 }
 
-                if (!$this->observableChannels->isEmpty()) {
+                if (!$this->observers->isEmpty()) {
                     $slotStatusUpdate = new ObservableTaskSlotStatusUpdate($slotId, $statusUpdate);
 
-                    foreach ($this->observableChannels as $observableChannel) {
-                        $observableChannel->push($slotStatusUpdate);
+                    foreach ($this->observers as $observer) {
+                        if (!is_callable($observer)) {
+                            throw new RuntimeException('Observer is not callable');
+                        }
+
+                        SwooleCoroutineHelper::mustGo(function () use ($observer, $slotStatusUpdate) {
+                            if (false === $observer($slotStatusUpdate)) {
+                                $this->observers->remove($observer);
+                            }
+                        });
                     }
                 }
 

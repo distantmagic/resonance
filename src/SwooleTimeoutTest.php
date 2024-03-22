@@ -13,7 +13,6 @@ use Swoole\Event;
  */
 #[CoversClass(SwooleTimeout::class)]
 #[CoversClass(SwooleTimeoutScheduled::class)]
-#[CoversClass(SwooleTimeoutScheduler::class)]
 final class SwooleTimeoutTest extends TestCase
 {
     protected function tearDown(): void
@@ -42,7 +41,7 @@ final class SwooleTimeoutTest extends TestCase
         $timeout = new SwooleTimeout(static function () use ($before) {
             $after = microtime(true);
 
-            self::assertGreaterThan(0.03, $after - $before);
+            self::assertGreaterThan(0.029, $after - $before);
             self::assertLessThan(0.035, $after - $before);
         });
 

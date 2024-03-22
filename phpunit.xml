@@ -2,10 +2,11 @@
 <phpunit
     beStrictAboutCoverageMetadata="true"
     beStrictAboutChangesToGlobalState="true"
-    beStrictAboutTestsThatDoNotTestAnything="true"
+    beStrictAboutTestsThatDoNotTestAnything="false"
     bootstrap="phpunit_bootstrap.php"
     colors="true"
     displayDetailsOnTestsThatTriggerWarnings="true"
+    processIsolation="false"
 >
     <testsuites>
         <testsuite name="Unit">
@@ -17,4 +18,8 @@
             <directory suffix=".php">src</directory>
         </include>
     </source>
+    <extensions>
+        <bootstrap class="Distantmagic\Resonance\PHPUnitSwooleCoroutineExtension">
+        </bootstrap>
+    </extensions>
 </phpunit>

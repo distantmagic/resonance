@@ -6,15 +6,13 @@ namespace Distantmagic\Resonance\WebSocketRPCResponder;
 
 use Distantmagic\Resonance\Constraint;
 use Distantmagic\Resonance\Constraint\ObjectConstraint;
+use Distantmagic\Resonance\ObservableTaskSlotStatusUpdate;
 use Distantmagic\Resonance\ObservableTaskTable;
-use Distantmagic\Resonance\ObservableTaskTableSlotStatusUpdateIterator;
 use Distantmagic\Resonance\RPCRequest;
 use Distantmagic\Resonance\RPCResponse;
 use Distantmagic\Resonance\WebSocketAuthResolution;
 use Distantmagic\Resonance\WebSocketConnection;
 use Distantmagic\Resonance\WebSocketRPCResponder;
-use Psr\Log\LoggerInterface;
-use WeakMap;
 
 /**
  * @template TPayload
@@ -23,33 +21,13 @@ use WeakMap;
  */
 readonly class ObservableTasksTableUpdateResponder extends WebSocketRPCResponder
 {
-    /**
-     * @var WeakMap<WebSocketConnection,ObservableTaskTableSlotStatusUpdateIterator>
-     */
-    private WeakMap $runningCompletions;
-
     public function __construct(
-        private LoggerInterface $logger,
         private ObservableTaskTable $observableTaskTable,
-    ) {
-        /**
-         * @var WeakMap<WebSocketConnection,ObservableTaskTableSlotStatusUpdateIterator>
-         */
-        $this->runningCompletions = new WeakMap();
-    }
+    ) {}
 
     public function getConstraint(): Constraint
     {
         return new ObjectConstraint();
-    }
-
-    public function onBeforeMessage(
-        WebSocketAuthResolution $webSocketAuthResolution,
-        WebSocketConnection $webSocketConnection,
-    ): void {
-        if ($this->runningCompletions->offsetExists($webSocketConnection)) {
-            $this->runningCompletions->offsetGet($webSocketConnection)->close();
-        }
     }
 
     public function onRequest(
@@ -57,19 +35,20 @@ readonly class ObservableTasksTableUpdateResponder extends WebSocketRPCResponder
         WebSocketConnection $webSocketConnection,
         RPCRequest $rpcRequest,
     ): void {
-        $observableTaskUpdatesIterator = new ObservableTaskTableSlotStatusUpdateIterator($this->observableTaskTable);
+        $this->observableTaskTable->observers->add(
+            static function (ObservableTaskSlotStatusUpdate $observableTaskSlotStatusUpdate) use (
+                $rpcRequest,
+                $webSocketConnection,
+            ): bool {
+                if (!$webSocketConnection->status->isOpen()) {
+                    return false;
+                }
 
-        $this->runningCompletions->offsetSet($webSocketConnection, $observableTaskUpdatesIterator);
-
-        foreach ($observableTaskUpdatesIterator as $observableTaskSlotStatusUpdate) {
-            if (!$webSocketConnection->status->isOpen()) {
-                break;
+                return $webSocketConnection->push(new RPCResponse(
+                    rpcRequest: $rpcRequest,
+                    content: $observableTaskSlotStatusUpdate,
+                ));
             }
-
-            $webSocketConnection->push(new RPCResponse(
-                rpcRequest: $rpcRequest,
-                content: $observableTaskSlotStatusUpdate,
-            ));
-        }
+        );
     }
 }

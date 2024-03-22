@@ -19,8 +19,8 @@ class WebSocketConnection
         public readonly int $fd,
     ) {}
 
-    public function push(string|Stringable $response): void
+    public function push(string|Stringable $response): bool
     {
-        $this->server->push($this->fd, (string) $response);
+        return $this->server->push($this->fd, (string) $response);
     }
 }
