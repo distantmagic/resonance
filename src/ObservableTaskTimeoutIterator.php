@@ -52,7 +52,12 @@ readonly class ObservableTaskTimeoutIterator implements IteratorAggregate
 
         $channel = new Channel(1);
 
-        $swooleTimeout = new SwooleTimeout(static function () use (&$generatorCoroutineId) {
+        $swooleTimeout = new SwooleTimeout(static function () use ($channel, &$generatorCoroutineId) {
+            $channel->push(new ObservableTaskStatusUpdate(
+                ObservableTaskStatus::TimedOut,
+                null,
+            ));
+
             if (is_int($generatorCoroutineId)) {
                 Coroutine::cancel($generatorCoroutineId);
             }

@@ -90,7 +90,7 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketRP
                     yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Running, null);
 
                     try {
-                        $this->onObservableRequest(
+                        yield from $this->onObservableRequest(
                             $webSocketAuthResolution,
                             $webSocketConnection,
                             $rpcRequest,
@@ -106,12 +106,14 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketRP
 
     /**
      * @param RPCRequest<TPayload> $rpcRequest
+     *
+     * @return Generator<ObservableTaskStatusUpdate>
      */
     private function onObservableRequest(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
         RPCRequest $rpcRequest,
-    ): void {
+    ): Generator {
         $request = new LlamaCppCompletionRequest(
             backusNaurFormGrammar: $this->subjectActionGrammar,
             promptTemplate: new ChainPrompt([
@@ -129,29 +131,24 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketRP
             ->createResponseFromTokens(
                 authenticatedUser: $webSocketAuthResolution->authenticatedUser,
                 completion: $completion,
-                timeout: 1.0,
+                inactivityTimeout: 1.0,
             )
         ;
 
-        /**
-         * @var mixed $responseChunk explicitly mixed for typechecks
-         */
         foreach ($response as $responseChunk) {
+            if ($responseChunk->isFailed) {
+                yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Failed, null);
+
+                break;
+            }
+
             $this->onResponseChunk(
                 webSocketAuthResolution: $webSocketAuthResolution,
                 webSocketConnection: $webSocketConnection,
                 rpcRequest: $rpcRequest,
-                responseChunk: $responseChunk,
-                isLastChunk: false,
+                responseChunk: $responseChunk->payload,
+                isLastChunk: $responseChunk->isLastChunk,
             );
         }
-
-        $this->onResponseChunk(
-            webSocketAuthResolution: $webSocketAuthResolution,
-            webSocketConnection: $webSocketConnection,
-            rpcRequest: $rpcRequest,
-            responseChunk: '',
-            isLastChunk: true,
-        );
     }
 }

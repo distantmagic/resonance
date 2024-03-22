@@ -16,10 +16,13 @@ readonly class PromptSubjectResponderAggregate
         private PromptSubjectResponderCollection $promptSubjectResponderCollection,
     ) {}
 
+    /**
+     * @return Generator<PromptSubjectResponseChunk>
+     */
     public function createResponseFromTokens(
         ?AuthenticatedUser $authenticatedUser,
         LlamaCppCompletionIterator $completion,
-        float $timeout = DM_POOL_CONNECTION_TIMEOUT,
+        float $inactivityTimeout = DM_POOL_CONNECTION_TIMEOUT,
     ): Generator {
         $subjectActionTokenReader = new SubjectActionTokenReader();
 
@@ -31,24 +34,36 @@ readonly class PromptSubjectResponderAggregate
 
                 break;
             }
+
+            if ($token->isFailed) {
+                yield new PromptSubjectResponseChunk(
+                    isFailed: true,
+                    isLastChunk: true,
+                    payload: '',
+                );
+            }
         }
 
         $action = $subjectActionTokenReader->getAction();
         $subject = $subjectActionTokenReader->getSubject();
+
+        if ($subjectActionTokenReader->isEmpty()) {
+            return;
+        }
 
         if ($subjectActionTokenReader->isUnknown() || !isset($action, $subject)) {
             yield from $this->respondWithSubjectAction(
                 $authenticatedUser,
                 'unknown',
                 'unknown',
-                $timeout,
+                $inactivityTimeout,
             );
         } else {
             yield from $this->respondWithSubjectAction(
                 $authenticatedUser,
                 $subject,
                 $action,
-                $timeout,
+                $inactivityTimeout,
             );
         }
     }
@@ -56,12 +71,14 @@ readonly class PromptSubjectResponderAggregate
     /**
      * @param non-empty-string $subject
      * @param non-empty-string $action
+     *
+     * @return Generator<PromptSubjectResponseChunk>
      */
     private function respondWithSubjectAction(
         ?AuthenticatedUser $authenticatedUser,
         string $subject,
         string $action,
-        float $timeout,
+        float $inactivityTimeout,
     ): Generator {
         $responder = $this
             ->promptSubjectResponderCollection
@@ -81,7 +98,7 @@ readonly class PromptSubjectResponderAggregate
         }
 
         $request = new PromptSubjectRequest($authenticatedUser);
-        $response = new PromptSubjectResponse($timeout);
+        $response = new PromptSubjectResponse($inactivityTimeout);
 
         SwooleCoroutineHelper::mustGo(static function () use ($request, $responder, $response) {
             $responder->respondToPromptSubject($request, $response);

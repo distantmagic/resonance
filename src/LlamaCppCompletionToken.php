@@ -13,6 +13,7 @@ readonly class LlamaCppCompletionToken implements Stringable
 {
     public function __construct(
         public string $content,
+        public bool $isFailed,
         public bool $isLastToken,
     ) {}
 

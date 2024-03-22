@@ -81,7 +81,7 @@ readonly class LlamaCppClient
             /**
              * @var object{ content: string }
              */
-            $token = $this->jsonSerializer->unserialize($responseChunk);
+            $token = $this->jsonSerializer->unserialize($responseChunk->chunk);
 
             yield new LlamaCppInfill(
                 after: $request->after,
@@ -160,7 +160,7 @@ readonly class LlamaCppClient
     }
 
     /**
-     * @return SwooleChannelIterator<string>
+     * @return SwooleChannelIterator<LlamaCppClientResponseChunk>
      */
     private function streamResponse(JsonSerializable $request, string $path): SwooleChannelIterator
     {
@@ -184,7 +184,10 @@ readonly class LlamaCppClient
             curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, false);
             curl_setopt($curlHandle, CURLOPT_URL, $this->llamaCppLinkBuilder->build($path));
             curl_setopt($curlHandle, CURLOPT_WRITEFUNCTION, function (CurlHandle $curlHandle, string $data) use ($channel): int {
-                if ($channel->push($data, $this->llamaCppConfiguration->completionTokenTimeout)) {
+                if ($channel->push(new LlamaCppClientResponseChunk(
+                    status: ObservableTaskStatus::Running,
+                    chunk: $data
+                ), $this->llamaCppConfiguration->completionTokenTimeout)) {
                     return strlen($data);
                 }
 
@@ -195,6 +198,11 @@ readonly class LlamaCppClient
 
                 if (CURLE_WRITE_ERROR !== $curlErrno) {
                     $this->logger->error(new CurlErrorMessage($curlHandle));
+
+                    $channel->push(new LlamaCppClientResponseChunk(
+                        status: ObservableTaskStatus::Failed,
+                        chunk: '',
+                    ));
                 }
             } else {
                 $this->assertStatusCode($curlHandle, 200);
@@ -202,7 +210,7 @@ readonly class LlamaCppClient
         });
 
         /**
-         * @var SwooleChannelIterator<string>
+         * @var SwooleChannelIterator<LlamaCppClientResponseChunk>
          */
         return new SwooleChannelIterator(
             channel: $channel,

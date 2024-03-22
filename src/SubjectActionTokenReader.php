@@ -37,6 +37,11 @@ class SubjectActionTokenReader
         return $this->subject;
     }
 
+    public function isEmpty(): bool
+    {
+        return !isset($this->action, $this->subject);
+    }
+
     public function isUnknown(): bool
     {
         return 'unknown' === $this->action || 'unknown' === $this->subject;

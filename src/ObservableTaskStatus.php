@@ -6,9 +6,21 @@ namespace Distantmagic\Resonance;
 
 enum ObservableTaskStatus: string
 {
-    case Cancelled = 'Cancelled';
-    case Failed = 'Failed';
-    case Finished = 'Finished';
-    case Pending = 'Pending';
-    case Running = 'Running';
+    case Cancelled = 'cancelled';
+    case Failed = 'failed';
+    case Finished = 'finished';
+    case Pending = 'pending';
+    case Running = 'running';
+    case TimedOut = 'timed_out';
+
+    public function isFinal(): bool
+    {
+        return match ($this) {
+            ObservableTaskStatus::Cancelled,
+            ObservableTaskStatus::Failed,
+            ObservableTaskStatus::Finished,
+            ObservableTaskStatus::TimedOut => true,
+            default => false,
+        };
+    }
 }

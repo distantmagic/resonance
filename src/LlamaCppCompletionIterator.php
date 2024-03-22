@@ -16,7 +16,7 @@ readonly class LlamaCppCompletionIterator implements IteratorAggregate
     private const COMPLETION_CHUNKED_DATA_PREFIX_LENGTH = 6;
 
     /**
-     * @param SwooleChannelIterator<string> $responseChunks
+     * @param SwooleChannelIterator<LlamaCppClientResponseChunk> $responseChunks
      */
     public function __construct(
         private JsonSerializer $jsonSerializer,
@@ -35,7 +35,19 @@ readonly class LlamaCppCompletionIterator implements IteratorAggregate
         $previousChunk = '';
 
         foreach ($this->responseChunks as $responseChunk) {
-            $previousChunk .= $responseChunk;
+            if (ObservableTaskStatus::Failed === $responseChunk->status) {
+                $previousChunk = '';
+
+                yield new LlamaCppCompletionToken(
+                    content: '',
+                    isFailed: true,
+                    isLastToken: true,
+                );
+
+                break;
+            }
+
+            $previousChunk .= $responseChunk->chunk;
 
             /**
              * @var null|object{
@@ -56,6 +68,7 @@ readonly class LlamaCppCompletionIterator implements IteratorAggregate
             if ($unserializedToken) {
                 yield new LlamaCppCompletionToken(
                     content: $unserializedToken->content,
+                    isFailed: false,
                     isLastToken: $unserializedToken->stop,
                 );
             }
@@ -72,8 +85,6 @@ readonly class LlamaCppCompletionIterator implements IteratorAggregate
             return;
         }
 
-        if (!$this->responseChunks->channel->close()) {
-            throw new RuntimeException('Unable to close coroutine channel');
-        }
+        $this->responseChunks->channel->close();
     }
 }

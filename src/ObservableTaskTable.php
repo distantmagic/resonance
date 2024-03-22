@@ -108,7 +108,7 @@ readonly class ObservableTaskTable implements IteratorAggregate
                     }
                 }
 
-                if (ObservableTaskStatus::Running !== $statusUpdate->status) {
+                if ($statusUpdate->status->isFinal()) {
                     break;
                 }
             }

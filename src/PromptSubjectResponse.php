@@ -8,14 +8,14 @@ use IteratorAggregate;
 use Swoole\Coroutine\Channel;
 
 /**
- * @template-implements IteratorAggregate<mixed>
+ * @template-implements IteratorAggregate<PromptSubjectResponseChunk>
  */
 readonly class PromptSubjectResponse implements IteratorAggregate
 {
     private Channel $channel;
 
     public function __construct(
-        private float $timeout,
+        private float $inactivityTimeout,
     ) {
         $this->channel = new Channel(1);
     }
@@ -28,30 +28,36 @@ readonly class PromptSubjectResponse implements IteratorAggregate
     public function end(mixed $payload = null): void
     {
         try {
-            if (null !== $payload) {
-                $this->write($payload);
-            }
+            $this->channel->push(new PromptSubjectResponseChunk(
+                isFailed: false,
+                isLastChunk: true,
+                payload: $payload,
+            ));
         } finally {
             $this->channel->close();
         }
     }
 
     /**
-     * @return SwooleChannelIterator<mixed>
+     * @return SwooleChannelIterator<PromptSubjectResponseChunk>
      */
     public function getIterator(): SwooleChannelIterator
     {
         /**
-         * @var SwooleChannelIterator<mixed>
+         * @var SwooleChannelIterator<PromptSubjectResponseChunk>
          */
         return new SwooleChannelIterator(
             channel: $this->channel,
-            timeout: $this->timeout,
+            timeout: $this->inactivityTimeout,
         );
     }
 
     public function write(mixed $payload): void
     {
-        $this->channel->push($payload);
+        $this->channel->push(new PromptSubjectResponseChunk(
+            isFailed: false,
+            isLastChunk: false,
+            payload: $payload,
+        ));
     }
 }
