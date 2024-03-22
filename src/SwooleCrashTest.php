@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine;
 use Swoole\Event;
+use Swoole\Table;
 
 /**
  * @internal
@@ -31,6 +32,20 @@ final class SwooleCrashTest extends TestCase
         SwooleCoroutineHelper::mustGo(function () {
             // just the coroutine
         });
+    }
+
+    public function test_table_small(): void
+    {
+        $table = new Table(100);
+        $table->column('status', Table::TYPE_STRING, 300);
+        $table->create();
+    }
+
+    public function test_table(): void
+    {
+        $table = new Table(20000);
+        $table->column('status', Table::TYPE_STRING, 30000);
+        $table->create();
     }
 
     public function test_coroutine_with_sleep(): void
