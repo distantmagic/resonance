@@ -57,7 +57,7 @@ readonly class Session
     {
         $storedValue = $this->redis->get($this->id);
 
-        if (!is_string($storedValue)) {
+        if (!is_string($storedValue) || empty($storedValue)) {
             return null;
         }
 

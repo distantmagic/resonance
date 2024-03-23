@@ -9,13 +9,19 @@
     <table>
         <thead>
             <tr>
+                <th>slot</th>
+                <th>status</th>
+                <th>category</th>
+                <th>name</th>
             </tr>
         </thead>
         <tbody>
             {% for slotId, observableTask in observableTaskTable %}
                 <tr>
                     <td>{{ slotId }}</td>
-                    <td>{{ observableTask.status.value }}</td>
+                    <td>{{ observableTask.observableTaskStatusUpdate.status.value }}</td>
+                    <td>{{ observableTask.category }}</td>
+                    <td>{{ observableTask.name }}</td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -42,6 +42,12 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketJs
      */
     abstract protected function getPromptFromPayload(mixed $payload): string;
 
+    abstract protected function onRequestFailure(
+        WebSocketAuthResolution $webSocketAuthResolution,
+        WebSocketConnection $webSocketConnection,
+        JsonRPCRequest $rpcRequest,
+    ): void;
+
     abstract protected function onResponseChunk(
         WebSocketAuthResolution $webSocketAuthResolution,
         WebSocketConnection $webSocketConnection,
@@ -81,7 +87,7 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketJs
         JsonRPCRequest $rpcRequest,
     ): void {
         $this->observableTaskTable->observe(new ObservableTask(
-            new ObservableTaskTimeoutIterator(
+            iterableTask: new ObservableTaskTimeoutIterator(
                 iterableTask: function () use (
                     $webSocketAuthResolution,
                     $webSocketConnection,
@@ -99,8 +105,10 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketJs
                         yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Finished, null);
                     }
                 },
-                inactivityTimeout: 1.0,
-            )
+                inactivityTimeout: 3.0,
+            ),
+            name: 'websocket_jsonrpc_response',
+            category: 'llama_cpp',
         ));
     }
 
@@ -138,6 +146,12 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketJs
         foreach ($response as $responseChunk) {
             if ($responseChunk->isFailed) {
                 yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Failed, null);
+
+                $this->onRequestFailure(
+                    webSocketAuthResolution: $webSocketAuthResolution,
+                    webSocketConnection: $webSocketConnection,
+                    rpcRequest: $rpcRequest,
+                );
 
                 break;
             }

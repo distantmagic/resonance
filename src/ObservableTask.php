@@ -18,9 +18,17 @@ readonly class ObservableTask implements ObservableTaskInterface
     /**
      * @param callable():iterable<ObservableTaskStatusUpdate> $iterableTask
      */
-    public function __construct(callable $iterableTask)
-    {
+    public function __construct(
+        callable $iterableTask,
+        private string $name = '',
+        private string $category = '',
+    ) {
         $this->iterableTask = Closure::fromCallable($iterableTask);
+    }
+
+    public function getCategory(): string
+    {
+        return $this->category;
     }
 
     public function getIterator(): Generator
@@ -33,5 +41,10 @@ readonly class ObservableTask implements ObservableTaskInterface
                 $throwable,
             );
         }
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 }

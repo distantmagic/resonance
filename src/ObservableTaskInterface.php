@@ -9,4 +9,9 @@ use IteratorAggregate;
 /**
  * @template-extends IteratorAggregate<ObservableTaskStatusUpdate>
  */
-interface ObservableTaskInterface extends IteratorAggregate {}
+interface ObservableTaskInterface extends IteratorAggregate
+{
+    public function getCategory(): string;
+
+    public function getName(): string;
+}

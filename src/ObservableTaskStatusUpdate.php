@@ -16,7 +16,7 @@ readonly class ObservableTaskStatusUpdate implements JsonSerializable
      */
     public function __construct(
         public ObservableTaskStatus $status,
-        public mixed $data
+        public mixed $data,
     ) {}
 
     public function jsonSerialize(): array

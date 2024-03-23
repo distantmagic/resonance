@@ -13,7 +13,7 @@ use Swoole\Coroutine;
 use Swoole\Table;
 
 /**
- * @template-implements IteratorAggregate<non-empty-string,?ObservableTaskStatusUpdate>
+ * @template-implements IteratorAggregate<non-empty-string,ObservableTaskTableRow>
  */
 #[Singleton]
 readonly class ObservableTaskTable implements IteratorAggregate
@@ -38,12 +38,14 @@ readonly class ObservableTaskTable implements IteratorAggregate
         );
 
         $this->table = new Table(2 * $observableTaskConfiguration->maxTasks);
+        $this->table->column('category', Table::TYPE_STRING, 255);
+        $this->table->column('name', Table::TYPE_STRING, 255);
         $this->table->column('status', Table::TYPE_STRING, $observableTaskConfiguration->serializedStatusSize);
         $this->table->create();
     }
 
     /**
-     * @return Generator<non-empty-string,?ObservableTaskStatusUpdate>
+     * @return Generator<non-empty-string,ObservableTaskTableRow>
      */
     public function getIterator(): Generator
     {
@@ -52,7 +54,11 @@ readonly class ObservableTaskTable implements IteratorAggregate
          * @var mixed            $row explicitly mixed for typechecks
          */
         foreach ($this->table as $slotId => $row) {
-            yield $slotId => $this->unserializeTableRow($row);
+            $unserializedRow = $this->unserializeTableRow($row);
+
+            if ($unserializedRow) {
+                yield $slotId => $unserializedRow;
+            }
         }
     }
 
@@ -61,7 +67,13 @@ readonly class ObservableTaskTable implements IteratorAggregate
      */
     public function getStatus(string $taskId): ?ObservableTaskStatusUpdate
     {
-        return $this->unserializeTableRow($this->table->get($taskId));
+        $row = $this->table->get($taskId);
+
+        if (!is_array($row)) {
+            return null;
+        }
+
+        return $this->unserializeTableStatusColumn($row);
     }
 
     /**
@@ -78,6 +90,8 @@ readonly class ObservableTaskTable implements IteratorAggregate
 
             if (
                 !$this->table->set($slotId, [
+                    'category' => $observableTask->getCategory(),
+                    'name' => $observableTask->getName(),
                     'status' => $this->serializedPendingStatus,
                 ])
             ) {
@@ -85,9 +99,12 @@ readonly class ObservableTaskTable implements IteratorAggregate
             }
 
             foreach ($observableTask as $statusUpdate) {
-                if (!$this->table->set($slotId, [
-                    'status' => $this->serializer->serialize($statusUpdate),
-                ])
+                if (
+                    !$this->table->set($slotId, [
+                        'category' => $observableTask->getCategory(),
+                        'name' => $observableTask->getName(),
+                        'status' => $this->serializer->serialize($statusUpdate),
+                    ])
                 ) {
                     throw new RuntimeException('Unable to update a slot status.');
                 }
@@ -117,9 +134,28 @@ readonly class ObservableTaskTable implements IteratorAggregate
         return $slotId;
     }
 
-    private function unserializeTableRow(mixed $row): ?ObservableTaskStatusUpdate
+    private function unserializeTableRow(mixed $row): ?ObservableTaskTableRow
     {
-        if (!is_array($row) || !is_string($row['status'])) {
+        if (!is_array($row)) {
+            return null;
+        }
+
+        $observableTaskStatusUpdate = $this->unserializeTableStatusColumn($row);
+
+        if (is_null($observableTaskStatusUpdate) || !is_string($row['name']) || !is_string($row['category'])) {
+            return null;
+        }
+
+        return new ObservableTaskTableRow(
+            name: $row['name'],
+            category: $row['category'],
+            observableTaskStatusUpdate: $observableTaskStatusUpdate,
+        );
+    }
+
+    private function unserializeTableStatusColumn(array $row): ?ObservableTaskStatusUpdate
+    {
+        if (!is_string($row['status'])) {
             return null;
         }
 
