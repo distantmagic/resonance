@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-readonly class PromptSubjectResponseChunk
+readonly class SwooleChannelIteratorError
 {
     public function __construct(
-        public bool $isFailed,
-        public bool $isLastChunk,
         public bool $isTimeout,
-        public mixed $payload,
     ) {}
 }

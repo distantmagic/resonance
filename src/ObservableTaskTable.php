@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use DateTimeImmutable;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Ds\Set;
 use Generator;
@@ -39,6 +40,7 @@ readonly class ObservableTaskTable implements IteratorAggregate
 
         $this->table = new Table(2 * $observableTaskConfiguration->maxTasks);
         $this->table->column('category', Table::TYPE_STRING, 255);
+        $this->table->column('modified_at', Table::TYPE_INT);
         $this->table->column('name', Table::TYPE_STRING, 255);
         $this->table->column('status', Table::TYPE_STRING, $observableTaskConfiguration->serializedStatusSize);
         $this->table->create();
@@ -91,6 +93,7 @@ readonly class ObservableTaskTable implements IteratorAggregate
             if (
                 !$this->table->set($slotId, [
                     'category' => $observableTask->getCategory(),
+                    'modified_at' => time(),
                     'name' => $observableTask->getName(),
                     'status' => $this->serializedPendingStatus,
                 ])
@@ -102,6 +105,7 @@ readonly class ObservableTaskTable implements IteratorAggregate
                 if (
                     !$this->table->set($slotId, [
                         'category' => $observableTask->getCategory(),
+                        'modified_at' => time(),
                         'name' => $observableTask->getName(),
                         'status' => $this->serializer->serialize($statusUpdate),
                     ])
@@ -142,13 +146,18 @@ readonly class ObservableTaskTable implements IteratorAggregate
 
         $observableTaskStatusUpdate = $this->unserializeTableStatusColumn($row);
 
-        if (is_null($observableTaskStatusUpdate) || !is_string($row['name']) || !is_string($row['category'])) {
+        if (is_null($observableTaskStatusUpdate)
+            || !is_string($row['name'])
+            || !is_string($row['category'])
+            || !is_int($row['modified_at'])
+        ) {
             return null;
         }
 
         return new ObservableTaskTableRow(
             name: $row['name'],
             category: $row['category'],
+            modifiedAt: (new DateTimeImmutable())->setTimestamp($row['modified_at']),
             observableTaskStatusUpdate: $observableTaskStatusUpdate,
         );
     }

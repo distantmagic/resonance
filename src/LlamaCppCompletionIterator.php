@@ -35,9 +35,7 @@ readonly class LlamaCppCompletionIterator implements IteratorAggregate
         $previousChunk = '';
 
         foreach ($this->responseChunks as $responseChunk) {
-            if (ObservableTaskStatus::Failed === $responseChunk->status) {
-                $previousChunk = '';
-
+            if ($responseChunk instanceof SwooleChannelIteratorError || ObservableTaskStatus::Failed === $responseChunk->data->status) {
                 yield new LlamaCppCompletionToken(
                     content: '',
                     isFailed: true,
@@ -47,7 +45,7 @@ readonly class LlamaCppCompletionIterator implements IteratorAggregate
                 break;
             }
 
-            $previousChunk .= $responseChunk->chunk;
+            $previousChunk .= $responseChunk->data->chunk;
 
             /**
              * @var null|object{

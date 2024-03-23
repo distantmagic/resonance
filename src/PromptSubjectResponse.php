@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Generator;
 use IteratorAggregate;
 use Swoole\Coroutine\Channel;
 
@@ -31,6 +32,7 @@ readonly class PromptSubjectResponse implements IteratorAggregate
             $this->channel->push(new PromptSubjectResponseChunk(
                 isFailed: false,
                 isLastChunk: true,
+                isTimeout: false,
                 payload: $payload,
             ));
         } finally {
@@ -39,17 +41,32 @@ readonly class PromptSubjectResponse implements IteratorAggregate
     }
 
     /**
-     * @return SwooleChannelIterator<PromptSubjectResponseChunk>
+     * @return Generator<PromptSubjectResponseChunk>
      */
-    public function getIterator(): SwooleChannelIterator
+    public function getIterator(): Generator
     {
         /**
          * @var SwooleChannelIterator<PromptSubjectResponseChunk>
          */
-        return new SwooleChannelIterator(
+        $swooleChannelIterator = new SwooleChannelIterator(
             channel: $this->channel,
             timeout: $this->inactivityTimeout,
         );
+
+        foreach ($swooleChannelIterator as $promptSubjectResponseChunk) {
+            if ($promptSubjectResponseChunk instanceof SwooleChannelIteratorError) {
+                yield new PromptSubjectResponseChunk(
+                    isFailed: true,
+                    isLastChunk: true,
+                    isTimeout: $promptSubjectResponseChunk->isTimeout,
+                    payload: null,
+                );
+
+                break;
+            }
+
+            yield $promptSubjectResponseChunk->data;
+        }
     }
 
     public function write(mixed $payload): void
@@ -57,6 +74,7 @@ readonly class PromptSubjectResponse implements IteratorAggregate
         $this->channel->push(new PromptSubjectResponseChunk(
             isFailed: false,
             isLastChunk: false,
+            isTimeout: false,
             payload: $payload,
         ));
     }

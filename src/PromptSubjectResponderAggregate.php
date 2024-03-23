@@ -39,6 +39,7 @@ readonly class PromptSubjectResponderAggregate
                 yield new PromptSubjectResponseChunk(
                     isFailed: true,
                     isLastChunk: true,
+                    isTimeout: false,
                     payload: '',
                 );
             }

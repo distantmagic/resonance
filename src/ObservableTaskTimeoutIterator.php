@@ -31,9 +31,9 @@ readonly class ObservableTaskTimeoutIterator implements IteratorAggregate
     }
 
     /**
-     * @return SwooleChannelIterator<ObservableTaskStatusUpdate>
+     * @return Generator<ObservableTaskStatusUpdate>
      */
-    public function __invoke(): SwooleChannelIterator
+    public function __invoke(): Generator
     {
         return $this->getIterator();
     }
@@ -41,9 +41,9 @@ readonly class ObservableTaskTimeoutIterator implements IteratorAggregate
     /**
      * @psalm-suppress UnusedVariable $generatorCoroutineId is used, just asynchronously
      *
-     * @return SwooleChannelIterator<ObservableTaskStatusUpdate>
+     * @return Generator<ObservableTaskStatusUpdate>
      */
-    public function getIterator(): SwooleChannelIterator
+    public function getIterator(): Generator
     {
         /**
          * @var null|int $generatorCoroutineId
@@ -88,9 +88,23 @@ readonly class ObservableTaskTimeoutIterator implements IteratorAggregate
         /**
          * @var SwooleChannelIterator<ObservableTaskStatusUpdate>
          */
-        return new SwooleChannelIterator(
+        $swooleChannelIterator = new SwooleChannelIterator(
             channel: $channel,
             timeout: $this->inactivityTimeout,
         );
+
+        foreach ($swooleChannelIterator as $observableTaskStatusUpdate) {
+            if ($observableTaskStatusUpdate instanceof SwooleChannelIteratorError) {
+                if ($observableTaskStatusUpdate->isTimeout) {
+                    yield new ObservableTaskStatusUpdate(ObservableTaskStatus::TimedOut, null);
+                } else {
+                    yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Failed, null);
+                }
+
+                break;
+            }
+
+            yield $observableTaskStatusUpdate->data;
+        }
     }
 }

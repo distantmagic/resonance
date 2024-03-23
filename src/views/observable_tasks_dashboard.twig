@@ -13,6 +13,7 @@
                 <th>status</th>
                 <th>category</th>
                 <th>name</th>
+                <th>last update</th>
             </tr>
         </thead>
         <tbody>
@@ -22,6 +23,7 @@
                     <td>{{ observableTask.observableTaskStatusUpdate.status.value }}</td>
                     <td>{{ observableTask.category }}</td>
                     <td>{{ observableTask.name }}</td>
+                    <td>{{ observableTask.modifiedAt|intl_format_date(request) }}</td>
                 </tr>
             {% endfor %}
         </tbody>

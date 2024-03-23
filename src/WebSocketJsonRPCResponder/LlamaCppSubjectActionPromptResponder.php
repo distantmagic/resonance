@@ -144,8 +144,12 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketJs
         ;
 
         foreach ($response as $responseChunk) {
-            if ($responseChunk->isFailed) {
-                yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Failed, null);
+            if ($responseChunk->isFailed || $responseChunk->isTimeout) {
+                if ($responseChunk->isTimeout) {
+                    yield new ObservableTaskStatusUpdate(ObservableTaskStatus::TimedOut, null);
+                } else {
+                    yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Failed, null);
+                }
 
                 $this->onRequestFailure(
                     webSocketAuthResolution: $webSocketAuthResolution,

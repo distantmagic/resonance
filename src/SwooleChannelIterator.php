@@ -12,7 +12,7 @@ use Swoole\Coroutine\Channel;
 /**
  * @template TData
  *
- * @template-implements IteratorAggregate<TData>
+ * @template-implements IteratorAggregate<SwooleChannelIteratorChunk<TData>|SwooleChannelIteratorError>
  */
 readonly class SwooleChannelIterator implements IteratorAggregate
 {
@@ -30,7 +30,7 @@ readonly class SwooleChannelIterator implements IteratorAggregate
      * @psalm-suppress TypeDoesNotContainType false positive, swoole channel
      *     status
      *
-     * @return Generator<int,TData,bool>
+     * @return Generator<SwooleChannelIteratorChunk<TData>|SwooleChannelIteratorError>
      */
     public function getIterator(): Generator
     {
@@ -45,7 +45,9 @@ readonly class SwooleChannelIterator implements IteratorAggregate
             $data = $this->channel->pop($this->timeout);
 
             if (SWOOLE_CHANNEL_TIMEOUT === $this->channel->errCode) {
-                throw new RuntimeException('Channel timed out');
+                yield new SwooleChannelIteratorError(isTimeout: true);
+
+                break;
             }
 
             if (false === $data) {
@@ -61,7 +63,7 @@ readonly class SwooleChannelIterator implements IteratorAggregate
              * @psalm-suppress RedundantCondition errCode might change async
              */
             if (SWOOLE_CHANNEL_OK === $this->channel->errCode) {
-                yield $data;
+                yield new SwooleChannelIteratorChunk($data);
             }
         } while (true);
     }

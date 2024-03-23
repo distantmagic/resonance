@@ -78,10 +78,14 @@ readonly class LlamaCppClient
         $responseChunks = $this->streamResponse($request, '/infill');
 
         foreach ($responseChunks as $responseChunk) {
+            if ($responseChunk instanceof SwooleChannelIteratorError) {
+                throw new RuntimeException('Unable to generate infill');
+            }
+
             /**
              * @var object{ content: string }
              */
-            $token = $this->jsonSerializer->unserialize($responseChunk->chunk);
+            $token = $this->jsonSerializer->unserialize($responseChunk->data->chunk);
 
             yield new LlamaCppInfill(
                 after: $request->after,
