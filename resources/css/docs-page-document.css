@@ -73,6 +73,7 @@
 
   iframe {
     align-self: center;
+    min-height: 480px;
     width: 100%;
   }
 }
