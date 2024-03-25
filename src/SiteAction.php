@@ -11,4 +11,5 @@ enum SiteAction implements SiteActionInterface
     case StartWebSocketJsonRPCConnection;
     case UseGraphQL;
     case UseOAuth2;
+    case ViewObservableTaskTable;
 }

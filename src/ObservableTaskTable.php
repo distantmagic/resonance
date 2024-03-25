@@ -6,7 +6,6 @@ namespace Distantmagic\Resonance;
 
 use DateTimeImmutable;
 use Distantmagic\Resonance\Attribute\Singleton;
-use Ds\Set;
 use Generator;
 use IteratorAggregate;
 use RuntimeException;
@@ -19,11 +18,6 @@ use Swoole\Table;
 #[Singleton]
 readonly class ObservableTaskTable implements IteratorAggregate
 {
-    /**
-     * @var Set<callable(ObservableTaskSlotStatusUpdate):bool>
-     */
-    public Set $observers;
-
     private SwooleTableAvailableRowsPool $availableRowsPool;
     private string $serializedPendingStatus;
     private Table $table;
@@ -33,7 +27,6 @@ readonly class ObservableTaskTable implements IteratorAggregate
         private SerializerInterface $serializer,
     ) {
         $this->availableRowsPool = new SwooleTableAvailableRowsPool($observableTaskConfiguration->maxTasks);
-        $this->observers = new Set();
         $this->serializedPendingStatus = $serializer->serialize(
             new ObservableTaskStatusUpdate(ObservableTaskStatus::Pending, null)
         );
@@ -111,22 +104,6 @@ readonly class ObservableTaskTable implements IteratorAggregate
                     ])
                 ) {
                     throw new RuntimeException('Unable to update a slot status.');
-                }
-
-                if (!$this->observers->isEmpty()) {
-                    $slotStatusUpdate = new ObservableTaskSlotStatusUpdate($slotId, $statusUpdate);
-
-                    foreach ($this->observers as $observer) {
-                        if (!is_callable($observer)) {
-                            throw new RuntimeException('Observer is not callable');
-                        }
-
-                        SwooleCoroutineHelper::mustGo(function () use ($observer, $slotStatusUpdate) {
-                            if (false === $observer($slotStatusUpdate)) {
-                                $this->observers->remove($observer);
-                            }
-                        });
-                    }
                 }
 
                 if ($statusUpdate->status->isFinal()) {

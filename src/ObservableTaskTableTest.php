@@ -36,27 +36,6 @@ final class ObservableTaskTableTest extends TestCase
         Event::wait();
     }
 
-    public function test_channel_is_observed(): void
-    {
-        self::assertNotNull($this->observableTaskTable);
-
-        $this->observableTaskTable->observers->add(static function (ObservableTaskSlotStatusUpdate $status): bool {
-            return ObservableTaskStatus::Finished === $status->observableTaskStatusUpdate->status;
-        });
-
-        $this->observableTaskTable->observe(new ObservableTask(static function () {
-            yield new ObservableTaskStatusUpdate(
-                ObservableTaskStatus::Running,
-                'test1',
-            );
-
-            yield new ObservableTaskStatusUpdate(
-                ObservableTaskStatus::Finished,
-                'test2',
-            );
-        }));
-    }
-
     public function test_task_is_observed(): void
     {
         self::assertNotNull($this->observableTaskTable);

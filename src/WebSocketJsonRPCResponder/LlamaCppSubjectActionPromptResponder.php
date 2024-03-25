@@ -105,7 +105,7 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketJs
                         yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Finished, null);
                     }
                 },
-                inactivityTimeout: 3.0,
+                inactivityTimeout: 5.0,
             ),
             name: 'websocket_jsonrpc_response',
             category: 'llama_cpp',
