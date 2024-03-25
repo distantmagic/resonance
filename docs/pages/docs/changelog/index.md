@@ -10,6 +10,10 @@ title: Changelog
 
 # Changelog
 
+## v0.28.0
+
+- Feature: {{docs/features/observability/observable-task-table/index}}
+
 ## v0.26.0
 
 - Feature: {{docs/features/ai/prompt-engineering/gemma/index}} prompt template
