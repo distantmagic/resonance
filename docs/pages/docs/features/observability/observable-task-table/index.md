@@ -14,6 +14,8 @@ description: >
 Observable task table is a shared memory table that stores the status of 
 observable tasks. It is used to observe the status of long-running tasks.
 
+https://www.youtube.com/watch?v=Ac5Ww4PBPlY
+
 # Usage
 
 ## Updating Status of Observable Task
