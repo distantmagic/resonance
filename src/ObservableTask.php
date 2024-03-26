@@ -8,6 +8,9 @@ use Closure;
 use Generator;
 use Throwable;
 
+/**
+ * @psalm-type TIterableTaskCallback = callable():iterable<ObservableTaskStatusUpdate>
+ */
 readonly class ObservableTask implements ObservableTaskInterface
 {
     /**
@@ -16,7 +19,7 @@ readonly class ObservableTask implements ObservableTaskInterface
     private Closure $iterableTask;
 
     /**
-     * @param callable():iterable<ObservableTaskStatusUpdate> $iterableTask
+     * @param TIterableTaskCallback $iterableTask
      */
     public function __construct(
         callable $iterableTask,

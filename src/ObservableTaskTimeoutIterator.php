@@ -11,17 +11,19 @@ use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 
 /**
+ * @psalm-import-type TIterableTaskCallback from ObservableTask
+ *
  * @template-implements IteratorAggregate<ObservableTaskStatusUpdate>
  */
 readonly class ObservableTaskTimeoutIterator implements IteratorAggregate
 {
     /**
-     * @var Closure():Generator<ObservableTaskStatusUpdate>
+     * @var Closure():iterable<ObservableTaskStatusUpdate>
      */
     private Closure $iterableTask;
 
     /**
-     * @param callable():Generator<ObservableTaskStatusUpdate> $iterableTask
+     * @param TIterableTaskCallback $iterableTask
      */
     public function __construct(
         callable $iterableTask,

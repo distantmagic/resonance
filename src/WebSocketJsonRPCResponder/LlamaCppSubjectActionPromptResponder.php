@@ -12,11 +12,11 @@ use Distantmagic\Resonance\LlamaCppCompletionRequest;
 use Distantmagic\Resonance\LlmPrompt\SubjectActionPrompt;
 use Distantmagic\Resonance\LlmPromptTemplate;
 use Distantmagic\Resonance\LlmPromptTemplate\ChainPrompt;
-use Distantmagic\Resonance\ObservableTask;
+use Distantmagic\Resonance\ObservableTaskCategory;
+use Distantmagic\Resonance\ObservableTaskFactory;
 use Distantmagic\Resonance\ObservableTaskStatus;
 use Distantmagic\Resonance\ObservableTaskStatusUpdate;
 use Distantmagic\Resonance\ObservableTaskTable;
-use Distantmagic\Resonance\ObservableTaskTimeoutIterator;
 use Distantmagic\Resonance\PromptSubjectResponderAggregate;
 use Distantmagic\Resonance\WebSocketAuthResolution;
 use Distantmagic\Resonance\WebSocketConnection;
@@ -86,29 +86,21 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketJs
         WebSocketConnection $webSocketConnection,
         JsonRPCRequest $rpcRequest,
     ): void {
-        $this->observableTaskTable->observe(new ObservableTask(
-            iterableTask: new ObservableTaskTimeoutIterator(
-                iterableTask: function () use (
+        $this->observableTaskTable->observe(ObservableTaskFactory::withTimeout(
+            iterableTask: function () use (
+                $webSocketAuthResolution,
+                $webSocketConnection,
+                $rpcRequest,
+            ): Generator {
+                yield from $this->onObservableRequest(
                     $webSocketAuthResolution,
                     $webSocketConnection,
                     $rpcRequest,
-                ): Generator {
-                    yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Running, null);
-
-                    try {
-                        yield from $this->onObservableRequest(
-                            $webSocketAuthResolution,
-                            $webSocketConnection,
-                            $rpcRequest,
-                        );
-                    } finally {
-                        yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Finished, null);
-                    }
-                },
-                inactivityTimeout: 5.0,
-            ),
+                );
+            },
+            inactivityTimeout: 5.0,
             name: 'websocket_jsonrpc_response',
-            category: 'llama_cpp',
+            category: ObservableTaskCategory::LlamaCpp->value,
         ));
     }
 
@@ -159,6 +151,8 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketJs
 
                 break;
             }
+
+            yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Running, null);
 
             $this->onResponseChunk(
                 webSocketAuthResolution: $webSocketAuthResolution,
