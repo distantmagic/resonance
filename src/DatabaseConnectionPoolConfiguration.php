@@ -12,7 +12,7 @@ readonly class DatabaseConnectionPoolConfiguration
      * @psalm-taint-source file $unixSocket
      *
      * @param non-empty-string      $host
-     * @param null|non-empty-string $password
+     * @param null|string           $password
      * @param null|non-empty-string $unixSocket
      * @param non-empty-string      $username
      */

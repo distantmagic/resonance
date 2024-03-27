@@ -13,7 +13,6 @@ use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Http\Server as HttpServer;
 use Swoole\Server;
-use Swoole\Server\StatusInfo;
 use Swoole\WebSocket\Server as WebSocketServer;
 
 #[GrantsFeature(Feature::SwooleTaskServer)]
@@ -138,7 +137,7 @@ readonly class SwooleServer
         }
     }
 
-    private function onWorkerError(Server $server, StatusInfo $statusInfo): void
+    private function onWorkerError(Server $server, mixed $statusInfo): void
     {
         $this->logger->error(sprintf(
             'swoole_worker_error(%s)',
