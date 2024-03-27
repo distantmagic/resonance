@@ -206,7 +206,7 @@ readonly class LlamaCppClient
                     $channel->push(new LlamaCppClientResponseChunk(
                         status: ObservableTaskStatus::Failed,
                         chunk: '',
-                    ));
+                    ), $this->llamaCppConfiguration->completionTokenTimeout);
                 }
             } else {
                 $this->assertStatusCode($curlHandle, 200);
