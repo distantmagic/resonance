@@ -64,6 +64,8 @@ readonly class SwooleChannelIterator implements IteratorAggregate
              */
             if (SWOOLE_CHANNEL_OK === $this->channel->errCode) {
                 yield new SwooleChannelIteratorChunk($data);
+            } else {
+                break;
             }
         } while (true);
     }
