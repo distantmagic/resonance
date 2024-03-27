@@ -8,7 +8,6 @@ use Doctrine\DBAL\Driver\Connection;
 use PDO;
 use PDOStatement;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 use Swoole\Database\PDOProxy;
 use Swoole\Database\PDOStatementProxy;
 use Swoole\Event;
@@ -147,11 +146,7 @@ readonly class DatabaseConnection implements Connection
          */
         $quoted = $this->pdo->quote($value);
 
-        if (!is_string($quoted)) {
-            throw new RuntimeException('Unable to quote string: '.$value);
-        }
-
-        return $quoted;
+        return $this->assertNotFalse($quoted);
     }
 
     public function rollBack(): void

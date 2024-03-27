@@ -22,7 +22,7 @@
         "doctrine/dbal": "^4.0",
         "doctrine/migrations": "^3.6",
         "doctrine/orm": "^3.0",
-        "doctrine/sql-formatter": "^1.1",
+        "doctrine/sql-formatter": "^1.2",
         "dragonmantank/cron-expression": "^3.3",
         "ezyang/htmlpurifier": "^4.16",
         "grpc/grpc": "^1.57",
