@@ -46,7 +46,7 @@ final readonly class DatabaseConfigurationProvider extends ConfigurationProvider
                 'driver' => new EnumConstraint(DatabaseConnectionPoolDriverName::values()),
                 'host' => (new StringConstraint())->default(null),
                 'log_queries' => new BooleanConstraint(),
-                'password' => (new StringConstraint())->nullable(),
+                'password' => (new StringConstraint(isEmptyAllowed: true))->nullable(),
                 'pool_prefill' => (new BooleanConstraint())->default(true),
                 'pool_size' => new IntegerConstraint(),
                 'port' => (new IntegerConstraint())->nullable()->default(3306),
