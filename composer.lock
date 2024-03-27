@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "05c3974ad930e86ce3e88a97dd92e16c",
+    "content-hash": "cc3bef917ba3347da2a431e314d0e2db",
     "packages": [
         {
             "name": "bref/bref",
-            "version": "2.1.17",
+            "version": "2.1.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brefphp/bref.git",
-                "reference": "6041ad7d5ca1901dfb91323c9a903ec0d4fc9333"
+                "reference": "fee29863803d2e9d5765f5f278fcbd7ccbad6537"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brefphp/bref/zipball/6041ad7d5ca1901dfb91323c9a903ec0d4fc9333",
-                "reference": "6041ad7d5ca1901dfb91323c9a903ec0d4fc9333",
+                "url": "https://api.github.com/repos/brefphp/bref/zipball/fee29863803d2e9d5765f5f278fcbd7ccbad6537",
+                "reference": "fee29863803d2e9d5765f5f278fcbd7ccbad6537",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +71,7 @@
             ],
             "support": {
                 "issues": "https://github.com/brefphp/bref/issues",
-                "source": "https://github.com/brefphp/bref/tree/2.1.17"
+                "source": "https://github.com/brefphp/bref/tree/2.1.18"
             },
             "funding": [
                 {
@@ -83,7 +83,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-03-22T12:39:34+00:00"
+            "time": "2024-03-27T12:47:08+00:00"
         },
         {
             "name": "brick/math",
@@ -4148,30 +4148,30 @@
         },
         {
             "name": "nicmart/tree",
-            "version": "0.7.2",
+            "version": "0.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nicmart/Tree.git",
-                "reference": "c265a7776a35eecb66e5b832b7d15260e0f4fdd0"
+                "reference": "8d02952acc9779a2c14f7a9c4ac1650c3dacb545"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nicmart/Tree/zipball/c265a7776a35eecb66e5b832b7d15260e0f4fdd0",
-                "reference": "c265a7776a35eecb66e5b832b7d15260e0f4fdd0",
+                "url": "https://api.github.com/repos/nicmart/Tree/zipball/8d02952acc9779a2c14f7a9c4ac1650c3dacb545",
+                "reference": "8d02952acc9779a2c14f7a9c4ac1650c3dacb545",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.0.0 || ~8.1.0 || ~8.2.0"
+                "php": "~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0"
             },
             "require-dev": {
                 "ergebnis/composer-normalize": "^2.31.0",
-                "ergebnis/license": "^2.1.0",
-                "ergebnis/php-cs-fixer-config": "^5.7.0",
+                "ergebnis/license": "^2.4.0",
+                "ergebnis/php-cs-fixer-config": "^6.13.0",
                 "fakerphp/faker": "^1.23.0",
                 "infection/infection": "~0.26.19",
-                "phpunit/phpunit": "^9.6.9",
+                "phpunit/phpunit": "^9.6.14",
                 "psalm/plugin-phpunit": "~0.18.4",
-                "vimeo/psalm": "^5.12.0"
+                "vimeo/psalm": "^5.16.0"
             },
             "type": "library",
             "autoload": {
@@ -4196,9 +4196,9 @@
             "description": "A basic but flexible php tree data structure and a fluent tree builder implementation.",
             "support": {
                 "issues": "https://github.com/nicmart/Tree/issues",
-                "source": "https://github.com/nicmart/Tree/tree/0.7.2"
+                "source": "https://github.com/nicmart/Tree/tree/0.8.0"
             },
-            "time": "2023-06-18T12:36:55+00:00"
+            "time": "2023-12-02T13:24:56+00:00"
         },
         {
             "name": "nyholm/psr7",
