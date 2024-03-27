@@ -11,6 +11,7 @@ use Distantmagic\Resonance\ConstraintReason;
 use Distantmagic\Resonance\ConstraintResult;
 use Distantmagic\Resonance\ConstraintResultStatus;
 use Distantmagic\Resonance\ConstraintStringFormat;
+use Ramsey\Uuid\Uuid;
 use RuntimeException;
 
 final readonly class StringConstraint extends Constraint
@@ -104,7 +105,7 @@ final readonly class StringConstraint extends Constraint
 
         $isFormatValid = match ($this->format) {
             ConstraintStringFormat::Mail => false !== filter_var($notValidatedData, FILTER_VALIDATE_EMAIL),
-            ConstraintStringFormat::Uuid => uuid_is_valid($notValidatedData),
+            ConstraintStringFormat::Uuid => Uuid::isValid($notValidatedData),
             default => throw new RuntimeException('Unknown string format'),
         };
 
