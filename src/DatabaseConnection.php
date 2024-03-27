@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Doctrine\DBAL\Driver\PDO\ParameterTypeMap;
-use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
-use Doctrine\DBAL\ParameterType;
-use LogicException;
+use Doctrine\DBAL\Driver\Connection;
 use PDO;
 use PDOStatement;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Swoole\Database\PDOProxy;
 use Swoole\Database\PDOStatementProxy;
 use Swoole\Event;
@@ -21,7 +19,7 @@ use Swoole\Event;
  *
  * @psalm-suppress DeprecatedInterface
  */
-readonly class DatabaseConnection implements ServerInfoAwareConnection
+readonly class DatabaseConnection implements Connection
 {
     private DatabaseQueryLogger $databaseQueryLogger;
     private PDO|PDOProxy $pdo;
@@ -52,26 +50,24 @@ readonly class DatabaseConnection implements ServerInfoAwareConnection
         });
     }
 
-    public function beginTransaction(): bool
+    public function beginTransaction(): void
     {
         /**
          * @psalm-suppress UndefinedMagicMethod
          */
         $result = $this->pdo->beginTransaction();
-        $this->assertNotFalse($result);
 
-        return true;
+        $this->assertNotFalse($result);
     }
 
-    public function commit(): bool
+    public function commit(): void
     {
         /**
          * @psalm-suppress UndefinedMagicMethod
          */
         $result = $this->pdo->commit();
-        $this->assertNotFalse($result);
 
-        return true;
+        $this->assertNotFalse($result);
     }
 
     /**
@@ -104,20 +100,16 @@ readonly class DatabaseConnection implements ServerInfoAwareConnection
         return $this->assertNotFalse($version);
     }
 
-    public function lastInsertId($name = null): false|string
+    public function lastInsertId(): int|string
     {
         /**
          * @psalm-suppress UndefinedMagicMethod
          *
          * @var false|string $lastInsertId
          */
-        $lastInsertId = $this->pdo->lastInsertId($name);
+        $lastInsertId = $this->pdo->lastInsertId();
 
-        if (false === $lastInsertId) {
-            return false;
-        }
-
-        return $lastInsertId;
+        return $this->assertNotFalse($lastInsertId);
     }
 
     public function prepare(string $sql): DatabasePreparedStatement
@@ -128,6 +120,7 @@ readonly class DatabaseConnection implements ServerInfoAwareConnection
          * @var false|PDOStatement|PDOStatementProxy
          */
         $pdoPreparedStatement = $this->pdo->prepare($sql);
+
         $pdoPreparedStatement = $this->assertNotFalse($pdoPreparedStatement);
 
         return new DatabasePreparedStatement(
@@ -147,38 +140,34 @@ readonly class DatabaseConnection implements ServerInfoAwareConnection
          * @var false|PDOStatement|PDOStatementProxy
          */
         $result = $this->pdo->query($sql);
+
         $result = $this->assertNotFalse($result);
 
         return new DatabaseExecutedStatement($result);
     }
 
-    /**
-     * @psalm-assert ParameterType::* $type
-     *
-     * @psalm-suppress InternalClass
-     * @psalm-suppress InternalMethod
-     */
-    public function quote($value, $type = ParameterType::STRING)
+    public function quote(string $value): string
     {
-        if (!is_string($value)) {
-            throw new LogicException('Only string values can be quoted');
-        }
-
         /**
          * @psalm-suppress UndefinedMagicMethod
          */
-        return $this->pdo->quote($value, ParameterTypeMap::convertParamType($type));
+        $quoted = $this->pdo->quote($value);
+
+        if (!is_string($quoted)) {
+            throw new RuntimeException('Unable to quote string: '.$value);
+        }
+
+        return $quoted;
     }
 
-    public function rollBack(): bool
+    public function rollBack(): void
     {
         /**
          * @psalm-suppress UndefinedMagicMethod
          */
         $result = $this->pdo->rollBack();
-        $this->assertNotFalse($result);
 
-        return true;
+        $this->assertNotFalse($result);
     }
 
     /**

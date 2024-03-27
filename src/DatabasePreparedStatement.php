@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Doctrine\DBAL\Driver\PDO\ParameterTypeMap;
 use Doctrine\DBAL\Driver\Statement;
 use Doctrine\DBAL\ParameterType;
-use LogicException;
+use PDO;
 use PDOStatement;
 use Swoole\Database\PDOStatementProxy;
 
@@ -19,37 +18,16 @@ readonly class DatabasePreparedStatement implements Statement
         private string $sql,
     ) {}
 
-    /**
-     * @param mixed $param         explicitly mixed for typechecks
-     * @param mixed $variable      explicitly mixed for typechecks
-     * @param mixed $type          explicitly mixed for typechecks
-     * @param mixed $length        explicitly mixed for typechecks
-     * @param mixed $driverOptions explicitly mixed for typechecks
-     */
-    public function bindParam(
-        $param,
-        &$variable,
-        $type = ParameterType::STRING,
-        $length = null,
-        $driverOptions = null
-    ): never {
-        throw new LogicException('Use bindValue() instead');
-    }
-
-    /**
-     * @psalm-suppress InternalClass
-     * @psalm-suppress InternalMethod
-     */
-    public function bindValue($param, $value, $type = ParameterType::STRING)
+    public function bindValue($param, $value, ParameterType $type): void
     {
-        return $this->pdoStatement->bindValue(
+        $this->pdoStatement->bindValue(
             $param,
             $value,
-            ParameterTypeMap::convertParamType($type),
+            $this->convertParamType($type),
         );
     }
 
-    public function execute($params = null): DatabaseExecutedStatement
+    public function execute(): DatabaseExecutedStatement
     {
         $this->databaseQueryLogger->onQueryBeforeExecute($this->sql);
 
@@ -63,5 +41,21 @@ readonly class DatabasePreparedStatement implements Statement
         }
 
         return new DatabaseExecutedStatement($this->pdoStatement);
+    }
+
+    /**
+     * @psalm-return PDO::PARAM_*
+     */
+    private function convertParamType(ParameterType $type): int
+    {
+        return match ($type) {
+            ParameterType::NULL => PDO::PARAM_NULL,
+            ParameterType::INTEGER => PDO::PARAM_INT,
+            ParameterType::STRING,
+            ParameterType::ASCII => PDO::PARAM_STR,
+            ParameterType::BINARY,
+            ParameterType::LARGE_OBJECT => PDO::PARAM_LOB,
+            ParameterType::BOOLEAN => PDO::PARAM_BOOL,
+        };
     }
 }
