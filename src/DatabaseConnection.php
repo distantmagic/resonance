@@ -13,12 +13,6 @@ use Swoole\Database\PDOProxy;
 use Swoole\Database\PDOStatementProxy;
 use Swoole\Event;
 
-/**
- * This interface is going to be mandatory in the next Doctrine release, but
- * for now it has to be used.
- *
- * @psalm-suppress DeprecatedInterface
- */
 readonly class DatabaseConnection implements Connection
 {
     private DatabaseQueryLogger $databaseQueryLogger;
