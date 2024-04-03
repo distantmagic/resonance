@@ -6,7 +6,7 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\DialogueInput\UserInput;
 use Distantmagic\Resonance\DialogueMessageProducer\ConstMessageProducer;
-use Distantmagic\Resonance\DialogueResponseCondition\ExactInputCondition;
+use Distantmagic\Resonance\DialogueResponse\LiteralInputResponse;
 use Distantmagic\Resonance\DialogueResponseCondition\LlamaCppInputCondition;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -20,38 +20,33 @@ final class DialogueNodeTest extends TestCase
 {
     public function test_dialogue_produces_no_response(): void
     {
-        $responseDiscriminator = new DialogueResponseDiscriminator();
-
         $rootNode = new DialogueNode(
             message: new ConstMessageProducer('What is your current role?'),
-            responseDiscriminator: $responseDiscriminator,
         );
 
         $marketingNode = new DialogueNode(
             message: new ConstMessageProducer('Hello, marketer!'),
-            responseDiscriminator: $responseDiscriminator,
         );
 
-        $rootNode->addResponse(new DialogueResponse(
+        $rootNode->addPotentialResponse(new DialogueResponse(
             when: new LlamaCppInputCondition(
                 Mockery::mock(LlamaCppClientInterface::class),
-                'marketing'
+                'User states that they are working in a marketing department',
             ),
             followUp: $marketingNode,
         ));
 
-        $rootNode->addResponse(new DialogueResponse(
-            when: new ExactInputCondition('marketing'),
+        $rootNode->addPotentialResponse(new LiteralInputResponse(
+            when: 'marketing',
             followUp: $marketingNode,
         ));
 
         $invalidNode = new DialogueNode(
             message: new ConstMessageProducer('nope :('),
-            responseDiscriminator: $responseDiscriminator,
         );
 
-        $rootNode->addResponse(new DialogueResponse(
-            when: new ExactInputCondition('not_a_marketing'),
+        $rootNode->addPotentialResponse(new LiteralInputResponse(
+            when: 'not_a_marketing',
             followUp: $invalidNode,
         ));
 

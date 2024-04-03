@@ -8,14 +8,19 @@
     displayDetailsOnTestsThatTriggerWarnings="true"
     processIsolation="false"
 >
-    <testsuites>
-        <testsuite name="Unit">
-            <directory suffix="Test.php">src</directory>
-        </testsuite>
-    </testsuites>
+    <groups>
+        <exclude>
+            <group>llamacpp</group>
+        </exclude>
+    </groups>
     <source>
         <include>
             <directory suffix=".php">src</directory>
         </include>
     </source>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory suffix="Test.php">src</directory>
+        </testsuite>
+    </testsuites>
 </phpunit>

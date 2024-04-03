@@ -6,7 +6,7 @@ namespace Distantmagic\Resonance;
 
 interface DialogueResponseInterface
 {
-    public function getCondition(): DialogueResponseConditionInterface;
+    public function getCost(): int;
 
-    public function getFollowUp(): DialogueNodeInterface;
+    public function resolveResponse(DialogueInputInterface $dialogueInput): DialogueResponseResolutionInterface;
 }

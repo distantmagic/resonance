@@ -6,7 +6,7 @@ namespace Distantmagic\Resonance;
 
 interface DialogueNodeInterface
 {
-    public function addResponse(DialogueResponseInterface $response): void;
+    public function addPotentialResponse(DialogueResponseInterface $response): void;
 
     public function getMessageProducer(): DialogueMessageProducerInterface;
 

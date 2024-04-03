@@ -34,7 +34,7 @@ readonly class DialogueResponseSortedIterator implements IteratorAggregate
         foreach ($this->responses as $response) {
             $responsesPriorityQueue->push(
                 $response,
-                $response->getCondition()->getCost(),
+                $response->getCost(),
             );
         }
 

@@ -13,14 +13,12 @@ readonly class DialogueNode implements DialogueNodeInterface
      */
     private Set $responses;
 
-    public function __construct(
-        private DialogueMessageProducerInterface $message,
-        private DialogueResponseDiscriminatorInterface $responseDiscriminator,
-    ) {
+    public function __construct(private DialogueMessageProducerInterface $message)
+    {
         $this->responses = new Set();
     }
 
-    public function addResponse(DialogueResponseInterface $response): void
+    public function addPotentialResponse(DialogueResponseInterface $response): void
     {
         $this->responses->add($response);
     }
@@ -30,8 +28,14 @@ readonly class DialogueNode implements DialogueNodeInterface
         return $this->message;
     }
 
-    public function respondTo(DialogueInputInterface $prompt): ?DialogueNodeInterface
+    public function respondTo(DialogueInputInterface $dialogueInput): ?DialogueNodeInterface
     {
-        return $this->responseDiscriminator->discriminate($this->responses, $prompt);
+        foreach (new DialogueResponseSortedIterator($this->responses) as $response) {
+            if ($response->getCondition()->isMetBy($dialogueInput)) {
+                return $response->getFollowUp();
+            }
+        }
+
+        return null;
     }
 }
