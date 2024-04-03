@@ -9,7 +9,7 @@ use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\JsonSerializer;
-use Distantmagic\Resonance\LlamaCppClient;
+use Distantmagic\Resonance\LlamaCppClientInterface;
 use Distantmagic\Resonance\LlamaCppEmbeddingRequest;
 use Distantmagic\Resonance\SQLiteVSSConnectionBuilder;
 use Distantmagic\Resonance\StaticPageChunkIterator;
@@ -29,7 +29,7 @@ final class StaticPagesMakeEmbeddings extends Command
 
     public function __construct(
         private readonly JsonSerializer $jsonSerializer,
-        private readonly LlamaCppClient $llamaCppClient,
+        private readonly LlamaCppClientInterface $llamaCppClient,
         private readonly SQLiteVSSConnectionBuilder $sqliteVSSConnectionBuilder,
         private readonly StaticPageChunkIterator $staticPageChunkIterator,
     ) {

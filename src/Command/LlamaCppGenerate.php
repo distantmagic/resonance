@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\Command;
 
 use Distantmagic\Resonance\CoroutineCommand;
-use Distantmagic\Resonance\LlamaCppClient;
+use Distantmagic\Resonance\LlamaCppClientInterface;
 use Distantmagic\Resonance\SwooleConfiguration;
 use RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
@@ -20,7 +20,7 @@ abstract class LlamaCppGenerate extends CoroutineCommand
     abstract protected function executeLlamaCppCommand(InputInterface $input, OutputInterface $output, string $prompt): int;
 
     public function __construct(
-        protected LlamaCppClient $llamaCppClient,
+        protected LlamaCppClientInterface $llamaCppClient,
         SwooleConfiguration $swooleConfiguration,
     ) {
         parent::__construct($swooleConfiguration);

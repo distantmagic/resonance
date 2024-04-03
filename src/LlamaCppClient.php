@@ -15,8 +15,8 @@ use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 
 #[RequiresPhpExtension('curl')]
-#[Singleton]
-readonly class LlamaCppClient
+#[Singleton(provides: LlamaCppClientInterface::class)]
+readonly class LlamaCppClient implements LlamaCppClientInterface
 {
     public function __construct(
         private JsonSerializer $jsonSerializer,

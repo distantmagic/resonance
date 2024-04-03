@@ -46,14 +46,14 @@ you are serving. In the following example we will use
 
 namespace App;
 
-use Distantmagic\Resonance\LlamaCppClient;
+use Distantmagic\Resonance\LlamaCppClientInterface;
 use Distantmagic\Resonance\LlamaCppCompletionRequest;
 use Distantmagic\Resonance\LlamaCppPromptTemplate\MistralInstructChat;
 
 #[Singleton]
 class LlamaCppGenerate 
 {
-    public function __construct(protected LlamaCppClient $llamaCppClient) 
+    public function __construct(protected LlamaCppClientInterface $llamaCppClient) 
     {
     }
 
@@ -104,13 +104,13 @@ foreach ($completion as $token) {
 
 namespace App;
 
-use Distantmagic\Resonance\LlamaCppClient;
+use Distantmagic\Resonance\LlamaCppClientInterface;
 use Distantmagic\Resonance\LlamaCppEmbeddingRequest;
 
 #[Singleton]
 class LlamaCppGenerate 
 {
-    public function __construct(protected LlamaCppClient $llamaCppClient) 
+    public function __construct(protected LlamaCppClientInterface $llamaCppClient) 
     {
     }
 

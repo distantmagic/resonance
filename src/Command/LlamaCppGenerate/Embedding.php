@@ -8,7 +8,7 @@ use Distantmagic\Resonance\Attribute\ConsoleCommand;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\Command\LlamaCppGenerate;
 use Distantmagic\Resonance\JsonSerializer;
-use Distantmagic\Resonance\LlamaCppClient;
+use Distantmagic\Resonance\LlamaCppClientInterface;
 use Distantmagic\Resonance\LlamaCppEmbeddingRequest;
 use Distantmagic\Resonance\SwooleConfiguration;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,7 +22,7 @@ final class Embedding extends LlamaCppGenerate
 {
     public function __construct(
         private readonly JsonSerializer $jsonSerializer,
-        LlamaCppClient $llamaCppClient,
+        LlamaCppClientInterface $llamaCppClient,
         SwooleConfiguration $swooleConfiguration,
     ) {
         parent::__construct($llamaCppClient, $swooleConfiguration);

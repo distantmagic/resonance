@@ -7,7 +7,7 @@ namespace Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\CoroutineCommand;
-use Distantmagic\Resonance\LlamaCppClient;
+use Distantmagic\Resonance\LlamaCppClientInterface;
 use Distantmagic\Resonance\SwooleConfiguration;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class LlamaCppHealth extends CoroutineCommand
 {
     public function __construct(
-        private readonly LlamaCppClient $llamaCppClient,
+        private readonly LlamaCppClientInterface $llamaCppClient,
         SwooleConfiguration $swooleConfiguration,
     ) {
         parent::__construct($swooleConfiguration);

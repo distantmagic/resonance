@@ -14,8 +14,8 @@ use Stringable;
  */
 abstract readonly class HttpInterceptor implements HttpInterceptorInterface
 {
-    public function createStream(string|Stringable $contents): StreamInterface
+    public function createStream(string|Stringable $content): StreamInterface
     {
-        return new PsrStringStream($contents);
+        return new PsrStringStream($content);
     }
 }

@@ -9,8 +9,8 @@ use Stringable;
 
 abstract readonly class HttpResponder implements HttpResponderInterface
 {
-    public function createStream(string|Stringable $contents): StreamInterface
+    public function createStream(string|Stringable $content): StreamInterface
     {
-        return new PsrStringStream($contents);
+        return new PsrStringStream($content);
     }
 }

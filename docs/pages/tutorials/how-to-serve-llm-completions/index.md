@@ -111,13 +111,13 @@ inject `LlamaCppClient`:
 
 namespace App;
 
-use Distantmagic\Resonance\LlamaCppClient;
+use Distantmagic\Resonance\LlamaCppClientInterface;
 use Distantmagic\Resonance\LlamaCppCompletionRequest;
 
 #[Singleton]
 class LlamaCppGenerate 
 {
-    public function __construct(protected LlamaCppClient $llamaCppClient) 
+    public function __construct(protected LlamaCppClientInterface $llamaCppClient) 
     {
     }
 

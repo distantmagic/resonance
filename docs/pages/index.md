@@ -109,7 +109,7 @@ readonly class CatAdopt implements PromptSubjectResponderInterface
                         data-hljs-language-value="php"
                     >class LlamaCppGenerate 
 {
-    public function __construct(protected LlamaCppClient $llamaCppClient) 
+    public function __construct(protected LlamaCppClientInterface $llamaCppClient) 
     {
     }
 

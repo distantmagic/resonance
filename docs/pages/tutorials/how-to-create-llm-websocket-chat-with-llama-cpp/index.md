@@ -212,7 +212,7 @@ use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\JsonRPCNotification;
 use Distantmagic\Resonance\JsonRPCRequest;
 use Distantmagic\Resonance\JsonRPCResponse;
-use Distantmagic\Resonance\LlamaCppClient;
+use Distantmagic\Resonance\LlamaCppClientInterface;
 use Distantmagic\Resonance\LlamaCppCompletionRequest;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\WebSocketAuthResolution;
@@ -225,7 +225,7 @@ use Distantmagic\Resonance\WebSocketJsonRPCResponder;
 final readonly class LlmChatPromptResponder extends WebSocketJsonRPCResponder
 {
     public function __construct(
-        private LlamaCppClient $llamaCppClient,
+        private LlamaCppClientInterface $llamaCppClient,
     ) {}
 
     public function getConstraint(): Constraint

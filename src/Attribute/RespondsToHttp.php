@@ -9,7 +9,7 @@ use Distantmagic\Resonance\Attribute as BaseAttribute;
 use Distantmagic\Resonance\HttpRouteSymbolInterface;
 use Distantmagic\Resonance\RequestMethod;
 
-#[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_CLASS)]
+#[Attribute(Attribute::TARGET_CLASS)]
 final readonly class RespondsToHttp extends BaseAttribute
 {
     /**

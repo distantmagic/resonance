@@ -103,9 +103,9 @@ readonly class StaticPageInternalLinkNodeRenderer implements NodeRendererInterfa
     private function renderStaticPageBlockLink(StaticPage $staticPage): Stringable
     {
         /**
-         * @list<HtmlElement> $contents
+         * @list<HtmlElement> $content
          */
-        $contents = [
+        $content = [
             new HtmlElement(
                 'div',
                 [
@@ -135,7 +135,7 @@ readonly class StaticPageInternalLinkNodeRenderer implements NodeRendererInterfa
                 );
             }
 
-            $contents[] = new HtmlElement(
+            $content[] = new HtmlElement(
                 'ol',
                 [
                     'class' => 'document-links-group__link__tags',
@@ -150,7 +150,7 @@ readonly class StaticPageInternalLinkNodeRenderer implements NodeRendererInterfa
                 'class' => 'document-links-group__link',
                 'href' => $staticPage->getHref(),
             ],
-            $contents,
+            $content,
         );
     }
 

@@ -6,7 +6,7 @@ namespace Distantmagic\Resonance\WebSocketJsonRPCResponder;
 
 use Distantmagic\Resonance\BackusNaurFormGrammar\SubjectActionGrammar;
 use Distantmagic\Resonance\JsonRPCRequest;
-use Distantmagic\Resonance\LlamaCppClient;
+use Distantmagic\Resonance\LlamaCppClientInterface;
 use Distantmagic\Resonance\LlamaCppCompletionIterator;
 use Distantmagic\Resonance\LlamaCppCompletionRequest;
 use Distantmagic\Resonance\LlmPrompt\SubjectActionPrompt;
@@ -59,7 +59,7 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketJs
     abstract protected function toPromptTemplate(string $prompt): LlmPromptTemplate;
 
     public function __construct(
-        private LlamaCppClient $llamaCppClient,
+        private LlamaCppClientInterface $llamaCppClient,
         private LoggerInterface $logger,
         private ObservableTaskTable $observableTaskTable,
         private PromptSubjectResponderAggregate $promptSubjectResponderAggregate,

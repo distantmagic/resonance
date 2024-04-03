@@ -2,7 +2,7 @@
 <phpunit
     beStrictAboutCoverageMetadata="true"
     beStrictAboutChangesToGlobalState="true"
-    beStrictAboutTestsThatDoNotTestAnything="false"
+    beStrictAboutTestsThatDoNotTestAnything="true"
     bootstrap="phpunit_bootstrap.php"
     colors="true"
     displayDetailsOnTestsThatTriggerWarnings="true"

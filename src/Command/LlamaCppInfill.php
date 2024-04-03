@@ -8,7 +8,7 @@ use Distantmagic\Resonance\Attribute\ConsoleCommand;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\CoroutineCommand;
 use Distantmagic\Resonance\JsonSerializer;
-use Distantmagic\Resonance\LlamaCppClient;
+use Distantmagic\Resonance\LlamaCppClientInterface;
 use Distantmagic\Resonance\LlamaCppInfillRequest;
 use Distantmagic\Resonance\SwooleConfiguration;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,7 +22,7 @@ final class LlamaCppInfill extends CoroutineCommand
 {
     public function __construct(
         private readonly JsonSerializer $jsonSerializer,
-        private readonly LlamaCppClient $llamaCppClient,
+        private readonly LlamaCppClientInterface $llamaCppClient,
         SwooleConfiguration $swooleConfiguration,
     ) {
         parent::__construct($swooleConfiguration);

@@ -151,13 +151,13 @@ readonly class EsbuildMetaBuilder
             throw new RuntimeException('Esbuild meta manifest is not readable: '.$esbuildMetafile);
         }
 
-        $contents = Coroutine::readFile($esbuildMetafile);
+        $content = Coroutine::readFile($esbuildMetafile);
 
-        if (!is_string($contents)) {
+        if (!is_string($content)) {
             throw new RuntimeException('Unable to read esbuild manifest: '.$esbuildMetafile);
         }
 
-        return $contents;
+        return $content;
     }
 
     private function getEsbuildMetaDecoded(string $esbuildMetafile): object

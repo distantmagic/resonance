@@ -26,6 +26,7 @@
         "dragonmantank/cron-expression": "^3.3",
         "ezyang/htmlpurifier": "^4.16",
         "grpc/grpc": "^1.57",
+        "hyperf/coroutine": "^3.1",
         "hyperf/grpc-client": "^3.1",
         "league/commonmark": "^2.4",
         "league/oauth2-client": "^2.7",
@@ -60,7 +61,8 @@
     "require-dev": {
         "phpunit/phpunit": "^11.0",
         "swoole/ide-helper": "^5.1",
-        "symfony/var-dumper": "^7.0"
+        "symfony/var-dumper": "^7.0",
+        "mockery/mockery": "^1.6"
     },
     "suggest": {
         "ext-ds": "For better memory management",

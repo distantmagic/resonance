@@ -9,16 +9,16 @@ use Stringable;
 
 readonly class PsrStringStream implements StreamInterface
 {
-    private string $contents;
+    private string $content;
 
-    public function __construct(string|Stringable $contents)
+    public function __construct(string|Stringable $content)
     {
-        $this->contents = (string) $contents;
+        $this->content = (string) $content;
     }
 
     public function __toString(): string
     {
-        return $this->contents;
+        return $this->content;
     }
 
     public function close(): void {}
@@ -32,7 +32,7 @@ readonly class PsrStringStream implements StreamInterface
 
     public function getContents(): string
     {
-        return $this->contents;
+        return $this->content;
     }
 
     public function getMetadata($key = null)
@@ -42,7 +42,7 @@ readonly class PsrStringStream implements StreamInterface
 
     public function getSize(): ?int
     {
-        return strlen($this->contents);
+        return strlen($this->content);
     }
 
     public function isReadable(): bool
