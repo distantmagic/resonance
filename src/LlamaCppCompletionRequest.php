@@ -4,34 +4,24 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use JsonSerializable;
-
-readonly class LlamaCppCompletionRequest implements JsonSerializable
+readonly class LlamaCppCompletionRequest
 {
     public function __construct(
-        public LlmPromptTemplate $promptTemplate,
+        public LlmChatHistory $llmChatHistory,
         public ?BackusNaurFormGrammar $backusNaurFormGrammar = null,
-        public ?LlmPrompt $llmSystemPrompt = null,
     ) {}
 
-    public function jsonSerialize(): array
+    public function toJsonSerializable(LlmChatHistoryRenderer $llmChatHistoryRenderer): array
     {
         $parameters = [
             'cache_prompt' => true,
-            // 'n_predict' => 200,
-            'prompt' => $this->promptTemplate->getPromptTemplateContent(),
-            'stop' => $this->promptTemplate->getStopWords(),
+            'n_predict' => 128,
+            'prompt' => $llmChatHistoryRenderer->renderLlmChatHistory($this->llmChatHistory),
             'stream' => true,
         ];
 
         if ($this->backusNaurFormGrammar) {
             $parameters['grammar'] = $this->backusNaurFormGrammar->getGrammarContent();
-        }
-
-        if ($this->llmSystemPrompt) {
-            $parameters['system_prompt'] = [
-                'prompt' => $this->llmSystemPrompt->getPromptContent(),
-            ];
         }
 
         return $parameters;

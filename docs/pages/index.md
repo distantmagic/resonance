@@ -17,13 +17,10 @@ description: >
     <div class="homepage__content">
         <hgroup class="homepage__title">
             <h1>Resonance</h1>
-            <h2>PHP Framework That Solves Real-Life Issues</h2>
+            <h2>Build Web Applications with AI and ML Capabilities</h2>
             <p>
                 Designed from the ground up to facilitate interoperability and 
                 messaging between services in your infrastructure and beyond.
-            </p>
-            <p>
-                Provides AI capabilities.
             </p>
             <p>
                 Takes full advantage of asynchronous PHP. Built on top of 

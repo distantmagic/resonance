@@ -7,6 +7,7 @@ namespace Distantmagic\Resonance;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+use Swoole\Event;
 
 /**
  * @internal
@@ -17,7 +18,33 @@ final class LlamaCppClientTest extends TestCase
 {
     use TestsDependencyInectionContainerTrait;
 
-    public function test_request_header_is_parsed(): void
+    protected function tearDown(): void
+    {
+        Event::wait();
+    }
+
+    public function test_completion_is_generated(): void
+    {
+        $llamaCppClient = self::$container->make(LlamaCppClient::class);
+
+        SwooleCoroutineHelper::mustRun(static function () use ($llamaCppClient) {
+            $completion = $llamaCppClient->generateCompletion(new LlamaCppCompletionRequest(
+                llmChatHistory: new LlmChatHistory([
+                    new LlmChatMessage('user', 'Who are you? Answer in exactly two words.'),
+                ]),
+            ));
+
+            $ret = '';
+
+            foreach ($completion as $token) {
+                $ret .= (string) $token;
+            }
+
+            self::assertNotEmpty($ret);
+        });
+    }
+
+    public function test_health_status_is_checked(): void
     {
         $llamaCppClient = self::$container->make(LlamaCppClient::class);
 

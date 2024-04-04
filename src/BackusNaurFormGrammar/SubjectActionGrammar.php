@@ -37,7 +37,7 @@ readonly class SubjectActionGrammar extends BackusNaurFormGrammar
         $stringGrammar = <<<'STRING_GRAMMAR'
         "\"" (
             [^"\\] |
-             "\\" (["\\/bfnrt] | "u" [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F])
+             "\\" (["\\/bfnrt] | "u" [0-9a-zA-Z] [0-9a-zA-Z] [0-9a-zA-Z] [0-9a-zA-Z])
         )* "\""
         STRING_GRAMMAR;
 

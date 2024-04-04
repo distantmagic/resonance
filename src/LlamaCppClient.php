@@ -8,7 +8,6 @@ use CurlHandle;
 use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Generator;
-use JsonSerializable;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Swoole\Coroutine;
@@ -20,6 +19,7 @@ readonly class LlamaCppClient implements LlamaCppClientInterface
 {
     public function __construct(
         private JsonSerializer $jsonSerializer,
+        private LlmChatHistoryRenderer $llmChatHistoryRenderer,
         private LlamaCppConfiguration $llamaCppConfiguration,
         private LlamaCppLinkBuilder $llamaCppLinkBuilder,
         private LoggerInterface $logger,
@@ -27,7 +27,8 @@ readonly class LlamaCppClient implements LlamaCppClientInterface
 
     public function generateCompletion(LlamaCppCompletionRequest $request): LlamaCppCompletionIterator
     {
-        $responseChunks = $this->streamResponse($request, '/completion');
+        $serializedRequest = $this->jsonSerializer->serialize($request->toJsonSerializable($this->llmChatHistoryRenderer));
+        $responseChunks = $this->streamResponse($serializedRequest, '/completion');
 
         return new LlamaCppCompletionIterator(
             $this->jsonSerializer,
@@ -75,7 +76,8 @@ readonly class LlamaCppClient implements LlamaCppClientInterface
      */
     public function generateInfill(LlamaCppInfillRequest $request): Generator
     {
-        $responseChunks = $this->streamResponse($request, '/infill');
+        $serializedRequest = $this->jsonSerializer->serialize($request);
+        $responseChunks = $this->streamResponse($serializedRequest, '/infill');
 
         foreach ($responseChunks as $responseChunk) {
             if ($responseChunk instanceof SwooleChannelIteratorError) {
@@ -166,10 +168,9 @@ readonly class LlamaCppClient implements LlamaCppClientInterface
     /**
      * @return SwooleChannelIterator<LlamaCppClientResponseChunk>
      */
-    private function streamResponse(JsonSerializable $request, string $path): SwooleChannelIterator
+    private function streamResponse(string $requestData, string $path): SwooleChannelIterator
     {
         $channel = new Channel(1);
-        $requestData = json_encode($request);
 
         SwooleCoroutineHelper::mustGo(function () use ($channel, $path, $requestData): void {
             $curlHandle = $this->createCurlHandle();

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Distantmagic\Resonance\LlmPromptTemplate\MistralInstructChat;
+use Distantmagic\Resonance\BackusNaurFormGrammar\InlineGrammar;
 
 readonly class LlamaCppExtractString
 {
@@ -18,14 +18,19 @@ readonly class LlamaCppExtractString
     ): ?string {
         $completion = $this->llamaCppClient->generateCompletion(
             new LlamaCppCompletionRequest(
-                promptTemplate: new MistralInstructChat(<<<PROMPT
-                User is about to provide the $subject.
-                If user provides the $subject, repeat only that $subject, without any additional comment.
-                If user did not provide $subject or it is not certain, write the empty string: ""
-
-                User input:
-                $input
-                PROMPT),
+                backusNaurFormGrammar: new InlineGrammar('root ::= [0-9a-zA-Z\" ]+'),
+                llmChatHistory: new LlmChatHistory([
+                    new LlmChatMessage(
+                        actor: 'system',
+                        message: <<<PROMPT
+                        User is about to provide the $subject.
+                        If user provides the $subject, repeat only that $subject, without any additional comment.
+                        If user did not provide $subject or it is not certain, write the empty string: ""
+                        Respond only with provided $subject.
+                        PROMPT
+                    ),
+                    new LlmChatMessage('user', $input),
+                ]),
             ),
         );
 

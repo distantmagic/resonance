@@ -27,6 +27,7 @@ readonly class LlamaCppConfiguration
         #[SensitiveParameter]
         public string $host,
         #[SensitiveParameter]
+        public LlmChatTemplateType $llmChatTemplate,
         public int $port,
         #[SensitiveParameter]
         public string $scheme,

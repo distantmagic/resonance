@@ -20,6 +20,7 @@ grpc_php_plugin_bin = %DM_ROOT%/grpc_php_plugin
 protoc_bin = /usr/bin/protoc
 
 [llamacpp]
+chat_template = mistral_instruct
 host = 127.0.0.1
 port = 8081
 
