@@ -2,7 +2,7 @@
 collections: 
     - documents
 layout: dm:document
-parent: docs/features/ai/prompt-engineering/index
+parent: docs/features/ai/prompt-templates/index
 title: Mistral Instruct
 description: >
     Open-Source Large Language Model with permissive licensing.

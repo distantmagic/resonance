@@ -16,7 +16,7 @@ title: Changelog
 
 ## v0.26.0
 
-- Feature: {{docs/features/ai/prompt-engineering/gemma/index}} prompt template
+- Feature: {{docs/features/ai/prompt-templates/gemma/index}} prompt template
 - Feature {{docs/features/dependency-injection/index}} side effects
 - Feature {{docs/features/templating/twig/index}} `csp_include` function
 
@@ -64,7 +64,7 @@ title: Changelog
 
 ## v0.16.0
 
-- Feature: add {{docs/features/ai/prompt-engineering/index}} (basic prompt templates)
+- Feature: add {{docs/features/ai/prompt-templates/index}} 
 
 ## v0.15.0
 

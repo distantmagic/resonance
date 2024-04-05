@@ -42,10 +42,6 @@ readonly class CronScheduler implements TickTimerJobInterface
             }
         }
 
-        /**
-         * @var CronRegisteredJob $cronRegisteredJob
-         * @var DateTimeInterface $scheduledDate
-         */
         foreach ($this->schedule as $cronRegisteredJob => $scheduledDate) {
             if ($scheduledDate <= $now) {
                 try {

@@ -2,7 +2,7 @@
 collections: 
     - documents
 layout: dm:document
-parent: docs/features/ai/prompt-engineering/index
+parent: docs/features/ai/prompt-templates/index
 title: Gemma
 description: >
     Google's Open-Source alternative to Gemini.
@@ -27,7 +27,7 @@ knock knock<end_of_turn>
 
 namespace App;
 
-use Distantmagic\Resonance\LlmPromptTemplate\GennaInstructChat;
+use Distantmagic\Resonance\LlmPromptTemplate\GemmaInstructChat;
 
-$template = new GennaInstructChat('user', 'How to make a cat happy?');
+$template = new GemmaInstructChat('user', 'How to make a cat happy?');
 ```

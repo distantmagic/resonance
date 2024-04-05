@@ -37,7 +37,7 @@ port = 8081
 
 In your class, you need to use {{docs/features/dependency-injection/index}} to
 inject `LlamaCppClient`. Then, you need to use the appropriate 
-{{docs/features/ai/prompt-engineering/index}} template adequate for the model 
+{{docs/features/ai/prompt-templates/index}} template adequate for the model 
 you are serving. In the following example we will use 
 [Mistral-Instruct](https://docs.mistral.ai/models/#chat-template) template:
 

@@ -2,7 +2,7 @@
 collections: 
     - documents
 layout: dm:document
-parent: docs/features/ai/prompt-engineering/index
+parent: docs/features/ai/prompt-templates/index
 title: Phi-2
 description: >
     Small Language Model from Microsoft. Memory efficient, performant, 
