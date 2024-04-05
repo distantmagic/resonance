@@ -57,6 +57,12 @@ final class LlamaCppExtractSubjectTest extends TestCase
             'I want to add a blog',
             'blog',
         ];
+
+        yield 'application name hallucinate' => [
+            'application name',
+            'st',
+            null,
+        ];
     }
 
     protected function tearDown(): void

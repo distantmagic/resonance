@@ -127,6 +127,8 @@ final readonly class JsonRPCProtocolController extends WebSocketProtocolControll
         } catch (WebSocketProtocolException $exception) {
             $this->onProtocolError($server, $frame, $exception->getMessage());
             $this->onException($exception);
+        } catch (Throwable $throwable) {
+            $this->onException($throwable);
         }
     }
 
