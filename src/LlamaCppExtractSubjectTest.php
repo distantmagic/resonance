@@ -14,9 +14,9 @@ use Swoole\Event;
 /**
  * @internal
  */
-#[CoversClass(LlamaCppExtractString::class)]
+#[CoversClass(LlamaCppExtractSubject::class)]
 #[Group('llamacpp')]
-final class LlamaCppExtractStringTest extends TestCase
+final class LlamaCppExtractSubjectTest extends TestCase
 {
     use TestsDependencyInectionContainerTrait;
 
@@ -65,13 +65,13 @@ final class LlamaCppExtractStringTest extends TestCase
     }
 
     #[DataProvider('inputSubjectProvider')]
-    public function test_application_name_is_provided(string $subject, string $input, ?string $expected): void
+    public function test_application_name_is_provided(string $topic, string $input, ?string $expected): void
     {
-        $llamaCppExtractString = self::$container->make(LlamaCppExtractString::class);
+        $llamaCppExtract = self::$container->make(LlamaCppExtractSubject::class);
 
-        SwooleCoroutineHelper::mustRun(static function () use ($expected, $input, $llamaCppExtractString, $subject) {
-            $extracted = $llamaCppExtractString->extract(
-                subject: $subject,
+        SwooleCoroutineHelper::mustRun(static function () use ($expected, $input, $llamaCppExtract, $topic) {
+            $extracted = $llamaCppExtract->extract(
+                topic: $topic,
                 input: $input,
             );
 

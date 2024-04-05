@@ -7,9 +7,10 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\DialogueInput\UserInput;
 use Distantmagic\Resonance\DialogueMessageProducer\ConstMessageProducer;
 use Distantmagic\Resonance\DialogueResponse\LiteralInputResponse;
-use Distantmagic\Resonance\DialogueResponseCondition\LlamaCppInputCondition;
-use Mockery;
+use Distantmagic\Resonance\DialogueResponse\LlamaCppExtractSubjectResponse;
+use Distantmagic\Resonance\DialogueResponse\LlamaCppExtractYesNoResponse;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -18,7 +19,54 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(DialogueNode::class)]
 final class DialogueNodeTest extends TestCase
 {
-    public function test_dialogue_produces_no_response(): void
+    use TestsDependencyInectionContainerTrait;
+
+    #[Group('llamacpp')]
+    public function test_dialogue_handles_fuzzy_responses(): void
+    {
+        $rootNode = new DialogueNode(
+            message: new ConstMessageProducer('Are you a marketer?'),
+        );
+
+        $marketingNode = new DialogueNode(
+            message: new ConstMessageProducer('Hello, marketer!'),
+        );
+
+        $rootNode->addPotentialResponse(new LlamaCppExtractYesNoResponse(
+            llamaCppExtractYesNoMaybe: self::$container->make(LlamaCppExtractYesNoMaybe::class),
+            whenProvided: static function (YesNoMaybe $response) use ($marketingNode): DialogueResponseResolution {
+                return match ($response) {
+                    YesNoMaybe::Yes => new DialogueResponseResolution(
+                        followUp: $marketingNode,
+                        status: DialogueResponseResolutionStatus::CanRespond,
+                    ),
+                    default => new DialogueResponseResolution(
+                        followUp: null,
+                        status: DialogueResponseResolutionStatus::CannotRespond,
+                    ),
+                };
+            },
+        ));
+
+        $rootNode->addPotentialResponse(new LiteralInputResponse(
+            when: 'marketing',
+            followUp: $marketingNode,
+        ));
+
+        SwooleCoroutineHelper::mustRun(static function () use ($marketingNode, $rootNode) {
+            $response = $rootNode->respondTo(new UserInput('yep'));
+
+            self::assertSame($marketingNode, $response);
+        });
+
+        SwooleCoroutineHelper::mustRun(static function () use ($rootNode) {
+            $response = $rootNode->respondTo(new UserInput('I do not know who I am'));
+
+            self::assertNull($response);
+        });
+    }
+
+    public function test_dialogue_produces_exact(): void
     {
         $rootNode = new DialogueNode(
             message: new ConstMessageProducer('What is your current role?'),
@@ -27,14 +75,6 @@ final class DialogueNodeTest extends TestCase
         $marketingNode = new DialogueNode(
             message: new ConstMessageProducer('Hello, marketer!'),
         );
-
-        $rootNode->addPotentialResponse(new DialogueResponse(
-            when: new LlamaCppInputCondition(
-                Mockery::mock(LlamaCppClientInterface::class),
-                'User states that they are working in a marketing department',
-            ),
-            followUp: $marketingNode,
-        ));
 
         $rootNode->addPotentialResponse(new LiteralInputResponse(
             when: 'marketing',
@@ -53,5 +93,41 @@ final class DialogueNodeTest extends TestCase
         $response = $rootNode->respondTo(new UserInput('marketing'));
 
         self::assertSame($response, $marketingNode);
+    }
+
+    #[Group('llamacpp')]
+    public function test_dialogue_produces_response_through_llamacpp(): void
+    {
+        $rootNode = new DialogueNode(
+            message: new ConstMessageProducer('What is your current role?'),
+        );
+
+        $marketingNode = new DialogueNode(
+            message: new ConstMessageProducer('Hello, marketer!'),
+        );
+
+        $rootNode->addPotentialResponse(new LlamaCppExtractSubjectResponse(
+            llamaCppExtractSubject: self::$container->make(LlamaCppExtractSubject::class),
+            topic: "user's occupation",
+            whenProvided: static function (string $occupation): DialogueResponseResolution {
+                return new DialogueResponseResolution(
+                    followUp: new DialogueNode(
+                        message: new ConstMessageProducer(sprintf('Hello, %s!', $occupation)),
+                    ),
+                    status: DialogueResponseResolutionStatus::CanRespond,
+                );
+            },
+        ));
+
+        $rootNode->addPotentialResponse(new LiteralInputResponse(
+            when: 'marketing',
+            followUp: $marketingNode,
+        ));
+
+        SwooleCoroutineHelper::mustRun(static function () use ($rootNode) {
+            $response = $rootNode->respondTo(new UserInput('i am a recruiter'));
+
+            self::assertSame('Hello, recruiter!', (string) $response->getMessageProducer());
+        });
     }
 }

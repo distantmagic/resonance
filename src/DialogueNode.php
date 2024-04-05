@@ -31,8 +31,10 @@ readonly class DialogueNode implements DialogueNodeInterface
     public function respondTo(DialogueInputInterface $dialogueInput): ?DialogueNodeInterface
     {
         foreach (new DialogueResponseSortedIterator($this->responses) as $response) {
-            if ($response->getCondition()->isMetBy($dialogueInput)) {
-                return $response->getFollowUp();
+            $resolution = $response->resolveResponse($dialogueInput);
+
+            if ($resolution->getStatus()->canRespond()) {
+                return $resolution->getFollowUp();
             }
         }
 

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\DialogueMessageProducer\ConstMessageProducer;
-use Distantmagic\Resonance\DialogueResponseCondition\ExactInputCondition;
-use Distantmagic\Resonance\DialogueResponseCondition\LlamaCppInputCondition;
+use Distantmagic\Resonance\DialogueResponse\LiteralInputResponse;
+use Distantmagic\Resonance\DialogueResponse\LlamaCppExtractSubjectResponse;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -19,23 +19,23 @@ final class DialogueResponseSortedIteratorTest extends TestCase
 {
     public function test_dialogue_responses_are_sorted_by_cost(): void
     {
-        $responseDiscriminator = new DialogueResponseDiscriminator();
-
         $marketingNode = new DialogueNode(
             message: new ConstMessageProducer('Hello, marketer!'),
-            responseDiscriminator: $responseDiscriminator,
         );
 
-        $response1 = new DialogueResponse(
-            when: new LlamaCppInputCondition(
-                Mockery::mock(LlamaCppClientInterface::class),
-                'test'
-            ),
-            followUp: $marketingNode,
+        $response1 = new LlamaCppExtractSubjectResponse(
+            llamaCppExtractSubject: Mockery::mock(LlamaCppExtractSubjectInterface::class),
+            topic: "user's occupation",
+            whenProvided: static function (string $userInput): DialogueResponseResolution {
+                return new DialogueResponseResolution(
+                    followUp: null,
+                    status: DialogueResponseResolutionStatus::CannotRespond,
+                );
+            },
         );
 
-        $response2 = new DialogueResponse(
-            when: new ExactInputCondition('marketing'),
+        $response2 = new LiteralInputResponse(
+            when: 'marketing',
             followUp: $marketingNode,
         );
 

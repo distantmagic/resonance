@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\BackusNaurFormGrammar\InlineGrammar;
 
-readonly class LlamaCppExtractString
+#[Singleton(provides: LlamaCppExtractSubjectInterface::class)]
+readonly class LlamaCppExtractSubject implements LlamaCppExtractSubjectInterface
 {
     public function __construct(
         private LlamaCppClientInterface $llamaCppClient,
@@ -14,7 +16,7 @@ readonly class LlamaCppExtractString
 
     public function extract(
         string $input,
-        string $subject,
+        string $topic,
     ): ?string {
         $completion = $this->llamaCppClient->generateCompletion(
             new LlamaCppCompletionRequest(
@@ -23,10 +25,11 @@ readonly class LlamaCppExtractString
                     new LlmChatMessage(
                         actor: 'system',
                         message: <<<PROMPT
-                        User is about to provide the $subject.
-                        If user provides the $subject, repeat only that $subject, without any additional comment.
-                        If user did not provide $subject or it is not certain, write the empty string: ""
-                        Respond only with provided $subject.
+                        User is about to provide the $topic.
+                        If user provides the $topic, repeat only that $topic, without any additional comment.
+                        If user did not provide $topic or it is not certain, write the empty string: ""
+                        If possible use only nouns to describe the $topic.
+                        Respond only with provided $topic.
                         PROMPT
                     ),
                     new LlmChatMessage('user', $input),

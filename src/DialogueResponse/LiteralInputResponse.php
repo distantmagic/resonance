@@ -26,11 +26,13 @@ readonly class LiteralInputResponse extends DialogueResponse
     {
         if ($dialogueInput->getContent() === $this->when) {
             return new DialogueResponseResolution(
+                followUp: $this->followUp,
                 status: DialogueResponseResolutionStatus::CanRespond,
             );
         }
 
         return new DialogueResponseResolution(
+            followUp: null,
             status: DialogueResponseResolutionStatus::CannotRespond,
         );
     }

@@ -9,9 +9,9 @@ use Distantmagic\Resonance\JsonRPCRequest;
 use Distantmagic\Resonance\LlamaCppClientInterface;
 use Distantmagic\Resonance\LlamaCppCompletionIterator;
 use Distantmagic\Resonance\LlamaCppCompletionRequest;
+use Distantmagic\Resonance\LlmChatHistory;
+use Distantmagic\Resonance\LlmChatMessage;
 use Distantmagic\Resonance\LlmPrompt\SubjectActionPrompt;
-use Distantmagic\Resonance\LlmPromptTemplate;
-use Distantmagic\Resonance\LlmPromptTemplate\ChainPrompt;
 use Distantmagic\Resonance\ObservableTaskCategory;
 use Distantmagic\Resonance\ObservableTaskFactory;
 use Distantmagic\Resonance\ObservableTaskStatus;
@@ -55,8 +55,6 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketJs
         mixed $responseChunk,
         bool $isLastChunk,
     ): void;
-
-    abstract protected function toPromptTemplate(string $prompt): LlmPromptTemplate;
 
     public function __construct(
         private LlamaCppClientInterface $llamaCppClient,
@@ -116,9 +114,9 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketJs
     ): Generator {
         $request = new LlamaCppCompletionRequest(
             backusNaurFormGrammar: $this->subjectActionGrammar,
-            promptTemplate: new ChainPrompt([
-                $this->toPromptTemplate($this->subjectActionPrompt->getPromptContent()),
-                $this->toPromptTemplate($this->getPromptFromPayload($rpcRequest->payload)),
+            llmChatHistory: new LlmChatHistory([
+                new LlmChatMessage('system', $this->subjectActionPrompt->getPromptContent()),
+                new LlmChatMessage('user', $this->getPromptFromPayload($rpcRequest->payload)),
             ]),
         );
 

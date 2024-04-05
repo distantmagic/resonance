@@ -6,5 +6,7 @@ namespace Distantmagic\Resonance;
 
 interface DialogueResponseResolutionInterface
 {
+    public function getFollowUp(): ?DialogueNodeInterface;
+
     public function getStatus(): DialogueResponseResolutionStatus;
 }

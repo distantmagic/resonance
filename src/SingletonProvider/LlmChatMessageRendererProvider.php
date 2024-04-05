@@ -13,11 +13,9 @@ use Distantmagic\Resonance\LlmChatTemplateType;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
-use Nette\PhpGenerator\Printer;
-use RuntimeException;
 
 /**
- * @template-extends SingletonProvider<Printer>
+ * @template-extends SingletonProvider<LlmChatMessageRendererInterface>
  */
 #[Singleton(provides: LlmChatMessageRendererInterface::class)]
 final readonly class LlmChatMessageRendererProvider extends SingletonProvider
@@ -33,7 +31,6 @@ final readonly class LlmChatMessageRendererProvider extends SingletonProvider
         return match ($this->llamaCppConfiguration->llmChatTemplate) {
             LlmChatTemplateType::ChatML => $this->chatMLMessageRenderer,
             LlmChatTemplateType::MistralInstruct => $this->mistralInstructMessageRenderer,
-            default => throw new RuntimeException('Unsupported llm chat message format: '.$this->llamaCppConfiguration->llmChatTemplate->value),
         };
     }
 }
