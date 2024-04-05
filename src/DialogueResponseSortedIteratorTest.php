@@ -26,7 +26,7 @@ final class DialogueResponseSortedIteratorTest extends TestCase
         $response1 = new LlamaCppExtractSubjectResponse(
             llamaCppExtractSubject: Mockery::mock(LlamaCppExtractSubjectInterface::class),
             topic: "user's occupation",
-            whenProvided: static function (string $userInput): DialogueResponseResolution {
+            whenProvided: static function (): DialogueResponseResolution {
                 return new DialogueResponseResolution(
                     followUp: null,
                     status: DialogueResponseResolutionStatus::CannotRespond,

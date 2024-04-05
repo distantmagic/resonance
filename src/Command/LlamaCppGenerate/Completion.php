@@ -8,7 +8,8 @@ use Distantmagic\Resonance\Attribute\ConsoleCommand;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\Command\LlamaCppGenerate;
 use Distantmagic\Resonance\LlamaCppCompletionRequest;
-use Distantmagic\Resonance\LlmPromptTemplate\MistralInstructChat;
+use Distantmagic\Resonance\LlmChatHistory;
+use Distantmagic\Resonance\LlmChatMessage;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -20,8 +21,11 @@ final class Completion extends LlamaCppGenerate
 {
     protected function executeLlamaCppCommand(InputInterface $input, OutputInterface $output, string $prompt): int
     {
-        $template = new MistralInstructChat($prompt);
-        $request = new LlamaCppCompletionRequest($template);
+        $request = new LlamaCppCompletionRequest(
+            llmChatHistory: new LlmChatHistory([
+                new LlmChatMessage('user', $prompt),
+            ]),
+        );
 
         $completion = $this->llamaCppClient->generateCompletion($request);
 

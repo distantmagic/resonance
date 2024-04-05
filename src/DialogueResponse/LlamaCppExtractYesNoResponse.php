@@ -14,6 +14,9 @@ use Distantmagic\Resonance\YesNoMaybe;
 
 readonly class LlamaCppExtractYesNoResponse extends DialogueResponse
 {
+    /**
+     * @var Closure(YesNoMaybe):DialogueResponseResolution $whenProvided
+     */
     private Closure $whenProvided;
 
     /**
@@ -31,9 +34,9 @@ readonly class LlamaCppExtractYesNoResponse extends DialogueResponse
         return 50;
     }
 
-    public function resolveResponse(DialogueInputInterface $prompt): DialogueResponseResolution
+    public function resolveResponse(DialogueInputInterface $dialogueInput): DialogueResponseResolution
     {
-        $extracted = $this->llamaCppExtractYesNoMaybe->extract(input: $prompt->getContent());
+        $extracted = $this->llamaCppExtractYesNoMaybe->extract(input: $dialogueInput->getContent());
 
         if (!$extracted->isCertain()) {
             return new DialogueResponseResolution(

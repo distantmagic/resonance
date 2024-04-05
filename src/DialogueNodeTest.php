@@ -127,6 +127,7 @@ final class DialogueNodeTest extends TestCase
         SwooleCoroutineHelper::mustRun(static function () use ($rootNode) {
             $response = $rootNode->respondTo(new UserInput('i am a recruiter'));
 
+            self::assertNotNull($response);
             self::assertSame('Hello, recruiter!', (string) $response->getMessageProducer());
         });
     }

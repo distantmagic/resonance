@@ -13,6 +13,9 @@ use Distantmagic\Resonance\LlamaCppExtractSubjectInterface;
 
 readonly class LlamaCppExtractSubjectResponse extends DialogueResponse
 {
+    /**
+     * @var Closure(string):DialogueResponseResolution $whenProvided
+     */
     private Closure $whenProvided;
 
     /**
@@ -31,10 +34,10 @@ readonly class LlamaCppExtractSubjectResponse extends DialogueResponse
         return 50;
     }
 
-    public function resolveResponse(DialogueInputInterface $prompt): DialogueResponseResolution
+    public function resolveResponse(DialogueInputInterface $dialogueInput): DialogueResponseResolution
     {
         $extracted = $this->llamaCppExtractSubject->extract(
-            input: $prompt->getContent(),
+            input: $dialogueInput->getContent(),
             topic: $this->topic,
         );
 
