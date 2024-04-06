@@ -41,13 +41,20 @@ readonly class LlamaCppExtractSubjectResponse extends DialogueResponse
             topic: $this->topic,
         );
 
-        if (is_null($extracted)) {
+        if ($extracted->isFailed) {
+            return new DialogueResponseResolution(
+                followUp: null,
+                status: DialogueResponseResolutionStatus::Failed,
+            );
+        }
+
+        if (is_null($extracted->content)) {
             return new DialogueResponseResolution(
                 followUp: null,
                 status: DialogueResponseResolutionStatus::CannotRespond,
             );
         }
 
-        return ($this->whenProvided)($extracted);
+        return ($this->whenProvided)($extracted->content);
     }
 }

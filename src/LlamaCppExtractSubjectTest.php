@@ -81,7 +81,7 @@ final class LlamaCppExtractSubjectTest extends TestCase
                 input: $input,
             );
 
-            self::assertSame($expected, $extracted);
+            self::assertSame($expected, $extracted->content);
         });
     }
 }

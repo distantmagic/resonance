@@ -14,7 +14,7 @@ readonly class LlamaCppExtractSubject implements LlamaCppExtractSubjectInterface
         private LlamaCppClientInterface $llamaCppClient,
     ) {}
 
-    public function extract(string $input, string $topic): ?string
+    public function extract(string $input, string $topic): LlamaCppExtractSubjectResult
     {
         $completion = $this->llamaCppClient->generateCompletion(
             new LlamaCppCompletionRequest(
@@ -41,22 +41,38 @@ readonly class LlamaCppExtractSubject implements LlamaCppExtractSubjectInterface
         $ret = '';
 
         foreach ($completion as $token) {
+            if ($token->isFailed) {
+                return new LlamaCppExtractSubjectResult(
+                    content: null,
+                    isFailed: true,
+                );
+            }
+
             $ret .= $token;
 
             if (strlen($ret) > strlen($input)) {
                 $completion->stop();
 
                 // Hallucinated or just went off topic
-                return null;
+                return new LlamaCppExtractSubjectResult(
+                    content: null,
+                    isFailed: false,
+                );
             }
         }
 
         $trimmed = trim($ret, ' "');
 
         if (0 === strlen($trimmed)) {
-            return null;
+            return new LlamaCppExtractSubjectResult(
+                content: null,
+                isFailed: false,
+            );
         }
 
-        return $trimmed;
+        return new LlamaCppExtractSubjectResult(
+            content: $trimmed,
+            isFailed: false,
+        );
     }
 }

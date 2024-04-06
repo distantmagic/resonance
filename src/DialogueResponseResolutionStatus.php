@@ -8,9 +8,15 @@ enum DialogueResponseResolutionStatus
 {
     case CannotRespond;
     case CanRespond;
+    case Failed;
 
     public function canRespond(): bool
     {
         return self::CanRespond === $this;
+    }
+
+    public function isFailed(): bool
+    {
+        return self::Failed === $this;
     }
 }

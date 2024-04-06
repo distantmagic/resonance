@@ -28,16 +28,20 @@ readonly class DialogueNode implements DialogueNodeInterface
         return $this->message;
     }
 
-    public function respondTo(DialogueInputInterface $dialogueInput): ?DialogueNodeInterface
+    public function respondTo(DialogueInputInterface $dialogueInput): DialogueResponseResolutionInterface
     {
         foreach (new DialogueResponseSortedIterator($this->responses) as $response) {
             $resolution = $response->resolveResponse($dialogueInput);
+            $resolutionStatus = $resolution->getStatus();
 
-            if ($resolution->getStatus()->canRespond()) {
-                return $resolution->getFollowUp();
+            if ($resolutionStatus->isFailed() || $resolutionStatus->canRespond()) {
+                return $resolution;
             }
         }
 
-        return null;
+        return new DialogueResponseResolution(
+            followUp: null,
+            status: DialogueResponseResolutionStatus::CannotRespond,
+        );
     }
 }

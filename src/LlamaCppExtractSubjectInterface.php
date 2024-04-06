@@ -6,5 +6,5 @@ namespace Distantmagic\Resonance;
 
 interface LlamaCppExtractSubjectInterface
 {
-    public function extract(string $input, string $topic): ?string;
+    public function extract(string $input, string $topic): LlamaCppExtractSubjectResult;
 }

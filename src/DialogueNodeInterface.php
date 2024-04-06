@@ -10,5 +10,5 @@ interface DialogueNodeInterface
 
     public function getMessageProducer(): DialogueMessageProducerInterface;
 
-    public function respondTo(DialogueInputInterface $dialogueInput): ?self;
+    public function respondTo(DialogueInputInterface $dialogueInput): DialogueResponseResolutionInterface;
 }

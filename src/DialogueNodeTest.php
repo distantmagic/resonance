@@ -56,13 +56,15 @@ final class DialogueNodeTest extends TestCase
         SwooleCoroutineHelper::mustRun(static function () use ($marketingNode, $rootNode) {
             $response = $rootNode->respondTo(new UserInput('yep'));
 
-            self::assertSame($marketingNode, $response);
+            self::assertFalse($response->getStatus()->isFailed());
+            self::assertSame($marketingNode, $response->getFollowUp());
         });
 
         SwooleCoroutineHelper::mustRun(static function () use ($rootNode) {
             $response = $rootNode->respondTo(new UserInput('I do not know who I am'));
 
-            self::assertNull($response);
+            self::assertFalse($response->getStatus()->isFailed());
+            self::assertNull($response->getFollowUp());
         });
     }
 
@@ -92,7 +94,8 @@ final class DialogueNodeTest extends TestCase
 
         $response = $rootNode->respondTo(new UserInput('marketing'));
 
-        self::assertSame($response, $marketingNode);
+        self::assertFalse($response->getStatus()->isFailed());
+        self::assertSame($marketingNode, $response->getFollowUp());
     }
 
     #[Group('llamacpp')]
@@ -127,8 +130,12 @@ final class DialogueNodeTest extends TestCase
         SwooleCoroutineHelper::mustRun(static function () use ($rootNode) {
             $response = $rootNode->respondTo(new UserInput('i am a recruiter'));
 
-            self::assertNotNull($response);
-            self::assertSame('Hello, recruiter!', (string) $response->getMessageProducer());
+            self::assertFalse($response->getStatus()->isFailed());
+
+            $followUp = $response->getFollowUp();
+
+            self::assertNotNull($followUp);
+            self::assertSame('Hello, recruiter!', (string) $followUp->getMessageProducer());
         });
     }
 }
