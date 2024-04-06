@@ -42,6 +42,8 @@ readonly class LlamaCppExtractSubject implements LlamaCppExtractSubjectInterface
 
         foreach ($completion as $token) {
             if ($token->isFailed) {
+                $completion->stop();
+
                 return new LlamaCppExtractSubjectResult(
                     content: null,
                     isFailed: true,
