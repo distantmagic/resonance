@@ -40,8 +40,8 @@ readonly class ObservableTask implements ObservableTaskInterface
             yield from ($this->iterableTask)();
         } catch (Throwable $throwable) {
             yield new ObservableTaskStatusUpdate(
-                ObservableTaskStatus::Failed,
-                $throwable,
+                status: ObservableTaskStatus::Failed,
+                data: $throwable,
             );
         }
     }

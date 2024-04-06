@@ -123,13 +123,13 @@ readonly class DoctrineEntityManagerRepository
 
         $entityManager = $entityManagerWeakReference->getEntityManager();
 
-        try {
-            return $callback($entityManager);
-        } finally {
-            if ($flush) {
-                $entityManager->flush();
-            }
+        $ret = $callback($entityManager);
+
+        if ($flush) {
+            $entityManager->flush();
         }
+
+        return $ret;
     }
 
     /**

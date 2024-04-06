@@ -13,9 +13,16 @@ readonly class DialogueNode implements DialogueNodeInterface
      */
     private Set $responses;
 
-    public function __construct(private DialogueMessageProducerInterface $message)
-    {
+    /**
+     * @var Set<DialogueNodeSideEffectInterface> $sideEffects
+     */
+    private Set $sideEffects;
+
+    public function __construct(
+        private DialogueMessageProducerInterface $message,
+    ) {
         $this->responses = new Set();
+        $this->sideEffects = new Set();
     }
 
     public function addPotentialResponse(DialogueResponseInterface $response): void
@@ -23,9 +30,19 @@ readonly class DialogueNode implements DialogueNodeInterface
         $this->responses->add($response);
     }
 
+    public function addSideEffect(DialogueNodeSideEffectInterface $dialogueNodeSideEffect): void
+    {
+        $this->sideEffects->add($dialogueNodeSideEffect);
+    }
+
     public function getMessageProducer(): DialogueMessageProducerInterface
     {
         return $this->message;
+    }
+
+    public function getSideEffects(): Set
+    {
+        return $this->sideEffects;
     }
 
     public function respondTo(DialogueInputInterface $dialogueInput): DialogueResponseResolutionInterface

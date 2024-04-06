@@ -65,7 +65,7 @@ readonly class LlamaCppExtractSubject implements LlamaCppExtractSubjectInterface
 
         $trimmed = trim($ret, ' "');
 
-        if (0 === strlen($trimmed)) {
+        if (0 === strlen($trimmed) || !str_contains($input, $trimmed)) {
             return new LlamaCppExtractSubjectResult(
                 content: null,
                 isFailed: false,
