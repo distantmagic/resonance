@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\DialogueMessageProducer\ConstMessageProducer;
 use Ds\Set;
 
 readonly class DialogueNode implements DialogueNodeInterface
@@ -17,6 +18,13 @@ readonly class DialogueNode implements DialogueNodeInterface
      * @var Set<DialogueNodeSideEffectInterface> $sideEffects
      */
     private Set $sideEffects;
+
+    public static function withMessage(string $content): self
+    {
+        return new self(
+            message: new ConstMessageProducer($content),
+        );
+    }
 
     public function __construct(
         private DialogueMessageProducerInterface $message,

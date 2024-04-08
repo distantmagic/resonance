@@ -26,7 +26,7 @@ use WeakMap;
 readonly class DoctrineConnectionRepository
 {
     /**
-     * @var WeakMap<ServerRequestInterface,Map<string,Connection>>
+     * @var WeakMap<ServerRequestInterface|WebSocketConnection,Map<string,Connection>>
      */
     public WeakMap $connections;
 
@@ -39,7 +39,7 @@ readonly class DoctrineConnectionRepository
         private LoggerInterface $logger,
     ) {
         /**
-         * @var WeakMap<ServerRequestInterface,Map<string,Connection>>
+         * @var WeakMap<ServerRequestInterface|WebSocketConnection,Map<string,Connection>>
          */
         $this->connections = new WeakMap();
     }
@@ -63,7 +63,7 @@ readonly class DoctrineConnectionRepository
     /**
      * @param non-empty-string $name
      */
-    public function getConnection(ServerRequestInterface $request, string $name = 'default'): Connection
+    public function getConnection(ServerRequestInterface|WebSocketConnection $request, string $name = 'default'): Connection
     {
         if (!$this->connections->offsetExists($request)) {
             $this->connections->offsetSet($request, new Map());

@@ -41,7 +41,7 @@ use Throwable;
 final readonly class JsonRPCProtocolController extends WebSocketProtocolController
 {
     /**
-     * @var Map<int, WebSocketJsonRPCConnectionHandle>
+     * @var Map<int,WebSocketJsonRPCConnectionHandle>
      */
     private Map $connectionHandles;
 
@@ -57,7 +57,7 @@ final readonly class JsonRPCProtocolController extends WebSocketProtocolControll
         private ?WebSocketJsonRPCConnectionControllerInterface $webSocketJsonRPCConnectionController = null,
     ) {
         /**
-         * @var Map<int, WebSocketJsonRPCConnectionHandle>
+         * @var Map<int,WebSocketJsonRPCConnectionHandle>
          */
         $this->connectionHandles = new Map();
     }
@@ -132,9 +132,8 @@ final readonly class JsonRPCProtocolController extends WebSocketProtocolControll
         }
     }
 
-    public function onOpen(Server $server, int $fd, WebSocketAuthResolution $webSocketAuthResolution): void
+    public function onOpen(WebSocketConnection $webSocketConnection, WebSocketAuthResolution $webSocketAuthResolution): void
     {
-        $webSocketConnection = new WebSocketConnection($server, $fd);
         $connectionHandle = new WebSocketJsonRPCConnectionHandle(
             $this->webSocketJsonRPCResponderAggregate,
             $webSocketAuthResolution,
@@ -146,7 +145,7 @@ final readonly class JsonRPCProtocolController extends WebSocketProtocolControll
             $webSocketConnection,
         );
 
-        $this->connectionHandles->put($fd, $connectionHandle);
+        $this->connectionHandles->put($webSocketConnection->fd, $connectionHandle);
     }
 
     private function getFrameController(Frame $frame): WebSocketJsonRPCConnectionHandle

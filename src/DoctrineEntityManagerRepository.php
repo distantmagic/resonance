@@ -10,30 +10,16 @@ use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Ds\Map;
-use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Coroutine;
-use Swoole\Coroutine\Context;
-use WeakMap;
 
 readonly class DoctrineEntityManagerRepository
 {
-    /**
-     * @var WeakMap<ServerRequestInterface,Map<string,EntityManagerInterface>>
-     */
-    private WeakMap $entityManagers;
-
     public function __construct(
         private Configuration $configuration,
         private DoctrineConnectionRepository $doctrineConnectionRepository,
+        private DoctrineEntityManagerWeakStore $doctrineEntityManagerWeakStore,
         private EventManager $eventManager,
-    ) {
-        /**
-         * @var WeakMap<ServerRequestInterface,Map<string,EntityManagerInterface>>
-         */
-        $this->entityManagers = new WeakMap();
-    }
+    ) {}
 
     /**
      * @param non-empty-string $name
@@ -48,45 +34,26 @@ readonly class DoctrineEntityManagerRepository
     /**
      * @param non-empty-string $name
      */
-    public function createContextKey(string $name): string
+    public function getEntityManager(ServerRequestInterface|WebSocketConnection $request, string $name = 'default'): EntityManagerInterface
     {
-        return sprintf('%s.%s', self::class, $name);
-    }
+        $entityManager = $this->doctrineEntityManagerWeakStore->fromRequest($request, $name);
 
-    /**
-     * @param non-empty-string $name
-     */
-    public function getEntityManager(ServerRequestInterface $request, string $name = 'default'): EntityManagerInterface
-    {
-        if (!$this->entityManagers->offsetExists($request)) {
-            $this->entityManagers->offsetSet($request, new Map());
+        if ($entityManager) {
+            return $entityManager;
         }
 
-        $entityManagers = $this->entityManagers->offsetGet($request);
+        $entityManagerWeakReference = $this->doctrineEntityManagerWeakStore->fromContext($name);
 
-        if ($entityManagers->hasKey($name)) {
-            return $entityManagers->get($name);
-        }
-
-        /**
-         * @var null|Context $context
-         */
-        $context = Coroutine::getContext();
-        $contextKey = $this->createContextKey($name);
-
-        if ($context && isset($context[$contextKey]) && $context[$contextKey] instanceof EntityManagerWeakReference) {
-            return $context[$contextKey]->getEntityManager();
+        if ($entityManagerWeakReference) {
+            return $entityManagerWeakReference->getEntityManager();
         }
 
         $entityManager = $this->buildEntityManagerFromConnection(
             connection: $this->doctrineConnectionRepository->getConnection($request, $name),
         );
 
-        if ($context) {
-            $context[$contextKey] = new EntityManagerWeakReference($entityManager);
-        }
-
-        $entityManagers->put($name, $entityManager);
+        $this->doctrineEntityManagerWeakStore->setInContext($name, new EntityManagerWeakReference($entityManager));
+        $this->doctrineEntityManagerWeakStore->setByRequest($request, $name, $entityManager);
 
         return $entityManager;
     }
@@ -101,24 +68,12 @@ readonly class DoctrineEntityManagerRepository
      */
     public function withEntityManager(callable $callback, string $name = 'default', bool $flush = true): mixed
     {
-        /**
-         * @var null|Context $context
-         */
-        $context = Coroutine::getContext();
-        $contextKey = $this->createContextKey($name);
+        $entityManagerWeakReference = $this->doctrineEntityManagerWeakStore->fromContext($name);
 
-        if ($context && isset($context[$contextKey])) {
-            $entityManagerWeakReference = $context[$contextKey];
+        if (!$entityManagerWeakReference) {
+            $entityManagerWeakReference = $this->buildWeakReference($name);
 
-            if (!($entityManagerWeakReference instanceof EntityManagerWeakReference)) {
-                throw new LogicException('Expected weak reference to entity manager');
-            }
-        } else {
-            $entityManagerWeakReference = $this->getWeakReference($name);
-
-            if ($context) {
-                $context[$contextKey] = $entityManagerWeakReference;
-            }
+            $this->doctrineEntityManagerWeakStore->setInContext($name, $entityManagerWeakReference);
         }
 
         $entityManager = $entityManagerWeakReference->getEntityManager();
@@ -167,7 +122,7 @@ readonly class DoctrineEntityManagerRepository
     /**
      * @param non-empty-string $name
      */
-    private function getWeakReference(string $name = 'default'): EntityManagerWeakReference
+    private function buildWeakReference(string $name = 'default'): EntityManagerWeakReference
     {
         return new EntityManagerWeakReference($this->buildEntityManager($name));
     }

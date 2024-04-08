@@ -10,6 +10,7 @@ use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\DoctrineConnectionRepository;
 use Distantmagic\Resonance\DoctrineEntityManagerRepository;
+use Distantmagic\Resonance\DoctrineEntityManagerWeakStore;
 use Distantmagic\Resonance\Environment;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\PHPProjectFiles;
@@ -31,6 +32,7 @@ final readonly class DoctrineEntityManagerRepositoryProvider extends SingletonPr
         private ApplicationConfiguration $applicationConfiguration,
         private Configuration $configuration,
         private DoctrineConnectionRepository $doctrineConnectionRepository,
+        private DoctrineEntityManagerWeakStore $doctrineEntityManagerWeakStore,
         private EventManager $eventManager,
         private Filesystem $filesystem,
     ) {}
@@ -40,6 +42,7 @@ final readonly class DoctrineEntityManagerRepositoryProvider extends SingletonPr
         $doctrineEntityManagerRepository = new DoctrineEntityManagerRepository(
             $this->configuration,
             $this->doctrineConnectionRepository,
+            $this->doctrineEntityManagerWeakStore,
             $this->eventManager,
         );
 

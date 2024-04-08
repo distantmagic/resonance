@@ -54,6 +54,7 @@ final readonly class WebSocketServerController implements ServerPipeMessageHandl
         private LoggerInterface $logger,
         private SwooleConfiguration $swooleConfiguration,
         private WebSocketProtocolControllerAggregate $protocolControllerAggregate,
+        private WebSocketAwareCollection $webSocketAwareCollection,
         private WebSocketServerConnectionTable $webSocketServerConnectionTable,
     ) {
         $this->protocolControllers = new Map();
@@ -120,6 +121,10 @@ final readonly class WebSocketServerController implements ServerPipeMessageHandl
             swooleConfiguration: $this->swooleConfiguration,
         );
 
+        $fd = $request->fd;
+
+        $webSocketConnection = new WebSocketConnection($server, $fd);
+
         $authResolution = $controllerResolution->controller->isAuthorizedToConnect($psrRequest);
 
         if (!$authResolution->isAuthorizedToConnect) {
@@ -129,8 +134,6 @@ final readonly class WebSocketServerController implements ServerPipeMessageHandl
 
             return;
         }
-
-        $fd = $request->fd;
 
         $this->protocolControllers->put($fd, $controllerResolution->controller);
 
@@ -156,7 +159,11 @@ final readonly class WebSocketServerController implements ServerPipeMessageHandl
         $response->status(101);
         $response->end();
 
-        $controllerResolution->controller->onOpen($server, $fd, $authResolution);
+        foreach ($this->webSocketAwareCollection->webSocketAwares as $webSocketAware) {
+            $webSocketAware->onHttpConnectionUpgraded($psrRequest, $webSocketConnection);
+        }
+
+        $controllerResolution->controller->onOpen($webSocketConnection, $authResolution);
 
         $this->logger->debug(sprintf('websocket_handshake_successful(%s)', $fd));
     }

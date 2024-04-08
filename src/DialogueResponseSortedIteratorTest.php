@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Distantmagic\Resonance\DialogueMessageProducer\ConstMessageProducer;
 use Distantmagic\Resonance\DialogueResponse\LiteralInputResponse;
 use Distantmagic\Resonance\DialogueResponse\LlamaCppExtractSubjectResponse;
 use Mockery;
@@ -19,9 +18,7 @@ final class DialogueResponseSortedIteratorTest extends TestCase
 {
     public function test_dialogue_responses_are_sorted_by_cost(): void
     {
-        $marketingNode = new DialogueNode(
-            message: new ConstMessageProducer('Hello, marketer!'),
-        );
+        $marketingNode = DialogueNode::withMessage('Hello, marketer!');
 
         $response1 = new LlamaCppExtractSubjectResponse(
             llamaCppExtractSubject: Mockery::mock(LlamaCppExtractSubjectInterface::class),

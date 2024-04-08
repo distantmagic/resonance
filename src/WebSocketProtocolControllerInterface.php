@@ -16,5 +16,5 @@ interface WebSocketProtocolControllerInterface
 
     public function onMessage(Server $server, Frame $frame): void;
 
-    public function onOpen(Server $server, int $fd, WebSocketAuthResolution $webSocketAuthResolution): void;
+    public function onOpen(WebSocketConnection $webSocketConnection, WebSocketAuthResolution $webSocketAuthResolution): void;
 }
