@@ -22,11 +22,8 @@ final readonly class ObservableTaskFactory
                 iterableTask: static function () use ($iterableTask): Generator {
                     yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Running, null);
 
-                    try {
-                        yield from $iterableTask();
-                    } finally {
-                        yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Finished, null);
-                    }
+                    yield from $iterableTask();
+                    yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Finished, null);
                 },
                 inactivityTimeout: $inactivityTimeout,
             ),

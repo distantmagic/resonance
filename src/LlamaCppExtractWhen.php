@@ -56,8 +56,17 @@ readonly class LlamaCppExtractWhen implements LlamaCppExtractWhenInterface
             $ret .= $token;
         }
 
+        $yesNoMaybe = YesNoMaybe::tryFrom($ret);
+
+        if (!($yesNoMaybe instanceof YesNoMaybe)) {
+            return new LlamaCppExtractYesNoMaybeResult(
+                result: null,
+                isFailed: true,
+            );
+        }
+
         return new LlamaCppExtractYesNoMaybeResult(
-            result: YesNoMaybe::from($ret),
+            result: $yesNoMaybe,
             isFailed: false,
         );
     }
