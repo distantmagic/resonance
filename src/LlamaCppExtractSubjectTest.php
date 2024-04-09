@@ -22,43 +22,43 @@ final class LlamaCppExtractSubjectTest extends TestCase
 
     public static function inputSubjectProvider(): Generator
     {
-        yield 'application name is provided' => [
+        yield [
             'application name',
             'My application is called PHP Resonance',
             'PHP Resonance',
         ];
 
-        yield 'only application name is provided' => [
+        yield [
             'application name',
             'PHP Resonance',
             'PHP Resonance',
         ];
 
-        yield 'application name is not provided' => [
+        yield [
             'application name',
             'How are you?',
             null,
         ];
 
-        yield 'not on topic' => [
+        yield [
             'application name',
             'Suggest me the best application name',
             null,
         ];
 
-        yield 'not sure' => [
+        yield [
             'application name',
             'I am not really sure at the moment, was thinking about PHP Resonance, but I have to ask my friends first',
             null,
         ];
 
-        yield 'feature' => [
+        yield [
             'feature',
             'I want to add a blog',
             'blog',
         ];
 
-        yield 'application name hallucinate' => [
+        yield [
             'application name',
             'st',
             null,

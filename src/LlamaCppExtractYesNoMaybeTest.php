@@ -22,17 +22,17 @@ final class LlamaCppExtractYesNoMaybeTest extends TestCase
 
     public static function inputSubjectProvider(): Generator
     {
-        yield 'statement affirmative' => [
+        yield [
             'I CONFIRM',
             YesNoMaybe::Yes,
         ];
 
-        yield 'statement is negatory' => [
+        yield [
             'i do not want that',
             YesNoMaybe::No,
         ];
 
-        yield 'statement is uncertain' => [
+        yield [
             'i dont know',
             YesNoMaybe::Maybe,
         ];

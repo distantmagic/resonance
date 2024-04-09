@@ -8,8 +8,8 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\BackusNaurFormGrammar\YesNoMaybeGrammar;
 use Distantmagic\Resonance\LlmPersona\HelpfulAssistant;
 
-#[Singleton]
-readonly class LlamaCppExtractYesNoMaybe
+#[Singleton(provides: LlamaCppExtractWhenInterface::class)]
+readonly class LlamaCppExtractWhen implements LlamaCppExtractWhenInterface
 {
     public function __construct(
         private LlamaCppClientInterface $llamaCppClient,
@@ -18,8 +18,9 @@ readonly class LlamaCppExtractYesNoMaybe
 
     public function extract(
         string $input,
+        string $condition,
         LlmPersonaInterface $persona = new HelpfulAssistant(),
-    ): YesNoMaybe {
+    ): LlamaCppExtractYesNoMaybeResult {
         $completion = $this->llamaCppClient->generateCompletion(
             new LlamaCppCompletionRequest(
                 backusNaurFormGrammar: $this->yesNoMaybeGrammar,
@@ -28,16 +29,16 @@ readonly class LlamaCppExtractYesNoMaybe
                     new LlmChatMessage(
                         actor: 'system',
                         message: <<<'PROMPT'
-                        User will provide the statement.
-                        If the statement is affirmand, write "yes".
-                        If the statement means that user agrees, write "yes".
-                        If the statement means that user wants the thing, write "yes".
-                        If the statement is negatory, write "no".
-                        If the statement is negative, write "no".
-                        If the statement is uncertain, write "maybe".
+                        User will provide the statement and the condition.
+
+                        If the condition is explicitly true about the provided statement, write "yes".
+                        If the condition is untrue about the provided statement, write "no".
+                        If the condition is not related to the the statement, write "no".
+                        If you are not certain, write "maybe".
                         PROMPT
                     ),
-                    new LlmChatMessage('user', $input),
+                    new LlmChatMessage('user', sprintf("Statement:\n%s", $input)),
+                    new LlmChatMessage('user', sprintf("Condition:\n%s", $condition)),
                 ]),
             ),
         );
@@ -45,9 +46,19 @@ readonly class LlamaCppExtractYesNoMaybe
         $ret = '';
 
         foreach ($completion as $token) {
+            if ($token->isFailed) {
+                return new LlamaCppExtractYesNoMaybeResult(
+                    result: null,
+                    isFailed: true,
+                );
+            }
+
             $ret .= $token;
         }
 
-        return YesNoMaybe::from($ret);
+        return new LlamaCppExtractYesNoMaybeResult(
+            result: YesNoMaybe::from($ret),
+            isFailed: false,
+        );
     }
 }

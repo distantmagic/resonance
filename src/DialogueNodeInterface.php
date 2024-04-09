@@ -12,7 +12,14 @@ interface DialogueNodeInterface
 
     public function addSideEffect(DialogueNodeSideEffectInterface $dialogueNodeSideEffect): void;
 
+    public function copyResponsesFrom(self $other): void;
+
     public function getMessageProducer(): DialogueMessageProducerInterface;
+
+    /**
+     * @return Set<DialogueResponseInterface>
+     */
+    public function getPotentialResponses(): Set;
 
     /**
      * @return Set<DialogueNodeSideEffectInterface>

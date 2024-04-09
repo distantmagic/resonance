@@ -43,9 +43,24 @@ readonly class DialogueNode implements DialogueNodeInterface
         $this->sideEffects->add($dialogueNodeSideEffect);
     }
 
+    public function copyResponsesFrom(DialogueNodeInterface $other): void
+    {
+        foreach ($other->getPotentialResponses() as $response) {
+            $this->addPotentialResponse($response);
+            }
+        }
+
     public function getMessageProducer(): DialogueMessageProducerInterface
     {
         return $this->message;
+    }
+
+    /**
+     * @return Set<DialogueResponseInterface>
+     */
+    public function getPotentialResponses(): Set
+    {
+        return $this->responses->copy();
     }
 
     public function getSideEffects(): Set

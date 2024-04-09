@@ -6,6 +6,7 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\BackusNaurFormGrammar\InlineGrammar;
+use Distantmagic\Resonance\LlmPersona\HelpfulAssistant;
 
 #[Singleton(provides: LlamaCppExtractSubjectInterface::class)]
 readonly class LlamaCppExtractSubject implements LlamaCppExtractSubjectInterface
@@ -14,12 +15,16 @@ readonly class LlamaCppExtractSubject implements LlamaCppExtractSubjectInterface
         private LlamaCppClientInterface $llamaCppClient,
     ) {}
 
-    public function extract(string $input, string $topic): LlamaCppExtractSubjectResult
-    {
+    public function extract(
+        string $input,
+        string $topic,
+        LlmPersonaInterface $persona = new HelpfulAssistant(),
+    ): LlamaCppExtractSubjectResult {
         $completion = $this->llamaCppClient->generateCompletion(
             new LlamaCppCompletionRequest(
                 backusNaurFormGrammar: new InlineGrammar('root ::= [0-9a-zA-Z\"\\\\\' ]+'),
                 llmChatHistory: new LlmChatHistory([
+                    new LlmChatMessage('system', $persona->getPersonaDescription()),
                     new LlmChatMessage(
                         actor: 'system',
                         message: <<<PROMPT
