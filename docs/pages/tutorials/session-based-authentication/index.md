@@ -236,27 +236,18 @@ namespace App\HttpResponder;
 
 use App\HttpRouteSymbol;
 use Distantmagic\Resonance\Attribute\RespondsToHttp;
-use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpInterceptableInterface;
-use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\RequestMethod;
-use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigTemplate;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
     pattern: '/login',
     routeSymbol: HttpRouteSymbol::LoginForm,
 )]
-#[Singleton(collection: SingletonCollection::HttpResponder)]
-final readonly class LoginForm extends HttpResponder
+function LoginForm(): HttpInterceptableInterface
 {
-    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface
-    {
-        return new TwigTemplate('auth/login_form.twig');
-    }
+    return new TwigTemplate('auth/login_form.twig');
 }
 ```
 
@@ -491,29 +482,19 @@ We need two responders. The first one is to show the user the logout form:
 namespace App\HttpResponder;
 
 use App\HttpRouteSymbol;
-use App\SiteAction;
 use Distantmagic\Resonance\Attribute\RespondsToHttp;
-use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpInterceptableInterface;
-use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\RequestMethod;
-use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigTemplate;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
     pattern: '/logout',
     routeSymbol: HttpRouteSymbol::LogoutForm,
 )]
-#[Singleton(collection: SingletonCollection::HttpResponder)]
-final readonly class LogoutForm extends HttpResponder
+function LogoutForm(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface
 {
-    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface
-    {
-        return new TwigTemplate('auth/logout_form.twig');
-    }
+    return new TwigTemplate('auth/logout_form.twig');
 }
 ```
 ```twig file:app/views/auth/logout_form.twig
