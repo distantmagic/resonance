@@ -47,8 +47,8 @@ readonly class DialogueNode implements DialogueNodeInterface
     {
         foreach ($other->getPotentialResponses() as $response) {
             $this->addPotentialResponse($response);
-            }
         }
+    }
 
     public function getMessageProducer(): DialogueMessageProducerInterface
     {

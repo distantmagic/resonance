@@ -6,6 +6,8 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\DialogueResponse\LiteralInputResponse;
 use Distantmagic\Resonance\DialogueResponse\LlamaCppExtractSubjectResponse;
+use Distantmagic\Resonance\DialogueResponse\LlamaCppExtractWhenResponse;
+use Ds\Set;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -31,21 +33,34 @@ final class DialogueResponseSortedIteratorTest extends TestCase
             },
         );
 
-        $response2 = new LiteralInputResponse(
+        $response2 = new LlamaCppExtractWhenResponse(
+            llamaCppExtractWhen: Mockery::mock(LlamaCppExtractWhenInterface::class),
+            condition: "user's occupation",
+            whenProvided: static function (): DialogueResponseResolution {
+                return new DialogueResponseResolution(
+                    followUp: null,
+                    status: DialogueResponseResolutionStatus::CannotRespond,
+                );
+            },
+        );
+
+        $response3 = new LiteralInputResponse(
             when: 'marketing',
             followUp: $marketingNode,
         );
 
-        $responses = [
+        $responses = new Set([
             $response1,
             $response2,
-        ];
+            $response3,
+        ]);
 
         $sortedResponses = iterator_to_array(new DialogueResponseSortedIterator($responses));
 
         self::assertEquals([
-            $response2,
+            $response3,
             $response1,
+            $response2,
         ], $sortedResponses);
     }
 }
