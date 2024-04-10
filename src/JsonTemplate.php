@@ -11,19 +11,26 @@ use Stringable;
 
 final readonly class JsonTemplate implements HttpInterceptableInterface
 {
+    private SwooleContextRequestResponseReader $swooleContextRequestResponseReader;
+
     public function __construct(
-        private ServerRequestInterface $request,
-        private ResponseInterface $response,
         public array|JsonSerializable|string|Stringable $data,
-    ) {}
+        ?ServerRequestInterface $request = null,
+        ?ResponseInterface $response = null,
+    ) {
+        $this->swooleContextRequestResponseReader = new SwooleContextRequestResponseReader(
+            request: $request,
+            response: $response,
+        );
+    }
 
     public function getResponse(): ResponseInterface
     {
-        return $this->response;
+        return $this->swooleContextRequestResponseReader->getResponse();
     }
 
     public function getServerRequest(): ServerRequestInterface
     {
-        return $this->request;
+        return $this->swooleContextRequestResponseReader->getServerRequest();
     }
 }

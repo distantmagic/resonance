@@ -66,8 +66,8 @@ readonly class HttpResponderAggregate implements RequestHandlerInterface
         try {
             $context = SwooleCoroutineHelper::mustGetContext();
 
-            $context['psr_http_request'] = $request;
-            $context['psr_http_response'] = $response;
+            $context[SwooleContextRequestResponseReader::CONTEXT_KEY_REQUEST] = $request;
+            $context[SwooleContextRequestResponseReader::CONTEXT_KEY_RESPONSE] = $response;
 
             return $this->recursiveResponder->respondRecursive($request, $response, $responder);
         } catch (Throwable $throwable) {

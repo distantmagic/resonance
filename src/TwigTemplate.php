@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Assert\Assertion;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 final readonly class TwigTemplate implements HttpInterceptableInterface
 {
-    private ServerRequestInterface $request;
-    private ResponseInterface $response;
+    private SwooleContextRequestResponseReader $swooleContextRequestResponseReader;
 
     /**
      * @psalm-taint-source file $templatePath
@@ -19,32 +17,23 @@ final readonly class TwigTemplate implements HttpInterceptableInterface
     public function __construct(
         private string $templatePath,
         private array $templateData = [],
+        ?ServerRequestInterface $request = null,
         ?ResponseInterface $response = null,
     ) {
-        $context = SwooleCoroutineHelper::mustGetContext();
-
-        $request = $context['psr_http_request'];
-
-        /**
-         * @var mixed explicitly mixed for typechecks
-         */
-        $response ??= $context['psr_http_response'];
-
-        Assertion::isInstanceOf($request, ServerRequestInterface::class);
-        Assertion::isInstanceOf($response, ResponseInterface::class);
-
-        $this->request = $request;
-        $this->response = $response;
+        $this->swooleContextRequestResponseReader = new SwooleContextRequestResponseReader(
+            request: $request,
+            response: $response,
+        );
     }
 
     public function getResponse(): ResponseInterface
     {
-        return $this->response;
+        return $this->swooleContextRequestResponseReader->getResponse();
     }
 
     public function getServerRequest(): ServerRequestInterface
     {
-        return $this->request;
+        return $this->swooleContextRequestResponseReader->getServerRequest();
     }
 
     public function getTemplateData(ServerRequestInterface $request, ResponseInterface $response): array

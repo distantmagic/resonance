@@ -66,7 +66,7 @@ final readonly class GraphQL extends HttpResponder
             )
         ;
 
-        return new JsonTemplate($request, $response, $this->graphQLAdapter->query(
+        return new JsonTemplate($this->graphQLAdapter->query(
             $swoolePromiseAdapter,
             $query,
             null,
