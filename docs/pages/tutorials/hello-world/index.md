@@ -178,43 +178,7 @@ Each of the {{docs/features/http/responders}} handles only one route. It's
 
 The example Responder used the 3rd option. It returned the `TwigTemplate` 
 object, which is a Resonance's built-in object, to be handled with 
-{{docs/features/http/interceptors}} later
-
-`TwigTemplate` by itself is more or less just a plain PHP object:
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace Distantmagic\Resonance;
-
-use Distantmagic\Resonance\Attribute\ContentSecurityPolicy;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-
-#[ContentSecurityPolicy(ContentSecurityPolicyType::Html)]
-final readonly class TwigTemplate implements HttpInterceptableInterface
-{
-    public function __construct(
-        private string $templatePath,
-        private array $templateData = [],
-    ) {}
-
-    public function getTemplateData(ServerRequestInterface $request, ResponseInterface $response): array
-    {
-        return $this->templateData + [
-            'request' => $request,
-            'response' => $response,
-        ];
-    }
-
-    public function getTemplatePath(): string
-    {
-        return $this->templatePath;
-    }
-}
-```
+{{docs/features/http/interceptors}} later.
 
 It's completely passive and does not produce an HTTP response by itself. 
 Instead, it's "intercepted" by the Twig template renderer and converted into a 

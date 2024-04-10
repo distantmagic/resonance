@@ -16,9 +16,7 @@ readonly class DialogueResponseSortedIterator implements IteratorAggregate
     /**
      * @param Set<DialogueResponseInterface> $responses
      */
-    public function __construct(
-        private Set $responses,
-    ) {}
+    public function __construct(private Set $responses) {}
 
     /**
      * @return Generator<DialogueResponseInterface>

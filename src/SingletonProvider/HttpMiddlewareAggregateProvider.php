@@ -7,16 +7,14 @@ namespace Distantmagic\Resonance\SingletonProvider;
 use Distantmagic\Resonance\Attribute\HandlesMiddlewareAttribute;
 use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\HttpMiddlewareAggregate;
 use Distantmagic\Resonance\HttpMiddlewareInterface;
-use Distantmagic\Resonance\HttpResponderInterface;
+use Distantmagic\Resonance\HttpResponderCollection;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\SingletonAttribute;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
-use LogicException;
 
 /**
  * @template-extends SingletonProvider<HttpMiddlewareAggregate>
@@ -25,6 +23,10 @@ use LogicException;
 #[Singleton(provides: HttpMiddlewareAggregate::class)]
 final readonly class HttpMiddlewareAggregateProvider extends SingletonProvider
 {
+    public function __construct(
+        private HttpResponderCollection $httpResponderCollection,
+    ) {}
+
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): HttpMiddlewareAggregate
     {
         $httpMiddlewareAggregate = new HttpMiddlewareAggregate();
@@ -32,25 +34,20 @@ final readonly class HttpMiddlewareAggregateProvider extends SingletonProvider
         foreach ($this->collectMiddlewares($singletons) as $middlewareAttribute) {
             $attributeClassName = $middlewareAttribute->attribute->attribute;
 
-            foreach ($phpProjectFiles->findClassByAttribute($attributeClassName) as $subjectAttribute) {
-                $responderClassName = $subjectAttribute->reflectionClass->getName();
+            foreach ($this->httpResponderCollection->httpResponders as $httpResponderWithAtribute) {
+                $attribute = $httpResponderWithAtribute
+                    ->getReflectionAttributeManager()
+                    ->findAttribute($attributeClassName)
+                ;
 
-                if (
-                    !is_a($responderClassName, HttpInterceptableInterface::class, true)
-                    && !is_a($responderClassName, HttpResponderInterface::class, true)
-                ) {
-                    throw new LogicException(sprintf(
-                        '%s is not a %s nor a %s',
-                        $subjectAttribute->reflectionClass->getName(),
-                        HttpInterceptableInterface::class,
-                        HttpResponderInterface::class,
-                    ));
+                if (!$attribute) {
+                    continue;
                 }
 
                 $httpMiddlewareAggregate->registerPreprocessor(
+                    $attribute,
                     $middlewareAttribute->singleton,
-                    $responderClassName,
-                    $subjectAttribute->attribute,
+                    $httpResponderWithAtribute->httpResponder,
                     $middlewareAttribute->attribute->priority,
                 );
             }

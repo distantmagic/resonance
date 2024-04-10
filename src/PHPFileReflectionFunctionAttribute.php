@@ -9,7 +9,7 @@ use ReflectionFunction;
 /**
  * @template TAttribute of object
  */
-readonly class PHPFileReflectionFunctionAttribute
+readonly class PHPFileReflectionFunctionAttribute implements ReflectionAttributeInterface
 {
     /**
      * @param TAttribute $attribute
@@ -18,4 +18,9 @@ readonly class PHPFileReflectionFunctionAttribute
         public ReflectionFunction $reflectionFunction,
         public object $attribute,
     ) {}
+
+    public function getReflectionAttributeManager(): ReflectionAttributeManager
+    {
+        return new ReflectionAttributeManager($this->reflectionFunction);
+    }
 }

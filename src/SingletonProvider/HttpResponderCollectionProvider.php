@@ -29,7 +29,7 @@ final readonly class HttpResponderCollectionProvider extends SingletonProvider
     {
         $httpResponderCollection = new HttpResponderCollection();
 
-        $uniqueResponderId = 0;
+        $uniqueResponderId = 1;
 
         foreach ($singletons->values() as $singleton) {
             if (!($singleton instanceof HttpResponderInterface)) {
@@ -49,6 +49,7 @@ final readonly class HttpResponderCollectionProvider extends SingletonProvider
                 (string) $uniqueResponderId,
                 new HttpResponderWithAttribute(
                     httpResponder: $singleton,
+                    reflection: $reflectionClass,
                     respondsToHttp: $respondsToHttp,
                 ),
             );
@@ -61,9 +62,12 @@ final readonly class HttpResponderCollectionProvider extends SingletonProvider
                 (string) $uniqueResponderId,
                 new HttpResponderWithAttribute(
                     httpResponder: new HttpResponderFunction($functionResponder->reflectionFunction),
+                    reflection: $functionResponder->reflectionFunction,
                     respondsToHttp: $functionResponder->attribute,
                 ),
             );
+
+            ++$uniqueResponderId;
         }
 
         return $httpResponderCollection;

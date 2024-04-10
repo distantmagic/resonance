@@ -49,6 +49,9 @@ final class DialogueResponseSortedIteratorTest extends TestCase
             followUp: $marketingNode,
         );
 
+        /**
+         * @var Set<DialogueResponseInterface>
+         */
         $responses = new Set([
             $response1,
             $response2,

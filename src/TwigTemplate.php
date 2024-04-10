@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Assert\Assertion;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -22,8 +23,18 @@ final readonly class TwigTemplate implements HttpInterceptableInterface
     ) {
         $context = SwooleCoroutineHelper::mustGetContext();
 
-        $this->request = $context['psr_http_request'];
-        $this->response = $response ?? $context['psr_http_response'];
+        $request = $context['psr_http_request'];
+
+        /**
+         * @var mixed explicitly mixed for typechecks
+         */
+        $response ??= $context['psr_http_response'];
+
+        Assertion::isInstanceOf($request, ServerRequestInterface::class);
+        Assertion::isInstanceOf($response, ResponseInterface::class);
+
+        $this->request = $request;
+        $this->response = $response;
     }
 
     public function getResponse(): ResponseInterface

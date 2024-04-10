@@ -18,7 +18,7 @@ readonly class OAuth2ScopePattern
      * @param non-empty-string $separator
      */
     public function __construct(
-        public string $pattern,
+        string $pattern,
         private string $separator,
     ) {
         $patternChunks = explode($separator, $pattern);

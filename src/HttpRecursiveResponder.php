@@ -27,7 +27,9 @@ final readonly class HttpRecursiveResponder
         HttpInterceptableInterface|HttpResponderInterface|ResponseInterface $responder,
     ): ResponseInterface {
         while (!($responder instanceof ResponseInterface)) {
-            $responder = $this->processMiddlewares($request, $response, $responder);
+            if ($responder instanceof HttpResponderInterface) {
+                $responder = $this->processMiddlewares($request, $response, $responder);
+            }
 
             if ($responder instanceof HttpResponderInterface) {
                 return $this->respondRecursive(
@@ -72,12 +74,12 @@ final readonly class HttpRecursiveResponder
     private function processMiddlewares(
         ServerRequestInterface $request,
         ResponseInterface $response,
-        HttpInterceptableInterface|HttpResponderInterface $responder,
+        HttpResponderInterface $responder,
     ): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface {
         $middlewareAttributes = $this
             ->httpMiddlewareAggregate
             ->middlewares
-            ->get($responder::class, null)
+            ->get($responder, null)
         ;
 
         if (!$middlewareAttributes) {

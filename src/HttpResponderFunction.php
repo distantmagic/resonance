@@ -9,6 +9,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionFunction;
 
+/**
+ * @psalm-suppress MixedInferredReturnType
+ * @psalm-suppress MixedReturnStatement
+ */
 readonly class HttpResponderFunction implements HttpResponderInterface
 {
     private Closure $responderFunction;

@@ -42,10 +42,7 @@ final readonly class HttpControllerReflectionMethodCollectionProvider extends Si
                  */
                 $httpControllerMetadataCollection->reflectionMethods->put(
                     $httpResponderClassName,
-                    new HttpControllerReflectionMethod(
-                        $httpResponderAttribute->reflectionClass,
-                        $reflectionMethod,
-                    ),
+                    new HttpControllerReflectionMethod($reflectionMethod),
                 );
             }
         }

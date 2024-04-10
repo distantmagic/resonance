@@ -15,10 +15,7 @@ description: >
 Resonance provides validation constraints that are roughly equivalent to what
 [JSON Schema](https://json-schema.org/) offers.
 
-They are written in PHP, but they are also convertible into JSON Schema 
-(they feature is also used internally by Resonance's 
-{{docs/features/openapi/index}} schema generator). If you need to, you can
-export your schemas to JSON.
+They are written in PHP, but they are also convertible into JSON Schema.
 
 # Usage
 

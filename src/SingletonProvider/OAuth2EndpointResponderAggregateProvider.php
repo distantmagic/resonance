@@ -13,7 +13,6 @@ use Distantmagic\Resonance\HttpResponderCollection;
 use Distantmagic\Resonance\OAuth2Endpoint;
 use Distantmagic\Resonance\OAuth2EndpointResponderAggregate;
 use Distantmagic\Resonance\PHPProjectFiles;
-use Distantmagic\Resonance\ReflectionAttributeManager;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
 use LogicException;
@@ -30,8 +29,8 @@ final readonly class OAuth2EndpointResponderAggregateProvider extends SingletonP
     {
         $oAuth2EndpointResponderAggregate = new OAuth2EndpointResponderAggregate();
 
-        foreach ($phpProjectFiles->findClassByAttribute(RespondsToOAuth2Endpoint::class) as $oAuth2EndpointResponderFile) {
-            $reflectionClassAttributeManager = new ReflectionAttributeManager($oAuth2EndpointResponderFile->reflectionClass);
+        foreach ($phpProjectFiles->findAttribute(RespondsToOAuth2Endpoint::class) as $oAuth2EndpointResponderFile) {
+            $reflectionClassAttributeManager = $oAuth2EndpointResponderFile->getReflectionAttributeManager();
             $respondsToHttpAttribute = $reflectionClassAttributeManager->findAttribute(RespondsToHttp::class);
 
             if (!$respondsToHttpAttribute) {
@@ -45,10 +44,7 @@ final readonly class OAuth2EndpointResponderAggregateProvider extends SingletonP
             $routeSymbol = $respondsToHttpAttribute->routeSymbol;
 
             if (!$routeSymbol) {
-                throw new LogicException(sprintf(
-                    'Http responder requires a route symbol: %s',
-                    $oAuth2EndpointResponderFile->reflectionClass->getName(),
-                ));
+                throw new LogicException('Http responder requires a route symbol');
             }
 
             $oAuth2EndpointResponderAggregate->registerEndpoint(

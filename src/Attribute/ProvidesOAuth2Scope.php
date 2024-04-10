@@ -19,7 +19,6 @@ final readonly class ProvidesOAuth2Scope extends BaseAttribute
      */
     public function __construct(
         string $pattern,
-        public string $description,
         string $separator = ':',
     ) {
         $this->pattern = new OAuth2ScopePattern($pattern, $separator);

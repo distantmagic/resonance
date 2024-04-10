@@ -31,16 +31,16 @@ readonly class PHPProjectFiles
      *
      * @param class-string<TAttribute> $attributeClassName
      *
-     * @return iterable<TAttribute>
+     * @return iterable<PHPFileReflectionClassAttribute<object,TAttribute>|PHPFileReflectionFunctionAttribute<TAttribute>>
      */
     public function findAttribute(string $attributeClassName): iterable
     {
         foreach ($this->findClassByAttribute($attributeClassName) as $reflectionClassAttribute) {
-            yield $reflectionClassAttribute->attribute;
+            yield $reflectionClassAttribute;
         }
 
         foreach ($this->findFunctionByAttribute($attributeClassName) as $reflectionFunctionAttribute) {
-            yield $reflectionFunctionAttribute->attribute;
+            yield $reflectionFunctionAttribute;
         }
     }
 

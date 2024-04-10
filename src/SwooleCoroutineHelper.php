@@ -16,6 +16,9 @@ final readonly class SwooleCoroutineHelper
 {
     public static function mustGetContext(): Context
     {
+        /**
+         * @var null|Context
+         */
         $context = Coroutine::getContext();
 
         if (is_null($context)) {

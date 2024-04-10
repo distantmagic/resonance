@@ -8,14 +8,12 @@ use Distantmagic\Resonance\Attribute\CurrentRequest;
 use Distantmagic\Resonance\Attribute\CurrentResponse;
 use Distantmagic\Resonance\Attribute\DoctrineEntityManager;
 use Distantmagic\Resonance\Attribute\SessionAuthenticated;
-use Distantmagic\Resonance\HttpResponder\HttpController;
 use Doctrine\ORM\EntityManagerInterface;
 use Ds\Set;
 use Generator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionAttribute;
-use ReflectionClass;
 use ReflectionIntersectionType;
 use ReflectionMethod;
 use ReflectionNamedType;
@@ -30,13 +28,8 @@ readonly class HttpControllerReflectionMethod
      */
     public Set $parameters;
 
-    /**
-     * @param ReflectionClass<HttpController> $reflectionClass
-     */
-    public function __construct(
-        public ReflectionClass $reflectionClass,
-        private ReflectionMethod $reflectionMethod,
-    ) {
+    public function __construct(private ReflectionMethod $reflectionMethod)
+    {
         $this->parameters = new Set();
 
         $this->assertReturnTypes();

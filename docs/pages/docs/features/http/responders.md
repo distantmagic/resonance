@@ -124,6 +124,29 @@ class MyResponder implements HttpResponderInterface
 }
 ```
 
+## Function Responders
+
+You can simplify responders even more by using function responders. 
+
+```php
+<?php
+
+namespace App\HttpResponder;
+
+use Distantmagic\Resonance\Attribute\RespondsToHttp;
+use Distantmagic\Resonance\RequestMethod;
+use Distantmagic\Resonance\TwigTemplate;
+
+#[RespondsToHttp(
+    method: RequestMethod::GET,
+    pattern: '/blog',
+)]
+function Blog(): TwigTemplate
+{
+    return new TwigTemplate('turbo/blog.twig');
+}
+```
+
 ## Built-In Responders
 
 All of those responders use the `Distantmagic\Resonance\HttpResponder` 

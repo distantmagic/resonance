@@ -31,7 +31,9 @@ final readonly class UrlGeneratorProvider extends SingletonProvider
     {
         $routeCollection = new RouteCollection();
 
-        foreach ($phpProjectFiles->findAttribute(RespondsToHttp::class) as $attribute) {
+        foreach ($phpProjectFiles->findAttribute(RespondsToHttp::class) as $attributeWrapper) {
+            $attribute = $attributeWrapper->attribute;
+
             if (!$attribute->routeSymbol) {
                 continue;
             }

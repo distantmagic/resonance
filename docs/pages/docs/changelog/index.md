@@ -10,6 +10,10 @@ title: Changelog
 
 # Changelog
 
+## v0.29.0
+
+- Feature: function {{docs/features/http/responders}}
+
 ## v0.28.0
 
 - Feature: {{docs/features/observability/observable-task-table/index}}
@@ -36,8 +40,6 @@ title: Changelog
 ## v0.21.0
 
 - Feature: Doctrine {{docs/features/database/doctrine/events}} hooks
-- Improvement: OpenAPI reads return types from `Can` 
-    {{docs/features/openapi/attributes/index}}
 
 ## v0.20.0
 

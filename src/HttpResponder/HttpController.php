@@ -23,7 +23,6 @@ use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
-use ReflectionClass;
 use ReflectionMethod;
 
 abstract readonly class HttpController extends HttpResponder
@@ -60,8 +59,6 @@ abstract readonly class HttpController extends HttpResponder
         $this->pageNotFound = $controllerDependencies->pageNotFound;
         $this->serverError = $controllerDependencies->serverError;
 
-        $reflectionClass = new ReflectionClass($this);
-
         $this->invokeReflection = $controllerDependencies
             ->httpControllerReflectionMethodCollection
             ->reflectionMethods
@@ -75,7 +72,7 @@ abstract readonly class HttpController extends HttpResponder
 
                     $this->forwardableMethodReflections->put(
                         $attribute->forwardTo,
-                        new HttpControllerReflectionMethod($reflectionClass, $forwardableMethodReflection),
+                        new HttpControllerReflectionMethod($forwardableMethodReflection),
                     );
                     $this->forwardableMethodCallbacks->put(
                         $attribute->forwardTo,

@@ -10,7 +10,7 @@ use ReflectionClass;
  * @template TClass of object
  * @template TAttribute of object
  */
-readonly class PHPFileReflectionClassAttribute
+readonly class PHPFileReflectionClassAttribute implements ReflectionAttributeInterface
 {
     /**
      * @param ReflectionClass<TClass> $reflectionClass
@@ -20,4 +20,9 @@ readonly class PHPFileReflectionClassAttribute
         public ReflectionClass $reflectionClass,
         public object $attribute,
     ) {}
+
+    public function getReflectionAttributeManager(): ReflectionAttributeManager
+    {
+        return new ReflectionAttributeManager($this->reflectionClass);
+    }
 }

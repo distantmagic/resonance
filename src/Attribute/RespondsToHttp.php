@@ -13,17 +13,13 @@ use Distantmagic\Resonance\RequestMethod;
 final readonly class RespondsToHttp extends BaseAttribute
 {
     /**
-     * @param non-empty-string      $pattern
-     * @param null|non-empty-string $description
-     * @param null|non-empty-string $summary
+     * @param non-empty-string $pattern
      */
     public function __construct(
         public RequestMethod $method,
         public string $pattern,
-        public ?string $description = null,
         public ?HttpRouteSymbolInterface $routeSymbol = null,
         public int $priority = 0,
         public array $requirements = [],
-        public ?string $summary = null,
     ) {}
 }

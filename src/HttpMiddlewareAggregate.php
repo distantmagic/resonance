@@ -11,18 +11,12 @@ use Ds\Set;
 readonly class HttpMiddlewareAggregate
 {
     /**
-     * @var Map<
-     *     class-string<HttpInterceptableInterface|HttpResponderInterface>,
-     *     Set<HttpMiddlewareAttribute>
-     * >
+     * @var Map<HttpResponderInterface,Set<HttpMiddlewareAttribute>>
      */
     public Map $middlewares;
 
     /**
-     * @var Map<
-     *     class-string<HttpInterceptableInterface|HttpResponderInterface>,
-     *     PriorityQueue<HttpMiddlewareAttribute>
-     * >
+     * @var Map<HttpResponderInterface,PriorityQueue<HttpMiddlewareAttribute>>
      */
     private Map $unsorted;
 
@@ -32,27 +26,24 @@ readonly class HttpMiddlewareAggregate
         $this->unsorted = new Map();
     }
 
-    /**
-     * @param class-string<HttpInterceptableInterface|HttpResponderInterface> $httpResponderClassName
-     */
     public function registerPreprocessor(
-        HttpMiddlewareInterface $httpMiddleware,
-        string $httpResponderClassName,
         Attribute $attribute,
+        HttpMiddlewareInterface $httpMiddleware,
+        HttpResponderInterface $httpResponder,
         int $priority,
     ): void {
-        if (!$this->unsorted->hasKey($httpResponderClassName)) {
-            $this->middlewares->put($httpResponderClassName, new Set());
+        if (!$this->unsorted->hasKey($httpResponder)) {
+            $this->middlewares->put($httpResponder, new Set());
 
             /**
              * @var PriorityQueue<HttpMiddlewareAttribute>
              */
             $unsortedQueue = new PriorityQueue();
 
-            $this->unsorted->put($httpResponderClassName, $unsortedQueue);
+            $this->unsorted->put($httpResponder, $unsortedQueue);
         }
 
-        $this->unsorted->get($httpResponderClassName)->push(
+        $this->unsorted->get($httpResponder)->push(
             new HttpMiddlewareAttribute(
                 $httpMiddleware,
                 $attribute,
@@ -63,9 +54,9 @@ readonly class HttpMiddlewareAggregate
 
     public function sortPreprocessors(): void
     {
-        foreach ($this->unsorted as $httpResponderClassName => $processorAttributes) {
+        foreach ($this->unsorted as $httpResponder => $processorAttributes) {
             foreach ($processorAttributes as $processorAttribute) {
-                $this->middlewares->get($httpResponderClassName)->add($processorAttribute);
+                $this->middlewares->get($httpResponder)->add($processorAttribute);
             }
         }
     }
