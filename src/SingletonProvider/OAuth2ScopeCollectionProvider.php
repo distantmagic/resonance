@@ -26,7 +26,7 @@ final readonly class OAuth2ScopeCollectionProvider extends SingletonProvider
     {
         $scopeCollection = new OAuth2ScopeCollection();
 
-        foreach ($phpProjectFiles->findByAttribute(ProvidesOAuth2Scope::class) as $scopeFile) {
+        foreach ($phpProjectFiles->findClassByAttribute(ProvidesOAuth2Scope::class) as $scopeFile) {
             $className = $scopeFile->reflectionClass->getName();
 
             if (is_a($className, OAuth2ScopeInterface::class, true)) {

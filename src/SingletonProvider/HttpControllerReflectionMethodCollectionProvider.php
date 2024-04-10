@@ -9,7 +9,7 @@ use Distantmagic\Resonance\HttpControllerReflectionMethod;
 use Distantmagic\Resonance\HttpControllerReflectionMethodCollection;
 use Distantmagic\Resonance\HttpResponder\HttpController;
 use Distantmagic\Resonance\PHPProjectFiles;
-use Distantmagic\Resonance\RespondsToHttpAttributeCollection;
+use Distantmagic\Resonance\RespondsToHttpAttributeClassCollection;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
 use ReflectionClass;
@@ -21,14 +21,14 @@ use ReflectionClass;
 final readonly class HttpControllerReflectionMethodCollectionProvider extends SingletonProvider
 {
     public function __construct(
-        private RespondsToHttpAttributeCollection $respondsToHttpAttributeCollection,
+        private RespondsToHttpAttributeClassCollection $respondsToHttpAttributeClassCollection,
     ) {}
 
     public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): HttpControllerReflectionMethodCollection
     {
         $httpControllerMetadataCollection = new HttpControllerReflectionMethodCollection();
 
-        foreach ($this->respondsToHttpAttributeCollection->attributes as $httpResponderAttribute) {
+        foreach ($this->respondsToHttpAttributeClassCollection->attributes as $httpResponderAttribute) {
             $httpResponderClassName = $httpResponderAttribute->reflectionClass->getName();
 
             if (is_a($httpResponderClassName, HttpController::class, true)) {

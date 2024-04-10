@@ -14,12 +14,12 @@ readonly class HttpRouteMatch
     public Map $routeVars;
 
     /**
-     * @param null|class-string<HttpResponderInterface> $responderClass
-     * @param array<string, string>                     $routeVars
+     * @param null|non-empty-string $uniqueResponderId
+     * @param array<string, string> $routeVars
      */
     public function __construct(
         public HttpRouteMatchStatus $status,
-        public ?string $responderClass = null,
+        public ?string $uniqueResponderId = null,
         array $routeVars = [],
     ) {
         $this->routeVars = new Map($routeVars);

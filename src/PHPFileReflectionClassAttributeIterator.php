@@ -32,7 +32,7 @@ class PHPFileReflectionClassAttributeIterator implements IteratorAggregate
     public function getIterator(): Generator
     {
         foreach ($this->reflectionClassIterator as $reflectionClass) {
-            $reflectionClassAttributeManager = new ReflectionClassAttributeManager($reflectionClass);
+            $reflectionClassAttributeManager = new ReflectionAttributeManager($reflectionClass);
 
             foreach ($reflectionClassAttributeManager->findAttributes($this->attributeClass) as $attribute) {
                 yield new PHPFileReflectionClassAttribute(

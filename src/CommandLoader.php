@@ -29,7 +29,7 @@ readonly class CommandLoader implements CommandLoaderInterface
         /**
          * @var iterable<PHPFileReflectionClassAttribute<Command,ConsoleCommand>>
          */
-        $matchedPhpProjectFiles = $phpProjectFiles->findByAttribute(ConsoleCommand::class);
+        $matchedPhpProjectFiles = $phpProjectFiles->findClassByAttribute(ConsoleCommand::class);
 
         foreach ($matchedPhpProjectFiles as $phpProjectFile) {
             $this->names->put($phpProjectFile->attribute->name, $phpProjectFile);
@@ -78,7 +78,7 @@ readonly class CommandLoader implements CommandLoaderInterface
         $className = $phpProjectFileAttribute->reflectionClass->getName();
 
         $reflectionClass = new ReflectionClass($className);
-        $reflectionClassAttributeManager = new ReflectionClassAttributeManager($reflectionClass);
+        $reflectionClassAttributeManager = new ReflectionAttributeManager($reflectionClass);
 
         foreach ($reflectionClassAttributeManager->findAttributes(WantsFeature::class) as $wantedFeature) {
             $this->container->enableFeature($wantedFeature->feature);

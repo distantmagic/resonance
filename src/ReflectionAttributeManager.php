@@ -7,11 +7,12 @@ namespace Distantmagic\Resonance;
 use Ds\Set;
 use ReflectionAttribute;
 use ReflectionClass;
+use ReflectionFunction;
 use RuntimeException;
 
-readonly class ReflectionClassAttributeManager
+readonly class ReflectionAttributeManager
 {
-    public function __construct(private ReflectionClass $reflectionClass) {}
+    public function __construct(private ReflectionClass|ReflectionFunction $reflection) {}
 
     /**
      * @template TAttribute of Attribute
@@ -45,7 +46,7 @@ readonly class ReflectionClassAttributeManager
     public function findAttributes(string $attributeClassName): Set
     {
         $reflectionAttributes = $this
-            ->reflectionClass
+            ->reflection
             ->getAttributes($attributeClassName, ReflectionAttribute::IS_INSTANCEOF)
         ;
 

@@ -13,7 +13,7 @@ use Distantmagic\Resonance\HttpResponderCollection;
 use Distantmagic\Resonance\OAuth2Endpoint;
 use Distantmagic\Resonance\OAuth2EndpointResponderAggregate;
 use Distantmagic\Resonance\PHPProjectFiles;
-use Distantmagic\Resonance\ReflectionClassAttributeManager;
+use Distantmagic\Resonance\ReflectionAttributeManager;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
 use LogicException;
@@ -30,8 +30,8 @@ final readonly class OAuth2EndpointResponderAggregateProvider extends SingletonP
     {
         $oAuth2EndpointResponderAggregate = new OAuth2EndpointResponderAggregate();
 
-        foreach ($phpProjectFiles->findByAttribute(RespondsToOAuth2Endpoint::class) as $oAuth2EndpointResponderFile) {
-            $reflectionClassAttributeManager = new ReflectionClassAttributeManager($oAuth2EndpointResponderFile->reflectionClass);
+        foreach ($phpProjectFiles->findClassByAttribute(RespondsToOAuth2Endpoint::class) as $oAuth2EndpointResponderFile) {
+            $reflectionClassAttributeManager = new ReflectionAttributeManager($oAuth2EndpointResponderFile->reflectionClass);
             $respondsToHttpAttribute = $reflectionClassAttributeManager->findAttribute(RespondsToHttp::class);
 
             if (!$respondsToHttpAttribute) {

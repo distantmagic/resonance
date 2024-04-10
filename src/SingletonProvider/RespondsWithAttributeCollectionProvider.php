@@ -27,7 +27,7 @@ final readonly class RespondsWithAttributeCollectionProvider extends SingletonPr
         /**
          * @var PHPFileReflectionClassAttribute<HttpResponderInterface,RespondsWith>
          */
-        foreach ($phpProjectFiles->findByAttribute(RespondsWith::class) as $attribute) {
+        foreach ($phpProjectFiles->findClassByAttribute(RespondsWith::class) as $attribute) {
             $respondsWithAttributeCollection->addAttribute($attribute);
         }
 

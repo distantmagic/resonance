@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
-use Distantmagic\Resonance\Attribute\RespondsToHttp;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\HttpResponderCollection;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\RespondsToHttpAttributeRoute;
 use Distantmagic\Resonance\SingletonContainer;
@@ -22,6 +22,7 @@ use Symfony\Component\Routing\RouteCollection;
 final readonly class UrlMatcherProvider extends SingletonProvider
 {
     public function __construct(
+        private HttpResponderCollection $httpResponderCollection,
         private RequestContext $requestContext,
     ) {}
 
@@ -29,17 +30,16 @@ final readonly class UrlMatcherProvider extends SingletonProvider
     {
         $routeCollection = new RouteCollection();
 
-        foreach ($phpProjectFiles->findByAttribute(RespondsToHttp::class) as $httpResponderReflection) {
-            $attribute = $httpResponderReflection->attribute;
-            $routeName = $httpResponderReflection->reflectionClass->getName();
+        foreach ($this->httpResponderCollection->httpResponders as $uniqueResponderId => $httpResponderWithAttribute) {
+            $attribute = $httpResponderWithAttribute->respondsToHttp;
 
-            if ($routeCollection->get($routeName)) {
-                throw new LogicException('Duplicate route name: '.$routeName);
+            if ($routeCollection->get($uniqueResponderId)) {
+                throw new LogicException('Duplicate route name: '.$uniqueResponderId);
             }
 
             $route = new RespondsToHttpAttributeRoute($attribute);
 
-            $routeCollection->add($routeName, $route->symfonyRoute, $attribute->priority);
+            $routeCollection->add($uniqueResponderId, $route->symfonyRoute, $attribute->priority);
         }
 
         return new UrlMatcher($routeCollection, $this->requestContext);

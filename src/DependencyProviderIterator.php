@@ -25,9 +25,9 @@ readonly class DependencyProviderIterator implements IteratorAggregate
      */
     public function getIterator(): Generator
     {
-        foreach ($this->phpProjectFiles->findByAttribute(Singleton::class) as $reflectionAttribute) {
+        foreach ($this->phpProjectFiles->findClassByAttribute(Singleton::class) as $reflectionAttribute) {
             $providedClassName = $reflectionAttribute->attribute->provides ?? $reflectionAttribute->reflectionClass->getName();
-            $reflectionClassAttributeManager = new ReflectionClassAttributeManager($reflectionAttribute->reflectionClass);
+            $reflectionClassAttributeManager = new ReflectionAttributeManager($reflectionAttribute->reflectionClass);
 
             yield $providedClassName => new DependencyProvider(
                 collection: $reflectionAttribute->attribute->collection,
@@ -44,7 +44,7 @@ readonly class DependencyProviderIterator implements IteratorAggregate
     /**
      * @return Set<SingletonCollectionInterface> $requiredCollections
      */
-    private function findRequiredCollections(ReflectionClassAttributeManager $reflectionClassAttributeManager): Set
+    private function findRequiredCollections(ReflectionAttributeManager $reflectionClassAttributeManager): Set
     {
         $requiredCollectionAttributes = $reflectionClassAttributeManager->findAttributes(RequiresSingletonCollection::class);
 

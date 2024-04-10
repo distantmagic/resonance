@@ -22,7 +22,7 @@ final readonly class RespondsToPromptSubjectAttributeCollectionProvider extends 
     {
         $httpResponderAttributeCollection = new RespondsToPromptSubjectAttributeCollection();
 
-        foreach ($phpProjectFiles->findByAttribute(RespondsToPromptSubject::class) as $attribute) {
+        foreach ($phpProjectFiles->findClassByAttribute(RespondsToPromptSubject::class) as $attribute) {
             $httpResponderAttributeCollection->attributes->add($attribute->attribute);
         }
 

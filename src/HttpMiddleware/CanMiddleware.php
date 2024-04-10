@@ -46,13 +46,6 @@ readonly class CanMiddleware extends HttpMiddleware
             return $next;
         }
 
-        if ($attribute->onForbiddenRespondWith) {
-            return $this
-                ->httpResponderCollection
-                ->httpResponders->get($attribute->onForbiddenRespondWith)
-            ;
-        }
-
         return $this->forbidden;
     }
 }

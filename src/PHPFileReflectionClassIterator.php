@@ -7,7 +7,6 @@ namespace Distantmagic\Resonance;
 use Generator;
 use IteratorAggregate;
 use LogicException;
-use PhpToken;
 use ReflectionClass;
 use SplFileInfo;
 
@@ -71,7 +70,7 @@ readonly class PHPFileReflectionClassIterator implements IteratorAggregate
             return $this->readKnownClassName($file, 'Distantmagic\\Resonance\\');
         }
 
-        $namespace = $this->readNamespace($file);
+        $namespace = (new PHPFileNamespaceReader($file))->readNamespace();
 
         if (is_null($namespace)) {
             return null;
@@ -83,7 +82,7 @@ readonly class PHPFileReflectionClassIterator implements IteratorAggregate
             'T_STRING',
         ]);
 
-        foreach ($this->tokenizeFile($file) as $token) {
+        foreach (new PHPFileTokenIterator($file) as $token) {
             $namespaceSequence->pushToken($token);
 
             if ($namespaceSequence->isMatching()) {
@@ -114,41 +113,5 @@ readonly class PHPFileReflectionClassIterator implements IteratorAggregate
         );
 
         return $this->assertClassExists($namespace.$relativeFilename);
-    }
-
-    private function readNamespace(SplFileInfo $file): ?string
-    {
-        $namespaceSequenceQualified = new PHPTokenSequenceMatcher([
-            'T_NAMESPACE',
-            'T_WHITESPACE',
-            'T_NAME_QUALIFIED',
-        ]);
-        $namespaceSequenceString = new PHPTokenSequenceMatcher([
-            'T_NAMESPACE',
-            'T_WHITESPACE',
-            'T_STRING',
-        ]);
-
-        foreach ($this->tokenizeFile($file) as $token) {
-            $namespaceSequenceQualified->pushToken($token);
-            $namespaceSequenceString->pushToken($token);
-
-            if ($namespaceSequenceQualified->isMatching()) {
-                return $namespaceSequenceQualified->matchingTokens->get(2)->text;
-            }
-            if ($namespaceSequenceString->isMatching()) {
-                return $namespaceSequenceString->matchingTokens->get(2)->text;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @return array<PhpToken>
-     */
-    private function tokenizeFile(SplFileInfo $file): array
-    {
-        return PhpToken::tokenize(file_get_contents($file->getPathname()));
     }
 }

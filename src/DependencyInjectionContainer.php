@@ -272,7 +272,7 @@ readonly class DependencyInjectionContainer
      */
     private function makeClassFromReflection(ReflectionClass $reflectionClass, DependencyStack $stack): object
     {
-        $reflectionClassAttributeManager = new ReflectionClassAttributeManager($reflectionClass);
+        $reflectionClassAttributeManager = new ReflectionAttributeManager($reflectionClass);
         $requiredPhpExtensions = $reflectionClassAttributeManager->findAttributes(RequiresPhpExtension::class);
 
         if (!$requiredPhpExtensions->isEmpty()) {

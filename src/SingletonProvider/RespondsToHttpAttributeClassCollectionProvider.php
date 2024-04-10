@@ -10,24 +10,24 @@ use Distantmagic\Resonance\HttpResponderCollection;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\PHPFileReflectionClassAttribute;
 use Distantmagic\Resonance\PHPProjectFiles;
-use Distantmagic\Resonance\RespondsToHttpAttributeCollection;
+use Distantmagic\Resonance\RespondsToHttpAttributeClassCollection;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
 
 /**
  * @template-extends SingletonProvider<HttpResponderCollection>
  */
-#[Singleton(provides: RespondsToHttpAttributeCollection::class)]
-final readonly class RespondsToHttpAttributeCollectionProvider extends SingletonProvider
+#[Singleton(provides: RespondsToHttpAttributeClassCollection::class)]
+final readonly class RespondsToHttpAttributeClassCollectionProvider extends SingletonProvider
 {
-    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): RespondsToHttpAttributeCollection
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): RespondsToHttpAttributeClassCollection
     {
-        $httpResponderAttributeCollection = new RespondsToHttpAttributeCollection();
+        $httpResponderAttributeCollection = new RespondsToHttpAttributeClassCollection();
 
         /**
          * @var PHPFileReflectionClassAttribute<HttpResponderInterface,RespondsToHttp>
          */
-        foreach ($phpProjectFiles->findByAttribute(RespondsToHttp::class) as $attribute) {
+        foreach ($phpProjectFiles->findClassByAttribute(RespondsToHttp::class) as $attribute) {
             $httpResponderAttributeCollection->attributes->put(
                 $attribute->reflectionClass->getName(),
                 $attribute

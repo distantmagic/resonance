@@ -32,7 +32,7 @@ final readonly class HttpMiddlewareAggregateProvider extends SingletonProvider
         foreach ($this->collectMiddlewares($singletons) as $middlewareAttribute) {
             $attributeClassName = $middlewareAttribute->attribute->attribute;
 
-            foreach ($phpProjectFiles->findByAttribute($attributeClassName) as $subjectAttribute) {
+            foreach ($phpProjectFiles->findClassByAttribute($attributeClassName) as $subjectAttribute) {
                 $responderClassName = $subjectAttribute->reflectionClass->getName();
 
                 if (

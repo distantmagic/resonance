@@ -43,7 +43,7 @@ final readonly class CrudActionGateAggregateProvider extends SingletonProvider
             );
         }
 
-        foreach ($phpProjectFiles->findByAttribute(CrudActionSubject::class) as $subjectAttribute) {
+        foreach ($phpProjectFiles->findClassByAttribute(CrudActionSubject::class) as $subjectAttribute) {
             $crudSubjectClass = $subjectAttribute->reflectionClass->getName();
 
             if (!is_a($crudSubjectClass, CrudActionSubjectInterface::class, true)) {

@@ -13,12 +13,12 @@ use Distantmagic\Resonance\HttpResponder\Error\ServerError;
 use Distantmagic\Resonance\PsrMessage\SwooleServerRequest;
 use Distantmagic\Resonance\PsrMessage\SwooleServerResponse;
 use DomainException;
-use LogicException;
 use Nyholm\Psr7\Response as Psr7Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
@@ -103,16 +103,16 @@ readonly class HttpResponderAggregate implements RequestHandlerInterface
     }
 
     /**
-     * @param null|class-string<HttpResponderInterface> $responderClass
+     * @param null|non-empty-string $uniqueResponderId
      */
     private function matchResponder(
         HttpRouteMatchStatus $routeStatus,
-        ?string $responderClass,
+        ?string $uniqueResponderId,
     ): HttpResponderInterface {
         return match ($routeStatus) {
             HttpRouteMatchStatus::MethodNotAllowed => $this->methodNotAllowed,
             HttpRouteMatchStatus::NotFound => $this->pageNotFound,
-            HttpRouteMatchStatus::Found => $this->resolveFoundResponder($responderClass),
+            HttpRouteMatchStatus::Found => $this->resolveFoundResponder($uniqueResponderId),
 
             default => throw new DomainException('Unexpected route status'),
         };
@@ -136,18 +136,19 @@ readonly class HttpResponderAggregate implements RequestHandlerInterface
              * @var array<string,string>
              */
             $routeMatch = $this->urlMatcher->match($requestUri->getPath());
-            $responderClass = $routeMatch['_route'];
 
-            if (!is_a($responderClass, HttpResponderInterface::class, true)) {
-                throw new LogicException('Matched route does not resolve to an instance of HttpResponderInterface');
+            $uniqueResponderId = $routeMatch['_route'];
+
+            if (empty($uniqueResponderId)) {
+                throw new RuntimeException('Invalid empty route id');
             }
 
             unset($routeMatch['_route']);
 
             return new HttpRouteMatch(
-                responderClass: $responderClass,
                 routeVars: $routeMatch,
                 status: HttpRouteMatchStatus::Found,
+                uniqueResponderId: $uniqueResponderId,
             );
         } catch (MethodNotAllowedException) {
             return new HttpRouteMatch(HttpRouteMatchStatus::MethodNotAllowed);
@@ -157,37 +158,26 @@ readonly class HttpResponderAggregate implements RequestHandlerInterface
     }
 
     /**
-     * @param null|class-string<HttpResponderInterface> $responderClass
+     * @param null|non-empty-string $uniqueResponderId
      */
-    private function resolveFoundResponder(?string $responderClass): HttpResponderInterface
+    private function resolveFoundResponder(?string $uniqueResponderId): HttpResponderInterface
     {
-        if (!$responderClass || !$this->httpResponderCollection->httpResponders->hasKey($responderClass)) {
-            $this->unimplementedHttpRouteResponder($responderClass);
+        if (is_null($uniqueResponderId) || !$this->httpResponderCollection->httpResponders->hasKey($uniqueResponderId)) {
+            throw new DomainException('Unresolable route responder.');
         }
 
-        return $this->httpResponderCollection->httpResponders->get($responderClass);
+        return $this->httpResponderCollection->httpResponders->get($uniqueResponderId)->httpResponder;
     }
 
     private function selectResponder(ServerRequestInterface $request): HttpResponderInterface
     {
         $routeMatchingStatus = $this->matchRoute($request);
+
         $this->routeMatchRegistry->set($request, $routeMatchingStatus);
 
         return $this->matchResponder(
             $routeMatchingStatus->status,
-            $routeMatchingStatus->responderClass,
+            $routeMatchingStatus->uniqueResponderId,
         );
-    }
-
-    /**
-     * @param null|class-string<HttpResponderInterface> $responderClass
-     */
-    private function unimplementedHttpRouteResponder(?string $responderClass): never
-    {
-        if ($responderClass) {
-            throw new DomainException('Unresolved route responder: '.$responderClass);
-        }
-
-        throw new DomainException('Unresolved route responder.');
     }
 }

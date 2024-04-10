@@ -13,7 +13,7 @@ use Distantmagic\Resonance\OpenAPIPathItem;
 use Distantmagic\Resonance\OpenAPIPathItemCollection;
 use Distantmagic\Resonance\OpenAPISchemaSymbol;
 use Distantmagic\Resonance\PHPProjectFiles;
-use Distantmagic\Resonance\ReflectionClassAttributeManager;
+use Distantmagic\Resonance\ReflectionAttributeManager;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
 use LogicException;
@@ -29,8 +29,8 @@ final readonly class OpenAPIPathItemCollectionProvider extends SingletonProvider
     {
         $openAPIPathItemCollection = new OpenAPIPathItemCollection();
 
-        foreach ($phpProjectFiles->findByAttribute(BelongsToOpenAPISchema::class) as $belongsToOpenAPISchemaFile) {
-            $reflectionClassAttributeManager = new ReflectionClassAttributeManager($belongsToOpenAPISchemaFile->reflectionClass);
+        foreach ($phpProjectFiles->findClassByAttribute(BelongsToOpenAPISchema::class) as $belongsToOpenAPISchemaFile) {
+            $reflectionClassAttributeManager = new ReflectionAttributeManager($belongsToOpenAPISchemaFile->reflectionClass);
             $respondsToHttpAttribute = $reflectionClassAttributeManager->findAttribute(RespondsToHttp::class);
 
             if (!$respondsToHttpAttribute) {

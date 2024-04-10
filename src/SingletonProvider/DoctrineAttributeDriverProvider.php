@@ -27,7 +27,7 @@ final readonly class DoctrineAttributeDriverProvider extends SingletonProvider
     {
         $attributeDriver = new DoctrineAttributeDriver();
 
-        foreach ($phpProjectFiles->findByAttribute(Entity::class) as $phpProjectfile) {
+        foreach ($phpProjectFiles->findClassByAttribute(Entity::class) as $phpProjectfile) {
             $attributeDriver->addClassName($phpProjectfile->reflectionClass->getName());
         }
 
