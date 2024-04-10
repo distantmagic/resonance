@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Ds\PriorityQueue;
-use Ds\Stack;
+use Ds\Set;
 use Generator;
 use IteratorAggregate;
 
@@ -15,10 +14,10 @@ use IteratorAggregate;
 readonly class DialogueResponseSortedIterator implements IteratorAggregate
 {
     /**
-     * @param iterable<DialogueResponseInterface> $responses
+     * @param Set<DialogueResponseInterface> $responses
      */
     public function __construct(
-        private iterable $responses,
+        private Set $responses,
     ) {}
 
     /**
@@ -26,29 +25,17 @@ readonly class DialogueResponseSortedIterator implements IteratorAggregate
      */
     public function getIterator(): Generator
     {
-        /**
-         * @var PriorityQueue<DialogueResponseInterface> $responsesPriorityQueue
-         */
-        $responsesPriorityQueue = new PriorityQueue();
+        $responses = $this->responses->toArray();
 
-        foreach ($this->responses as $response) {
-            $responsesPriorityQueue->push(
-                $response,
-                $response->getCost(),
-            );
-        }
+        usort($responses, $this->compareResponses(...));
 
-        /**
-         * @var Stack<DialogueResponseInterface> $sortedResponses
-         */
-        $sortedResponses = new Stack();
-
-        foreach ($responsesPriorityQueue as $response) {
-            $sortedResponses->push($response);
-        }
-
-        foreach ($sortedResponses as $response) {
+        foreach ($responses as $response) {
             yield $response;
         }
+    }
+
+    private function compareResponses(DialogueResponseInterface $a, DialogueResponseInterface $b): int
+    {
+        return $a->getCost() <=> $b->getCost();
     }
 }
