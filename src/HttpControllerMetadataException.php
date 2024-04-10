@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use LogicException;
+use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
@@ -13,7 +14,7 @@ class HttpControllerMetadataException extends LogicException
 {
     public function __construct(
         string $message,
-        private readonly ReflectionMethod $reflectionMethod,
+        private readonly ReflectionFunction|ReflectionMethod $reflectionFunction,
         private readonly ?ReflectionParameter $parameter = null,
         private readonly ?ReflectionNamedType $type = null,
     ) {
@@ -28,8 +29,10 @@ class HttpControllerMetadataException extends LogicException
     {
         $ret = sprintf(
             '%s@%s',
-            $this->reflectionMethod->getDeclaringClass()->getName(),
-            $this->reflectionMethod->getName(),
+            ($this->reflectionFunction instanceof ReflectionMethod)
+                ? $this->reflectionFunction->getDeclaringClass()->getName()
+                : '-',
+            $this->reflectionFunction->getName(),
         );
 
         if (!isset($this->parameter)) {

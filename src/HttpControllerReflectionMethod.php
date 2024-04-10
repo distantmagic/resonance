@@ -14,6 +14,7 @@ use Generator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionAttribute;
+use ReflectionFunction;
 use ReflectionIntersectionType;
 use ReflectionMethod;
 use ReflectionNamedType;
@@ -28,13 +29,13 @@ readonly class HttpControllerReflectionMethod
      */
     public Set $parameters;
 
-    public function __construct(private ReflectionMethod $reflectionMethod)
+    public function __construct(private ReflectionFunction|ReflectionMethod $reflectionFunction)
     {
         $this->parameters = new Set();
 
         $this->assertReturnTypes();
 
-        foreach ($reflectionMethod->getParameters() as $reflectionParameter) {
+        foreach ($reflectionFunction->getParameters() as $reflectionParameter) {
             $this->extractParameterData($reflectionParameter);
         }
     }
@@ -45,7 +46,7 @@ readonly class HttpControllerReflectionMethod
             if (!($returnType instanceof ReflectionNamedType)) {
                 throw new HttpControllerMetadataException(
                     'Unsupported return type',
-                    $this->reflectionMethod,
+                    $this->reflectionFunction,
                 );
             }
 
@@ -56,7 +57,7 @@ readonly class HttpControllerReflectionMethod
 
                 throw new HttpControllerMetadataException(
                     'Only supported builtin return type is "void"',
-                    $this->reflectionMethod,
+                    $this->reflectionFunction,
                 );
             }
 
@@ -75,7 +76,7 @@ readonly class HttpControllerReflectionMethod
                     HttpResponderInterface::class,
                     HttpInterceptableInterface::class,
                 ),
-                $this->reflectionMethod,
+                $this->reflectionFunction,
             );
         }
     }
@@ -88,7 +89,7 @@ readonly class HttpControllerReflectionMethod
         if (!($type instanceof ReflectionNamedType)) {
             throw new HttpControllerMetadataException(
                 'Unsupported parameter type',
-                $this->reflectionMethod,
+                $this->reflectionFunction,
                 $reflectionParameter,
             );
         }
@@ -96,7 +97,7 @@ readonly class HttpControllerReflectionMethod
         if ($type->isBuiltin()) {
             throw new HttpControllerMetadataException(
                 'Cannot inject builtin type',
-                $this->reflectionMethod,
+                $this->reflectionFunction,
                 $reflectionParameter,
                 $type,
             );
@@ -107,7 +108,7 @@ readonly class HttpControllerReflectionMethod
         if (!class_exists($className) && !interface_exists($className)) {
             throw new HttpControllerMetadataException(
                 'Class does not exist: '.$className,
-                $this->reflectionMethod,
+                $this->reflectionFunction,
                 $reflectionParameter,
                 $type,
             );
@@ -126,7 +127,7 @@ readonly class HttpControllerReflectionMethod
      */
     private function extractReturnTypes(): Generator
     {
-        $returnType = $this->reflectionMethod->getReturnType();
+        $returnType = $this->reflectionFunction->getReturnType();
 
         if (
             $returnType instanceof ReflectionUnionType

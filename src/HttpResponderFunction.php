@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Closure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionFunction;
@@ -15,15 +14,21 @@ use ReflectionFunction;
  */
 readonly class HttpResponderFunction implements HttpResponderInterface
 {
-    private Closure $responderFunction;
+    private HttpControllerRequestHandler $httpControllerRequestHandler;
 
-    public function __construct(ReflectionFunction $responderFunctionReflection)
-    {
-        $this->responderFunction = $responderFunctionReflection->getClosure();
+    public function __construct(
+        HttpControllerDependencies $controllerDependencies,
+        ReflectionFunction $responderFunctionReflection
+    ) {
+        $this->httpControllerRequestHandler = new HttpControllerRequestHandler(
+            controllerDependencies: $controllerDependencies,
+            responderClosure: $responderFunctionReflection->getClosure(),
+            reflectionFunction: $responderFunctionReflection,
+        );
     }
 
     public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface
     {
-        return ($this->responderFunction)($request, $response);
+        return $this->httpControllerRequestHandler->respond($request, $response);
     }
 }
