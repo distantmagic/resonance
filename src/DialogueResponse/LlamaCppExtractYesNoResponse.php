@@ -10,17 +10,17 @@ use Distantmagic\Resonance\DialogueResponse;
 use Distantmagic\Resonance\DialogueResponseResolution;
 use Distantmagic\Resonance\DialogueResponseResolutionStatus;
 use Distantmagic\Resonance\LlamaCppExtractYesNoMaybe;
-use Distantmagic\Resonance\YesNoMaybe;
+use Distantmagic\Resonance\LlamaCppExtractYesNoMaybeResult;
 
 readonly class LlamaCppExtractYesNoResponse extends DialogueResponse
 {
     /**
-     * @var Closure(YesNoMaybe):DialogueResponseResolution $whenProvided
+     * @var Closure(LlamaCppExtractYesNoMaybeResult):DialogueResponseResolution $whenProvided
      */
     private Closure $whenProvided;
 
     /**
-     * @param callable(YesNoMaybe):DialogueResponseResolution $whenProvided
+     * @param callable(LlamaCppExtractYesNoMaybeResult):DialogueResponseResolution $whenProvided
      */
     public function __construct(
         private LlamaCppExtractYesNoMaybe $llamaCppExtractYesNoMaybe,
@@ -38,7 +38,14 @@ readonly class LlamaCppExtractYesNoResponse extends DialogueResponse
     {
         $extracted = $this->llamaCppExtractYesNoMaybe->extract(input: $dialogueInput->getContent());
 
-        if (!$extracted->isCertain()) {
+        if (is_null($extracted->result) || $extracted->isFailed) {
+            return new DialogueResponseResolution(
+                followUp: null,
+                status: DialogueResponseResolutionStatus::Failed,
+            );
+        }
+
+        if (!$extracted->result->isCertain()) {
             return new DialogueResponseResolution(
                 followUp: null,
                 status: DialogueResponseResolutionStatus::CannotRespond,

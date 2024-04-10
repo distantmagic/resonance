@@ -10,21 +10,25 @@ use Distantmagic\Resonance\DialogueResponse;
 use Distantmagic\Resonance\DialogueResponseResolution;
 use Distantmagic\Resonance\DialogueResponseResolutionStatus;
 use Distantmagic\Resonance\LlamaCppExtractSubjectInterface;
+use Distantmagic\Resonance\LlamaCppExtractSubjectResult;
+use Distantmagic\Resonance\LlmPersona\HelpfulAssistant;
+use Distantmagic\Resonance\LlmPersonaInterface;
 
 readonly class LlamaCppExtractSubjectResponse extends DialogueResponse
 {
     /**
-     * @var Closure(string):DialogueResponseResolution $whenProvided
+     * @var Closure(LlamaCppExtractSubjectResult):DialogueResponseResolution $whenProvided
      */
     private Closure $whenProvided;
 
     /**
-     * @param callable(string):DialogueResponseResolution $whenProvided
+     * @param callable(LlamaCppExtractSubjectResult):DialogueResponseResolution $whenProvided
      */
     public function __construct(
         private LlamaCppExtractSubjectInterface $llamaCppExtractSubject,
         private string $topic,
         callable $whenProvided,
+        private LlmPersonaInterface $persona = new HelpfulAssistant(),
     ) {
         $this->whenProvided = Closure::fromCallable($whenProvided);
     }
@@ -38,6 +42,7 @@ readonly class LlamaCppExtractSubjectResponse extends DialogueResponse
     {
         $extracted = $this->llamaCppExtractSubject->extract(
             input: $dialogueInput->getContent(),
+            persona: $this->persona,
             topic: $this->topic,
         );
 
@@ -48,13 +53,13 @@ readonly class LlamaCppExtractSubjectResponse extends DialogueResponse
             );
         }
 
-        if (is_null($extracted->content)) {
+        if (!$extracted->isMatched) {
             return new DialogueResponseResolution(
                 followUp: null,
                 status: DialogueResponseResolutionStatus::CannotRespond,
             );
         }
 
-        return ($this->whenProvided)($extracted->content);
+        return ($this->whenProvided)($extracted);
     }
 }

@@ -7,7 +7,7 @@ namespace Distantmagic\Resonance;
 use Stringable;
 
 /**
- * @psalm-suppress PossiblyUnusedProperty used in apps
+ * @psalm-suppress PossiblyUnusedProperty used in applications
  */
 readonly class LlamaCppCompletionToken implements Stringable
 {

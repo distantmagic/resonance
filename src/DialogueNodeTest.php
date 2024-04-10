@@ -34,8 +34,8 @@ final class DialogueNodeTest extends TestCase
 
         $rootNode->addPotentialResponse(new LlamaCppExtractYesNoResponse(
             llamaCppExtractYesNoMaybe: self::$container->make(LlamaCppExtractYesNoMaybe::class),
-            whenProvided: static function (YesNoMaybe $response) use ($marketingNode): DialogueResponseResolution {
-                return match ($response) {
+            whenProvided: static function (LlamaCppExtractYesNoMaybeResult $response) use ($marketingNode): DialogueResponseResolution {
+                return match ($response->result) {
                     YesNoMaybe::Yes => new DialogueResponseResolution(
                         followUp: $marketingNode,
                         status: DialogueResponseResolutionStatus::CanRespond,
@@ -112,10 +112,10 @@ final class DialogueNodeTest extends TestCase
         $rootNode->addPotentialResponse(new LlamaCppExtractSubjectResponse(
             llamaCppExtractSubject: self::$container->make(LlamaCppExtractSubject::class),
             topic: "user's occupation",
-            whenProvided: static function (string $occupation): DialogueResponseResolution {
+            whenProvided: static function (LlamaCppExtractSubjectResult $response): DialogueResponseResolution {
                 return new DialogueResponseResolution(
                     followUp: new DialogueNode(
-                        message: new ConstMessageProducer(sprintf('Hello, %s!', $occupation)),
+                        message: new ConstMessageProducer(sprintf('Hello, %s!', $response->content)),
                     ),
                     status: DialogueResponseResolutionStatus::CanRespond,
                 );

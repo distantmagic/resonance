@@ -50,8 +50,11 @@ readonly class LlamaCppExtractSubject implements LlamaCppExtractSubjectInterface
                 $completion->stop();
 
                 return new LlamaCppExtractSubjectResult(
-                    content: null,
+                    content: '',
+                    input: $input,
                     isFailed: true,
+                    isMatched: false,
+                    topic: $topic,
                 );
             }
 
@@ -62,8 +65,11 @@ readonly class LlamaCppExtractSubject implements LlamaCppExtractSubjectInterface
 
                 // Hallucinated or just went off topic
                 return new LlamaCppExtractSubjectResult(
-                    content: null,
+                    content: '',
+                    input: $input,
                     isFailed: false,
+                    isMatched: false,
+                    topic: $topic,
                 );
             }
         }
@@ -72,14 +78,20 @@ readonly class LlamaCppExtractSubject implements LlamaCppExtractSubjectInterface
 
         if (0 === strlen($trimmed) || !str_contains($input, $trimmed)) {
             return new LlamaCppExtractSubjectResult(
-                content: null,
+                content: '',
+                input: $input,
                 isFailed: false,
+                isMatched: false,
+                topic: $topic,
             );
         }
 
         return new LlamaCppExtractSubjectResult(
             content: $trimmed,
+            input: $input,
             isFailed: false,
+            isMatched: true,
+            topic: $topic,
         );
     }
 }

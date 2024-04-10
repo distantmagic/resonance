@@ -51,7 +51,7 @@ final class LlamaCppExtractYesNoMaybeTest extends TestCase
         SwooleCoroutineHelper::mustRun(static function () use ($expected, $input, $llamaCppExtract) {
             $extracted = $llamaCppExtract->extract(input: $input);
 
-            self::assertSame($expected, $extracted);
+            self::assertSame($expected, $extracted->result);
         });
     }
 }

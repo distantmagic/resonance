@@ -67,7 +67,7 @@ readonly class DependencyInjectionContainer
      *
      * @param Closure(...mixed):TReturnType $function
      *
-     * @psalm-suppress PossiblyUnusedReturnValue it's used in apps
+     * @psalm-suppress PossiblyUnusedReturnValue used in applications
      *
      * @return TReturnType
      */

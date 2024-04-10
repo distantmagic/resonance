@@ -19,7 +19,7 @@ readonly class LlamaCppExtractYesNoMaybe
     public function extract(
         string $input,
         LlmPersonaInterface $persona = new HelpfulAssistant(),
-    ): YesNoMaybe {
+    ): LlamaCppExtractYesNoMaybeResult {
         $completion = $this->llamaCppClient->generateCompletion(
             new LlamaCppCompletionRequest(
                 backusNaurFormGrammar: $this->yesNoMaybeGrammar,
@@ -48,6 +48,10 @@ readonly class LlamaCppExtractYesNoMaybe
             $ret .= $token;
         }
 
-        return YesNoMaybe::from($ret);
+        return new LlamaCppExtractYesNoMaybeResult(
+            input: $input,
+            isFailed: false,
+            result: YesNoMaybe::from($ret),
+        );
     }
 }

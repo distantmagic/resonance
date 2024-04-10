@@ -37,19 +37,19 @@ final class LlamaCppExtractSubjectTest extends TestCase
         yield [
             'application name',
             'How are you?',
-            null,
+            '',
         ];
 
         yield [
             'application name',
             'Suggest me the best application name',
-            null,
+            '',
         ];
 
         yield [
             'application name',
             'I am not really sure at the moment, was thinking about PHP Resonance, but I have to ask my friends first',
-            null,
+            '',
         ];
 
         yield [
@@ -61,7 +61,7 @@ final class LlamaCppExtractSubjectTest extends TestCase
         yield [
             'application name',
             'st',
-            null,
+            '',
         ];
     }
 

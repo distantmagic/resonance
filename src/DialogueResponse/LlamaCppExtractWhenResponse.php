@@ -10,22 +10,25 @@ use Distantmagic\Resonance\DialogueResponse;
 use Distantmagic\Resonance\DialogueResponseResolution;
 use Distantmagic\Resonance\DialogueResponseResolutionStatus;
 use Distantmagic\Resonance\LlamaCppExtractWhenInterface;
-use Distantmagic\Resonance\YesNoMaybe;
+use Distantmagic\Resonance\LlamaCppExtractWhenResult;
+use Distantmagic\Resonance\LlmPersona\HelpfulAssistant;
+use Distantmagic\Resonance\LlmPersonaInterface;
 
 readonly class LlamaCppExtractWhenResponse extends DialogueResponse
 {
     /**
-     * @var Closure(YesNoMaybe):DialogueResponseResolution $whenProvided
+     * @var Closure(LlamaCppExtractWhenResult):DialogueResponseResolution $whenProvided
      */
     private Closure $whenProvided;
 
     /**
-     * @param callable(YesNoMaybe):DialogueResponseResolution $whenProvided
+     * @param callable(LlamaCppExtractWhenResult):DialogueResponseResolution $whenProvided
      */
     public function __construct(
         private LlamaCppExtractWhenInterface $llamaCppExtractWhen,
         private string $condition,
         callable $whenProvided,
+        private LlmPersonaInterface $persona = new HelpfulAssistant(),
     ) {
         $this->whenProvided = Closure::fromCallable($whenProvided);
     }
@@ -41,15 +44,23 @@ readonly class LlamaCppExtractWhenResponse extends DialogueResponse
         $extracted = $this->llamaCppExtractWhen->extract(
             condition: $this->condition,
             input: $dialogueInput->getContent(),
+            persona: $this->persona,
         );
 
-        if ($extracted->isFailed || is_null($extracted->result)) {
+        if ($extracted->isFailed) {
             return new DialogueResponseResolution(
                 followUp: null,
                 status: DialogueResponseResolutionStatus::Failed,
             );
         }
 
-        return ($this->whenProvided)($extracted->result);
+        if (!$extracted->isMatched) {
+            return new DialogueResponseResolution(
+                followUp: null,
+                status: DialogueResponseResolutionStatus::CannotRespond,
+            );
+        }
+
+        return ($this->whenProvided)($extracted);
     }
 }

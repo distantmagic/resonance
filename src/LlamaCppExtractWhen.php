@@ -20,7 +20,7 @@ readonly class LlamaCppExtractWhen implements LlamaCppExtractWhenInterface
         string $input,
         string $condition,
         LlmPersonaInterface $persona = new HelpfulAssistant(),
-    ): LlamaCppExtractYesNoMaybeResult {
+    ): LlamaCppExtractWhenResult {
         $completion = $this->llamaCppClient->generateCompletion(
             new LlamaCppCompletionRequest(
                 backusNaurFormGrammar: $this->yesNoMaybeGrammar,
@@ -47,9 +47,12 @@ readonly class LlamaCppExtractWhen implements LlamaCppExtractWhenInterface
 
         foreach ($completion as $token) {
             if ($token->isFailed) {
-                return new LlamaCppExtractYesNoMaybeResult(
-                    result: null,
+                return new LlamaCppExtractWhenResult(
+                    condition: $condition,
                     isFailed: true,
+                    isMatched: false,
+                    input: $input,
+                    result: YesNoMaybe::No,
                 );
             }
 
@@ -59,15 +62,21 @@ readonly class LlamaCppExtractWhen implements LlamaCppExtractWhenInterface
         $yesNoMaybe = YesNoMaybe::tryFrom($ret);
 
         if (!($yesNoMaybe instanceof YesNoMaybe)) {
-            return new LlamaCppExtractYesNoMaybeResult(
-                result: null,
+            return new LlamaCppExtractWhenResult(
+                condition: $condition,
                 isFailed: true,
+                isMatched: false,
+                input: $input,
+                result: YesNoMaybe::No,
             );
         }
 
-        return new LlamaCppExtractYesNoMaybeResult(
-            result: $yesNoMaybe,
+        return new LlamaCppExtractWhenResult(
+            condition: $condition,
             isFailed: false,
+            isMatched: true,
+            input: $input,
+            result: $yesNoMaybe,
         );
     }
 }
