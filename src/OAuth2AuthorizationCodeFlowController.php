@@ -95,7 +95,7 @@ readonly class OAuth2AuthorizationCodeFlowController implements OAuth2Authorizat
             ->getHttpRouteSymbolForEndpoint(OAuth2Endpoint::AuthenticatedPage)
         ;
 
-        return new InternalRedirect($request, $response, $routeSymbol);
+        return new InternalRedirect($routeSymbol);
     }
 
     public function redirectToClientScopeConsentPage(
@@ -107,7 +107,7 @@ readonly class OAuth2AuthorizationCodeFlowController implements OAuth2Authorizat
             ->getHttpRouteSymbolForEndpoint(OAuth2Endpoint::ClientScopeConsentForm)
         ;
 
-        return new InternalRedirect($request, $response, $routeSymbol);
+        return new InternalRedirect($routeSymbol);
     }
 
     public function redirectToLoginPage(
@@ -119,6 +119,6 @@ readonly class OAuth2AuthorizationCodeFlowController implements OAuth2Authorizat
             ->getHttpRouteSymbolForEndpoint(OAuth2Endpoint::LoginForm)
         ;
 
-        return new InternalRedirect($request, $response, $routeSymbol);
+        return new InternalRedirect($routeSymbol);
     }
 }

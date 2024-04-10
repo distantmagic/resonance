@@ -9,15 +9,22 @@ use Psr\Http\Message\ServerRequestInterface;
 
 final readonly class TwigTemplate implements HttpInterceptableInterface
 {
+    private ServerRequestInterface $request;
+    private ResponseInterface $response;
+
     /**
      * @psalm-taint-source file $templatePath
      */
     public function __construct(
-        private ServerRequestInterface $request,
-        private ResponseInterface $response,
         private string $templatePath,
         private array $templateData = [],
-    ) {}
+        ?ResponseInterface $response = null,
+    ) {
+        $context = SwooleCoroutineHelper::mustGetContext();
+
+        $this->request = $context['psr_http_request'];
+        $this->response = $response ?? $context['psr_http_response'];
+    }
 
     public function getResponse(): ResponseInterface
     {

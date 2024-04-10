@@ -65,7 +65,7 @@ final readonly class LoginValidation extends HttpController
             $user,
         );
 
-        return new InternalRedirect($request, $response, HttpRouteSymbol::Homepage);
+        return new InternalRedirect(HttpRouteSymbol::Homepage);
     }
 }
 ```

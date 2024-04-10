@@ -255,7 +255,7 @@ final readonly class LoginForm extends HttpResponder
 {
     public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface
     {
-        return new TwigTemplate($request, $response, 'auth/login_form.twig');
+        return new TwigTemplate('auth/login_form.twig');
     }
 }
 ```
@@ -473,7 +473,7 @@ final readonly class LoginValidation extends HttpController
             $user->user,
         );
 
-        return new InternalRedirect($request, $response, HttpRouteSymbol::Homepage);
+        return new InternalRedirect(HttpRouteSymbol::Homepage);
     }
 }
 ```
@@ -512,7 +512,7 @@ final readonly class LogoutForm extends HttpResponder
 {
     public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface
     {
-        return new TwigTemplate($request, $response, 'auth/logout_form.twig');
+        return new TwigTemplate('auth/logout_form.twig');
     }
 }
 ```

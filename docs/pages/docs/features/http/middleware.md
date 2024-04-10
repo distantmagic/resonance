@@ -100,7 +100,7 @@ final readonly class BlogPostDestroy extends HttpController
     ): HttpInterceptableInterface {
         // ...
 
-        return new InternalRedirect($request, $response, HttpRouteSymbol::Blog);
+        return new InternalRedirect(HttpRouteSymbol::Blog);
     }
 }
 

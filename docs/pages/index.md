@@ -36,6 +36,39 @@ description: >
         <ul class="homepage__examples">
             <li class="formatted-content homepage__example">
                 <h2 class="homepage__example__title">
+                    Simple Things Remain Simple
+                </h2>
+                <div class="homepage__example__description">
+                    <p>
+                        Writing HTTP controllers is similar to how it's done in 
+                        the synchronous code.
+                    </p>
+                    <p>
+                        Controllers have new exciting features that take 
+                        advantage of the asynchronous environment.
+                    </p>
+                    <a 
+                        class="homepage__cta homepage__cta--example"
+                        href="/docs/features/http/controllers.html"
+                    >
+                        Learn More
+                    </a>
+                </div>
+                <pre class="homepage__example__code fenced-code"><code 
+                        class="language-php"
+                        data-controller="hljs"
+                        data-hljs-language-value="php"
+                    >#[RespondsToHttp(
+    method: RequestMethod::GET,
+    pattern: '/',
+)]
+function Homepage(ServerRequestInterface $request, ResponseInterface $response): TwigTemplate
+{
+    return new TwigTemplate('website/homepage.twig');
+}</code></pre>
+            </li>
+            <li class="formatted-content homepage__example">
+                <h2 class="homepage__example__title">
                     Chat with Open-Source LLMs
                 </h2>
                 <div class="homepage__example__description">
@@ -83,47 +116,6 @@ readonly class CatAdopt implements PromptSubjectResponderInterface
             </li>
             <li class="formatted-content homepage__example">
                 <h2 class="homepage__example__title">
-                    Artificial Intelligence
-                </h2>
-                <div class="homepage__example__description">
-                    <p>
-                        Integrate your application with self-hosted open-source 
-                        LLMs.
-                    </p>
-                    <p>
-                        Use your own Machine Learning models in production.
-                    </p>
-                    <a 
-                        class="homepage__cta homepage__cta--example"
-                        href="/docs/features/ai/"
-                    >
-                        Learn More
-                    </a>
-                </div>
-                <pre class="homepage__example__code fenced-code"><code 
-                        class="language-php"
-                        data-controller="hljs"
-                        data-hljs-language-value="php"
-                    >class LlamaCppGenerate 
-{
-    public function __construct(protected LlamaCppClientInterface $llamaCppClient) 
-    {
-    }
-
-    public function doSomething(): void
-    {
-        $request = new LlamaCppCompletionRequest('How to make a cat happy?');
-
-        $completion = $this->llamaCppClient->generateCompletion($request);
-
-        foreach ($completion as $token) {
-            // ...
-        }
-    }
-}</code></pre>
-            </li>
-            <li class="formatted-content homepage__example">
-                <h2 class="homepage__example__title">
                     Asynchronous Where it Matters
                 </h2>
                 <div class="homepage__example__description">
@@ -164,47 +156,6 @@ final readonly class EchoResponder extends WebSocketJsonRPCResponder
             $rpcRequest,
             $rpcRequest->payload,
         ));
-    }
-}</code></pre>
-            </li>
-            <li class="formatted-content homepage__example">
-                <h2 class="homepage__example__title">
-                    Simple Things Remain Simple
-                </h2>
-                <div class="homepage__example__description">
-                    <p>
-                        Writing HTTP controllers is similar to how it's done in 
-                        the synchronous code.
-                    </p>
-                    <p>
-                        Controllers have new exciting features that take 
-                        advantage of the asynchronous environment.
-                    </p>
-                    <a 
-                        class="homepage__cta homepage__cta--example"
-                        href="/docs/features/http/controllers.html"
-                    >
-                        Learn More
-                    </a>
-                </div>
-                <pre class="homepage__example__code fenced-code"><code 
-                        class="language-php"
-                        data-controller="hljs"
-                        data-hljs-language-value="php"
-                    >#[RespondsToHttp(
-    method: RequestMethod::GET,
-    pattern: '/',
-    routeSymbol: HttpRouteSymbol::Homepage,
-)]
-#[Singleton(collection: SingletonCollection::HttpResponder)]
-readonly class Homepage implements HttpResponderInterface
-{
-    public function respond(
-        ServerRequestInterface $request, 
-        ResponseInterface $response
-    ): TwigTemplate
-    {
-        return new TwigTemplate($request, $response, 'website/homepage.twig');
     }
 }</code></pre>
             </li>

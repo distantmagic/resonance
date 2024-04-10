@@ -115,7 +115,7 @@ final readonly class Homepage extends HttpResponder
 {
     public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface
     {
-        return new TwigTemplate($request, $response, 'homepage.twig');
+        return new TwigTemplate('homepage.twig');
     }
 }
 ```

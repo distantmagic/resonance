@@ -64,6 +64,11 @@ readonly class HttpResponderAggregate implements RequestHandlerInterface
         $responder = $this->selectResponder($request);
 
         try {
+            $context = SwooleCoroutineHelper::mustGetContext();
+
+            $context['psr_http_request'] = $request;
+            $context['psr_http_response'] = $response;
+
             return $this->recursiveResponder->respondRecursive($request, $response, $responder);
         } catch (Throwable $throwable) {
             $this->eventDispatcher->dispatch(new UnhandledException($throwable));

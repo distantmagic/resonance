@@ -67,8 +67,6 @@ use Psr\Http\Message\ServerRequestInterface;
 final readonly class BlogPostShow extends HttpController
 {
     public function createResponse(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
         #[DoctrineEntityRouteParameter(
             from: 'blog_post_slug', 
             intent: CrudAction::Read,
@@ -76,14 +74,9 @@ final readonly class BlogPostShow extends HttpController
         )]
         BlogPost $blogPost,
     ): HttpInterceptableInterface {
-        return new TwigTemplate(
-            $request, 
-            $response, 
-            'turbo/website/blog_post.twig', 
-            [
-                'blog_post' => $blogPost,
-            ],
-        );
+        return new TwigTemplate('turbo/website/blog_post.twig',  [
+            'blog_post' => $blogPost,
+        ]);
     }
 }
 ```

@@ -114,14 +114,9 @@ final readonly class Blog extends HttpResponder
 
         $blogPostsRepository = $entityManager->getRepository(BlogPost::class);
 
-        return new TwigTemplate(
-            $request,
-            $response,
-            'turbo/website/blog.twig', 
-            [
-                'blog_posts' => $blogPostsRepository->findAll(),
-            ]
-        );
+        return new TwigTemplate('turbo/website/blog.twig', [
+            'blog_posts' => $blogPostsRepository->findAll(),
+        ]);
     }
 }
 ```
@@ -143,7 +138,6 @@ namespace App\HttpResponder;
 
 use App\DoctrineEntity\BlogPost;
 use App\HttpRouteSymbol;
-use Distantmagic\Resonance\Attribute\DoctrineEntityManager;
 use Distantmagic\Resonance\Attribute\DoctrineEntityRepository;
 use Distantmagic\Resonance\Attribute\RespondsToHttp;
 use Distantmagic\Resonance\Attribute\Singleton;
@@ -153,10 +147,7 @@ use Distantmagic\Resonance\HttpResponder\HttpController;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigTemplate;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
@@ -167,21 +158,12 @@ use Psr\Http\Message\ServerRequestInterface;
 final readonly class Blog extends HttpController
 {
     public function createResponse(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        #[DoctrineEntityManager]
-        EntityManager $entityManager,
         #[DoctrineEntityRepository(BlogPost::class)]
         EntityRepository $blogPosts,
     ): HttpInterceptableInterface {
-        return new TwigTemplate(
-            $request,
-            $response,
-            'website/blog.twig', 
-            [
-                'blog_posts' => $blogPosts->findAll(),
-            ]
-        );
+        return new TwigTemplate('website/blog.twig', [
+            'blog_posts' => $blogPosts->findAll(),
+        ]);
     }
 }
 ```

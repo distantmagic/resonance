@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use RuntimeException;
+use Swoole\Coroutine;
+use Swoole\Coroutine\Context;
 use Throwable;
 
 use function Swoole\Coroutine\go;
@@ -12,6 +14,17 @@ use function Swoole\Coroutine\run;
 
 final readonly class SwooleCoroutineHelper
 {
+    public static function mustGetContext(): Context
+    {
+        $context = Coroutine::getContext();
+
+        if (is_null($context)) {
+            throw new RuntimeException('Unable to get coroutine context');
+        }
+
+        return $context;
+    }
+
     /**
      * @param callable() $callback
      */

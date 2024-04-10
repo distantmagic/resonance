@@ -89,15 +89,10 @@ advantage of the asynchronous environment.
 #[RespondsToHttp(
     method: RequestMethod::GET,
     pattern: '/',
-    routeSymbol: HttpRouteSymbol::Homepage,
 )]
-#[Singleton(collection: SingletonCollection::HttpResponder)]
-readonly class Homepage implements HttpResponderInterface
+function Homepage(ServerRequestInterface $request, ResponseInterface $response): TwigTemplate
 {
-    public function respond(ServerRequestInterface $request, ResponseInterface $response): TwigTemplate
-    {
-        return new TwigTemplate($request, $response, 'website/homepage.twig');
-    }
+    return new TwigTemplate('website/homepage.twig');
 }
 ```
 
