@@ -2,8 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Distantmagic\Resonance;
+namespace Distantmagic\Resonance\HttpResponder;
 
+use Distantmagic\Resonance\HttpControllerDependencies;
+use Distantmagic\Resonance\HttpControllerRequestHandler;
+use Distantmagic\Resonance\HttpInterceptableInterface;
+use Distantmagic\Resonance\HttpResponder;
+use Distantmagic\Resonance\HttpResponderInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionFunction;
@@ -12,7 +17,7 @@ use ReflectionFunction;
  * @psalm-suppress MixedInferredReturnType
  * @psalm-suppress MixedReturnStatement
  */
-readonly class HttpResponderFunction implements HttpResponderInterface
+readonly class FunctionResponder extends HttpResponder
 {
     private HttpControllerRequestHandler $httpControllerRequestHandler;
 
@@ -22,7 +27,7 @@ readonly class HttpResponderFunction implements HttpResponderInterface
     ) {
         $this->httpControllerRequestHandler = new HttpControllerRequestHandler(
             controllerDependencies: $controllerDependencies,
-            responderClosure: $responderFunctionReflection->getClosure(),
+            responderClosure: $responderFunctionReflection->getClosure()->bindTo($this),
             reflectionFunction: $responderFunctionReflection,
         );
     }

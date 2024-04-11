@@ -8,8 +8,8 @@ use Distantmagic\Resonance\Attribute\RequiresSingletonCollection;
 use Distantmagic\Resonance\Attribute\RespondsToHttp;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\HttpControllerDependencies;
+use Distantmagic\Resonance\HttpResponder\FunctionResponder;
 use Distantmagic\Resonance\HttpResponderCollection;
-use Distantmagic\Resonance\HttpResponderFunction;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\HttpResponderWithAttribute;
 use Distantmagic\Resonance\PHPProjectFiles;
@@ -66,7 +66,7 @@ final readonly class HttpResponderCollectionProvider extends SingletonProvider
             $httpResponderCollection->httpResponders->put(
                 (string) $uniqueResponderId,
                 new HttpResponderWithAttribute(
-                    httpResponder: new HttpResponderFunction(
+                    httpResponder: new FunctionResponder(
                         controllerDependencies: $this->httpControllerDependencies,
                         responderFunctionReflection: $functionResponder->reflectionFunction,
                     ),

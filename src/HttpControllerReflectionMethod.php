@@ -66,6 +66,7 @@ readonly class HttpControllerReflectionMethod
             if (
                 is_a($returnTypeClass, HttpResponderInterface::class, true)
                 || is_a($returnTypeClass, HttpInterceptableInterface::class, true)
+                || is_a($returnTypeClass, ResponseInterface::class, true)
             ) {
                 return;
             }
