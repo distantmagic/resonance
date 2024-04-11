@@ -15,7 +15,7 @@ readonly class LlamaCppCompletionRequest
     {
         $parameters = [
             'cache_prompt' => true,
-            'n_predict' => 128,
+            'n_predict' => 1000,
             'prompt' => $llmChatHistoryRenderer->renderLlmChatHistory($this->llmChatHistory),
             'stream' => true,
         ];

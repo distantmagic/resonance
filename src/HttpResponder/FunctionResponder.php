@@ -27,7 +27,7 @@ readonly class FunctionResponder extends HttpResponder
     ) {
         $this->httpControllerRequestHandler = new HttpControllerRequestHandler(
             controllerDependencies: $controllerDependencies,
-            responderClosure: $responderFunctionReflection->getClosure()->bindTo($this),
+            responderClosure: $responderFunctionReflection->getClosure(),
             reflectionFunction: $responderFunctionReflection,
         );
     }
