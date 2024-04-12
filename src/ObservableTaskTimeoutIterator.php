@@ -73,7 +73,12 @@ readonly class ObservableTaskTimeoutIterator implements IteratorAggregate
             });
 
             Coroutine::defer(static function () use (&$swooleTimeoutScheduled) {
-                $swooleTimeoutScheduled->cancel();
+                /**
+                 * @psalm-suppress UnnecessaryVarAnnotation it can be changed async
+                 *
+                 * @var null|SwooleTimeoutScheduled $swooleTimeoutScheduled
+                 */
+                $swooleTimeoutScheduled?->cancel();
             });
 
             foreach (($this->iterableTask)() as $observableTaskStatusUpdate) {
@@ -81,7 +86,11 @@ readonly class ObservableTaskTimeoutIterator implements IteratorAggregate
                     break;
                 }
 
-                $swooleTimeoutScheduled = $swooleTimeoutScheduled->reschedule($this->inactivityTimeout);
+                $swooleTimeoutScheduled = $swooleTimeoutScheduled?->reschedule($this->inactivityTimeout);
+
+                if (!$swooleTimeoutScheduled) {
+                    break;
+                }
 
                 $channel->push($observableTaskStatusUpdate, $this->inactivityTimeout);
             }

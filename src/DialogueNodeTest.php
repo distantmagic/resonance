@@ -8,7 +8,7 @@ use Distantmagic\Resonance\DialogueInput\UserInput;
 use Distantmagic\Resonance\DialogueMessageProducer\ConstMessageProducer;
 use Distantmagic\Resonance\DialogueResponse\LiteralInputResponse;
 use Distantmagic\Resonance\DialogueResponse\LlamaCppExtractSubjectResponse;
-use Distantmagic\Resonance\DialogueResponse\LlamaCppExtractYesNoResponse;
+use Distantmagic\Resonance\DialogueResponse\LlamaCppExtractYesNoMaybeResponse;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
@@ -32,7 +32,7 @@ final class DialogueNodeTest extends TestCase
             message: new ConstMessageProducer('Hello, marketer!'),
         );
 
-        $rootNode->addPotentialResponse(new LlamaCppExtractYesNoResponse(
+        $rootNode->addPotentialResponse(new LlamaCppExtractYesNoMaybeResponse(
             llamaCppExtractYesNoMaybe: self::$container->make(LlamaCppExtractYesNoMaybe::class),
             whenProvided: static function (LlamaCppExtractYesNoMaybeResult $response) use ($marketingNode): DialogueResponseResolution {
                 return match ($response->result) {

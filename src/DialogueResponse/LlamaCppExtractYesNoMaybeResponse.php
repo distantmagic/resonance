@@ -12,7 +12,7 @@ use Distantmagic\Resonance\DialogueResponseResolutionStatus;
 use Distantmagic\Resonance\LlamaCppExtractYesNoMaybe;
 use Distantmagic\Resonance\LlamaCppExtractYesNoMaybeResult;
 
-readonly class LlamaCppExtractYesNoResponse extends DialogueResponse
+readonly class LlamaCppExtractYesNoMaybeResponse extends DialogueResponse
 {
     /**
      * @var Closure(LlamaCppExtractYesNoMaybeResult):DialogueResponseResolution $whenProvided
@@ -42,13 +42,6 @@ readonly class LlamaCppExtractYesNoResponse extends DialogueResponse
             return new DialogueResponseResolution(
                 followUp: null,
                 status: DialogueResponseResolutionStatus::Failed,
-            );
-        }
-
-        if (!$extracted->result->isCertain()) {
-            return new DialogueResponseResolution(
-                followUp: null,
-                status: DialogueResponseResolutionStatus::CannotRespond,
             );
         }
 

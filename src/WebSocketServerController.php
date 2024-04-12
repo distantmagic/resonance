@@ -10,6 +10,7 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\PsrMessage\SwooleServerRequest;
 use Distantmagic\Resonance\ServerPipeMessage\CloseWebSocketConnection;
 use Ds\Map;
+use Nyholm\Psr7\ServerRequest;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Swoole\Http\Request;
@@ -115,15 +116,36 @@ final readonly class WebSocketServerController implements ServerPipeMessageHandl
             return;
         }
 
-        $psrRequest = new SwooleServerRequest(
+        $swoolePsrRequest = new SwooleServerRequest(
             applicationConfiguration: $this->applicationConfiguration,
             request: $request,
             swooleConfiguration: $this->swooleConfiguration,
         );
 
+        /**
+         * Copy the request so the original Swoole request can be garbage
+         * collected.
+         */
+        $psrRequest = new ServerRequest(
+            $swoolePsrRequest->getMethod(),
+            $swoolePsrRequest->getUri(),
+            $swoolePsrRequest->getHeaders(),
+            $swoolePsrRequest->getBody(),
+            $swoolePsrRequest->getProtocolVersion(),
+            $swoolePsrRequest->getServerParams(),
+        );
+
+        $psrRequest = $psrRequest->withCookieParams($swoolePsrRequest->getCookieParams());
+        $psrRequest = $psrRequest->withQueryParams($swoolePsrRequest->getQueryParams());
+
         $fd = $request->fd;
 
-        $webSocketConnection = new WebSocketConnection($server, $fd);
+        $webSocketConnection = new WebSocketConnection(
+            fd: $fd,
+            logger: $this->logger,
+            request: $psrRequest,
+            server: $server,
+        );
 
         $authResolution = $controllerResolution->controller->isAuthorizedToConnect($psrRequest);
 
@@ -190,7 +212,6 @@ final readonly class WebSocketServerController implements ServerPipeMessageHandl
     public function onOpen(Server $server, Request $request): void
     {
         $this->logger->error(self::MESSAGE_UNEXPECTED_ONOPEN);
-
         $server->disconnect($request->fd, SWOOLE_WEBSOCKET_CLOSE_SERVER_ERROR);
     }
 

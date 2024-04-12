@@ -67,7 +67,7 @@ final readonly class JsonRPCProtocolController extends WebSocketProtocolControll
         $requestQueryParams = $request->getQueryParams();
 
         if (!isset($requestQueryParams['csrf_name']) || !is_string($requestQueryParams['csrf_name'])) {
-            $this->logger->debug('WebSocket: CSRF name not found in query params');
+            $this->logger->debug('websocket_csrf_name_not_found()');
 
             return new WebSocketAuthResolution(false);
         }
@@ -77,7 +77,7 @@ final readonly class JsonRPCProtocolController extends WebSocketProtocolControll
             $requestQueryParams['csrf_name'],
             $requestQueryParams
         )) {
-            $this->logger->debug('WebSocket: Invalid CSRF token');
+            $this->logger->debug('websocket_csrf_invalid()');
 
             return new WebSocketAuthResolution(false);
         }
@@ -194,7 +194,7 @@ final readonly class JsonRPCProtocolController extends WebSocketProtocolControll
 
     private function onProtocolError(Server $server, Frame $frame, string $reason): void
     {
-        $this->logger->debug(sprintf('WebSocket Protocol Error: %s', $reason));
+        $this->logger->debug(sprintf('websocket_protocol_error(%s)', $reason));
         $server->disconnect($frame->fd, SWOOLE_WEBSOCKET_CLOSE_PROTOCOL_ERROR, $reason);
     }
 }

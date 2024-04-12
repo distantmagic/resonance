@@ -28,12 +28,27 @@ final class LlamaCppExtractYesNoMaybeTest extends TestCase
         ];
 
         yield [
+            'yes',
+            YesNoMaybe::Yes,
+        ];
+
+        yield [
             'i do not want that',
             YesNoMaybe::No,
         ];
 
         yield [
+            'no',
+            YesNoMaybe::No,
+        ];
+
+        yield [
             'i dont know',
+            YesNoMaybe::Maybe,
+        ];
+
+        yield [
+            'maybe',
             YesNoMaybe::Maybe,
         ];
     }
