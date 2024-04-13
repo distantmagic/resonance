@@ -192,8 +192,15 @@ final readonly class ObjectConstraint extends Constraint
                 }
             }
         } else {
+            /**
+             * @var array-key|string $notValidatedKey
+             * @var mixed $notValidatedValue explicitly mixed for typechecks
+             */
             foreach ($notValidatedData as $notValidatedKey => $notValidatedValue) {
                 if (!array_key_exists($notValidatedKey, $ret)) {
+                    /**
+                     * @var mixed explicitly mixed for typechecks
+                     */
                     $ret[$notValidatedKey] = $notValidatedValue;
                 }
             }
