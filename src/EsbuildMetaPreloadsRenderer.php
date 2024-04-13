@@ -29,10 +29,19 @@ readonly class EsbuildMetaPreloadsRenderer implements Stringable
                     EsbuildPreloadableType::JavaScriptModule => '<link rel="modulepreload" href="%s">'."\n",
                     EsbuildPreloadableType::Stylesheet => '<link rel="preload" as="style" href="%s">'."\n",
                 },
-                '/'.$pathname,
+                $this->prefixPathname($pathname),
             );
         }
 
         return $ret;
+    }
+
+    private function prefixPathname(string $pathname): string
+    {
+        if (filter_var($pathname, FILTER_VALIDATE_URL)) {
+            return $pathname;
+        }
+
+        return '/'.$pathname;
     }
 }
