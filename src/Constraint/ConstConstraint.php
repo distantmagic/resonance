@@ -16,7 +16,7 @@ final readonly class ConstConstraint extends Constraint
     /**
      * @param float|int|non-empty-string $constValue
      */
-    public function __construct(public null|float|int|string $constValue)
+    public function __construct(public float|int|string $constValue)
     {
         parent::__construct();
     }
