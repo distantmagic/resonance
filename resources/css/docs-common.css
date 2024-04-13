@@ -13,7 +13,8 @@
   --color-link-decoration: var(--color-link-active);
   --color-primary-banner-background: var(--color-block-background);
   --color-primary-banner-font: var(--color-body-font);
-  --color-primary-footer-background: var(--color-body-background);
+  --color-primary-footer-background: black;
+  --color-primary-footer-font: white;
   --color-primary-navigation-background: var(--color-body-background);
   --color-text-decoration-highlight: var(--color-body-font);
   --color-tag-background: transparent;
@@ -191,6 +192,7 @@ a:active,
   align-items: center;
   background-color: var(--color-primary-footer-background);
   border-top: 1px solid var(--color-border);
+  color: var(--color-primary-footer-font);
   display: flex;
   flex-direction: column;
   padding: 20px;
