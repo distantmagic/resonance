@@ -191,6 +191,12 @@ final readonly class ObjectConstraint extends Constraint
                     );
                 }
             }
+        } else {
+            foreach ($notValidatedData as $notValidatedKey => $notValidatedValue) {
+                if (!array_key_exists($notValidatedKey, $ret)) {
+                    $ret[$notValidatedKey] = $notValidatedValue;
+                }
+            }
         }
 
         return new ConstraintResult(

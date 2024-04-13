@@ -124,12 +124,15 @@ final class ObjectConstraintTest extends TestCase
     {
         $constraint = new ObjectConstraint(additionalProperties: true);
 
-        $validatedResult = $constraint->validate([
+        $inputData = [
             'aaa' => 'hi',
             'bbb' => 'foo',
             'cc' => 'bar',
-        ]);
+        ];
 
+        $validatedResult = $constraint->validate($inputData);
+
+        self::assertEquals($inputData, $validatedResult->castedData);
         self::assertTrue($validatedResult->status->isValid());
     }
 
