@@ -138,6 +138,10 @@
   }
 }
 
+.documentation__aside-filter__input::placeholder {
+  color: inherit;
+}
+
 @media screen and (min-width: 1480px) {
   .documentation__toc__links {
     position: sticky;
@@ -160,7 +164,10 @@
 .documentation__aside__links a,
 .documentation__toc__links a {
   hyphens: auto;
-  text-decoration: none;
+
+  &:not(.active) {
+    text-decoration: none;
+  }
 }
 
 .documentation__aside__links a.active {

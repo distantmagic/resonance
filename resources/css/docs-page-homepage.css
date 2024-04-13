@@ -7,13 +7,6 @@
   display: flex;
   flex-direction: column;
   position: relative;
-
-  @media screen and (max-width: 1023px) {
-    padding-top: 20px;
-  }
-  @media screen and (min-width: 1024px) {
-    padding-top: 140px;
-  }
 }
 
 .homepage__content {
@@ -102,37 +95,7 @@ h2.homepage__example__title {
   }
 }
 
-.homepage__title::before {
-  background-image: url("../images/resonance_cat.webp");
-  background-position: center;
-  background-size: cover;
-  border-radius: 50%;
-  content: "";
-  pointer-events: none;
-  position: absolute;
-  user-select: none;
-  z-index: -1;
-}
-
-@media screen and (max-width: 1023px) {
-  .homepage__title::before {
-    height: 160px;
-    left: 0;
-    top: 15px;
-    width: 160px;
-  }
-}
-@media screen and (min-width: 1024px) {
-  .homepage__title::before {
-    height: 310px;
-    left: 0;
-    top: 0;
-    width: 310px;
-  }
-}
-
 .homepage__title h1 {
-  font-family: var(--font-family-serif);
   font-weight: bold;
   line-height: 1;
 
@@ -140,23 +103,27 @@ h2.homepage__example__title {
     font-size: 60px;
   }
   @media screen and (min-width: 1024px) {
-    font-size: 8em;
+    font-size: 6em;
     position: relative;
   }
 }
 
 .homepage__title h2 {
+  font-weight: bold;
+
   @media screen and (min-width: 1024px) {
     font-size: 2em;
   }
 }
 
 .homepage__title p {
-  line-height: 1.3;
+  line-height: 1.5;
+  max-width: 80ch;
 }
 
 .homepage__cta {
   align-self: flex-start;
+  background-color: var(--color-block-background);
   border-style: solid;
   border-width: 1px;
   margin-top: 20px;

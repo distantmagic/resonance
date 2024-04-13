@@ -16,11 +16,15 @@ description: >
 <div class="homepage">
     <div class="homepage__content">
         <hgroup class="homepage__title">
-            <h1>Resonance</h1>
-            <h2>Build Web Applications with AI and ML Capabilities</h2>
+            <h1>PHP Framework for Next-Gen Web Apps</h1>
+            <h2>
+                Connect, Converse, Create
+            </h2>
             <p>
-                Designed from the ground up to facilitate interoperability and 
-                messaging between services in your infrastructure and beyond.
+                Resonance is designed from the ground up to facilitate 
+                interoperability and messaging between services in your 
+                infrastructure and beyond. It provides AI capabilities,
+                has a built in web server and integrates with llama.cpp.
             </p>
             <p>
                 Takes full advantage of asynchronous PHP. Built on top of 

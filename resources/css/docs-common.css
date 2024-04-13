@@ -1,16 +1,17 @@
 @import url("./_reset.css");
 
 :root {
-  --color-aside-background: var(--color-body-background);
-  --color-body-background: #050505;
-  --color-body-font: #ddd;
+  --color-aside-background: #fefefe;
+  --color-block-background: #fefefe;
+  --color-body-background: #ffc764;
+  --color-body-font: #050505;
   --color-body-font-darker: #aaa;
   --color-border: #333;
-  --color-document-background: #080808;
+  --color-document-background: #fefefe;
   --color-inline-code-background: #0080ff30;
-  --color-link-active: #ffc000;
+  --color-link-active: #000;
   --color-link-decoration: var(--color-link-active);
-  --color-primary-banner-background: var(--color-body-background);
+  --color-primary-banner-background: var(--color-block-background);
   --color-primary-banner-font: var(--color-body-font);
   --color-primary-footer-background: var(--color-body-background);
   --color-primary-navigation-background: var(--color-body-background);
@@ -19,7 +20,6 @@
   --color-tag-border: var(--color-body-font);
   --color-tag-font: var(--color-body-font);
   --font-family-body: "Noto Sans", sans-serif;
-  --font-family-serif: "Noto Serif", Garamond, Georgia, serif;
   --font-family-monospace: monospace;
   --height-primary-navigation: 70px;
   --height-aside-filter: 70px;
@@ -57,6 +57,10 @@ a {
   transition:
     filter 0.1s ease,
     opacity 0.1s ease;
+}
+
+a.active {
+  text-decoration: underline;
 }
 
 a:active,
@@ -98,7 +102,7 @@ a:active,
 }
 @media screen and (min-width: 1480px) {
   .global-edit-on-github {
-    background-color: var(--color-body-background);
+    background-color: var(--color-block-background);
     border: 1px solid var(--color-border);
     padding: 10px 20px;
     position: fixed;
@@ -147,10 +151,6 @@ a:active,
 .primary-banner {
   align-items: center;
   background-color: var(--color-primary-banner-background);
-  background-image:
-    linear-gradient(to bottom, #000000bb, #000000bb),
-    url('../images/intentt_background_small.webp')
-  ;
   color: var(--color-primary-banner-font);
   border-bottom: 1px solid var(--color-border);
   display: flex;
@@ -193,7 +193,7 @@ a:active,
   border-top: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  padding: 40px 20px 40px 20px;
+  padding: 20px;
   row-gap: 80px;
 }
 
