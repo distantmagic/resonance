@@ -26,7 +26,7 @@ readonly class LlamaCppExtractYesNoMaybe
                 isFailed: false,
                 result: YesNoMaybe::No,
             ),
-            'yes', 'yep', 'yeah' => new LlamaCppExtractYesNoMaybeResult(
+            'ok', 'yes', 'yep', 'yeah' => new LlamaCppExtractYesNoMaybeResult(
                 input: $input,
                 isFailed: false,
                 result: YesNoMaybe::Yes,
