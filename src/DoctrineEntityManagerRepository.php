@@ -34,7 +34,7 @@ readonly class DoctrineEntityManagerRepository
     /**
      * @param non-empty-string $name
      */
-    public function getEntityManager(ServerRequestInterface|WebSocketConnection $request, string $name = 'default'): EntityManagerInterface
+    public function getEntityManager(ServerRequestInterface $request, string $name = 'default'): EntityManagerInterface
     {
         $entityManager = $this->doctrineEntityManagerWeakStore->fromRequest($request, $name);
 

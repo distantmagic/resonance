@@ -55,7 +55,6 @@ final readonly class WebSocketServerController implements ServerPipeMessageHandl
         private LoggerInterface $logger,
         private SwooleConfiguration $swooleConfiguration,
         private WebSocketProtocolControllerAggregate $protocolControllerAggregate,
-        private WebSocketAwareCollection $webSocketAwareCollection,
         private WebSocketServerConnectionTable $webSocketServerConnectionTable,
     ) {
         $this->protocolControllers = new Map();
@@ -180,10 +179,6 @@ final readonly class WebSocketServerController implements ServerPipeMessageHandl
 
         $response->status(101);
         $response->end();
-
-        foreach ($this->webSocketAwareCollection->webSocketAwares as $webSocketAware) {
-            $webSocketAware->onHttpConnectionUpgraded($psrRequest, $webSocketConnection);
-        }
 
         $controllerResolution->controller->onOpen($webSocketConnection, $authResolution);
 

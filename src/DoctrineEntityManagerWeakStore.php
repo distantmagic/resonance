@@ -15,17 +15,17 @@ use WeakMap;
 
 #[Singleton(collection: SingletonCollection::WebSocketAware)]
 #[WebSocketAware]
-readonly class DoctrineEntityManagerWeakStore implements WebSocketAwareInterface
+readonly class DoctrineEntityManagerWeakStore
 {
     /**
-     * @var WeakMap<ServerRequestInterface|WebSocketConnection,Map<string,EntityManagerInterface>>
+     * @var WeakMap<ServerRequestInterface,Map<string,EntityManagerInterface>>
      */
     private WeakMap $entityManagers;
 
     public function __construct()
     {
         /**
-         * @var WeakMap<ServerRequestInterface|WebSocketConnection,Map<string,EntityManagerInterface>>
+         * @var WeakMap<ServerRequestInterface,Map<string,EntityManagerInterface>>
          */
         $this->entityManagers = new WeakMap();
     }
@@ -53,7 +53,7 @@ readonly class DoctrineEntityManagerWeakStore implements WebSocketAwareInterface
     /**
      * @param non-empty-string $name
      */
-    public function fromRequest(ServerRequestInterface|WebSocketConnection $request, string $name): ?EntityManagerInterface
+    public function fromRequest(ServerRequestInterface $request, string $name): ?EntityManagerInterface
     {
         $entityManagers = $this->getEntityManagersByRequest($request);
 
@@ -64,58 +64,7 @@ readonly class DoctrineEntityManagerWeakStore implements WebSocketAwareInterface
         return null;
     }
 
-    public function onHttpConnectionUpgraded(ServerRequestInterface $request, WebSocketConnection $webSocketConnection): void
-    {
-        /**
-         * @var null|Context
-         */
-        $context = Coroutine::getContext();
-
-        if ($context instanceof Context) {
-            $connectionIndexKey = $this->createContextKey('connection_index');
-
-            if (isset($context[$connectionIndexKey])) {
-                /**
-                 * @var mixed $connectionIndex explicitly mixed for typechecks
-                 */
-                $connectionIndex = $context[$connectionIndexKey];
-
-                if (is_array($connectionIndex)) {
-                    /**
-                     * @var mixed $connectionName explicitly mixed for typechecks
-                     */
-                    foreach ($connectionIndex as $connectionName) {
-                        if (!is_string($connectionName) || empty($connectionName)) {
-                            continue;
-                        }
-
-                        $entityManagerWeakReference = $this->fromContext($connectionName);
-
-                        if (!$entityManagerWeakReference) {
-                            continue;
-                        }
-
-                        $this->setByRequest(
-                            $webSocketConnection,
-                            $connectionName,
-                            $entityManagerWeakReference->getEntityManager(),
-                        );
-                    }
-                }
-            }
-        }
-
-        if (!$this->entityManagers->offsetExists($request)) {
-            return;
-        }
-
-        $entityManagers = $this->entityManagers->offsetGet($request);
-
-        $this->entityManagers->offsetUnset($request);
-        $this->entityManagers->offsetSet($webSocketConnection, $entityManagers);
-    }
-
-    public function setByRequest(ServerRequestInterface|WebSocketConnection $request, string $name, EntityManagerInterface $entityManager): void
+    public function setByRequest(ServerRequestInterface $request, string $name, EntityManagerInterface $entityManager): void
     {
         $this->getEntityManagersByRequest($request)->put($name, $entityManager);
     }
@@ -164,7 +113,7 @@ readonly class DoctrineEntityManagerWeakStore implements WebSocketAwareInterface
     /**
      * @return Map<string,EntityManagerInterface>
      */
-    private function getEntityManagersByRequest(ServerRequestInterface|WebSocketConnection $request): Map
+    private function getEntityManagersByRequest(ServerRequestInterface $request): Map
     {
         if (!$this->entityManagers->offsetExists($request)) {
             $this->entityManagers->offsetSet($request, new Map());
