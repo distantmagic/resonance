@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Stringable;
 use Swoole\WebSocket\Server;
@@ -19,7 +18,7 @@ class WebSocketConnection
     public function __construct(
         public readonly int $fd,
         public LoggerInterface $logger,
-        public readonly ServerRequestInterface $request,
+        public string $requestPath,
         public readonly Server $server,
     ) {}
 

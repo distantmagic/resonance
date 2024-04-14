@@ -10,7 +10,6 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\PsrMessage\SwooleServerRequest;
 use Distantmagic\Resonance\ServerPipeMessage\CloseWebSocketConnection;
 use Ds\Map;
-use Nyholm\Psr7\ServerRequest;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Swoole\Http\Request;
@@ -121,32 +120,16 @@ final readonly class WebSocketServerController implements ServerPipeMessageHandl
             swooleConfiguration: $this->swooleConfiguration,
         );
 
-        /**
-         * Copy the request so the original Swoole request can be garbage
-         * collected.
-         */
-        $psrRequest = new ServerRequest(
-            $swoolePsrRequest->getMethod(),
-            $swoolePsrRequest->getUri(),
-            $swoolePsrRequest->getHeaders(),
-            $swoolePsrRequest->getBody(),
-            $swoolePsrRequest->getProtocolVersion(),
-            $swoolePsrRequest->getServerParams(),
-        );
-
-        $psrRequest = $psrRequest->withCookieParams($swoolePsrRequest->getCookieParams());
-        $psrRequest = $psrRequest->withQueryParams($swoolePsrRequest->getQueryParams());
-
         $fd = $request->fd;
 
         $webSocketConnection = new WebSocketConnection(
             fd: $fd,
             logger: $this->logger,
-            request: $psrRequest,
+            requestPath: $swoolePsrRequest->getUri()->getPath(),
             server: $server,
         );
 
-        $authResolution = $controllerResolution->controller->isAuthorizedToConnect($psrRequest);
+        $authResolution = $controllerResolution->controller->isAuthorizedToConnect($swoolePsrRequest);
 
         if (!$authResolution->isAuthorizedToConnect) {
             $this->logger->debug(self::MESSAGE_NOT_AUTHORIZED);
