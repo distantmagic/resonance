@@ -13,7 +13,7 @@ description: >
     beyond.
 ---
 
-<div class="homepage">
+<div class="homepage homepage--title">
     <div class="homepage__content">
         <hgroup class="homepage__title">
             <h1>PHP Framework for Next-Gen Web Apps</h1>
@@ -37,6 +37,101 @@ description: >
                 Get Started
             </a>
         </hgroup>
+    </div>
+</div>
+<div class="homepage-gallery">
+    <h3>New Releases</h3>
+    <ul class="homepage-gallery__items">
+        <li class="homepage-gallery__item">
+            <h4>
+                <a href="/docs/features/http/responders.html">
+                    Function Responders
+                </a>
+            </h4>
+            <p>
+                You can use functions as responders to handle incoming HTTP 
+                requests.
+            </p>
+            <a 
+                class="homepage-gallery__item__learnmore"
+                href="/docs/features/http/responders.html"
+            >Learn More</a>
+        </li>
+        <li class="homepage-gallery__item">
+            <h4>
+                <a href="/docs/features/observability/observable-task-table/">
+                    Observable Tasks
+                </a>
+            </h4>
+            <iframe 
+                src="https://www.youtube.com/embed/Ac5Ww4PBPlY?si=-1JDugBt3BmIE-GG" 
+                title="YouTube video player" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin" 
+                allowfullscreen
+            ></iframe>
+        </li>
+        <li class="homepage-gallery__item">
+            <h4>
+                <a href="/docs/features/grpc/">
+                    gRPC
+                </a>
+            </h4>
+            <p>
+                Use gRPC to communicate between services.
+            </p>
+            <a 
+                class="homepage-gallery__item__learnmore"
+                href="/docs/features/grpc/"
+            >Learn More</a>
+        </li>
+        <li class="homepage-gallery__item">
+            <h4>
+                <a href="/docs/features/validation/constraints/">
+                    Constraints Schema
+                </a>
+            </h4>
+            <p>
+                Use constraints to validate incoming data.
+            </p>
+            <a 
+                class="homepage-gallery__item__learnmore"
+                href="/docs/features/validation/constraints/"
+            >Learn More</a>
+        </li>
+        <li class="homepage-gallery__item">
+            <h4>
+                <a href="/docs/features/swoole-server-tasks/">
+                    Swoole Server Tasks
+                </a>
+            </h4>
+            <p>
+                Use Swoole tasks to handle long running tasks.
+            </p>
+            <a 
+                class="homepage-gallery__item__learnmore"
+                href="/docs/features/swoole-server-tasks/"
+            >Learn More</a>
+        </li>
+        <li class="homepage-gallery__item">
+            <h4>
+                <a href="/docs/features/security/oauth2/">
+                    OAuth 2.0
+                </a>
+            </h4>
+            <p>
+                Use OAuth 2.0 to authenticate users.
+            </p>
+            <a 
+                class="homepage-gallery__item__learnmore"
+                href="/docs/features/security/oauth2/"
+            >Learn More</a>
+        </li>
+    </ul>
+</div>
+<div class="homepage homepage--features">
+    <div class="homepage__content">
         <ul class="homepage__examples">
             <li class="formatted-content homepage__example">
                 <h2 class="homepage__example__title">

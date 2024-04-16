@@ -1,20 +1,22 @@
 @import url("./_reset.css");
+@import url("./_fonts.css");
 
 :root {
-  --color-aside-background: #fefefe;
+  --color-aside-background: var(--color-block-background);
   --color-block-background: #fefefe;
+  --color-block-dark-background: #000;
   --color-body-background: #ffc764;
   --color-body-font: #050505;
-  --color-body-font-darker: #aaa;
+  --color-body-font-dark-background: var(--color-block-background);
   --color-border: #333;
-  --color-document-background: #fefefe;
+  --color-document-background: var(--color-block-background);
   --color-inline-code-background: #0080ff30;
   --color-link-active: #000;
   --color-link-decoration: var(--color-link-active);
   --color-primary-banner-background: var(--color-block-background);
   --color-primary-banner-font: var(--color-body-font);
-  --color-primary-footer-background: black;
-  --color-primary-footer-font: white;
+  --color-primary-footer-background: var(--color-block-dark-background);
+  --color-primary-footer-font: var(--color-body-font-dark-background);
   --color-primary-navigation-background: var(--color-body-background);
   --color-text-decoration-highlight: var(--color-body-font);
   --color-tag-background: transparent;
@@ -43,7 +45,6 @@
   }
 }
 
-
 ::-webkit-scrollbar {
   background-color: transparent;
   height: var(--height-scrollbar-horizontal);
@@ -51,7 +52,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--color-border);
+  background-color: var(--color-block-dark-background);
 }
 
 a {
@@ -225,6 +226,7 @@ a:active,
   height: var(--height-primary-navigation);
   max-width: 100vw;
   overflow-x: auto;
+  overflow-y: hidden;
   position: sticky;
   top: 0;
   z-index: var(--z-index-primary-navigation);

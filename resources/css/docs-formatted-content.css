@@ -125,6 +125,13 @@
     margin-top: 0;
   }
 
+  iframe {
+    background-color: #eee;
+    box-shadow: 8px 8px #00000033;
+    border: 1px solid var(--color-border);
+    padding:20px;
+  }
+
   img {
     margin: 24px 0;
     max-width: 100%;

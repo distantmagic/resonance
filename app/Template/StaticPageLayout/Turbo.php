@@ -75,7 +75,6 @@ abstract readonly class Turbo extends StaticPageLayout
             <title>{$staticPage->frontMatter->title}</title>
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-            <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
         HTML;
         yield from $this->renderMeta($staticPage);
         yield $renderedPreloads;
