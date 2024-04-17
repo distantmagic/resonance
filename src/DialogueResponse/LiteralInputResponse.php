@@ -14,7 +14,7 @@ readonly class LiteralInputResponse extends DialogueResponse
 {
     public function __construct(
         private string $when,
-        private DialogueNodeInterface $followUp,
+        private ?DialogueNodeInterface $followUp,
     ) {}
 
     public function getCost(): int

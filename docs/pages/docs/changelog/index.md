@@ -10,6 +10,11 @@ title: Changelog
 
 # Changelog
 
+## v0.30.0
+
+- Feature: {{docs/features/conversational-applications/dialogue-nodes/index}}
+- Feature: AI Data {{docs/features/ai/server/llama-cpp/extractors/index}}
+
 ## v0.29.0
 
 - Feature: function {{docs/features/http/responders}}

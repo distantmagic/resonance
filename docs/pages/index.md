@@ -44,8 +44,40 @@ description: >
     <ul class="homepage-gallery__items">
         <li class="homepage-gallery__item">
             <h4>
+                <a href="/docs/features/conversational-applications/dialogue-nodes/">
+                    Dialogue Nodes
+                    <span class="homepage-gallery__version">v0.30.0</span>
+                </a>
+            </h4>
+            <p>
+                Build and maintain copilots, scripted dialogues, semi-scripted
+                dialogues and fully conversational applications.
+            </p>
+            <a 
+                class="homepage-gallery__item__learnmore"
+                href="/docs/features/conversational-applications/dialogue-nodes/"
+            >Learn More</a>
+        </li>
+        <li class="homepage-gallery__item">
+            <h4>
+                <a href="/docs/features/ai/server/llama-cpp/extractors/">
+                    Extract Data with AI
+                    <span class="homepage-gallery__version">v0.30.0</span>
+                </a>
+            </h4>
+            <p>
+                Extract strictly formatted data from user's fuzzy input.
+            </p>
+            <a 
+                class="homepage-gallery__item__learnmore"
+                href="/docs/features/ai/server/llama-cpp/extractors/"
+            >Learn More</a>
+        </li>
+        <li class="homepage-gallery__item">
+            <h4>
                 <a href="/docs/features/http/responders.html">
                     Function Responders
+                    <span class="homepage-gallery__version">v0.29.0</span>
                 </a>
             </h4>
             <p>
@@ -61,6 +93,7 @@ description: >
             <h4>
                 <a href="/docs/features/observability/observable-task-table/">
                     Observable Tasks
+                    <span class="homepage-gallery__version">v0.28.0</span>
                 </a>
             </h4>
             <iframe 
@@ -76,6 +109,7 @@ description: >
             <h4>
                 <a href="/docs/features/grpc/">
                     gRPC
+                    <span class="homepage-gallery__version">v0.24.0</span>
                 </a>
             </h4>
             <p>
@@ -90,6 +124,7 @@ description: >
             <h4>
                 <a href="/docs/features/validation/constraints/">
                     Constraints Schema
+                    <span class="homepage-gallery__version">v0.23.0</span>
                 </a>
             </h4>
             <p>
@@ -104,6 +139,7 @@ description: >
             <h4>
                 <a href="/docs/features/swoole-server-tasks/">
                     Swoole Server Tasks
+                    <span class="homepage-gallery__version">v0.18.0</span>
                 </a>
             </h4>
             <p>
@@ -118,6 +154,7 @@ description: >
             <h4>
                 <a href="/docs/features/security/oauth2/">
                     OAuth 2.0
+                    <span class="homepage-gallery__version">v0.10.0</span>
                 </a>
             </h4>
             <p>

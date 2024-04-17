@@ -16,8 +16,8 @@ To use this feature you need to setup a
 {{docs/features/ai/server/llama-cpp/index}} server.
 :::
 
-`When` extractor is useful when you need to determine if user's input matches
-the specific condition. It uses LLM to do the "reasoning", so both the input
+`When` extractor is useful when determining if the user's input matches
+the specific condition. It uses LLM to do the "reasoning," so the input
 and the condition can be fuzzy (do not have to follow a strict syntax).
 
 For example:
@@ -30,8 +30,8 @@ Result: No
 
 ## What Is It Good For?
 
-Creating semi-scripted dialogues, when you need to steer a conversation onto
-specific topics or you need to check if user is talking about a specific topic.
+Creating semi-scripted dialogues when you need to steer a conversation onto
+specific topics or check if a user is talking about a specific topic.
 
 # Usage
 

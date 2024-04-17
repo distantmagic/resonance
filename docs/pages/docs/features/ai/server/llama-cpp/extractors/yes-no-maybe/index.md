@@ -30,13 +30,13 @@ For example:
 ## What Is It Good For?
 
 This extractor is useful if you expect fuzzy inputs like `yeah`, `i agree`,
-`i confirm` etc and you need to map them into a more specific output.
+`I confirm`, etc, and you need to map them into a more specific output.
 
 # Usage
 
 After setting up the {{docs/features/ai/server/llama-cpp/index}} you only
-need to provide user's input. It will then be mapped to either `yes`, `no` or
-`maybe`.
+need to provide the user's input. It will then be mapped to either `yes`, `no` 
+or `maybe`.
 
 Resonance uses `YesNoMaybe` enum for consistency.
 

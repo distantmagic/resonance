@@ -15,12 +15,12 @@ To use this feature you need to setup a
 {{docs/features/ai/server/llama-cpp/index}} server.
 :::
 
-`Subject` extracts a specific phrase from user's input without modifying that 
-phrase.
+`Subject` extracts a specific phrase from the user's input without modifying 
+that phrase.
 
 ## What Is It Good For?
 
-It is good for extracting a specific phrases like application name, username
+It is good for extracting specific phrases like application name, username
 and any other strings that can be provided in an ambiguous way but need to 
 be extracted exactly as-is.
 
