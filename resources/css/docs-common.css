@@ -34,11 +34,13 @@
   --z-index-edit-on-github: 4;
 
   @media screen and (max-height: 1199px) {
+    --font-size-bigger: 20px;
     --font-size-base: 18px;
     --font-size-code: 16px;
     --font-size-smaller: 16px;
   }
   @media screen and (min-height: 1200px) {
+    --font-size-bigger: 22px;
     --font-size-base: 20px;
     --font-size-code: 18px;
     --font-size-smaller: 18px;
@@ -230,6 +232,9 @@ a:active,
   padding: 20px 20px;
   text-decoration: none;
   white-space: nowrap;
+}
+
+.primary-navigation a:first-of-type {
 }
 
 .primary-navigation a.active {
