@@ -122,18 +122,12 @@ a:active,
  */
 
 .heading-permalink {
-  display: inline-block;
   color: var(--color-link-active);
+  display: inline-block;
   font-size: 1em;
+  position: absolute;
   text-decoration: none;
   user-select: none;
-
-  @media screen and (min-width: 1480px) {
-    left: calc(-1ch - 10px);
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-  }
 }
 
 .heading-permalink:target {
