@@ -10,6 +10,8 @@ description: >
 
 # Prompt Subject Responders
 
+https://www.youtube.com/watch?v=pCyEBueNw24
+
 :::note
 At the moment this feature requires {{docs/features/ai/server/llama-cpp/index}}.
 

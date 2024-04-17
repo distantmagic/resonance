@@ -119,7 +119,7 @@ code[class] {
 
   .fenced-code__language-name {
     content: attr(data-language-name);
-    font-size: var(--font-size-code-smaller);
+    font-size: var(--font-size-smaller);
     border-color: var(--color-border);
     border-style: solid;
     padding: 6px 10px;

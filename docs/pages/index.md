@@ -137,6 +137,22 @@ description: >
         </li>
         <li class="homepage-gallery__item">
             <h4>
+                <a href="/docs/features/ai/prompt-subject-responders/">
+                    Prompt Subject Responders
+                    <span class="homepage-gallery__version">v0.20.0</span>
+                </a>
+            </h4>
+            <iframe 
+                src="https://www.youtube.com/embed/pCyEBueNw24" 
+                title="YouTube video player" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin" 
+                allowfullscreen
+            ></iframe>
+        </li>
+        <li class="homepage-gallery__item">
+            <h4>
                 <a href="/docs/features/swoole-server-tasks/">
                     Swoole Server Tasks
                     <span class="homepage-gallery__version">v0.18.0</span>
