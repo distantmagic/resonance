@@ -86,13 +86,9 @@
 }
 
 .homepage-gallery__version {
-  background-color: var(--color-block-background);
-  border-radius: 4px;
-  color: var(--color-body-font);
   display: flex;
   font-size: var(--font-size-smaller);
   font-weight: normal;
-  padding: 4px 8px;
 }
 
 .homepage__content {
