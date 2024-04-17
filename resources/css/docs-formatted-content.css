@@ -3,6 +3,7 @@
  */
 
 .admonition {
+  background-color: #55555511;
   background-image: url("../icons/circle-info-e3e3e3.svg");
   background-position: 14px calc(var(--font-size-base) + 2px);
   background-repeat: no-repeat;
@@ -18,21 +19,25 @@
 
 .admonition.admonition--caution {
   background-image: url("../icons/triangle-exclamation-e3e3e3.svg");
+  background-color: #a0721e11;
   border-color: #a0721e;
 }
 
 .admonition.admonition--danger {
   background-image: url("../icons/fire-e3e3e3.svg");
+  background-color: #a61f1f11;
   border-color: #a61f1f;
 }
 
 .admonition.admonition--info {
   background-image: url("../icons/info-e3e3e3.svg");
+  background-color: #3b5dbb11;
   border-color: #3b5dbb;
 }
 
 .admonition.admonition--tip {
   background-image: url("../icons/lightbulb-e3e3e3.svg");
+  background-color: #669a5211;
   border-color: #669a52;
 }
 

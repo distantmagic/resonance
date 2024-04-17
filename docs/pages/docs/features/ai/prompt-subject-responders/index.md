@@ -24,6 +24,17 @@ It automatically prepares both the system prompt and
 grammar that are forwarded to the LLM through 
 {{docs/features/ai/server/llama-cpp/index}}.
 
+## What Is It Good For?
+
+You can use Prompt Subject Responders to execute hard-coded tasks.
+
+For example a good use-case would be an admin panel done through a 
+conversational interface.
+
+You do not have to create a separate admin panel views for your features, you 
+can register responders instead - they will trigger when user mentions specific
+phrases or actions in the chat.
+
 # Usage
 
 Let's define the following LLM prompt controller:

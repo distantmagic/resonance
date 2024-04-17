@@ -344,6 +344,6 @@
 
 @media screen and (min-width: 1480px) {
   .documentation__toc__links a.visible {
-    color: var(--color-link-active);
+/*    background-color: var(--color-link-active);*/
   }
 }

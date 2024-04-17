@@ -8,21 +8,21 @@ import type { RenderOptions } from "@viz-js/viz";
 let instancePromise: null | ReturnType<typeof instance> = null;
 const defaults: RenderOptions = {
   edgeAttributes: {
-    color: "white",
-    fontcolor: "white",
+    color: "#050505",
+    fontcolor: "#050505",
     fontname: "inherit",
     fontsize: 14,
   },
   graphAttributes: {
     bgcolor: "transparent",
     color: "#555",
-    fontcolor: "white",
+    fontcolor: "#050505",
     fontname: "inherit",
     fontsize: 14,
   },
   nodeAttributes: {
-    color: "white",
-    fontcolor: "white",
+    color: "#050505",
+    fontcolor: "#050505",
     fontname: "inherit",
     fontsize: 14,
     margin: 0.1,

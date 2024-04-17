@@ -127,3 +127,5 @@ class LlamaCppGenerate
     }
 }
 ```
+
+{{docs/features/ai/server/llama-cpp/*/index}}
