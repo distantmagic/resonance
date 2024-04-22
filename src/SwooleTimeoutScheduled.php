@@ -26,6 +26,9 @@ readonly class SwooleTimeoutScheduled
         return Timer::clear($this->timeoutId);
     }
 
+    /**
+     * @psalm-suppress PossiblyUnusedReturnValue used in apps
+     */
     public function reschedule(float $timeout): ?self
     {
         if (!$this->cancel()) {

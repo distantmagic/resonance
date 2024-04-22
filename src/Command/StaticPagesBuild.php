@@ -9,9 +9,10 @@ use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\StaticPageProcessor;
-use Distantmagic\Resonance\SwooleCoroutineHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use function Distantmagic\Resonance\helpers\coroutineMustRun;
 
 #[ConsoleCommand(
     name: 'static-pages:build',
@@ -28,7 +29,7 @@ final class StaticPagesBuild extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        SwooleCoroutineHelper::mustRun(function () {
+        coroutineMustRun(function () {
             $this->staticPageProcessor->process();
         });
 

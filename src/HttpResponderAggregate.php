@@ -27,6 +27,8 @@ use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Throwable;
 
+use function Distantmagic\Resonance\helpers\coroutineMustGetContext;
+
 #[Singleton]
 readonly class HttpResponderAggregate implements RequestHandlerInterface
 {
@@ -64,7 +66,7 @@ readonly class HttpResponderAggregate implements RequestHandlerInterface
         $responder = $this->selectResponder($request);
 
         try {
-            $context = SwooleCoroutineHelper::mustGetContext();
+            $context = coroutineMustGetContext();
 
             $context[SwooleContextRequestResponseReader::CONTEXT_KEY_REQUEST] = $request;
             $context[SwooleContextRequestResponseReader::CONTEXT_KEY_RESPONSE] = $response;

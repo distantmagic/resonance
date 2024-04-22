@@ -4,6 +4,12 @@
     "type": "library",
     "license": "MIT",
     "autoload": {
+        "files": [
+            "src/helpers/coroutineMustGetContext.php",
+            "src/helpers/coroutineMustGo.php",
+            "src/helpers/coroutineMustRun.php",
+            "src/helpers/generatorGetReturn.php"
+        ],
         "psr-4": {
             "Distantmagic\\Docs\\": "app/",
             "Distantmagic\\Resonance\\": "src/"

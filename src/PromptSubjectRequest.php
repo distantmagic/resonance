@@ -11,5 +11,6 @@ readonly class PromptSubjectRequest
 {
     public function __construct(
         public ?AuthenticatedUser $authenticatedUser,
+        public string $prompt,
     ) {}
 }

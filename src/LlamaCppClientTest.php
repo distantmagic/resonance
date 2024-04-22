@@ -9,6 +9,8 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Swoole\Event;
 
+use function Distantmagic\Resonance\helpers\coroutineMustRun;
+
 /**
  * @internal
  */
@@ -27,7 +29,7 @@ final class LlamaCppClientTest extends TestCase
     {
         $llamaCppClient = self::$container->make(LlamaCppClient::class);
 
-        SwooleCoroutineHelper::mustRun(static function () use ($llamaCppClient) {
+        coroutineMustRun(static function () use ($llamaCppClient) {
             $completion = $llamaCppClient->generateCompletion(new LlamaCppCompletionRequest(
                 llmChatHistory: new LlmChatHistory([
                     new LlmChatMessage('user', 'Who are you? Answer in exactly two words.'),

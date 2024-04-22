@@ -66,10 +66,6 @@ readonly class PHPFileReflectionClassIterator implements IteratorAggregate
             return null;
         }
 
-        if (str_starts_with($file->getPath(), DM_RESONANCE_ROOT)) {
-            return $this->readKnownClassName($file, 'Distantmagic\\Resonance\\');
-        }
-
         $namespace = (new PHPFileNamespaceReader($file))->readNamespace();
 
         if (is_null($namespace)) {
@@ -93,25 +89,5 @@ readonly class PHPFileReflectionClassIterator implements IteratorAggregate
         }
 
         return null;
-    }
-
-    /**
-     * This is an optimization to not tokenize all the files.
-     *
-     * @return class-string
-     */
-    private function readKnownClassName(SplFileInfo $file, string $namespace): string
-    {
-        $relativeFilename = str_replace(
-            DIRECTORY_SEPARATOR,
-            '\\',
-            substr(
-                trim(substr($file->getPathname(), strlen(DM_RESONANCE_ROOT)), DIRECTORY_SEPARATOR),
-                0,
-                -4,
-            )
-        );
-
-        return $this->assertClassExists($namespace.$relativeFilename);
     }
 }

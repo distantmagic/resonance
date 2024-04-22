@@ -107,6 +107,7 @@ esbuild: $(CSS_SOURCES) node_modules
 		--loader:.ttf=file \
 		--loader:.webp=file \
 		--metafile=esbuild-meta-docs.json \
+		--minify \
 		--outdir=$(ESBUILD_TARGET_DIRECTORY) \
 		--sourcemap \
 		--splitting \

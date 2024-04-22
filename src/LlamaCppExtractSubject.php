@@ -7,6 +7,9 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\BackusNaurFormGrammar\InlineGrammar;
 use Distantmagic\Resonance\LlmPersona\HelpfulAssistant;
+use Generator;
+
+use function Distantmagic\Resonance\helpers\generatorGetReturn;
 
 #[Singleton(provides: LlamaCppExtractSubjectInterface::class)]
 readonly class LlamaCppExtractSubject implements LlamaCppExtractSubjectInterface
@@ -20,6 +23,16 @@ readonly class LlamaCppExtractSubject implements LlamaCppExtractSubjectInterface
         string $topic,
         LlmPersonaInterface $persona = new HelpfulAssistant(),
     ): LlamaCppExtractSubjectResult {
+        $extractGenerator = $this->extractWithProgress($input, $topic, $persona);
+
+        return generatorGetReturn($extractGenerator);
+    }
+
+    public function extractWithProgress(
+        string $input,
+        string $topic,
+        LlmPersonaInterface $persona = new HelpfulAssistant(),
+    ): Generator {
         $completion = $this->llamaCppClient->generateCompletion(
             new LlamaCppCompletionRequest(
                 backusNaurFormGrammar: new InlineGrammar('root ::= [0-9a-zA-Z\"\\\\\' ]+'),
@@ -46,9 +59,12 @@ readonly class LlamaCppExtractSubject implements LlamaCppExtractSubjectInterface
         $ret = '';
 
         foreach ($completion as $token) {
-            if ($token->isFailed) {
-                $completion->stop();
+            yield new LlmCompletionProgress(
+                category: 'extract_subject',
+                shouldNotify: true,
+            );
 
+            if ($token->isFailed()) {
                 return new LlamaCppExtractSubjectResult(
                     content: '',
                     input: $input,
@@ -93,5 +109,6 @@ readonly class LlamaCppExtractSubject implements LlamaCppExtractSubjectInterface
             isMatched: true,
             topic: $topic,
         );
+
     }
 }

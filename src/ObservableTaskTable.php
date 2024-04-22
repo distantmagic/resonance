@@ -12,6 +12,8 @@ use RuntimeException;
 use Swoole\Coroutine;
 use Swoole\Table;
 
+use function Distantmagic\Resonance\helpers\coroutineMustGo;
+
 /**
  * @template-implements IteratorAggregate<non-empty-string,ObservableTaskTableRow>
  */
@@ -78,7 +80,7 @@ readonly class ObservableTaskTable implements IteratorAggregate
     {
         $slotId = $this->availableRowsPool->nextAvailableRow();
 
-        SwooleCoroutineHelper::mustGo(function () use ($slotId, $observableTask) {
+        coroutineMustGo(function () use ($slotId, $observableTask) {
             Coroutine::defer(function () use ($slotId) {
                 $this->availableRowsPool->freeAvailableRow($slotId);
             });

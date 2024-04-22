@@ -18,6 +18,8 @@ use ReflectionFunction;
 use ReflectionFunctionAbstract;
 use Swoole\Event;
 
+use function Distantmagic\Resonance\helpers\coroutineMustRun;
+
 readonly class DependencyInjectionContainer
 {
     public PHPProjectFiles $phpProjectFiles;
@@ -76,7 +78,7 @@ readonly class DependencyInjectionContainer
         /**
          * @var null|array<string,mixed>
          */
-        $parameters = SwooleCoroutineHelper::mustRun(function () use ($function): array {
+        $parameters = coroutineMustRun(function () use ($function): array {
             $reflectionFunction = new ReflectionFunction($function);
 
             return $this->makeParameters($reflectionFunction, new DependencyStack());
@@ -122,7 +124,7 @@ readonly class DependencyInjectionContainer
      */
     public function make(string $className): object
     {
-        $ret = SwooleCoroutineHelper::mustRun(function () use ($className): object {
+        $ret = coroutineMustRun(function () use ($className): object {
             $stack = new DependencyStack();
 
             if ($this->dependencyProviders->hasKey($className)) {

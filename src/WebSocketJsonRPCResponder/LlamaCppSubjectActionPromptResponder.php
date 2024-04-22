@@ -12,8 +12,8 @@ use Distantmagic\Resonance\LlamaCppCompletionRequest;
 use Distantmagic\Resonance\LlmChatHistory;
 use Distantmagic\Resonance\LlmChatMessage;
 use Distantmagic\Resonance\LlmPrompt\SubjectActionPrompt;
+use Distantmagic\Resonance\ObservableTask;
 use Distantmagic\Resonance\ObservableTaskCategory;
-use Distantmagic\Resonance\ObservableTaskFactory;
 use Distantmagic\Resonance\ObservableTaskStatus;
 use Distantmagic\Resonance\ObservableTaskStatusUpdate;
 use Distantmagic\Resonance\ObservableTaskTable;
@@ -84,7 +84,7 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketJs
         WebSocketConnection $webSocketConnection,
         JsonRPCRequest $rpcRequest,
     ): void {
-        $this->observableTaskTable->observe(ObservableTaskFactory::withTimeout(
+        $this->observableTaskTable->observe(new ObservableTask(
             iterableTask: function () use (
                 $webSocketAuthResolution,
                 $webSocketConnection,
@@ -96,7 +96,6 @@ abstract readonly class LlamaCppSubjectActionPromptResponder extends WebSocketJs
                     $rpcRequest,
                 );
             },
-            inactivityTimeout: 5.0,
             name: 'websocket_jsonrpc_response',
             category: ObservableTaskCategory::LlamaCpp->value,
         ));

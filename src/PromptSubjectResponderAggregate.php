@@ -8,6 +8,8 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Generator;
 use Psr\Log\LoggerInterface;
 
+use function Distantmagic\Resonance\helpers\coroutineMustGo;
+
 #[Singleton]
 readonly class PromptSubjectResponderAggregate
 {
@@ -25,8 +27,10 @@ readonly class PromptSubjectResponderAggregate
         float $inactivityTimeout = DM_POOL_CONNECTION_TIMEOUT,
     ): Generator {
         $subjectActionTokenReader = new SubjectActionTokenReader();
+        $prompt = '';
 
         foreach ($completion as $token) {
+            $prompt .= (string) $token;
             $subjectActionTokenReader->write($token);
 
             if ($subjectActionTokenReader->isUnknown()) {
@@ -35,7 +39,7 @@ readonly class PromptSubjectResponderAggregate
                 break;
             }
 
-            if ($token->isFailed) {
+            if ($token->isFailed()) {
                 yield new PromptSubjectResponseChunk(
                     isFailed: true,
                     isLastChunk: true,
@@ -55,6 +59,7 @@ readonly class PromptSubjectResponderAggregate
         if ($subjectActionTokenReader->isUnknown() || !isset($action, $subject)) {
             yield from $this->respondWithSubjectAction(
                 $authenticatedUser,
+                $prompt,
                 'unknown',
                 'unknown',
                 $inactivityTimeout,
@@ -62,6 +67,7 @@ readonly class PromptSubjectResponderAggregate
         } else {
             yield from $this->respondWithSubjectAction(
                 $authenticatedUser,
+                $prompt,
                 $subject,
                 $action,
                 $inactivityTimeout,
@@ -77,6 +83,7 @@ readonly class PromptSubjectResponderAggregate
      */
     private function respondWithSubjectAction(
         ?AuthenticatedUser $authenticatedUser,
+        string $prompt,
         string $subject,
         string $action,
         float $inactivityTimeout,
@@ -98,10 +105,13 @@ readonly class PromptSubjectResponderAggregate
             return;
         }
 
-        $request = new PromptSubjectRequest($authenticatedUser);
+        $request = new PromptSubjectRequest(
+            authenticatedUser: $authenticatedUser,
+            prompt: $prompt,
+        );
         $response = new PromptSubjectResponse($inactivityTimeout);
 
-        SwooleCoroutineHelper::mustGo(static function () use ($request, $responder, $response) {
+        coroutineMustGo(static function () use ($request, $responder, $response) {
             $responder->respondToPromptSubject($request, $response);
         });
 

@@ -6,6 +6,9 @@ namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\DialogueMessageProducer\ConstMessageProducer;
 use Ds\Set;
+use Generator;
+
+use function Distantmagic\Resonance\helpers\generatorGetReturn;
 
 readonly class DialogueNode implements DialogueNodeInterface
 {
@@ -70,8 +73,19 @@ readonly class DialogueNode implements DialogueNodeInterface
 
     public function respondTo(DialogueInputInterface $dialogueInput): DialogueResponseResolutionInterface
     {
+        $respondToGenerator = $this->respondToWithProgress($dialogueInput);
+
+        return generatorGetReturn($respondToGenerator);
+    }
+
+    public function respondToWithProgress(DialogueInputInterface $dialogueInput): Generator
+    {
         foreach (new DialogueResponseSortedIterator($this->responses) as $response) {
-            $resolution = $response->resolveResponse($dialogueInput);
+            $resolutionGenerator = $response->resolveResponseWithProgress($dialogueInput);
+
+            yield from $resolutionGenerator;
+
+            $resolution = $resolutionGenerator->getReturn();
             $resolutionStatus = $resolution->getStatus();
 
             if ($resolutionStatus->isFailed() || $resolutionStatus->canRespond()) {

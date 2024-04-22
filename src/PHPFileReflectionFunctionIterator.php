@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Closure;
 use Generator;
 use IteratorAggregate;
 use LogicException;
 use ReflectionFunction;
+use RuntimeException;
 use SplFileInfo;
 
 /**
@@ -50,7 +52,13 @@ readonly class PHPFileReflectionFunctionIterator implements IteratorAggregate
      */
     private function assertFunctionExists(SplFileInfo $file, string $functionName): string
     {
-        require_once $file->getPathname();
+        $requireClosure = Closure::fromCallable(function (SplFileInfo $file) {
+            require_once $file->getPathname();
+        })->bindTo(null);
+
+        if ($requireClosure) {
+            $requireClosure($file);
+        }
 
         if (function_exists($functionName)) {
             return $functionName;
@@ -80,6 +88,8 @@ readonly class PHPFileReflectionFunctionIterator implements IteratorAggregate
             return null;
         }
 
+        $fileBasenameWithoutExtension = $file->getBasename('.php');
+
         $namespaceSequence = new PHPTokenSequenceMatcher([
             'T_WHITESPACE',
             'T_FUNCTION',
@@ -98,9 +108,16 @@ readonly class PHPFileReflectionFunctionIterator implements IteratorAggregate
             $namespaceSequence->pushToken($token);
 
             if ($namespaceSequence->isMatching()) {
-                $functionName = $namespace.'\\'.$namespaceSequence->matchingTokens->get(3)->text;
+                $baseFunctionName = $namespaceSequence->matchingTokens->get(3)->text;
+                $functionName = $namespace.'\\'.$baseFunctionName;
 
-                return $this->assertFunctionExists($file, $functionName);
+                if ($fileBasenameWithoutExtension !== $baseFunctionName && strtolower($baseFunctionName) === strtolower($fileBasenameWithoutExtension)) {
+                    throw new RuntimeException('Function name must match the file name: '.$file->getPathname());
+                }
+
+                if ($fileBasenameWithoutExtension === $baseFunctionName) {
+                    return $this->assertFunctionExists($file, $functionName);
+                }
             }
         }
 

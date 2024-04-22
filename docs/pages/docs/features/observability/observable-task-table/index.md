@@ -40,37 +40,6 @@ $this->observableTaskTable->observe(new ObservableTask(
 ));
 ```
 
-## Observing Task with Timeout
-
-The `ObservableTaskTimeoutIterator` class is used to define a timeout for the 
-task. If the task is inactive for the specified time, the task will be 
-cancelled.
-
-You can use it by composing it with an observable task:
-
-```php
-$observableTaskTimeout = new ObservableTaskTimeoutIterator(
-    iterableTask: function () use (
-        $webSocketAuthResolution,
-        $webSocketConnection,
-        $rpcRequest,
-    ): Generator {
-        yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Running, null);
-
-        Coroutine::sleep(3);
-
-        yield new ObservableTaskStatusUpdate(ObservableTaskStatus::Finished, null);
-    },
-    inactivityTimeout: 5.0,
-);
-
-$this->observableTaskTable->observe(new ObservableTask(
-    iterableTask: $observableTaskTimeout,
-    name: 'test',
-    category: 'test_tasks',
-));
-```
-
 # Rendering
 
 Observable tasks table is iterable and uses shared memory. It is possible to

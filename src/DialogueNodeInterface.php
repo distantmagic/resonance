@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Ds\Set;
+use Generator;
 
 interface DialogueNodeInterface
 {
@@ -27,4 +28,9 @@ interface DialogueNodeInterface
     public function getSideEffects(): Set;
 
     public function respondTo(DialogueInputInterface $dialogueInput): DialogueResponseResolutionInterface;
+
+    /**
+     * @return Generator<mixed,LlmCompletionProgressInterface,mixed,DialogueResponseResolutionInterface>
+     */
+    public function respondToWithProgress(DialogueInputInterface $dialogueInput): Generator;
 }

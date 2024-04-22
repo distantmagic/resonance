@@ -11,18 +11,23 @@ use Distantmagic\Resonance\DialogueResponseResolution;
 use Distantmagic\Resonance\DialogueResponseResolutionStatus;
 use Distantmagic\Resonance\LlamaCppExtractWhenInterface;
 use Distantmagic\Resonance\LlamaCppExtractWhenResult;
+use Distantmagic\Resonance\LlmCompletionProgressInterface;
 use Distantmagic\Resonance\LlmPersona\HelpfulAssistant;
 use Distantmagic\Resonance\LlmPersonaInterface;
+use Generator;
 
+/**
+ * @psalm-type TCallbackReturn = DialogueResponseResolution|Generator<mixed,LlmCompletionProgressInterface,mixed,DialogueResponseResolution>
+ */
 readonly class LlamaCppExtractWhenResponse extends DialogueResponse
 {
     /**
-     * @var Closure(LlamaCppExtractWhenResult):DialogueResponseResolution $whenProvided
+     * @var Closure(LlamaCppExtractWhenResult):TCallbackReturn $whenProvided
      */
     private Closure $whenProvided;
 
     /**
-     * @param callable(LlamaCppExtractWhenResult):DialogueResponseResolution $whenProvided
+     * @param callable(LlamaCppExtractWhenResult):TCallbackReturn $whenProvided
      */
     public function __construct(
         private LlamaCppExtractWhenInterface $llamaCppExtractWhen,
@@ -38,14 +43,17 @@ readonly class LlamaCppExtractWhenResponse extends DialogueResponse
         return 50;
     }
 
-    public function resolveResponse(
-        DialogueInputInterface $dialogueInput
-    ): DialogueResponseResolution {
-        $extracted = $this->llamaCppExtractWhen->extract(
+    public function resolveResponseWithProgress(DialogueInputInterface $dialogueInput): Generator
+    {
+        $extractedGenerator = $this->llamaCppExtractWhen->extractWithProgress(
             condition: $this->condition,
             input: $dialogueInput->getContent(),
             persona: $this->persona,
         );
+
+        yield from $extractedGenerator;
+
+        $extracted = $extractedGenerator->getReturn();
 
         if ($extracted->isFailed) {
             return new DialogueResponseResolution(
@@ -61,6 +69,14 @@ readonly class LlamaCppExtractWhenResponse extends DialogueResponse
             );
         }
 
-        return ($this->whenProvided)($extracted);
+        $ret = ($this->whenProvided)($extracted);
+
+        if ($ret instanceof Generator) {
+            yield from $ret;
+
+            return $ret->getReturn();
+        }
+
+        return $ret;
     }
 }

@@ -17,11 +17,13 @@ description: >
     <div class="homepage__content">
         <hgroup class="homepage__title">
             <h1>PHP Framework for Next-Gen Web Apps</h1>
-            <h2>Resonance: Connect, Converse, Create</h2>
+            <h2>
+                Connect, Converse, Create
+            </h2>
             <p>
-                PHP Resonance Framework is designed from the ground up to 
-                facilitate interoperability and messaging between services in 
-                your infrastructure and beyond. It provides AI capabilities,
+                Resonance is designed from the ground up to facilitate 
+                interoperability and messaging between services in your 
+                infrastructure and beyond. It provides AI capabilities,
                 has a built in web server and integrates with llama.cpp.
             </p>
             <p>
@@ -132,22 +134,6 @@ description: >
                 class="homepage-gallery__item__learnmore"
                 href="/docs/features/validation/constraints/"
             >Learn More</a>
-        </li>
-        <li class="homepage-gallery__item">
-            <h4>
-                <a href="/docs/features/ai/prompt-subject-responders/">
-                    Prompt Subject Responders
-                    <span class="homepage-gallery__version">v0.20.0</span>
-                </a>
-            </h4>
-            <iframe 
-                src="https://www.youtube.com/embed/pCyEBueNw24" 
-                title="YouTube video player" 
-                frameborder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                referrerpolicy="strict-origin-when-cross-origin" 
-                allowfullscreen
-            ></iframe>
         </li>
         <li class="homepage-gallery__item">
             <h4>

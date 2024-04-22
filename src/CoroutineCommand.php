@@ -8,6 +8,8 @@ use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function Distantmagic\Resonance\helpers\coroutineMustRun;
+
 abstract class CoroutineCommand extends SymfonyCommand
 {
     abstract protected function executeInCoroutine(InputInterface $input, OutputInterface $output): int;
@@ -29,7 +31,7 @@ abstract class CoroutineCommand extends SymfonyCommand
             'log_level' => $this->swooleConfiguration->logLevel,
         ]);
 
-        return SwooleCoroutineHelper::mustRun(function () use ($input, $output): int {
+        return coroutineMustRun(function () use ($input, $output): int {
             return $this->executeInCoroutine($input, $output);
         });
     }

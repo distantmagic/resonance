@@ -7,6 +7,9 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\BackusNaurFormGrammar\YesNoMaybeGrammar;
 use Distantmagic\Resonance\LlmPersona\HelpfulAssistant;
+use Generator;
+
+use function Distantmagic\Resonance\helpers\generatorGetReturn;
 
 #[Singleton(provides: LlamaCppExtractWhenInterface::class)]
 readonly class LlamaCppExtractWhen implements LlamaCppExtractWhenInterface
@@ -21,6 +24,16 @@ readonly class LlamaCppExtractWhen implements LlamaCppExtractWhenInterface
         string $condition,
         LlmPersonaInterface $persona = new HelpfulAssistant(),
     ): LlamaCppExtractWhenResult {
+        $extractGenerator = $this->extractWithProgress($input, $condition, $persona);
+
+        return generatorGetReturn($extractGenerator);
+    }
+
+    public function extractWithProgress(
+        string $input,
+        string $condition,
+        LlmPersonaInterface $persona = new HelpfulAssistant(),
+    ): Generator {
         $completion = $this->llamaCppClient->generateCompletion(
             new LlamaCppCompletionRequest(
                 backusNaurFormGrammar: $this->yesNoMaybeGrammar,
@@ -46,7 +59,12 @@ readonly class LlamaCppExtractWhen implements LlamaCppExtractWhenInterface
         $ret = '';
 
         foreach ($completion as $token) {
-            if ($token->isFailed) {
+            yield new LlmCompletionProgress(
+                category: 'extract_when',
+                shouldNotify: true,
+            );
+
+            if ($token->isFailed()) {
                 return new LlamaCppExtractWhenResult(
                     condition: $condition,
                     isFailed: true,

@@ -200,6 +200,11 @@ h2.homepage__example__title {
   }
 }
 
+.homepage__title h3 {
+  font-size: 2em;
+  font-weight: bold;
+}
+
 .homepage__title p {
   line-height: 1.5;
   max-width: 80ch;

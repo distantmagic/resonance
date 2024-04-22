@@ -13,6 +13,8 @@ use RuntimeException;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 
+use function Distantmagic\Resonance\helpers\coroutineMustGo;
+
 #[RequiresPhpExtension('curl')]
 #[Singleton(provides: LlamaCppClientInterface::class)]
 readonly class LlamaCppClient implements LlamaCppClientInterface
@@ -172,7 +174,7 @@ readonly class LlamaCppClient implements LlamaCppClientInterface
     {
         $channel = new Channel(1);
 
-        SwooleCoroutineHelper::mustGo(function () use ($channel, $path, $requestData): void {
+        coroutineMustGo(function () use ($channel, $path, $requestData): void {
             $curlHandle = $this->createCurlHandle();
 
             Coroutine::defer(static function () use ($channel) {

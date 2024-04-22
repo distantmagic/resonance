@@ -8,6 +8,8 @@ use Assert\Assertion;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+use function Distantmagic\Resonance\helpers\coroutineMustGetContext;
+
 readonly class SwooleContextRequestResponseReader
 {
     public const CONTEXT_KEY_REQUEST = 'psr_http_request';
@@ -27,7 +29,7 @@ readonly class SwooleContextRequestResponseReader
             return;
         }
 
-        $context = SwooleCoroutineHelper::mustGetContext();
+        $context = coroutineMustGetContext();
 
         /**
          * @var mixed explicitly mixed for typechecks

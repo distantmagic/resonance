@@ -11,6 +11,8 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Swoole\Event;
 
+use function Distantmagic\Resonance\helpers\coroutineMustRun;
+
 /**
  * @internal
  */
@@ -102,7 +104,7 @@ final class LlamaCppExtractWhenTest extends TestCase
     ): void {
         $llamaCppExtract = self::$container->make(LlamaCppExtractWhen::class);
 
-        SwooleCoroutineHelper::mustRun(static function () use ($expected, $input, $condition, $llamaCppExtract) {
+        coroutineMustRun(static function () use ($expected, $input, $condition, $llamaCppExtract) {
             $extracted = $llamaCppExtract->extract(
                 input: $input,
                 condition: $condition,

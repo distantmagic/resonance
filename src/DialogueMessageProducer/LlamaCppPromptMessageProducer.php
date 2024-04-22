@@ -27,22 +27,10 @@ readonly class LlamaCppPromptMessageProducer extends DialogueMessageProducer
         );
 
         foreach ($completion as $token) {
-            if ($token->isFailed) {
-                $completion->stop();
-
-                yield new DialogueMessageChunk(
-                    content: '',
-                    isFailed: true,
-                    isLastToken: true,
-                );
-
-                return;
-            }
-
             yield new DialogueMessageChunk(
                 content: (string) $token,
-                isFailed: false,
-                isLastToken: $token->isLastToken,
+                isFailed: $token->isFailed(),
+                isLastToken: $token->isLastToken(),
             );
         }
     }
