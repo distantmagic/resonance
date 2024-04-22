@@ -2,25 +2,32 @@
 
 declare(strict_types=1);
 
-namespace Distantmagic\Resonance\HttpResponder\OAuth2;
+namespace Distantmagic\Resonance\HttpInterceptor;
 
 use Distantmagic\Resonance\Attribute\GrantsFeature;
+use Distantmagic\Resonance\Attribute\Intercepts;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\HttpInterceptableInterface;
-use Distantmagic\Resonance\HttpResponder;
+use Distantmagic\Resonance\HttpInterceptor;
 use Distantmagic\Resonance\HttpResponderInterface;
 use Distantmagic\Resonance\OAuth2AuthorizationCodeFlowControllerInterface;
 use Distantmagic\Resonance\OAuth2AuthorizationRequestSessionStore;
 use Distantmagic\Resonance\OAuth2AuthorizedUser;
+use Distantmagic\Resonance\OAuth2UserSessionAuthenticated;
 use Distantmagic\Resonance\SessionAuthentication;
+use Distantmagic\Resonance\SingletonCollection;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
+/**
+ * @template-extends HttpInterceptor<OAuth2UserSessionAuthenticated>
+ */
 #[GrantsFeature(Feature::OAuth2)]
-#[Singleton]
-final readonly class PostSessionAuthentication extends HttpResponder
+#[Intercepts(OAuth2UserSessionAuthenticated::class)]
+#[Singleton(collection: SingletonCollection::HttpInterceptor)]
+final readonly class OAuth2UserSessionAuthenticatedInterceptor extends HttpInterceptor
 {
     public function __construct(
         private OAuth2AuthorizationCodeFlowControllerInterface $authorizationCodeFlowController,
@@ -28,8 +35,11 @@ final readonly class PostSessionAuthentication extends HttpResponder
         private SessionAuthentication $sessionAuthentication,
     ) {}
 
-    public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface
-    {
+    public function intercept(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        object $intercepted,
+    ): HttpInterceptableInterface|HttpResponderInterface|ResponseInterface {
         if (!$this->authorizationRequestSessionStore->has($request)) {
             return $this->authorizationCodeFlowController->redirectToAuthenticatedPage($request, $response);
         }

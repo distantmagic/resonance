@@ -85,6 +85,7 @@ code[class] {
 .fenced-code {
   background-color: var(--color-block-background);
   box-shadow: 8px 8px #00000033;
+  margin: 20px 0;
 
   @media screen and (min-width: 1024px) {
     position: relative;

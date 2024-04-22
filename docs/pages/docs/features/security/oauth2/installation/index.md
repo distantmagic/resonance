@@ -103,3 +103,31 @@ $ php ./bin/resonance.php generate:defuse-key > oauth2/defuse.key
 ```
 
 Then, change the CHMOD permissions for that key to `0600`.
+
+## Post Session Authentication Hook
+
+If you are using {{tutorials/session-based-authentication/index}} you need
+to return `OAuth2UserSessionAuthenticated` instance
+from your authentication {{docs/features/http/responders}} (see also:
+{{docs/features/http/interceptors}}).
+
+It allows OAuth2 to know that the user is authenticated and that it should
+check if user is in the middle of OAuth2 flow.
+
+```php
+<?php
+
+use Distantmagic\Resonance\OAuth2UserSessionAuthenticated;
+
+final readonly class LoginValidation extends HttpController
+{
+    public function createResponse(): HttpInterceptableInterface 
+    {
+        // ...
+        // perform session authentication somehow
+        // ...
+
+        return new OAuth2UserSessionAuthenticated();
+    }
+}
+```
