@@ -46,7 +46,7 @@ use Distantmagic\Resonance\SessionAuthentication;
     routeSymbol: HttpRouteSymbol::LoginValidation,
 )]
 #[Singleton(collection: SingletonCollection::HttpResponder)]
-#[ValidatesCSRFToken('login)]
+#[ValidatesCSRFToken('login')]
 final readonly class LoginValidation extends HttpController
 {
     public function __construct(
