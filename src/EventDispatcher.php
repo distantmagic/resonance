@@ -8,8 +8,8 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\SwooleFuture\SwooleFuture;
 use Distantmagic\SwooleFuture\SwooleFutureResult;
 use Psr\Log\LoggerInterface;
-use Swoole\Event;
 
+use function Distantmagic\Resonance\helpers\coroutineMustGo;
 use function Swoole\Coroutine\batch;
 
 #[Singleton(provides: EventDispatcherInterface::class)]
@@ -31,7 +31,7 @@ readonly class EventDispatcher implements EventDispatcherInterface
 
     public function dispatch(object $event): void
     {
-        Event::defer(function () use ($event): void {
+        coroutineMustGo(function () use ($event): void {
             $this->doDispatch($event);
         });
     }

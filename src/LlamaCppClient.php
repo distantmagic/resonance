@@ -29,7 +29,7 @@ readonly class LlamaCppClient implements LlamaCppClientInterface
 
     public function generateCompletion(
         LlamaCppCompletionRequest $request,
-        int $timeout = 3600,
+        int $timeout = 10800,
     ): LlamaCppCompletionIterator {
         $serializedRequest = $this->jsonSerializer->serialize($request->toJsonSerializable($this->llmChatHistoryRenderer));
         $responseChunks = $this->streamResponse($serializedRequest, '/completion', $timeout);
@@ -80,7 +80,7 @@ readonly class LlamaCppClient implements LlamaCppClientInterface
      */
     public function generateInfill(
         LlamaCppInfillRequest $request,
-        int $timeout = 3600,
+        int $timeout = 10800,
     ): Generator {
         $serializedRequest = $this->jsonSerializer->serialize($request);
         $responseChunks = $this->streamResponse($serializedRequest, '/infill', $timeout);

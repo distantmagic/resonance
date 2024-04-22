@@ -6,7 +6,6 @@ namespace Distantmagic\Resonance;
 
 use Ds\Map;
 use Redis;
-use Swoole\Event;
 
 readonly class Session
 {
@@ -37,12 +36,10 @@ readonly class Session
 
     public function __destruct()
     {
-        Event::defer(function (): void {
-            $this->redisConnectionPoolRepository->putConnection(
-                $this->sessionConfiguration->redisConnectionPool,
-                $this->redis,
-            );
-        });
+        $this->redisConnectionPoolRepository->putConnection(
+            $this->sessionConfiguration->redisConnectionPool,
+            $this->redis,
+        );
     }
 
     public function persist(): void

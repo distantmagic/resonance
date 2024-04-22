@@ -10,7 +10,6 @@ use PDOStatement;
 use Psr\Log\LoggerInterface;
 use Swoole\Database\PDOProxy;
 use Swoole\Database\PDOStatementProxy;
-use Swoole\Event;
 
 readonly class DatabaseConnection implements Connection
 {
@@ -38,9 +37,7 @@ readonly class DatabaseConnection implements Connection
 
     public function __destruct()
     {
-        Event::defer(function (): void {
-            $this->databaseConnectionPoolRepository->putConnection($this->connectionPoolName, $this->pdo);
-        });
+        $this->databaseConnectionPoolRepository->putConnection($this->connectionPoolName, $this->pdo);
     }
 
     public function beginTransaction(): void
