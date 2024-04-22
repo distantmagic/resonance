@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Ds\Map;
-use Redis;
 
 readonly class Session
 {
@@ -24,7 +23,12 @@ readonly class Session
 
     public function persist(): void
     {
-        $this->getRedisConnection()->set(
+        $redisConnection = new RedisConnection(
+            $this->redisConnectionPoolRepository,
+            $this->getRedisPrefix(),
+        );
+
+        $redisConnection->redis->set(
             $this->id,
             $this->serializer->serialize($this->data->toArray())
         );
@@ -32,7 +36,12 @@ readonly class Session
 
     private function getPersistedData(): mixed
     {
-        $storedValue = $this->getRedisConnection()->get($this->id);
+        $redisConnection = new RedisConnection(
+            $this->redisConnectionPoolRepository,
+            $this->getRedisPrefix(),
+        );
+
+        $storedValue = $redisConnection->redis->get($this->id);
 
         if (!is_string($storedValue) || empty($storedValue)) {
             return null;
@@ -41,7 +50,7 @@ readonly class Session
         return $this->serializer->unserialize($storedValue);
     }
 
-    private function getRedisConnection(): Redis
+    private function getRedisPrefix(): string
     {
         $redisPrefix = $this->redisConfiguration
             ->connectionPoolConfiguration
@@ -49,12 +58,7 @@ readonly class Session
             ->prefix
         ;
 
-        $redisConnection = new RedisConnection(
-            redisConnectionPoolRepository: $this->redisConnectionPoolRepository,
-            redisPrefix: $redisPrefix.'session:',
-        );
-
-        return $redisConnection->redis;
+        return $redisPrefix.'.session';
     }
 
     private function restoreSessionData(): array
