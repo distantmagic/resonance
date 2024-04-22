@@ -10,41 +10,21 @@ use Redis;
 readonly class Session
 {
     public Map $data;
-    private Redis $redis;
 
     public function __construct(
-        RedisConfiguration $redisConfiguration,
+        private RedisConfiguration $redisConfiguration,
         private RedisConnectionPoolRepository $redisConnectionPoolRepository,
         private SerializerInterface $serializer,
         private SessionConfiguration $sessionConfiguration,
         public string $id,
     ) {
-        $redisPrefix = $redisConfiguration
-            ->connectionPoolConfiguration
-            ->get($this->sessionConfiguration->redisConnectionPool)
-            ->prefix
-        ;
-
-        $this->redis = $this
-            ->redisConnectionPoolRepository
-            ->getConnection($this->sessionConfiguration->redisConnectionPool)
-        ;
-        $this->redis->setOption(Redis::OPT_PREFIX, $redisPrefix.'session:');
 
         $this->data = new Map($this->restoreSessionData());
     }
 
-    public function __destruct()
-    {
-        $this->redisConnectionPoolRepository->putConnection(
-            $this->sessionConfiguration->redisConnectionPool,
-            $this->redis,
-        );
-    }
-
     public function persist(): void
     {
-        $this->redis->set(
+        $this->getRedisConnection()->set(
             $this->id,
             $this->serializer->serialize($this->data->toArray())
         );
@@ -52,13 +32,30 @@ readonly class Session
 
     private function getPersistedData(): mixed
     {
-        $storedValue = $this->redis->get($this->id);
+        $storedValue = $this->getRedisConnection()->get($this->id);
 
         if (!is_string($storedValue) || empty($storedValue)) {
             return null;
         }
 
         return $this->serializer->unserialize($storedValue);
+    }
+
+    private function getRedisConnection(): Redis
+    {
+        $redisPrefix = $this->redisConfiguration
+            ->connectionPoolConfiguration
+            ->get($this->sessionConfiguration->redisConnectionPool)
+            ->prefix
+        ;
+
+        $redisConnection = new RedisConnection(
+            redisConfiguration: $this->redisConfiguration,
+            redisConnectionPoolRepository: $this->redisConnectionPoolRepository,
+            redisPrefix: $redisPrefix.'session:',
+        );
+
+        return $redisConnection->redis;
     }
 
     private function restoreSessionData(): array
