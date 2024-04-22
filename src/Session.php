@@ -50,7 +50,6 @@ readonly class Session
         ;
 
         $redisConnection = new RedisConnection(
-            redisConfiguration: $this->redisConfiguration,
             redisConnectionPoolRepository: $this->redisConnectionPoolRepository,
             redisPrefix: $redisPrefix.'session:',
         );

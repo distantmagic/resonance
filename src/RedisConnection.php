@@ -11,17 +11,10 @@ readonly class RedisConnection
     public Redis $redis;
 
     public function __construct(
-        RedisConfiguration $redisConfiguration,
         private RedisConnectionPoolRepository $redisConnectionPoolRepository,
         string $redisPrefix,
         private string $connectionPoolName = 'default',
     ) {
-        $redisPrefix = $redisConfiguration
-            ->connectionPoolConfiguration
-            ->get($connectionPoolName)
-            ->prefix
-        ;
-
         $this->redis = $this
             ->redisConnectionPoolRepository
             ->getConnection($connectionPoolName)
