@@ -27,10 +27,12 @@ readonly class LlamaCppClient implements LlamaCppClientInterface
         private LoggerInterface $logger,
     ) {}
 
-    public function generateCompletion(LlamaCppCompletionRequest $request): LlamaCppCompletionIterator
-    {
+    public function generateCompletion(
+        LlamaCppCompletionRequest $request,
+        int $timeout = 3600,
+    ): LlamaCppCompletionIterator {
         $serializedRequest = $this->jsonSerializer->serialize($request->toJsonSerializable($this->llmChatHistoryRenderer));
-        $responseChunks = $this->streamResponse($serializedRequest, '/completion');
+        $responseChunks = $this->streamResponse($serializedRequest, '/completion', $timeout);
 
         return new LlamaCppCompletionIterator(
             $this->jsonSerializer,
@@ -76,10 +78,12 @@ readonly class LlamaCppClient implements LlamaCppClientInterface
     /**
      * @return Generator<LlamaCppInfill>
      */
-    public function generateInfill(LlamaCppInfillRequest $request): Generator
-    {
+    public function generateInfill(
+        LlamaCppInfillRequest $request,
+        int $timeout = 3600,
+    ): Generator {
         $serializedRequest = $this->jsonSerializer->serialize($request);
-        $responseChunks = $this->streamResponse($serializedRequest, '/infill');
+        $responseChunks = $this->streamResponse($serializedRequest, '/infill', $timeout);
 
         foreach ($responseChunks as $responseChunk) {
             if ($responseChunk instanceof SwooleChannelIteratorError) {
@@ -170,11 +174,14 @@ readonly class LlamaCppClient implements LlamaCppClientInterface
     /**
      * @return SwooleChannelIterator<LlamaCppClientResponseChunk>
      */
-    private function streamResponse(string $requestData, string $path): SwooleChannelIterator
-    {
+    private function streamResponse(
+        string $requestData,
+        string $path,
+        int $timeout,
+    ): SwooleChannelIterator {
         $channel = new Channel(1);
 
-        coroutineMustGo(function () use ($channel, $path, $requestData): void {
+        coroutineMustGo(function () use ($channel, $path, $requestData, $timeout): void {
             $curlHandle = $this->createCurlHandle();
 
             Coroutine::defer(static function () use ($channel) {
@@ -185,7 +192,7 @@ readonly class LlamaCppClient implements LlamaCppClientInterface
                 curl_close($curlHandle);
             });
 
-            curl_setopt($curlHandle, CURLOPT_TIMEOUT, 180);
+            curl_setopt($curlHandle, CURLOPT_TIMEOUT, $timeout);
             curl_setopt($curlHandle, CURLOPT_POST, true);
             curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $requestData);
             curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, false);
