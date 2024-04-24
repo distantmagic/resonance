@@ -18,6 +18,11 @@ enum YesNoMaybe: string
         return self::Maybe !== $this;
     }
 
+    public function isMaybe(): bool
+    {
+        return self::Maybe === $this;
+    }
+
     public function isNo(): bool
     {
         return self::No === $this;

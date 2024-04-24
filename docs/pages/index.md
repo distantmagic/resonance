@@ -65,13 +65,14 @@ description: >
                     <span class="homepage-gallery__version">v0.30.0</span>
                 </a>
             </h4>
-            <p>
-                Extract strictly formatted data from user's fuzzy input.
-            </p>
-            <a 
-                class="homepage-gallery__item__learnmore"
-                href="/docs/features/ai/server/llama-cpp/extractors/"
-            >Learn More</a>
+            <iframe 
+                src="https://www.youtube.com/embed/Jz-p6Bhcm54" 
+                title="YouTube video player" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin" 
+                allowfullscreen
+            ></iframe>
         </li>
         <li class="homepage-gallery__item">
             <h4>
