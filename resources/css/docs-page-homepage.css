@@ -58,6 +58,7 @@
   h4 a {
     align-items: center;
     border-bottom: 1px solid var(--color-border);
+    column-gap: 1ch;
     display: flex;
     font-weight: bold;
     justify-content: space-between;

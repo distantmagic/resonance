@@ -156,6 +156,17 @@
     width: 100%;
   }
 
+  img + em {
+    align-items: center;
+    column-gap: 1ch;
+    display: flex;
+    flex-direction: row;
+    font-size: var(--font-size-smaller);
+    justify-content: center;
+    margin-top: -24px;
+    text-align: center;
+  }
+
   ol:not([class]),
   ul:not([class]) {
     display: flex;

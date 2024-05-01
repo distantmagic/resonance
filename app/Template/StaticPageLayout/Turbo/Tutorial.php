@@ -132,6 +132,18 @@ final readonly class Tutorial extends Turbo
                 <div class="formatted-content tutorial__readme">
                     {$renderedOutput}
                 </div>
+                <div class="formatted-content tutorial__comments">
+                    <h3>Comments</h3>
+                    <p>
+                        If you want to leave a comment
+                        <a
+                            href="https://github.com/distantmagic/resonance/discussions"
+                            target="_blank"
+                        >Start a discussion on GitHub</a>
+                        or join our
+                        <a href="/community/">Community</a>
+                    </p>
+                </div>
             </div>
         </div>
         HTML;

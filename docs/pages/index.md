@@ -44,6 +44,23 @@ description: >
     <ul class="homepage-gallery__items">
         <li class="homepage-gallery__item">
             <h4>
+                <a href="/tutorials/semi-scripted-conversational-applications/">
+                    Semi-Scripted Conversational Applications
+                    <span class="homepage-gallery__version">tutorial</span>
+                </a>
+            </h4>
+            <p>
+                Large Language Models, when used as a user interface, enable 
+                users to create advanced applications that can replace most 
+                traditional interfaces.
+            </p>
+            <a 
+                class="homepage-gallery__item__learnmore"
+                href="/tutorials/semi-scripted-conversational-applications/"
+            >Learn More</a>
+        </li>
+        <li class="homepage-gallery__item">
+            <h4>
                 <a href="/docs/features/conversational-applications/dialogue-nodes/">
                     Dialogue Nodes
                     <span class="homepage-gallery__version">v0.30.0</span>
