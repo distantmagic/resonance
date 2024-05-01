@@ -70,8 +70,8 @@ How about building the applications themselves without writing code?
 Let us meet the AI halfway. We will create a semi-scripted dialogue to list 
 predefined dialogue nodes and potential responses. The system will accept any 
 input and try to match it with one of the predefined responses. This allows us 
-flexibility when accepting inputs and be strict and predictable about our o
-utputs.
+flexibility when accepting inputs and be strict and predictable about our 
+outputs.
 
 ### Ingredients
 
