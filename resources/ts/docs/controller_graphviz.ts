@@ -40,7 +40,7 @@ export class controller_graphviz extends Controller<HTMLElement> {
   private declare readonly sceneTarget: HTMLElement;
 
   public async connect(): Promise<void> {
-    if (this.element.classList.contains("fenced-graphviz--rendered")) {
+    if (this.element.classList.contains("fenced-renderable--rendered")) {
       return;
     }
 
@@ -51,7 +51,7 @@ export class controller_graphviz extends Controller<HTMLElement> {
     );
 
     this.sceneTarget.replaceChildren(renderedNode);
-    this.element.classList.add("fenced-graphviz--rendered");
+    this.element.classList.add("fenced-renderable--rendered");
   }
 
   private static async getInstance(): ReturnType<typeof instance> {

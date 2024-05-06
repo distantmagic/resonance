@@ -78,6 +78,7 @@ final readonly class Document extends Turbo
         $scripts->push('controller_aside-filter.ts', 0);
         $scripts->push('controller_graphviz.ts', 0);
         $scripts->push('controller_hljs.ts', 0);
+        // $scripts->push('controller_mermaid.ts', 0);
     }
 
     protected function registerStylesheets(PriorityQueue $stylesheets): void

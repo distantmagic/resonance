@@ -58,18 +58,18 @@ final readonly class CommonMarkFencedCodeRenderer implements NodeRendererInterfa
 
         $languageName = $infoWords->isEmpty() ? 'unknown' : $infoWords->first();
 
-        if ('graphviz' === $languageName && $infoWords->contains('render')) {
+        if ($infoWords->contains('render')) {
             return new HtmlElement(
                 'div',
                 [
-                    'class' => 'fenced-graphviz',
-                    'data-controller' => 'graphviz',
+                    'class' => 'fenced-renderable',
+                    'data-controller' => $languageName,
                 ],
                 new HtmlElement(
                     'div',
                     [
-                        'class' => 'fenced-graphviz__scene',
-                        'data-graphviz-target' => 'scene',
+                        'class' => 'fenced-renderable__scene',
+                        "data-{$languageName}-target" => 'scene',
                     ],
                     Xml::escape($node->getLiteral()),
                 ),

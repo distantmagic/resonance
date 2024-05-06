@@ -238,14 +238,14 @@
 }
 
 /**
- * Graphviz
+ * Renderables
  */
 
-.fenced-graphviz {
-  display: none;
+.fenced-renderable:not(.fenced-renderable--rendered) {
+  opacity: 0;
 }
 
-.fenced-graphviz.fenced-graphviz--rendered {
+.fenced-renderable.fenced-renderable--rendered {
   display: table;
   margin: 1em 0;
   width: 100%;
@@ -254,7 +254,7 @@
   table-layout: fixed;
 }
 
-.fenced-graphviz__scene {
+.fenced-renderable__scene {
   overflow-x: scroll;
   overflow-y: hidden;
   padding: 24px;
