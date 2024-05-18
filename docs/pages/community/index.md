@@ -17,5 +17,5 @@ You can find official channels here:
 - [GitHub](https://github.com/distantmagic/resonance)
 - [Telegram](https://t.me/+AQiDhKlsNBRjMmU0)
 
-If you started your own community and want it to be features here, feel free to 
+If you started your own community and want it to be featured here, feel free to 
 let us know.
