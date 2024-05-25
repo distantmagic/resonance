@@ -12,7 +12,6 @@ readonly class RedisConnectionPoolConfiguration
      * @psalm-taint-source system_secret $dbIndex
      * @psalm-taint-source system_secret $host
      * @psalm-taint-source system_secret $password
-     * @psalm-taint-source system_secret $poolPrefill
      * @psalm-taint-source system_secret $poolSize
      * @psalm-taint-source system_secret $port
      * @psalm-taint-source system_secret $prefix
@@ -28,8 +27,6 @@ readonly class RedisConnectionPoolConfiguration
         public string $host,
         #[SensitiveParameter]
         public string $password,
-        #[SensitiveParameter]
-        public bool $poolPrefill,
         #[SensitiveParameter]
         public int $poolSize,
         #[SensitiveParameter]

@@ -39,14 +39,14 @@ final readonly class RedisConnectionPoolRepositoryProvider extends SingletonProv
             ;
 
             $redisPool = new RedisPool($redisConfig, $connectionPoolConfiguration->poolSize);
-
-            if ($connectionPoolConfiguration->poolPrefill) {
-                $redisPool->fill();
-            }
-
             $redisConnectionPoolRepository->redisConnectionPool->put($name, $redisPool);
         }
 
         return $redisConnectionPoolRepository;
+    }
+
+    public function shouldRegister(): bool
+    {
+        return false;
     }
 }

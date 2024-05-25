@@ -55,10 +55,6 @@ final readonly class DatabaseConnectionPoolRepositoryProvider extends SingletonP
                 $connectionPoolConfiguration->poolSize,
             );
 
-            if ($connectionPoolConfiguration->poolPrefill) {
-                $pdoPool->fill();
-            }
-
             $databaseConnectionPoolRepository->databaseConnectionPool->put($name, $pdoPool);
         }
 

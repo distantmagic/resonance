@@ -9,11 +9,11 @@ use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\CoroutineCommand;
+use Distantmagic\Resonance\CoroutineDriverInterface;
 use Distantmagic\Resonance\Event\MailBounced;
 use Distantmagic\Resonance\EventDispatcherInterface;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\PostfixBounceAnalyzer;
-use Distantmagic\Resonance\SwooleConfiguration;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,12 +29,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class PostfixBounce extends CoroutineCommand
 {
     public function __construct(
+        CoroutineDriverInterface $coroutineDriver,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly LoggerInterface $logger,
         private readonly PostfixBounceAnalyzer $postfixBounceAnalyzer,
-        SwooleConfiguration $swooleConfiguration,
     ) {
-        parent::__construct($swooleConfiguration);
+        parent::__construct($coroutineDriver);
     }
 
     protected function executeInCoroutine(InputInterface $input, OutputInterface $output): int

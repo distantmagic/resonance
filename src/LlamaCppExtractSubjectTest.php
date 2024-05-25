@@ -9,9 +9,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use Swoole\Event;
-
-use function Distantmagic\Resonance\helpers\coroutineMustRun;
 
 /**
  * @internal
@@ -69,7 +66,7 @@ final class LlamaCppExtractSubjectTest extends TestCase
 
     protected function tearDown(): void
     {
-        Event::wait();
+        self::$container->coroutineDriver->wait();
     }
 
     #[DataProvider('inputSubjectProvider')]
@@ -77,7 +74,7 @@ final class LlamaCppExtractSubjectTest extends TestCase
     {
         $llamaCppExtract = self::$container->make(LlamaCppExtractSubject::class);
 
-        coroutineMustRun(static function () use ($expected, $input, $llamaCppExtract, $topic) {
+        self::$container->coroutineDriver->run(static function () use ($expected, $input, $llamaCppExtract, $topic) {
             $extracted = $llamaCppExtract->extract(
                 topic: $topic,
                 input: $input,

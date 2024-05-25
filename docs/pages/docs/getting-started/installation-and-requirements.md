@@ -91,9 +91,6 @@ Available commands:
   completion                Dump the shell completion script
   help                      Display help for a command
   list                      List commands
- generate
-  generate:http-controller  Generate http-controller
-  generate:http-responder   Generate http-responder
  static-pages
   static-pages:build        Generate static pages
 ```

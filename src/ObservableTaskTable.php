@@ -9,10 +9,7 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Generator;
 use IteratorAggregate;
 use RuntimeException;
-use Swoole\Coroutine;
 use Swoole\Table;
-
-use function Distantmagic\Resonance\helpers\coroutineMustGo;
 
 /**
  * @template-implements IteratorAggregate<non-empty-string,ObservableTaskTableRow>
@@ -25,6 +22,7 @@ readonly class ObservableTaskTable implements IteratorAggregate
     private Table $table;
 
     public function __construct(
+        private CoroutineDriverInterface $coroutineDriver,
         ObservableTaskConfiguration $observableTaskConfiguration,
         private SerializerInterface $serializer,
     ) {
@@ -80,37 +78,37 @@ readonly class ObservableTaskTable implements IteratorAggregate
     {
         $slotId = $this->availableRowsPool->nextAvailableRow();
 
-        coroutineMustGo(function () use ($slotId, $observableTask) {
-            Coroutine::defer(function () use ($slotId) {
-                $this->availableRowsPool->freeAvailableRow($slotId);
-            });
-
-            if (
-                !$this->table->set($slotId, [
-                    'category' => $observableTask->getCategory(),
-                    'modified_at' => time(),
-                    'name' => $observableTask->getName(),
-                    'status' => $this->serializedPendingStatus,
-                ])
-            ) {
-                throw new RuntimeException('Unable to set an initial slot status');
-            }
-
-            foreach ($observableTask as $statusUpdate) {
+        $this->coroutineDriver->go(function () use ($slotId, $observableTask) {
+            try {
                 if (
                     !$this->table->set($slotId, [
                         'category' => $observableTask->getCategory(),
                         'modified_at' => time(),
                         'name' => $observableTask->getName(),
-                        'status' => $this->serializer->serialize($statusUpdate),
+                        'status' => $this->serializedPendingStatus,
                     ])
                 ) {
-                    throw new RuntimeException('Unable to update a slot status.');
+                    throw new RuntimeException('Unable to set an initial slot status');
                 }
 
-                if ($statusUpdate->status->isFinal()) {
-                    break;
+                foreach ($observableTask as $statusUpdate) {
+                    if (
+                        !$this->table->set($slotId, [
+                            'category' => $observableTask->getCategory(),
+                            'modified_at' => time(),
+                            'name' => $observableTask->getName(),
+                            'status' => $this->serializer->serialize($statusUpdate),
+                        ])
+                    ) {
+                        throw new RuntimeException('Unable to update a slot status.');
+                    }
+
+                    if ($statusUpdate->status->isFinal()) {
+                        break;
+                    }
                 }
+            } finally {
+                $this->availableRowsPool->freeAvailableRow($slotId);
             }
         });
 

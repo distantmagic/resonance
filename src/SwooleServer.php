@@ -8,12 +8,15 @@ use Distantmagic\Resonance\Attribute\GrantsFeature;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Event\HttpServerBeforeStop;
 use Distantmagic\Resonance\Event\HttpServerStarted;
+use Distantmagic\Resonance\PsrMessage\ServerResponse;
+use Distantmagic\Resonance\PsrMessage\SwooleServerRequest;
 use Psr\Log\LoggerInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Http\Server as HttpServer;
 use Swoole\Server;
 use Swoole\WebSocket\Server as WebSocketServer;
+use Throwable;
 
 #[GrantsFeature(Feature::SwooleTaskServer)]
 #[Singleton]
@@ -26,6 +29,7 @@ readonly class SwooleServer
         private EventDispatcherInterface $eventDispatcher,
         private HttpResponderAggregate $httpResponderAggregate,
         private LoggerInterface $logger,
+        private PsrSwooleResponder $psrSwooleResponder,
         private ServerPipeMessageDispatcher $serverPipeMessageDispatcher,
         private ServerTaskHandlerDispatcher $serverTaskHandlerDispatcher,
         private SwooleConfiguration $swooleConfiguration,
@@ -79,7 +83,7 @@ readonly class SwooleServer
         $this->server->on('beforeShutdown', $this->onBeforeShutdown(...));
         $this->server->on('finish', $this->serverTaskHandlerDispatcher->onFinish(...));
         $this->server->on('pipeMessage', $this->serverPipeMessageDispatcher->onPipeMessage(...));
-        $this->server->on('request', $this->httpResponderAggregate->respondToSwooleRequest(...));
+        $this->server->on('request', $this->onRequest(...));
         $this->server->on('start', $this->onStart(...));
         $this->server->on('task', $this->serverTaskHandlerDispatcher->onTask(...));
         $this->server->on('workerError', $this->onWorkerError(...));
@@ -114,6 +118,30 @@ readonly class SwooleServer
         }
 
         $this->webSocketServerController->onHandshake($this->server, $request, $response);
+    }
+
+    private function onRequest(Request $request, Response $response): void
+    {
+        try {
+            $psrRequest = new SwooleServerRequest(
+                applicationConfiguration: $this->applicationConfiguration,
+                request: $request,
+                swooleConfiguration: $this->swooleConfiguration,
+            );
+
+            $this->psrSwooleResponder->respondWithPsrResponse(
+                $psrRequest,
+                $response,
+                $this->httpResponderAggregate->respondToPsrRequest(
+                    request: $psrRequest,
+                    response: new ServerResponse(),
+                ),
+            );
+        } catch (Throwable $throwable) {
+            $message = sprintf('http_swoole_responder_failure(%s)', (string) $throwable);
+
+            $this->logger->error($message);
+        }
     }
 
     private function onStart(Server $server): void

@@ -67,7 +67,6 @@ final readonly class RedisConfigurationProvider extends ConfigurationProvider
                     dbIndex: $connectionPoolConfiguration['db_index'],
                     host: $connectionPoolConfiguration['host'],
                     password: (string) $connectionPoolConfiguration['password'],
-                    poolPrefill: $connectionPoolConfiguration['pool_prefill'],
                     poolSize: $connectionPoolConfiguration['pool_size'],
                     port: $connectionPoolConfiguration['port'],
                     prefix: $connectionPoolConfiguration['prefix'],

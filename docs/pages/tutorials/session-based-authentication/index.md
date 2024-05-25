@@ -239,15 +239,20 @@ use Distantmagic\Resonance\Attribute\RespondsToHttp;
 use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\TwigTemplate;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
     pattern: '/login',
     routeSymbol: HttpRouteSymbol::LoginForm,
 )]
-function LoginForm(): HttpInterceptableInterface
+function LoginForm(
+    ServerRequestInterface $request,
+    ResponseInterface $response,
+): HttpInterceptableInterface
 {
-    return new TwigTemplate('auth/login_form.twig');
+    return new TwigTemplate($request, $response, 'auth/login_form.twig');
 }
 ```
 
@@ -464,7 +469,7 @@ final readonly class LoginValidation extends HttpController
             $user->user,
         );
 
-        return new InternalRedirect(HttpRouteSymbol::Homepage);
+        return new InternalRedirect($request, $response, HttpRouteSymbol::Homepage);
     }
 }
 ```

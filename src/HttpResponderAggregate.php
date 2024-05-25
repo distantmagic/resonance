@@ -10,38 +10,28 @@ use Distantmagic\Resonance\Event\UnhandledException;
 use Distantmagic\Resonance\HttpResponder\Error\MethodNotAllowed;
 use Distantmagic\Resonance\HttpResponder\Error\PageNotFound;
 use Distantmagic\Resonance\HttpResponder\Error\ServerError;
-use Distantmagic\Resonance\PsrMessage\SwooleServerRequest;
-use Distantmagic\Resonance\PsrMessage\SwooleServerResponse;
 use DomainException;
 use Nyholm\Psr7\Response as Psr7Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Throwable;
 
-use function Distantmagic\Resonance\helpers\coroutineMustGetContext;
-
 #[Singleton]
 readonly class HttpResponderAggregate implements RequestHandlerInterface
 {
     public function __construct(
-        private ApplicationConfiguration $applicationConfiguration,
         private EventDispatcherInterface $eventDispatcher,
         private HttpRecursiveResponder $recursiveResponder,
         private HttpResponderCollection $httpResponderCollection,
         private HttpRouteMatchRegistry $routeMatchRegistry,
-        private LoggerInterface $logger,
         private MethodNotAllowed $methodNotAllowed,
         private PageNotFound $pageNotFound,
-        private PsrSwooleResponder $psrSwooleResponder,
         private RequestContext $requestContext,
         private ServerError $serverError,
         private SwooleConfiguration $swooleConfiguration,
@@ -66,11 +56,6 @@ readonly class HttpResponderAggregate implements RequestHandlerInterface
         $responder = $this->selectResponder($request);
 
         try {
-            $context = coroutineMustGetContext();
-
-            $context[SwooleContextRequestResponseReader::CONTEXT_KEY_REQUEST] = $request;
-            $context[SwooleContextRequestResponseReader::CONTEXT_KEY_RESPONSE] = $response;
-
             return $this->recursiveResponder->respondRecursive($request, $response, $responder);
         } catch (Throwable $throwable) {
             $this->eventDispatcher->dispatch(new UnhandledException($throwable));
@@ -82,30 +67,6 @@ readonly class HttpResponderAggregate implements RequestHandlerInterface
             );
         } finally {
             $this->eventDispatcher->dispatch(new HttpResponseReady($responder, $request));
-        }
-    }
-
-    public function respondToSwooleRequest(Request $request, Response $response): void
-    {
-        try {
-            $psrRequest = new SwooleServerRequest(
-                applicationConfiguration: $this->applicationConfiguration,
-                request: $request,
-                swooleConfiguration: $this->swooleConfiguration,
-            );
-
-            $this->psrSwooleResponder->respondWithPsrResponse(
-                $psrRequest,
-                $response,
-                $this->respondToPsrRequest(
-                    $psrRequest,
-                    new SwooleServerResponse($response),
-                ),
-            );
-        } catch (Throwable $throwable) {
-            $message = sprintf('http_swoole_responder_failure(%s)', (string) $throwable);
-
-            $this->logger->error($message);
         }
     }
 

@@ -28,13 +28,6 @@ requests.
 The `respond` method is used internally for handling tasks like parameter 
 binding, so you should not override it.
 
-If you want to generate a new controller, you can do this manually, or you can 
-use the `generate:http-controller` command:
-
-```shell
-$ php ./bin/resonance.php generate:http-controller Name
-```
-
 ## Route Parameters
 
 ### Binding Route Parameters

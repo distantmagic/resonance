@@ -9,7 +9,6 @@ use Ds\Map;
 use Generator;
 use LogicException;
 use RuntimeException;
-use Swoole\Coroutine;
 
 #[Singleton]
 readonly class EsbuildMetaBuilder
@@ -151,7 +150,7 @@ readonly class EsbuildMetaBuilder
             throw new RuntimeException('Esbuild meta manifest is not readable: '.$esbuildMetafile);
         }
 
-        $content = Coroutine::readFile($esbuildMetafile);
+        $content = file_get_contents($esbuildMetafile);
 
         if (!is_string($content)) {
             throw new RuntimeException('Unable to read esbuild manifest: '.$esbuildMetafile);

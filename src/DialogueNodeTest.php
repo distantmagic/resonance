@@ -13,8 +13,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-use function Distantmagic\Resonance\helpers\coroutineMustRun;
-
 /**
  * @internal
  */
@@ -55,14 +53,14 @@ final class DialogueNodeTest extends TestCase
             followUp: $marketingNode,
         ));
 
-        coroutineMustRun(static function () use ($marketingNode, $rootNode) {
+        self::$container->coroutineDriver->run(static function () use ($marketingNode, $rootNode) {
             $response = $rootNode->respondTo(new UserInput('yep'));
 
             self::assertFalse($response->getStatus()->isFailed());
             self::assertSame($marketingNode, $response->getFollowUp());
         });
 
-        coroutineMustRun(static function () use ($rootNode) {
+        self::$container->coroutineDriver->run(static function () use ($rootNode) {
             $response = $rootNode->respondTo(new UserInput('I do not know who I am'));
 
             self::assertFalse($response->getStatus()->isFailed());
@@ -129,7 +127,7 @@ final class DialogueNodeTest extends TestCase
             followUp: $marketingNode,
         ));
 
-        coroutineMustRun(static function () use ($rootNode) {
+        self::$container->coroutineDriver->run(static function () use ($rootNode) {
             $response = $rootNode->respondTo(new UserInput('i am a recruiter'));
 
             self::assertFalse($response->getStatus()->isFailed());

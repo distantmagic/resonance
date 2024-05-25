@@ -9,9 +9,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use Swoole\Event;
-
-use function Distantmagic\Resonance\helpers\coroutineMustRun;
 
 /**
  * @internal
@@ -57,7 +54,7 @@ final class LlamaCppExtractYesNoMaybeTest extends TestCase
 
     protected function tearDown(): void
     {
-        Event::wait();
+        self::$container->coroutineDriver->wait();
     }
 
     #[DataProvider('inputSubjectProvider')]
@@ -65,7 +62,7 @@ final class LlamaCppExtractYesNoMaybeTest extends TestCase
     {
         $llamaCppExtract = self::$container->make(LlamaCppExtractYesNoMaybe::class);
 
-        coroutineMustRun(static function () use ($expected, $input, $llamaCppExtract) {
+        self::$container->coroutineDriver->run(static function () use ($expected, $input, $llamaCppExtract) {
             $extracted = $llamaCppExtract->extract(input: $input);
 
             self::assertSame($expected, $extracted->result);

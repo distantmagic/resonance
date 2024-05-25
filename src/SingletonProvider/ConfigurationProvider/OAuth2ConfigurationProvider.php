@@ -16,7 +16,6 @@ use Distantmagic\Resonance\OAuth2Configuration;
 use Distantmagic\Resonance\SingletonProvider\ConfigurationProvider;
 use League\OAuth2\Server\CryptKey;
 use RuntimeException;
-use Swoole\Coroutine;
 
 /**
  * @template-extends ConfigurationProvider<OAuth2Configuration, array{
@@ -55,7 +54,7 @@ final readonly class OAuth2ConfigurationProvider extends ConfigurationProvider
 
     protected function provideConfiguration($validatedData): OAuth2Configuration
     {
-        $encryptionKeyContent = Coroutine::readFile($validatedData['encryption_key']);
+        $encryptionKeyContent = file_get_contents($validatedData['encryption_key']);
 
         if (!is_string($encryptionKeyContent)) {
             throw new RuntimeException('Unable to read encrpytion key file: '.$validatedData['encryption_key']);

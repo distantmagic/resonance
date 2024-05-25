@@ -8,8 +8,6 @@ use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function Distantmagic\Resonance\helpers\coroutineMustRun;
-
 abstract class CoroutineCommand extends SymfonyCommand
 {
     abstract protected function executeInCoroutine(InputInterface $input, OutputInterface $output): int;
@@ -19,19 +17,14 @@ abstract class CoroutineCommand extends SymfonyCommand
      * the DI.
      */
     public function __construct(
-        private readonly SwooleConfiguration $swooleConfiguration,
+        private readonly CoroutineDriverInterface $coroutineDriver,
     ) {
         parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        swoole_async_set([
-            'enable_coroutine' => true,
-            'log_level' => $this->swooleConfiguration->logLevel,
-        ]);
-
-        return coroutineMustRun(function () use ($input, $output): int {
+        return $this->coroutineDriver->run(function () use ($input, $output): int {
             return $this->executeInCoroutine($input, $output);
         });
     }

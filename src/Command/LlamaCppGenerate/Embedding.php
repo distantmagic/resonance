@@ -7,10 +7,10 @@ namespace Distantmagic\Resonance\Command\LlamaCppGenerate;
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\Command\LlamaCppGenerate;
+use Distantmagic\Resonance\CoroutineDriverInterface;
 use Distantmagic\Resonance\JsonSerializer;
 use Distantmagic\Resonance\LlamaCppClientInterface;
 use Distantmagic\Resonance\LlamaCppEmbeddingRequest;
-use Distantmagic\Resonance\SwooleConfiguration;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -21,11 +21,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class Embedding extends LlamaCppGenerate
 {
     public function __construct(
+        CoroutineDriverInterface $coroutineDriver,
         private readonly JsonSerializer $jsonSerializer,
         LlamaCppClientInterface $llamaCppClient,
-        SwooleConfiguration $swooleConfiguration,
     ) {
-        parent::__construct($llamaCppClient, $swooleConfiguration);
+        parent::__construct($coroutineDriver, $llamaCppClient);
     }
 
     protected function executeLlamaCppCommand(InputInterface $input, OutputInterface $output, string $prompt): int

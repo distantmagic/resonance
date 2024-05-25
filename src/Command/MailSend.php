@@ -7,10 +7,10 @@ namespace Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
 use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Command;
+use Distantmagic\Resonance\CoroutineDriverInterface;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\MailerRepository;
 use RuntimeException;
-use Swoole\Event;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -25,6 +25,7 @@ use Symfony\Component\Mime\Email;
 final class MailSend extends Command
 {
     public function __construct(
+        private readonly CoroutineDriverInterface $coroutineDriver,
         private readonly MailerRepository $mailerRepository,
     ) {
         parent::__construct();
@@ -90,8 +91,7 @@ final class MailSend extends Command
         ;
 
         $this->mailerRepository->mailer->get($transport)->enqueue($email);
-
-        Event::wait();
+        $this->coroutineDriver->wait();
 
         return Command::SUCCESS;
     }

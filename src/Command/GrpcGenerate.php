@@ -8,8 +8,8 @@ use Distantmagic\Resonance\Attribute\ConsoleCommand;
 use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\CoroutineCommand;
+use Distantmagic\Resonance\CoroutineDriverInterface;
 use Distantmagic\Resonance\GrpcConfiguration;
-use Distantmagic\Resonance\SwooleConfiguration;
 use RuntimeException;
 use Swoole\Coroutine\System;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,11 +26,11 @@ use Symfony\Component\Finder\Finder;
 final class GrpcGenerate extends CoroutineCommand
 {
     public function __construct(
+        CoroutineDriverInterface $coroutineDriver,
         private readonly Filesystem $filesystem,
         private readonly GrpcConfiguration $grpcConfiguration,
-        SwooleConfiguration $swooleConfiguration,
     ) {
-        parent::__construct($swooleConfiguration);
+        parent::__construct($coroutineDriver);
     }
 
     protected function configure(): void {}

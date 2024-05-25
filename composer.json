@@ -5,9 +5,6 @@
     "license": "MIT",
     "autoload": {
         "files": [
-            "src/helpers/coroutineMustGetContext.php",
-            "src/helpers/coroutineMustGo.php",
-            "src/helpers/coroutineMustRun.php",
             "src/helpers/generatorGetReturn.php"
         ],
         "psr-4": {
@@ -64,7 +61,11 @@
         "twig/twig": "^3.7",
         "webonyx/graphql-php": "^15.6",
         "beberlei/assert": "^3.3",
-        "dunglas/doctrine-json-odm": "^1.4"
+        "dunglas/doctrine-json-odm": "^1.4",
+        "amphp/amp": "^3.0",
+        "revolt/event-loop": "^1.0",
+        "amphp/http-server": "^3.3",
+        "amphp/http-server-form-parser": "^2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^11.0",

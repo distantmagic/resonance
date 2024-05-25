@@ -92,7 +92,7 @@ advantage of the asynchronous environment.
 )]
 function Homepage(ServerRequestInterface $request, ResponseInterface $response): TwigTemplate
 {
-    return new TwigTemplate('website/homepage.twig');
+    return new TwigTemplate($request, $response, 'website/homepage.twig');
 }
 ```
 

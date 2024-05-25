@@ -16,9 +16,6 @@ use LogicException;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionFunctionAbstract;
-use Swoole\Event;
-
-use function Distantmagic\Resonance\helpers\coroutineMustRun;
 
 readonly class DependencyInjectionContainer
 {
@@ -51,8 +48,9 @@ readonly class DependencyInjectionContainer
      */
     private Set $wantedFeatures;
 
-    public function __construct()
-    {
+    public function __construct(
+        public CoroutineDriverInterface $coroutineDriver,
+    ) {
         $this->collections = new Map();
         $this->dependencyProviders = new Map();
         $this->executedSideEffects = new Set();
@@ -62,6 +60,7 @@ readonly class DependencyInjectionContainer
 
         $this->singletons = new SingletonContainer();
         $this->singletons->set(static::class, $this);
+        $this->singletons->set(CoroutineDriverInterface::class, $coroutineDriver);
     }
 
     /**
@@ -78,7 +77,7 @@ readonly class DependencyInjectionContainer
         /**
          * @var null|array<string,mixed>
          */
-        $parameters = coroutineMustRun(function () use ($function): array {
+        $parameters = $this->coroutineDriver->run(function () use ($function): array {
             $reflectionFunction = new ReflectionFunction($function);
 
             return $this->makeParameters($reflectionFunction, new DependencyStack());
@@ -90,7 +89,7 @@ readonly class DependencyInjectionContainer
 
         $ret = $function(...$parameters);
 
-        Event::wait();
+        $this->coroutineDriver->wait();
 
         return $ret;
     }
@@ -124,7 +123,7 @@ readonly class DependencyInjectionContainer
      */
     public function make(string $className): object
     {
-        $ret = coroutineMustRun(function () use ($className): object {
+        $ret = $this->coroutineDriver->run(function () use ($className): object {
             $stack = new DependencyStack();
 
             if ($this->dependencyProviders->hasKey($className)) {

@@ -60,9 +60,14 @@ final readonly class ObservableTasksDashboard extends HttpResponder
 
     public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface
     {
-        return new TwigTemplate('observable_task_table.twig',[
-            'observableTaskTable' => $this->observableTaskTable,
-        ]);
+        return new TwigTemplate(
+            $request,
+            $response,
+            'observable_task_table.twig',
+            [
+                'observableTaskTable' => $this->observableTaskTable,
+            ]
+        );
     }
 }
 ```

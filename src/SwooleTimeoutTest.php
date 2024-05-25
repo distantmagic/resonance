@@ -6,7 +6,6 @@ namespace Distantmagic\Resonance;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Swoole\Event;
 
 /**
  * @internal
@@ -15,9 +14,11 @@ use Swoole\Event;
 #[CoversClass(SwooleTimeoutScheduled::class)]
 final class SwooleTimeoutTest extends TestCase
 {
+    use TestsDependencyInectionContainerTrait;
+
     protected function tearDown(): void
     {
-        Event::wait();
+        self::$container->coroutineDriver->wait();
     }
 
     public function test_code_executes_after_timeout(): void

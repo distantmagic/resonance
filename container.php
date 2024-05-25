@@ -7,12 +7,15 @@ require_once __DIR__.'/constants.php';
 
 defined('DM_ROOT') or exit('Configuration is not loaded.');
 
+use Distantmagic\Resonance\CoroutineDriver\Swoole;
 use Distantmagic\Resonance\DependencyInjectionContainer;
-use Swoole\Runtime;
 
-Runtime::enableCoroutine(SWOOLE_HOOK_ALL);
+$coroutineDriver = new Swoole();
+$coroutineDriver->init();
 
-$container = new DependencyInjectionContainer();
+$container = new DependencyInjectionContainer(
+    coroutineDriver: $coroutineDriver,
+);
 $container->phpProjectFiles->indexDirectory(DM_RESONANCE_ROOT);
 $container->phpProjectFiles->indexDirectory(DM_APP_ROOT);
 $container->registerSingletons();

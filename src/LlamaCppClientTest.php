@@ -7,9 +7,6 @@ namespace Distantmagic\Resonance;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use Swoole\Event;
-
-use function Distantmagic\Resonance\helpers\coroutineMustRun;
 
 /**
  * @internal
@@ -22,14 +19,14 @@ final class LlamaCppClientTest extends TestCase
 
     protected function tearDown(): void
     {
-        Event::wait();
+        self::$container->coroutineDriver->wait();
     }
 
     public function test_completion_is_generated(): void
     {
         $llamaCppClient = self::$container->make(LlamaCppClient::class);
 
-        coroutineMustRun(static function () use ($llamaCppClient) {
+        self::$container->coroutineDriver->run(static function () use ($llamaCppClient) {
             $completion = $llamaCppClient->generateCompletion(new LlamaCppCompletionRequest(
                 llmChatHistory: new LlmChatHistory([
                     new LlmChatMessage('user', 'Who are you? Answer in exactly two words.'),

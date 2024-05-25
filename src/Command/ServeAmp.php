@@ -4,28 +4,25 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\Command;
 
+use Distantmagic\Resonance\AmpServer;
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
-use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Command;
-use Distantmagic\Resonance\Feature;
-use Distantmagic\Resonance\SwooleServer;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[ConsoleCommand(
-    name: 'serve',
+    name: 'serve:amp',
     description: 'Start combined HTTP and WebSocket server'
 )]
-#[WantsFeature(Feature::SwooleTaskServer)]
-final class Serve extends Command
+final class ServeAmp extends Command
 {
-    public function __construct(private readonly SwooleServer $swooleServer)
+    public function __construct(private readonly AmpServer $ampServer)
     {
         parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        return (int) !$this->swooleServer->start();
+        return (int) !$this->ampServer->start();
     }
 }

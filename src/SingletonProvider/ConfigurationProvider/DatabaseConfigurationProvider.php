@@ -76,7 +76,6 @@ final readonly class DatabaseConfigurationProvider extends ConfigurationProvider
                     host: $connectionPoolConfiguration['host'],
                     logQueries: $connectionPoolConfiguration['log_queries'],
                     password: $connectionPoolConfiguration['password'],
-                    poolPrefill: $connectionPoolConfiguration['pool_prefill'],
                     poolSize: $connectionPoolConfiguration['pool_size'],
                     port: $connectionPoolConfiguration['port'],
                     unixSocket: $connectionPoolConfiguration['unix_socket'],

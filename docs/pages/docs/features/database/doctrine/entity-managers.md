@@ -114,9 +114,14 @@ final readonly class Blog extends HttpResponder
 
         $blogPostsRepository = $entityManager->getRepository(BlogPost::class);
 
-        return new TwigTemplate('turbo/website/blog.twig', [
-            'blog_posts' => $blogPostsRepository->findAll(),
-        ]);
+        return new TwigTemplate(
+            $request,
+            $response,
+            'turbo/website/blog.twig', 
+            [
+                'blog_posts' => $blogPostsRepository->findAll(),
+            ],
+        );
     }
 }
 ```
@@ -148,6 +153,8 @@ use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
 use Distantmagic\Resonance\TwigTemplate;
 use Doctrine\ORM\EntityRepository;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
@@ -158,12 +165,19 @@ use Doctrine\ORM\EntityRepository;
 final readonly class Blog extends HttpController
 {
     public function createResponse(
+        ResponseInterface $response,
+        ServerRequestInterface $request,
         #[DoctrineEntityRepository(BlogPost::class)]
         EntityRepository $blogPosts,
     ): HttpInterceptableInterface {
-        return new TwigTemplate('website/blog.twig', [
-            'blog_posts' => $blogPosts->findAll(),
-        ]);
+        return new TwigTemplate(
+            $request,
+            $response,
+            'website/blog.twig', 
+            [
+                'blog_posts' => $blogPosts->findAll(),
+            ],
+        );
     }
 }
 ```

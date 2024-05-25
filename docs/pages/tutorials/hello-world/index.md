@@ -99,13 +99,18 @@ use Distantmagic\Resonance\Attribute\RespondsToHttp;
 use Distantmagic\Resonance\HttpInterceptableInterface;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\TwigTemplate;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
     pattern: '/',
     routeSymbol: HttpRouteSymbol::Homepage,
 )]
-function Homepage(): HttpInterceptableInterface
+function Homepage(
+    ServerRequestInterface $request,
+    ResponseInterface $response,
+): HttpInterceptableInterface
 {
     return new TwigTemplate('homepage.twig');
 }

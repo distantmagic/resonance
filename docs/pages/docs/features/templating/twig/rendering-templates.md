@@ -40,7 +40,7 @@ final readonly class Twig extends HttpResponder
 {
     public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface
     {
-        return new TwigTemplate('test.twig');
+        return new TwigTemplate($request, $response, 'test.twig');
     }
 }
 ```

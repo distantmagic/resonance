@@ -9,28 +9,21 @@ use Psr\Http\Message\ServerRequestInterface;
 
 final readonly class OAuth2UserSessionAuthenticated implements HttpInterceptableInterface
 {
-    private SwooleContextRequestResponseReader $swooleContextRequestResponseReader;
-
     /**
      * @psalm-taint-source file $templatePath
      */
     public function __construct(
-        ?ServerRequestInterface $request = null,
-        ?ResponseInterface $response = null,
-    ) {
-        $this->swooleContextRequestResponseReader = new SwooleContextRequestResponseReader(
-            request: $request,
-            response: $response,
-        );
-    }
+        private ServerRequestInterface $request,
+        private ResponseInterface $response,
+    ) {}
 
     public function getResponse(): ResponseInterface
     {
-        return $this->swooleContextRequestResponseReader->getResponse();
+        return $this->response;
     }
 
     public function getServerRequest(): ServerRequestInterface
     {
-        return $this->swooleContextRequestResponseReader->getServerRequest();
+        return $this->request;
     }
 }

@@ -13,7 +13,7 @@ readonly class JsonErrorTemplate implements JsonErrorTemplateInterface
 {
     public function renderHttpError(ServerRequestInterface $request, ResponseInterface $response, HttpError $httpError): HttpInterceptableInterface
     {
-        return new JsonTemplate([
+        return new JsonTemplate($request, $response, [
             'code' => $httpError->code(),
             'message' => $httpError->message($request),
         ]);

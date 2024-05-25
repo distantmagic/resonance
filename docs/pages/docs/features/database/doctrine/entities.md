@@ -73,10 +73,17 @@ final readonly class BlogPostShow extends HttpController
             lookupField: 'slug',
         )]
         BlogPost $blogPost,
+        ResponseInterface $response,
+        ServerRequestInterface $request,
     ): HttpInterceptableInterface {
-        return new TwigTemplate('turbo/website/blog_post.twig',  [
-            'blog_post' => $blogPost,
-        ]);
+        return new TwigTemplate(
+            $request,
+            $response,
+            'turbo/website/blog_post.twig', 
+            [
+                'blog_post' => $blogPost,
+            ],
+        );
     }
 }
 ```

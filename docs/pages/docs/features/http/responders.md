@@ -36,13 +36,6 @@ HTTP Responder should be a `readonly` class that serves a single purpose
 Responders must implement the `respond` method that sends the response back to 
 the HTTP client or forwards the request to a different responder.
 
-You can generate a new responder class manually, or you can use the 
-`generate:http-responder` command:
-
-```shell
-$ php ./bin/resonance.php generate:http-responder Name
-```
-
 ## Responding to HTTP Requests
 
 To respond to requests you should use Swoole's `Response` object:
@@ -136,14 +129,19 @@ namespace App\HttpResponder;
 use Distantmagic\Resonance\Attribute\RespondsToHttp;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\TwigTemplate;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[RespondsToHttp(
     method: RequestMethod::GET,
     pattern: '/blog',
 )]
-function Blog(): TwigTemplate
+function Blog(
+    ServerRequestInterface $request,
+    ResponseInterface $response,
+): TwigTemplate
 {
-    return new TwigTemplate('turbo/blog.twig');
+    return new TwigTemplate($request, $response, 'turbo/blog.twig');
 }
 ```
 

@@ -28,8 +28,6 @@ readonly class DatabaseConnectionPoolConfiguration
         #[SensitiveParameter]
         public ?string $password,
         #[SensitiveParameter]
-        public bool $poolPrefill,
-        #[SensitiveParameter]
         public int $poolSize,
         #[SensitiveParameter]
         public int $port,

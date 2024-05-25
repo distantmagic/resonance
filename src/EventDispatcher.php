@@ -9,13 +9,11 @@ use Distantmagic\SwooleFuture\SwooleFuture;
 use Distantmagic\SwooleFuture\SwooleFutureResult;
 use Psr\Log\LoggerInterface;
 
-use function Distantmagic\Resonance\helpers\coroutineMustGo;
-use function Swoole\Coroutine\batch;
-
 #[Singleton(provides: EventDispatcherInterface::class)]
 readonly class EventDispatcher implements EventDispatcherInterface
 {
     public function __construct(
+        private CoroutineDriverInterface $coroutineDriver,
         private EventListenerAggregate $eventListenerAggregate,
         private LoggerInterface $logger,
     ) {}
@@ -31,7 +29,7 @@ readonly class EventDispatcher implements EventDispatcherInterface
 
     public function dispatch(object $event): void
     {
-        coroutineMustGo(function () use ($event): void {
+        $this->coroutineDriver->go(function () use ($event): void {
             $this->doDispatch($event);
         });
     }
@@ -59,6 +57,6 @@ readonly class EventDispatcher implements EventDispatcherInterface
             });
         }
 
-        return batch($batch, DM_BATCH_PROMISE_TIMEOUT);
+        return $this->coroutineDriver->batch($batch);
     }
 }

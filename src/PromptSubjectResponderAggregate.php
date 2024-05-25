@@ -8,12 +8,11 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Generator;
 use Psr\Log\LoggerInterface;
 
-use function Distantmagic\Resonance\helpers\coroutineMustGo;
-
 #[Singleton]
 readonly class PromptSubjectResponderAggregate
 {
     public function __construct(
+        private CoroutineDriverInterface $coroutineDriver,
         private LoggerInterface $logger,
         private PromptSubjectResponderCollection $promptSubjectResponderCollection,
     ) {}
@@ -111,7 +110,7 @@ readonly class PromptSubjectResponderAggregate
         );
         $response = new PromptSubjectResponse($inactivityTimeout);
 
-        coroutineMustGo(static function () use ($request, $responder, $response) {
+        $this->coroutineDriver->go(static function () use ($request, $responder, $response) {
             $responder->respondToPromptSubject($request, $response);
         });
 

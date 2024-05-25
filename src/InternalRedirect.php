@@ -9,30 +9,23 @@ use Psr\Http\Message\ServerRequestInterface;
 
 readonly class InternalRedirect implements HttpInterceptableInterface
 {
-    private SwooleContextRequestResponseReader $swooleContextRequestResponseReader;
-
     /**
      * @param array<string,string> $params
      */
     public function __construct(
+        private ServerRequestInterface $request,
+        private ResponseInterface $response,
         public HttpRouteSymbolInterface $routeSymbol,
         public array $params = [],
-        ?ServerRequestInterface $request = null,
-        ?ResponseInterface $response = null,
-    ) {
-        $this->swooleContextRequestResponseReader = new SwooleContextRequestResponseReader(
-            request: $request,
-            response: $response,
-        );
-    }
+    ) {}
 
     public function getResponse(): ResponseInterface
     {
-        return $this->swooleContextRequestResponseReader->getResponse();
+        return $this->response;
     }
 
     public function getServerRequest(): ServerRequestInterface
     {
-        return $this->swooleContextRequestResponseReader->getServerRequest();
+        return $this->request;
     }
 }

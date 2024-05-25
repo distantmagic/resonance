@@ -7,12 +7,11 @@ namespace Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
 use Distantmagic\Resonance\Attribute\WantsFeature;
 use Distantmagic\Resonance\Command;
+use Distantmagic\Resonance\CoroutineDriverInterface;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\StaticPageProcessor;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use function Distantmagic\Resonance\helpers\coroutineMustRun;
 
 #[ConsoleCommand(
     name: 'static-pages:build',
@@ -22,6 +21,7 @@ use function Distantmagic\Resonance\helpers\coroutineMustRun;
 final class StaticPagesBuild extends Command
 {
     public function __construct(
+        private readonly CoroutineDriverInterface $coroutineDriver,
         private readonly StaticPageProcessor $staticPageProcessor,
     ) {
         parent::__construct();
@@ -29,7 +29,7 @@ final class StaticPagesBuild extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        coroutineMustRun(function () {
+        $this->coroutineDriver->run(function () {
             $this->staticPageProcessor->process();
         });
 

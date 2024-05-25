@@ -113,7 +113,7 @@ final readonly class LlmChat extends HttpResponder
 {
     public function respond(ServerRequestInterface $request, ResponseInterface $response): HttpInterceptableInterface
     {
-        return new TwigTemplate('turbo/llmchat/index.twig');
+        return new TwigTemplate($request, $response, 'turbo/llmchat/index.twig');
     }
 }
 ```

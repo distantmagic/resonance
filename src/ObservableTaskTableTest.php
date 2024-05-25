@@ -7,7 +7,6 @@ namespace Distantmagic\Resonance;
 use Distantmagic\Resonance\Serializer\Vanilla;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Swoole\Event;
 
 /**
  * @internal
@@ -15,6 +14,8 @@ use Swoole\Event;
 #[CoversClass(ObservableTaskTable::class)]
 final class ObservableTaskTableTest extends TestCase
 {
+    use TestsDependencyInectionContainerTrait;
+
     private ?ObservableTaskConfiguration $observableTaskConfiguration = null;
     private ?ObservableTaskTable $observableTaskTable = null;
 
@@ -26,6 +27,7 @@ final class ObservableTaskTableTest extends TestCase
         );
 
         $this->observableTaskTable = new ObservableTaskTable(
+            coroutineDriver: self::$container->coroutineDriver,
             observableTaskConfiguration: $this->observableTaskConfiguration,
             serializer: new Vanilla(),
         );
@@ -33,7 +35,7 @@ final class ObservableTaskTableTest extends TestCase
 
     protected function tearDown(): void
     {
-        Event::wait();
+        self::$container->coroutineDriver->wait();
     }
 
     public function test_task_is_observed(): void

@@ -10,6 +10,7 @@ use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\CoroutineCommand;
+use Distantmagic\Resonance\CoroutineDriverInterface;
 use Distantmagic\Resonance\Feature;
 use Distantmagic\Resonance\GrpcBaseClient;
 use Distantmagic\Resonance\GrpcConfiguration;
@@ -17,7 +18,6 @@ use Distantmagic\Resonance\GrpcPoolConfiguration;
 use Distantmagic\Resonance\PHPFileIterator;
 use Distantmagic\Resonance\PHPFileReflectionClassIterator;
 use Distantmagic\Resonance\SingletonCollection;
-use Distantmagic\Resonance\SwooleConfiguration;
 use Grpc\BaseStub;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpFile;
@@ -36,12 +36,12 @@ use Symfony\Component\Filesystem\Filesystem;
 final class GrpcRewrite extends CoroutineCommand
 {
     public function __construct(
+        CoroutineDriverInterface $coroutineDriver,
         private readonly Filesystem $filesystem,
         private readonly GrpcConfiguration $grpcConfiguration,
         private readonly Printer $printer,
-        SwooleConfiguration $swooleConfiguration,
     ) {
-        parent::__construct($swooleConfiguration);
+        parent::__construct($coroutineDriver);
     }
 
     protected function configure(): void {}

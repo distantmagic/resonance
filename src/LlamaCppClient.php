@@ -10,16 +10,14 @@ use Distantmagic\Resonance\Attribute\Singleton;
 use Generator;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
-
-use function Distantmagic\Resonance\helpers\coroutineMustGo;
 
 #[RequiresPhpExtension('curl')]
 #[Singleton(provides: LlamaCppClientInterface::class)]
 readonly class LlamaCppClient implements LlamaCppClientInterface
 {
     public function __construct(
+        private CoroutineDriverInterface $coroutineDriver,
         private JsonSerializer $jsonSerializer,
         private LlmChatHistoryRenderer $llmChatHistoryRenderer,
         private LlamaCppConfiguration $llamaCppConfiguration,
@@ -181,45 +179,43 @@ readonly class LlamaCppClient implements LlamaCppClientInterface
     ): SwooleChannelIterator {
         $channel = new Channel(1);
 
-        coroutineMustGo(function () use ($channel, $path, $requestData, $timeout): void {
+        $this->coroutineDriver->go(function () use ($channel, $path, $requestData, $timeout): void {
             $curlHandle = $this->createCurlHandle();
 
-            Coroutine::defer(static function () use ($channel) {
+            try {
+                curl_setopt($curlHandle, CURLOPT_TIMEOUT, $timeout);
+                curl_setopt($curlHandle, CURLOPT_POST, true);
+                curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $requestData);
+                curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, false);
+                curl_setopt($curlHandle, CURLOPT_URL, $this->llamaCppLinkBuilder->build($path));
+                curl_setopt($curlHandle, CURLOPT_WRITEFUNCTION, function (CurlHandle $curlHandle, string $data) use ($channel): int {
+                    if ($channel->push(new LlamaCppClientResponseChunk(
+                        status: ObservableTaskStatus::Running,
+                        chunk: $data
+                    ), $this->llamaCppConfiguration->completionTokenTimeout)) {
+                        return strlen($data);
+                    }
+
+                    return 0;
+                });
+
+                if (false === curl_exec($curlHandle)) {
+                    $curlErrno = curl_errno($curlHandle);
+
+                    if (CURLE_WRITE_ERROR !== $curlErrno) {
+                        $this->logger->error(new CurlErrorMessage($curlHandle));
+
+                        $channel->push(new LlamaCppClientResponseChunk(
+                            status: ObservableTaskStatus::Failed,
+                            chunk: '',
+                        ), $this->llamaCppConfiguration->completionTokenTimeout);
+                    }
+                } else {
+                    $this->assertStatusCode($curlHandle, 200);
+                }
+            } finally {
                 $channel->close();
-            });
-
-            Coroutine::defer(static function () use ($curlHandle) {
                 curl_close($curlHandle);
-            });
-
-            curl_setopt($curlHandle, CURLOPT_TIMEOUT, $timeout);
-            curl_setopt($curlHandle, CURLOPT_POST, true);
-            curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $requestData);
-            curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, false);
-            curl_setopt($curlHandle, CURLOPT_URL, $this->llamaCppLinkBuilder->build($path));
-            curl_setopt($curlHandle, CURLOPT_WRITEFUNCTION, function (CurlHandle $curlHandle, string $data) use ($channel): int {
-                if ($channel->push(new LlamaCppClientResponseChunk(
-                    status: ObservableTaskStatus::Running,
-                    chunk: $data
-                ), $this->llamaCppConfiguration->completionTokenTimeout)) {
-                    return strlen($data);
-                }
-
-                return 0;
-            });
-            if (false === curl_exec($curlHandle)) {
-                $curlErrno = curl_errno($curlHandle);
-
-                if (CURLE_WRITE_ERROR !== $curlErrno) {
-                    $this->logger->error(new CurlErrorMessage($curlHandle));
-
-                    $channel->push(new LlamaCppClientResponseChunk(
-                        status: ObservableTaskStatus::Failed,
-                        chunk: '',
-                    ), $this->llamaCppConfiguration->completionTokenTimeout);
-                }
-            } else {
-                $this->assertStatusCode($curlHandle, 200);
             }
         });
 

@@ -10,15 +10,13 @@ use Ds\Map;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
-use Swoole\Http\Response;
 
-readonly class SwooleServerResponse extends PsrMessage implements ResponseInterface
+readonly class ServerResponse extends PsrMessage implements ResponseInterface
 {
     /**
      * @param Map<string,array<string>> $headers
      */
     public function __construct(
-        private Response $response,
         private StreamInterface $body = new PsrStringStream(''),
         private int $code = 200,
         private Map $headers = new Map(),
@@ -84,7 +82,6 @@ readonly class SwooleServerResponse extends PsrMessage implements ResponseInterf
          * @var static
          */
         return new self(
-            $this->response,
             $body,
             $this->code,
             $this->headers,
@@ -123,7 +120,6 @@ readonly class SwooleServerResponse extends PsrMessage implements ResponseInterf
          * @var static
          */
         return new self(
-            $this->response,
             $this->body,
             $this->code,
             $this->headers,
@@ -143,7 +139,6 @@ readonly class SwooleServerResponse extends PsrMessage implements ResponseInterf
          * @var static
          */
         return new self(
-            $this->response,
             $this->body,
             $code,
             $this->headers,
@@ -162,7 +157,6 @@ readonly class SwooleServerResponse extends PsrMessage implements ResponseInterf
          * @var static
          */
         return new self(
-            $this->response,
             $this->body,
             $this->code,
             $headersCopy,
