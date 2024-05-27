@@ -11,7 +11,7 @@ readonly class RedisConnection
     public Redis $redis;
 
     public function __construct(
-        private RedisConnectionPoolRepository $redisConnectionPoolRepository,
+        private RedisConnectionPoolRepositoryInterface $redisConnectionPoolRepository,
         string $redisPrefix,
         private string $connectionPoolName = 'default',
     ) {

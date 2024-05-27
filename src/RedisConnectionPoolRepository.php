@@ -9,7 +9,7 @@ use OutOfBoundsException;
 use Redis;
 use Swoole\Database\RedisPool;
 
-readonly class RedisConnectionPoolRepository
+readonly class RedisConnectionPoolRepository implements RedisConnectionPoolRepositoryInterface
 {
     /**
      * @var Map<string,RedisPool>

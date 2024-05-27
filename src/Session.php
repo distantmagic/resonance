@@ -12,7 +12,7 @@ readonly class Session
 
     public function __construct(
         private RedisConfiguration $redisConfiguration,
-        private RedisConnectionPoolRepository $redisConnectionPoolRepository,
+        private RedisConnectionPoolRepositoryInterface $redisConnectionPoolRepository,
         private SerializerInterface $serializer,
         private SessionConfiguration $sessionConfiguration,
         public string $id,

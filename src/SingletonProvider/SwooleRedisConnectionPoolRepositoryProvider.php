@@ -4,28 +4,32 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
+use Distantmagic\Resonance\Attribute\RequiresBackendDriver;
 use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\BackendDriver;
 use Distantmagic\Resonance\PHPProjectFiles;
 use Distantmagic\Resonance\RedisConfiguration;
 use Distantmagic\Resonance\RedisConnectionPoolRepository;
+use Distantmagic\Resonance\RedisConnectionPoolRepositoryInterface;
 use Distantmagic\Resonance\SingletonContainer;
 use Distantmagic\Resonance\SingletonProvider;
 use Swoole\Database\RedisConfig;
 use Swoole\Database\RedisPool;
 
 /**
- * @template-extends SingletonProvider<RedisConnectionPoolRepository>
+ * @template-extends SingletonProvider<RedisConnectionPoolRepositoryInterface>
  */
+#[RequiresBackendDriver(BackendDriver::Swoole)]
 #[RequiresPhpExtension('redis')]
-#[Singleton(provides: RedisConnectionPoolRepository::class)]
-final readonly class RedisConnectionPoolRepositoryProvider extends SingletonProvider
+#[Singleton(provides: RedisConnectionPoolRepositoryInterface::class)]
+final readonly class SwooleRedisConnectionPoolRepositoryProvider extends SingletonProvider
 {
     public function __construct(
         private RedisConfiguration $databaseConfiguration,
     ) {}
 
-    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): RedisConnectionPoolRepository
+    public function provide(SingletonContainer $singletons, PHPProjectFiles $phpProjectFiles): RedisConnectionPoolRepositoryInterface
     {
         $redisConnectionPoolRepository = new RedisConnectionPoolRepository();
 
@@ -43,10 +47,5 @@ final readonly class RedisConnectionPoolRepositoryProvider extends SingletonProv
         }
 
         return $redisConnectionPoolRepository;
-    }
-
-    public function shouldRegister(): bool
-    {
-        return false;
     }
 }

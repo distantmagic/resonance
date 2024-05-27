@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\RequiresBackendDriver;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Attribute\WebSocketAware;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,6 +14,7 @@ use Swoole\Coroutine;
 use Swoole\Coroutine\Context;
 use WeakMap;
 
+#[RequiresBackendDriver(BackendDriver::Swoole)]
 #[Singleton(collection: SingletonCollection::WebSocketAware)]
 #[WebSocketAware]
 readonly class DoctrineEntityManagerWeakStore

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\RequiresBackendDriver;
 use Distantmagic\Resonance\Attribute\Singleton;
 use RuntimeException;
 use Swoole\Server;
 
+#[RequiresBackendDriver(BackendDriver::Swoole)]
 #[Singleton]
 readonly class ServerPipeMessageDispatcher
 {

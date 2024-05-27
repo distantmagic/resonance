@@ -22,7 +22,7 @@ final readonly class SessionManager
     public function __construct(
         private CookieManager $cookieManager,
         private RedisConfiguration $redisConfiguration,
-        private RedisConnectionPoolRepository $redisConnectionPoolRepository,
+        private RedisConnectionPoolRepositoryInterface $redisConnectionPoolRepository,
         private SecureIdentifierGenerator $secureIdentifierGenerator,
         private SerializerInterface $serializer,
         private SessionConfiguration $sessionConfiguration,

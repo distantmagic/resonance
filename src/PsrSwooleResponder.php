@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\RequiresBackendDriver;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response;
 
+#[RequiresBackendDriver(BackendDriver::Swoole)]
 #[Singleton]
 readonly class PsrSwooleResponder
 {

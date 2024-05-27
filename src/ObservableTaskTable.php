@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use DateTimeImmutable;
+use Distantmagic\Resonance\Attribute\RequiresBackendDriver;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Generator;
 use IteratorAggregate;
@@ -14,6 +15,7 @@ use Swoole\Table;
 /**
  * @template-implements IteratorAggregate<non-empty-string,ObservableTaskTableRow>
  */
+#[RequiresBackendDriver(BackendDriver::Swoole)]
 #[Singleton]
 readonly class ObservableTaskTable implements IteratorAggregate
 {

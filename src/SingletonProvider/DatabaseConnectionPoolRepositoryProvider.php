@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance\SingletonProvider;
 
+use Distantmagic\Resonance\Attribute\RequiresBackendDriver;
 use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Attribute\Singleton;
+use Distantmagic\Resonance\BackendDriver;
 use Distantmagic\Resonance\DatabaseConfiguration;
 use Distantmagic\Resonance\DatabaseConnectionPoolRepository;
 use Distantmagic\Resonance\PHPProjectFiles;
@@ -17,6 +19,7 @@ use Swoole\Database\PDOPool;
 /**
  * @template-extends SingletonProvider<DatabaseConnectionPoolRepository>
  */
+#[RequiresBackendDriver(BackendDriver::Swoole)]
 #[RequiresPhpExtension('pdo')]
 #[Singleton(provides: DatabaseConnectionPoolRepository::class)]
 final readonly class DatabaseConnectionPoolRepositoryProvider extends SingletonProvider

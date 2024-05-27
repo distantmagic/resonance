@@ -362,7 +362,7 @@ readonly class DependencyInjectionContainer
         if ($potentialSingletonProvider instanceof SingletonProviderInterface) {
             if ($potentialSingletonProvider instanceof RegisterableInterface && !$potentialSingletonProvider->shouldRegister()) {
                 throw new DependencyInjectionContainerException(sprintf(
-                    '"%s" service provider refused to register',
+                    '"%s" service provider refused to register. No other candidates available.',
                     $potentialSingletonProvider::class,
                 ));
             }

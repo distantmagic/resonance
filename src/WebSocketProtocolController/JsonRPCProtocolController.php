@@ -6,8 +6,10 @@ namespace Distantmagic\Resonance\WebSocketProtocolController;
 
 use Distantmagic\Resonance\Attribute\ControlsWebSocketProtocol;
 use Distantmagic\Resonance\Attribute\GrantsFeature;
+use Distantmagic\Resonance\Attribute\RequiresBackendDriver;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\AuthenticatedUserStoreAggregate;
+use Distantmagic\Resonance\BackendDriver;
 use Distantmagic\Resonance\ConstraintResultErrorMessage;
 use Distantmagic\Resonance\CSRFManager;
 use Distantmagic\Resonance\Feature;
@@ -37,6 +39,7 @@ use Throwable;
 
 #[ControlsWebSocketProtocol(WebSocketProtocol::JsonRPC)]
 #[GrantsFeature(Feature::WebSocket)]
+#[RequiresBackendDriver(BackendDriver::Swoole)]
 #[Singleton(collection: SingletonCollection::WebSocketProtocolController)]
 final readonly class JsonRPCProtocolController extends WebSocketProtocolController
 {

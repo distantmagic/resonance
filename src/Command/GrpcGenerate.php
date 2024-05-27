@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance\Command;
 
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
+use Distantmagic\Resonance\Attribute\RequiresBackendDriver;
 use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
+use Distantmagic\Resonance\BackendDriver;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\CoroutineCommand;
 use Distantmagic\Resonance\CoroutineDriverInterface;
@@ -21,6 +23,7 @@ use Symfony\Component\Finder\Finder;
     name: 'grpc:generate',
     description: 'Generate GRPC stubs'
 )]
+#[RequiresBackendDriver(BackendDriver::Swoole)]
 #[RequiresPhpExtension('grpc')]
 #[RequiresPhpExtension('protobuf')]
 final class GrpcGenerate extends CoroutineCommand

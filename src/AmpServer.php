@@ -9,6 +9,7 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\SocketHttpServer;
+use Distantmagic\Resonance\Attribute\RequiresBackendDriver;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\PsrMessage\AmpServerRequest;
 use Distantmagic\Resonance\PsrMessage\ServerResponse;
@@ -16,6 +17,7 @@ use Psr\Log\LoggerInterface;
 
 use function Amp\trapSignal;
 
+#[RequiresBackendDriver(BackendDriver::Amp)]
 #[Singleton]
 readonly class AmpServer implements RequestHandler
 {

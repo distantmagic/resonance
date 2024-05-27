@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use CurlHandle;
+use Distantmagic\Resonance\Attribute\RequiresBackendDriver;
 use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Generator;
@@ -12,6 +13,7 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Swoole\Coroutine\Channel;
 
+#[RequiresBackendDriver(BackendDriver::Swoole)]
 #[RequiresPhpExtension('curl')]
 #[Singleton(provides: LlamaCppClientInterface::class)]
 readonly class LlamaCppClient implements LlamaCppClientInterface

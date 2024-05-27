@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Distantmagic\Resonance;
 
 use Distantmagic\Resonance\Attribute\GrantsFeature;
+use Distantmagic\Resonance\Attribute\RequiresBackendDriver;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Distantmagic\Resonance\Event\HttpServerBeforeStop;
 use Distantmagic\Resonance\Event\HttpServerStarted;
@@ -19,6 +20,7 @@ use Swoole\WebSocket\Server as WebSocketServer;
 use Throwable;
 
 #[GrantsFeature(Feature::SwooleTaskServer)]
+#[RequiresBackendDriver(BackendDriver::Swoole)]
 #[Singleton]
 readonly class SwooleServer
 {

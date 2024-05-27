@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Distantmagic\Resonance;
 
+use Distantmagic\Resonance\Attribute\RequiresBackendDriver;
 use Distantmagic\Resonance\Attribute\Singleton;
 use Psr\Log\LoggerInterface;
 use Swoole\Server;
 use Swoole\Server\Task;
 use Symfony\Component\Messenger\Envelope;
 
+#[RequiresBackendDriver(BackendDriver::Swoole)]
 #[Singleton]
 readonly class ServerTaskHandlerDispatcher
 {

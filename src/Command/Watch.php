@@ -6,7 +6,9 @@ namespace Distantmagic\Resonance\Command;
 
 use Distantmagic\Resonance\ApplicationConfiguration;
 use Distantmagic\Resonance\Attribute\ConsoleCommand;
+use Distantmagic\Resonance\Attribute\RequiresBackendDriver;
 use Distantmagic\Resonance\Attribute\RequiresPhpExtension;
+use Distantmagic\Resonance\BackendDriver;
 use Distantmagic\Resonance\Command;
 use Distantmagic\Resonance\InotifyIterator;
 use Psr\Log\LoggerInterface;
@@ -19,6 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
     name: 'watch:command',
     description: 'Watch project files for changes'
 )]
+#[RequiresBackendDriver(BackendDriver::Swoole)]
 #[RequiresPhpExtension('inotify')]
 final class Watch extends Command
 {
