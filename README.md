@@ -1,16 +1,32 @@
 # Resonance
 
-[Documentation](https://resonance.distantmagic.com/)
+## About Resonance
 
-## About
+Resonance is designed from the ground up to facilitate interoperability and messaging between services in your infrastructure and beyond. It provides AI capabilities, has a built in web server and integrates with [llama.cpp](https://github.com/ggerganov/llama.cpp).
 
-Designed from the ground up to facilitate interoperability and 
-messaging between services in your infrastructure and beyond.
+Takes full advantage of asynchronous PHP. Built on top of Swoole.
 
-Provides AI capabilities.
+## Documentation
 
-Takes full advantage of asynchronous PHP. Built on top of 
-Swoole.
+https://resonance.distantmagic.com/
+
+## Installation
+
+It's best to install Resonance by using Composer's create-project command:
+
+```php
+composer create-project distantmagic/resonance-project my-project
+```
+
+Resonance requires minimum 8.2 version of PHP, as well as Data Structures and Swoole extensions. Read more about required and recommended extensions, as well as other installation methods in our [installation guide](https://resonance.distantmagic.com/docs/getting-started/installation-and-requirements.html).
+
+### First-time use
+
+You'll need to create a `config.ini` file after installing the project (`config.ini.example` is provided) and then use `bin/resonance.php` as an entry point.
+
+### Running the server
+
+`php bin/resonance.php` serve starts the built-in HTTP server. If you need to, you can generate the [SSL Certificate for Local Development](https://resonance.distantmagic.com/docs/extras/ssl-certificate-for-local-development/).
 
 ## Features
 
@@ -176,6 +192,22 @@ final readonly class Blog implements GraphQLFieldableInterface
 }
 ```
 
+## Tutorials
+
+* ['Hello, World' with Resonance](https://resonance.distantmagic.com/tutorials/hello-world/)
+* [Session-Based Authentication](https://resonance.distantmagic.com/tutorials/session-based-authentication/)
+* [Building a Basic GraphQL Schema](https://resonance.distantmagic.com/tutorials/basic-graphql-schema/)
+* [How to Serve LLM Completions (With llama.cpp)?](https://resonance.distantmagic.com/tutorials/how-to-serve-llm-completions/)
+* [How to Create LLM WebSocket Chat with llama.cpp?](https://resonance.distantmagic.com/tutorials/how-to-create-llm-websocket-chat-with-llama-cpp/)
+* [Semi-Scripted Conversational Applications](https://resonance.distantmagic.com/tutorials/semi-scripted-conversational-applications/)
+
+## Community
+
+You can find official channels here:
+
+- [Discord](https://discord.gg/kysUzFqSCK)
+- [Telegram](https://t.me/+AQiDhKlsNBRjMmU0)
+  
 ## License
 
 The Resonance framework is open-sourced software licensed under the 
