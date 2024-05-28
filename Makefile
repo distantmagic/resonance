@@ -102,6 +102,7 @@ esbuild: $(CSS_SOURCES) node_modules
 		--format=esm \
 		--loader:.jpg=file \
 		--loader:.otf=file \
+		--loader:.png=file \
 		--loader:.svg=file \
 		--loader:.ttf=file \
 		--loader:.webp=file \
