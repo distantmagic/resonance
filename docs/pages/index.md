@@ -43,8 +43,13 @@ description: >
 </div>
 <div class="homepage-drivers">
     <h3>Backend Drivers Support</h3>
-    <ul class="homepage-drivers__items">
-        <li class="homepage-drivers__item homepage-drivers__item--swoole">
+    <div class="homepage-drivers__items">
+        <a 
+            class="homepage-drivers__item homepage-drivers__item--swoole"
+            href="https://swoole.com/"
+            rel=”noopener noreferrer”
+            target="_blank"
+        >
             <div class="homepage-drivers__item__background"></div>
             <div class="homepage-drivers__item__name">
                 Swoole
@@ -52,8 +57,13 @@ description: >
             <div class="homepage-drivers__item__state">
                 Supported since v0.1.0
             </div>
-        </li>
-        <li class="homepage-drivers__item homepage-drivers__item--openswoole">
+        </a>
+        <a 
+            class="homepage-drivers__item homepage-drivers__item--openswoole"
+            href="https://openswoole.com/"
+            rel=”noopener noreferrer”
+            target="_blank"
+        >
             <div class="homepage-drivers__item__background"></div>
             <div class="homepage-drivers__item__name">
                 OpenSwoole
@@ -61,8 +71,13 @@ description: >
             <div class="homepage-drivers__item__state">
                 Supported since v0.1.0
             </div>
-        </li>
-        <li class="homepage-drivers__item homepage-drivers__item--amphp">
+        </a>
+        <a 
+            class="homepage-drivers__item homepage-drivers__item--amphp"
+            href="https://amphp.org/"
+            rel=”noopener noreferrer”
+            target="_blank"
+        >
             <div class="homepage-drivers__item__background"></div>
             <div class="homepage-drivers__item__name">
                 AMPHP
@@ -70,8 +85,21 @@ description: >
             <div class="homepage-drivers__item__state">
                 In progress
             </div>
-        </li>
-    </ul>
+        </a>
+        <a 
+            class="homepage-drivers__item homepage-drivers__item--other"
+            href="https://github.com/distantmagic/resonance/discussions"
+            target="_blank"
+        >
+            <div class="homepage-drivers__item__background"></div>
+            <div class="homepage-drivers__item__name">
+                Do you have a driver in mind?
+            </div>
+            <div class="homepage-drivers__item__state">
+                Start a discussion
+            </div>
+        </a>
+    </div>
 </div>
 <div class="homepage-gallery">
     <h3>New Releases</h3>

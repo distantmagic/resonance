@@ -20,6 +20,8 @@
 
 .homepage-drivers,
 .homepage-gallery {
+  background-color: var(--color-block-dark-background);
+  color: var(--color-body-font-dark-background);
   max-width: 100vw;
   overflow-x: auto;
   overflow-y: hidden;
@@ -31,10 +33,13 @@
     position: sticky;
     left: 20px;
   }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-body-background);
+  }
 }
 
 .homepage-drivers {
-  background-color: white;
   border-top: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
@@ -50,13 +55,15 @@
 }
 
 .homepage-drivers__item {
+  background-color: white;
   border: 1px solid var(--color-border);
-  box-shadow: 8px 8px #00000033;
+  color: var(--color-body-font);
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 40px 20px 20px 20px;
   row-gap: 20px;
   text-align: center;
+  text-decoration: none;
 }
 
 .homepage-drivers__item.homepage-drivers__item--amphp {
@@ -67,6 +74,10 @@
   --drivers-bg-image: url(../images/openswoole.png);
 }
 
+.homepage-drivers__item.homepage-drivers__item--other {
+  --drivers-bg-image: url(../icons/plug-circle-plus-000000.svg);
+}
+
 .homepage-drivers__item.homepage-drivers__item--swoole {
   --drivers-bg-image: url(../images/swoole.png);
 }
@@ -75,7 +86,7 @@
   background-image: var(--drivers-bg-image);
   background-position: center;
   background-repeat: no-repeat;
-  height: 170px;
+  height: 140px;
   width: 460px;
 }
 
@@ -83,17 +94,15 @@
   font-weight: bold;
 }
 
+.homepage-drivers__item__state {
+  font-size: var(--font-size-smaller);
+}
+
 .homepage-gallery {
-  background-color: var(--color-block-dark-background);
-  color: var(--color-body-font-dark-background);
   display: flex;
   flex-direction: column;
   height: 460px;
   row-gap: 20px;
-}
-
-.homepage-gallery::-webkit-scrollbar-thumb {
-  background-color: var(--color-body-background);
 }
 
 .homepage-gallery__items {
