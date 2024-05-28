@@ -193,8 +193,14 @@ h2.homepage__example__title {
   }
 }
 
+.homepage__title h2,
+.homepage__title p {
+  max-width: 1024px;
+}
+
 .homepage__title h2 {
   font-weight: bold;
+  margin-top: 20px;
 
   @media screen and (min-width: 1024px) {
     font-size: 2em;
@@ -208,7 +214,6 @@ h2.homepage__example__title {
 
 .homepage__title p {
   line-height: 1.5;
-  max-width: 80ch;
 }
 
 .homepage__cta {
