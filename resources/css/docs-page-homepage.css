@@ -55,9 +55,7 @@
 }
 
 .homepage-drivers__item {
-  background-color: white;
   border: 1px solid var(--color-border);
-  color: var(--color-body-font);
   display: flex;
   flex-direction: column;
   padding: 40px 20px 20px 20px;
@@ -68,6 +66,10 @@
 
 .homepage-drivers__item.homepage-drivers__item--amphp {
   --drivers-bg-image: url(../images/amphp.webp);
+
+  .homepage-drivers__item__background {
+    width: 450px;
+  }
 }
 
 .homepage-drivers__item.homepage-drivers__item--openswoole {
@@ -75,7 +77,7 @@
 }
 
 .homepage-drivers__item.homepage-drivers__item--other {
-  --drivers-bg-image: url(../icons/plug-circle-plus-000000.svg);
+  --drivers-bg-image: url(../icons/plug-circle-plus-333333.svg);
 }
 
 .homepage-drivers__item.homepage-drivers__item--swoole {
@@ -87,7 +89,7 @@
   background-position: center;
   background-repeat: no-repeat;
   height: 140px;
-  width: 460px;
+  width: 350px;
 }
 
 .homepage-drivers__item__name {

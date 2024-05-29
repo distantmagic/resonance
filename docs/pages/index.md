@@ -22,15 +22,17 @@ description: >
                 Services, and more.
             </h2>
             <p>
-                Resonance is designed from the ground up to facilitate 
-                interoperability and messaging between services in your 
-                infrastructure and beyond. It provides AI capabilities
-                through llama.cpp and integration with Open Source foundational
-                LLMs.
+                Resonance is designed to build IO-intensive web applications 
+                from the ground up, making the development and maintenance as 
+                predictable and easy as possible.            
             </p>
             <p>
-                Takes full advantage of asynchronous PHP. Built on top of 
-                Swoole.
+                It provides AI capabilities through llama.cpp and integration 
+                with Open Source foundational LLMs, which makes it a great fit 
+                for building conversational applications and copilots.
+            </p>
+            <p>
+                Takes full advantage of asynchronous PHP.
             </p>
             <a 
                 class="homepage__cta"
