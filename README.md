@@ -6,6 +6,32 @@ Resonance is designed from the ground up to facilitate interoperability and mess
 
 Takes full advantage of asynchronous PHP. Built on top of Swoole.
 
+## Why Resonance?
+
+### Predictable Performance
+
+Resonance is designed with a few priorities: no memory leaks, blocking operations, and garbage collector surprises.
+
+Most of the internals are read-only and stateless. After the application startup, nothing disturbs JIT and opcode (Reflection is only used during the application startup), so there are no surprise slowdowns during runtime.
+
+### Opinionated
+
+All the libraries under the hood have been thoroughly tested to ensure they work together correctly, complement each other, and work perfectly under async environments.
+
+For example, Resonance implements custom <a href="https://www.doctrine-project.org/">Doctrine</a> drivers, so it uses Swoole's connection pools.
+
+### Resolves Input/Output Issues
+
+Resonance is designed to handle IO-intensive tasks, such as serving Machine Learning models, handling WebSocket connections, and processing long-running HTTP requests.
+
+It views modern applications as a mix of services that communicate with each other asynchronously, including AI completions and ML inferences, so it provides a set of tools to make this communication as easy as possible.
+
+### Complete Package
+
+Resonance includes everything you need to build a modern web application, from the HTTP server to the AI capabilities.
+
+It provides security features, HTML templating, integration with open-source LLMs, and provides capability to serve ML models.
+
 ## Documentation
 
 https://resonance.distantmagic.com/
