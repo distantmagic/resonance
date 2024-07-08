@@ -32,7 +32,7 @@ warned.
 
 ## The Goal
 
-Our final goal is to be able to send transactional emails from our server and 
+Our final goal is to send transactional emails from our server and
 still be able to both receive and send them through 3rd party service provider. 
 Let me explain.
 

@@ -15,7 +15,7 @@
     "repositories": [
         {
             "type": "path",
-            "url": "vendor/distantmagic/resonance",
+            "url": "./repository",
             "options": {
                 "symlink": true
             }
@@ -32,7 +32,7 @@
         "symlink-resonance": [
             "mkdir -p vendor/distantmagic",
             "rm -rf vendor/distantmagic/resonance",
-            "ln -s -f ../../ vendor/distantmagic/resonance"
+            "ln -s -f ../../ ./repository"
         ],
         "pre-install-cmd": "@symlink-resonance",
         "pre-update-cmd": "@symlink-resonance"

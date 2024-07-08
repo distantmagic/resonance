@@ -18,10 +18,22 @@
   background-color: var(--color-body-background);
 }
 
-.homepage-drivers,
+.homepage-gallery.homepage-gallery--reasons {
+  --homepage-gallery-background: var(--color-block-dark-background);
+  --homepage-gallery-color: var(--color-body-font-dark-background);
+}
+
+.homepage-gallery.homepage-gallery--releases {
+  --homepage-gallery-background: white;
+  --homepage-gallery-color: var(--color-body-font);
+
+  border-bottom: 1px solid var(--color-border);
+  height: 460px;
+}
+
 .homepage-gallery {
-  background-color: var(--color-block-dark-background);
-  color: var(--color-body-font-dark-background);
+  background-color: var(--homepage-gallery-background);
+  color: var(--homepage-gallery-color);
   max-width: 100vw;
   overflow-x: auto;
   overflow-y: hidden;
@@ -39,72 +51,22 @@
   }
 }
 
-.homepage-drivers {
-  border-top: 1px solid var(--color-border);
-  display: flex;
-  flex-direction: column;
-  row-gap: 20px;
-}
-
-.homepage-drivers__items {
-  align-items: center;
-  column-gap: 20px;
-  display: flex;
-  flex-direction: row;
-  list-style-type: none;
-}
-
-.homepage-drivers__item {
-  border: 1px solid var(--color-border);
-  display: flex;
-  flex-direction: column;
-  padding: 40px 20px 20px 20px;
-  row-gap: 20px;
-  text-align: center;
-  text-decoration: none;
-}
-
-.homepage-drivers__item.homepage-drivers__item--amphp {
-  --drivers-bg-image: url(../images/amphp.webp);
-
-  .homepage-drivers__item__background {
-    width: 450px;
-  }
-}
-
-.homepage-drivers__item.homepage-drivers__item--openswoole {
-  --drivers-bg-image: url(../images/openswoole.png);
-}
-
-.homepage-drivers__item.homepage-drivers__item--other {
-  --drivers-bg-image: url(../icons/plug-circle-plus-333333.svg);
-}
-
-.homepage-drivers__item.homepage-drivers__item--swoole {
-  --drivers-bg-image: url(../images/swoole.png);
-}
-
-.homepage-drivers__item__background {
-  background-image: var(--drivers-bg-image);
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 140px;
-  width: 350px;
-}
-
-.homepage-drivers__item__name {
-  font-weight: bold;
-}
-
-.homepage-drivers__item__state {
-  font-size: var(--font-size-smaller);
-}
-
 .homepage-gallery {
   display: flex;
   flex-direction: column;
-  height: 460px;
   row-gap: 20px;
+}
+
+.homepage-gallery__grid {
+  display: grid;
+  gap: 20px;
+
+  @media screen and (max-width: 1023px) {
+    grid-template-columns: 1fr;
+  }
+  @media screen and (min-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .homepage-gallery__items {
@@ -265,6 +227,7 @@ h2.homepage__example__title {
 
 .homepage__title h2 {
   font-weight: bold;
+  line-height: 1.3;
   margin-top: 20px;
 
   @media screen and (min-width: 1024px) {

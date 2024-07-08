@@ -43,69 +43,74 @@ description: >
         </hgroup>
     </div>
 </div>
-<div class="homepage-drivers">
-    <h3>Backend Drivers Support</h3>
-    <div class="homepage-drivers__items">
-        <a 
-            class="homepage-drivers__item homepage-drivers__item--swoole"
-            href="https://swoole.com/"
-            rel=”noopener noreferrer”
-            target="_blank"
-        >
-            <div class="homepage-drivers__item__background"></div>
-            <div class="homepage-drivers__item__name">
-                Swoole
-            </div>
-            <div class="homepage-drivers__item__state">
-                Supported since v0.1.0
-            </div>
-        </a>
-        <a 
-            class="homepage-drivers__item homepage-drivers__item--openswoole"
-            href="https://openswoole.com/"
-            rel=”noopener noreferrer”
-            target="_blank"
-        >
-            <div class="homepage-drivers__item__background"></div>
-            <div class="homepage-drivers__item__name">
-                OpenSwoole
-            </div>
-            <div class="homepage-drivers__item__state">
-                Supported since v0.1.0
-            </div>
-        </a>
-        <a 
-            class="homepage-drivers__item homepage-drivers__item--amphp"
-            href="https://amphp.org/"
-            rel=”noopener noreferrer”
-            target="_blank"
-        >
-            <div class="homepage-drivers__item__background"></div>
-            <div class="homepage-drivers__item__name">
-                AMPHP
-            </div>
-            <div class="homepage-drivers__item__state">
-                In progress
-            </div>
-        </a>
-        <a 
-            class="homepage-drivers__item homepage-drivers__item--other"
-            href="https://github.com/distantmagic/resonance/discussions"
-            target="_blank"
-        >
-            <div class="homepage-drivers__item__background"></div>
-            <div class="homepage-drivers__item__name">
-                Do you have a driver in mind?
-            </div>
-            <div class="homepage-drivers__item__state">
-                Start a discussion
-            </div>
-        </a>
-    </div>
+<div class="homepage-gallery homepage-gallery--reasons">
+    <h3>Why Resonance?</h3>
+    <ul class="homepage-gallery__grid">
+        <li class="homepage-gallery__item">
+            <h4>
+                <a href="/docs/features/">
+                    Predictable Performance
+                </a>
+            </h4>
+            <p>
+                Resonance is designed with a few priorities: no memory leaks, blocking operations, and garbage collector surprises.<br><br>
+                Most of the internals are read-only and stateless. After the application startup, nothing disturbs JIT and opcode (Reflection is only used during the application startup), so there are no surprise slowdowns during runtime.
+            </p>
+        </li>
+        <li class="homepage-gallery__item">
+            <h4>
+                <a href="/docs/features/">
+                    Opinionated
+                </a>
+            </h4>
+            <p>
+                All the libraries under the hood have been thoroughly tested to ensure they work together correctly, complement each other, and work perfectly under async environments.<br><br>
+                For example, Resonance implements custom <a href="https://www.doctrine-project.org/">Doctrine</a> drivers, so it uses Swoole's connection pools.
+            </p>
+        </li>
+        <li class="homepage-gallery__item">
+            <h4>
+                <a href="/docs/features/">
+                    Resolves Input/Output Issues
+                </a>
+            </h4>
+            <p>
+                Resonance is designed to handle IO-intensive tasks, such as serving Machine Learning models, handling WebSocket connections, and processing long-running HTTP requests.<br><br>
+                It views modern applications as a mix of services that communicate with each other asynchronously, including AI completions and ML inferences, so it provides a set of tools to make this communication as easy as possible.
+            </p>
+        </li>
+        <li class="homepage-gallery__item">
+            <h4>
+                <a href="/docs/features/">
+                    Complete Package
+                </a>
+            </h4>
+            <p>
+                Resonance includes everything you need to build a modern web application, from the HTTP server to the AI capabilities.<br><br>
+                It provides security features, HTML templating, integration with open-source LLMs, and provides capability to serve ML models.
+            </p>
+        </li>
+    </ul>
 </div>
-<div class="homepage-gallery">
+<div class="homepage-gallery homepage-gallery--releases">
     <h3>New Releases</h3>
     <ul class="homepage-gallery__items">
+        <li class="homepage-gallery__item">
+            <h4>
+                <a href="/docs/features/ai/machine-learning/">
+                    Serve Machine Learning Models
+                    <span class="homepage-gallery__version">v0.31.0</span>
+                </a>
+            </h4>
+            <p>
+                Resonance integrates with Rubix ML to serve Machine Learning
+                models in the same codebase as the rest of your application.
+            </p>
+            <a
+                class="homepage-gallery__item__learnmore"
+                href="/docs/features/ai/machine-learning/"
+            >Learn More</a>
+        </li>
         <li class="homepage-gallery__item">
             <h4>
                 <a href="/tutorials/semi-scripted-conversational-applications/">
@@ -345,6 +350,59 @@ readonly class CatAdopt implements PromptSubjectResponderInterface
         $response->write("  | | | | |\n");
         $response->write(" ((_((|))_))\n");
         $response->end();
+    }
+}</code></pre>
+            </li>
+            <li class="formatted-content homepage__example">
+                <h2 class="homepage__example__title">
+                    Serve Machine Learning Models
+                </h2>
+                <div class="homepage__example__description">
+                    <p>
+                        Resonance integrates with
+                        <a href="https://rubixml.com/" target="_blank">Rubix ML</a>
+                        and allows you to serve Machine Learning models in the
+                        same codebase as the rest of your application.
+                    </p>
+                    <p>
+                        Resonance allows you to serve inferences from your
+                        models through HTTP, WebSocket, and other protocols.
+                    </p>
+                    <a
+                        class="homepage__cta homepage__cta--example"
+                        href="/docs/features/ai/"
+                    >
+                        Learn More
+                    </a>
+                </div>
+                <pre class="homepage__example__code fenced-code"><code
+                        class="language-php"
+                        data-controller="hljs"
+                        data-hljs-language-value="php"
+                    >#[RespondsToHttp(
+    method: RequestMethod::POST,
+    pattern: '/predict',
+)]
+#[Singleton(collection: SingletonCollection::HttpResponder)]
+readonly class Predict extends HttpResponder
+{
+    private Estimator $model;
+
+    public function __construct()
+    {
+        $this->model = PersistentModel::load(new Filesystem(DM_ROOT.'/models/iris.model'));
+    }
+
+    public function respond(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+    ): HttpInterceptableInterface
+    {
+        $dataset = new Unlabeled($request->getParsedBody());
+
+        $predictions = $this->model->predict($dataset);
+
+        return new JsonResponse($predictions);
     }
 }</code></pre>
             </li>
