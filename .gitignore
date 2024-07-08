@@ -1,5 +1,7 @@
 *~
 /*.cache
+/.pnp.*
+/.yarn
 /config.ini
 /esbuild-meta-docs.json
 /node_modules

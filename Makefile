@@ -37,6 +37,10 @@ TS_SOURCES := \
 # Real targets
 # -----------------------------------------------------------------------------
 
+.pnp.cjs: yarn.lock
+	yarnpkg install --immutable;
+	touch .pnp.cjs;
+
 config.ini: config.ini.example
 	cp config.ini.example config.ini;
 
@@ -55,10 +59,6 @@ docs/artifact.tar: docs/build
 docs/build: config.ini esbuild vendor $(MD_SOURCES) $(PHP_SOURCES)
 	${PHP_BIN} ./bin/resonance.php static-pages:build;
 	cp resources/images/* docs/build;
-
-node_modules: yarn.lock
-	yarnpkg install --check-files --frozen-lockfile --non-interactive;
-	touch node_modules;
 
 tools/php-cs-fixer/vendor/bin/php-cs-fixer:
 	$(MAKE) -C tools/php-cs-fixer vendor
@@ -87,15 +87,17 @@ clean:
 	rm -rf ./.php-cs-fixer.cache
 	rm -rf ./.phpunit.cache
 	rm -rf ./.phpunit.result.cache
+	rm -rf ./.pnp.cjs
+	rm -rf ./.pnp.loader.mjs
+	rm -rf ./.yarn
 	rm -rf ./coverage
-	rm -rf ./esbuild-meta-docs.json
 	rm -rf ./docs/build
-	rm -rf ./node_modules
+	rm -rf ./esbuild-meta-docs.json
 	rm -rf ./vendor
 
 .PHONY: esbuild
-esbuild: $(CSS_SOURCES) node_modules
-	./node_modules/.bin/esbuild \
+esbuild: $(CSS_SOURCES) .pnp.cjs
+	yarnpkg run esbuild \
 		--bundle \
 		--asset-names="./[name]_[hash]" \
 		--entry-names="./[name]_[hash]" \
@@ -119,16 +121,16 @@ esbuild: $(CSS_SOURCES) node_modules
 	;
 
 .PHONY: eslint
-eslint: node_modules
-	./node_modules/.bin/eslint resources/ts
+eslint: .pnp.cjs
+	yarnpkg run eslint resources/ts
 
 .PHONY: eslint.fix
-eslint.fix: node_modules
-	./node_modules/.bin/eslint --fix resources/ts
+eslint.fix: .pnp.cjs
+	yarnpkg run eslint --fix resources/ts
 
 .PHONY: eslint.watch
-eslint.watch: node_modules
-	./node_modules/.bin/nodemon \
+eslint.watch: .pnp.cjs
+	yarnpkg run nodemon \
 		--ext ts,tsx,frag,vert \
 		--watch ./resources/ts \
 		--exec '$(MAKE) eslint || exit 1'
@@ -137,8 +139,8 @@ eslint.watch: node_modules
 fmt: php-cs-fixer prettier
 
 .PHONY: jest
-jest: node_modules
-	./node_modules/.bin/jest
+jest: .pnp.cjs
+	yarnpkg run jest
 
 .PHONY: php-cs-fixer
 php-cs-fixer: tools/php-cs-fixer/vendor/bin/php-cs-fixer
@@ -149,8 +151,8 @@ phpunit: config.ini vendor
 	./vendor/bin/phpunit
 
 .PHONY: prettier
-prettier: node_modules
-	./node_modules/.bin/prettier \
+prettier: .pnp.cjs
+	yarnpkg run prettier \
 		--write \
 		"resources/{css,ts}/**/*.{js,css,ts,tsx}"
 
@@ -162,7 +164,7 @@ psalm: tools/psalm/vendor/bin/psalm vendor
 		--root=$(CURDIR)
 
 .PHONY: psalm.taint
-psalm.taint: node_modules vendor
+psalm.taint: .pnp.cjs vendor
 	./tools/psalm/vendor/bin/psalm \
 		--no-cache \
 		--show-info=true \
@@ -170,8 +172,8 @@ psalm.taint: node_modules vendor
 		--taint-analysis
 
 .PHONY: psalm.watch
-psalm.watch: node_modules vendor
-	./node_modules/.bin/nodemon \
+psalm.watch: .pnp.cjs vendor
+	yarnpkg run nodemon \
 		--ext ini,php \
 		--signal SIGTERM \
 		--watch ./app \
@@ -185,8 +187,8 @@ psalm.watch: node_modules vendor
 ssg: docs/build
 
 .PHONY: ssg.watch
-ssg.watch: node_modules
-	./node_modules/.bin/nodemon \
+ssg.watch: .pnp.cjs
+	yarnpkg run nodemon \
 		--ext css,ini,md,php,ts \
 		--signal SIGTERM \
 		--watch ./app \
@@ -196,13 +198,13 @@ ssg.watch: node_modules
 		--exec '$(MAKE) ssg || exit 1'
 
 .PHONY: ssg.serve
-ssg.serve: ssg node_modules
-	./node_modules/.bin/esbuild --serve=8080 --servedir=docs/build
+ssg.serve: .pnp.cjs ssg
+	yarnpkg run esbuild --serve=8080 --servedir=docs/build
 
 .PHONY: tsc
-tsc: node_modules
-	./node_modules/.bin/tsc --noEmit
+tsc: .pnp.cjs
+	yarnpkg run tsc --noEmit
 
 .PHONY: tsc.watch
-tsc.watch: node_modules
-	./node_modules/.bin/tsc --noEmit --watch
+tsc.watch: .pnp.cjs
+	yarnpkg run tsc --noEmit --watch
