@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<psalm
+    errorLevel="1"
+    findUnusedBaselineEntry="true"
+    findUnusedCode="true"
+    findUnusedPsalmSuppress="true"
+    reportInfo="true"
+    resolveFromConfigFile="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+>
+    <projectFiles>
+        <directory name="app" />
+        <file name="constants.php" />
+        <ignoreFiles>
+            <directory name="vendor" />
+        </ignoreFiles>
+    </projectFiles>
+
+    <issueHandlers>
+        <ForbiddenCode>
+            <errorLevel type="suppress">
+                <directory name="app"/>
+            </errorLevel>
+        </ForbiddenCode>
+        <PossiblyUnusedMethod>
+            <!--
+                Classess built with Dependency Injection container do not have
+                their constructor explicitly called.
+            -->
+            <errorLevel type="suppress">
+                <directory name="app"/>
+                <referencedMethod name="*::__construct"/>
+            </errorLevel>
+        </PossiblyUnusedMethod>
+        <PossiblyUnusedReturnValue>
+            <errorLevel type="suppress">
+                <directory name="app/HttpResponder"/>
+            </errorLevel>
+        </PossiblyUnusedReturnValue>
+        <UnusedClass>
+            <errorLevel type="suppress">
+                <directory name="app"/>
+            </errorLevel>
+        </UnusedClass>
+    </issueHandlers>
+
+    <stubs>
+        <file name="tools/psalm/vendor/vimeo/psalm/stubs/extensions/ds.phpstub" />
+
+        <file name="vendor/swoole/ide-helper/src/swoole/Swoole/Http/Request.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole/Swoole/Http/Response.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole/Swoole/Http/Server.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole/Swoole/WebSocket/Frame.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole/Swoole/WebSocket/Server.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/ConnectionPool.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/Coroutine/WaitGroup.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/ObjectProxy.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/Database/ObjectProxy.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/Database/PDOConfig.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/Database/PDOPool.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/Database/PDOProxy.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/Database/PDOStatementProxy.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/Database/RedisConfig.php" />
+        <file name="vendor/swoole/ide-helper/src/swoole_library/src/core/Database/RedisPool.php" />
+    </stubs>
+</psalm>

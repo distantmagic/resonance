@@ -1,0 +1,90 @@
+[app]
+env = development
+esbuild_metafile = null
+scheme = https
+url = http://localhost:9501
+
+[database]
+default[driver] = mysql
+default[host] = 127.0.0.1
+default[port] = 3306
+default[database] = distantmagic
+default[username] = distantmagic
+default[password] = distantmagic
+default[log_queries] = false
+default[pool_prefill] = false
+default[pool_size] = 8
+
+[grpc]
+grpc_php_plugin_bin = %DM_ROOT%/grpc_php_plugin
+protoc_bin = /usr/bin/protoc
+
+[llamacpp]
+host = 127.0.0.1
+port = 8081
+
+[mailer]
+default[transport_dsn] = smtp://localhost
+; default[dkim_domain_name] = example.com
+; default[dkim_selector] = resonance1
+; default[dkim_signing_key_passphrase] = yourpassphrase
+; default[dkim_signing_key_private] = dkim/private.key
+; default[dkim_signing_key_public] = dkim/public.key
+
+[manifest]
+background_color = "#ffffff"
+theme_color = "#ffffff"
+
+[oauth2]
+encryption_key = %DM_ROOT%/oauth2/defuse.key
+jwt_signing_key_passphrase = yourpassphrase
+jwt_signing_key_private = %DM_ROOT%/oauth2/private.key
+jwt_signing_key_public = %DM_ROOT%/oauth2/public.key
+session_key_authorization_request = oauth2.authorization_request
+session_key_pkce = oauth2.pkce
+session_key_state = oauth2.state
+
+[openapi]
+description = description
+title = title
+version = 0.0.0
+
+[redis]
+default[db_index] = 0
+default[host] = 127.0.0.1
+default[password] = null
+default[port] = 6379
+default[prefix] = dm:
+default[timeout] = 1
+default[pool_prefill] = false
+default[pool_size] = 8
+
+[session]
+cookie_lifespan = 86400
+cookie_name = dmsession
+redis_connection_pool = default
+
+[sqlite-vss]
+extension_vector0 = %DM_ROOT%/vector0.so
+extension_vss0 = %DM_ROOT%/vss0.so
+
+[static]
+base_url = https://resonance.distantmagic.com
+esbuild_metafile = %DM_ROOT%/esbuild-meta-docs.json
+input_directory = docs
+output_directory = %DM_ROOT%/docs/build
+sitemap = %DM_ROOT%/docs/build/sitemap.xml
+
+[swoole]
+host = 127.0.0.1
+port = 9501
+log_level = SWOOLE_LOG_DEBUG
+ssl_cert_file = null
+ssl_key_file = null
+
+[translator]
+base_directory = %DM_APP_ROOT%/lang
+default_primary_language = en
+
+[websocket]
+max_connections = 10000

@@ -1,0 +1,40 @@
+{
+    "name": "distantmagic/resonance-project",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "files": [
+            "constants.php"
+        ],
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "path",
+            "url": "vendor/distantmagic/resonance",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "distantmagic/resonance": "dev-master"
+    },
+    "require-dev": {
+        "swoole/ide-helper": "^5.1"
+    },
+    "scripts": {
+        "symlink-resonance": [
+            "mkdir -p vendor/distantmagic",
+            "rm -rf vendor/distantmagic/resonance",
+            "ln -s -f ../../ vendor/distantmagic/resonance"
+        ],
+        "pre-install-cmd": "@symlink-resonance",
+        "pre-update-cmd": "@symlink-resonance"
+    }
+}

@@ -1,8 +1,19 @@
 {
-    "name": "distantmagic/resonance",
-    "description": "PHP Framework with AI capabilities.",
-    "type": "library",
-    "license": "MIT",
+    "archive": {
+        "exclude": [
+            "/app",
+            "/docs",
+            "/examples",
+            "/resources",
+            "/tools"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Mateusz Charytoniuk",
+            "email": "mateusz.charytoniuk@protonmail.com"
+        }
+    ],
     "autoload": {
         "files": [
             "src/helpers/coroutineMustGetContext.php",
@@ -15,12 +26,9 @@
             "Distantmagic\\Resonance\\": "src/"
         }
     },
-    "authors": [
-        {
-            "name": "Mateusz Charytoniuk",
-            "email": "mateusz.charytoniuk@protonmail.com"
-        }
-    ],
+    "description": "PHP Framework with AI capabilities.",
+    "license": "MIT",
+    "name": "distantmagic/resonance",
     "require": {
         "defuse/php-encryption": "^2.4",
         "distantmagic/graphql-swoole-promise-adapter": "^0.1.1",
@@ -64,7 +72,8 @@
         "twig/twig": "^3.7",
         "webonyx/graphql-php": "^15.6",
         "beberlei/assert": "^3.3",
-        "dunglas/doctrine-json-odm": "^1.4"
+        "dunglas/doctrine-json-odm": "^1.4",
+        "rubix/ml": "^2.5"
     },
     "require-dev": {
         "phpunit/phpunit": "^11.0",
@@ -81,5 +90,6 @@
         "ext-readline": "Unlocks some console features",
         "ext-redis": "HTTP Sessions driver",
         "ext-uuid": "Faster UUID generation"
-    }
+    },
+    "type": "library"
 }

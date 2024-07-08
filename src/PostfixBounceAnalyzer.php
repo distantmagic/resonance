@@ -65,10 +65,10 @@ readonly class PostfixBounceAnalyzer
         if (isset($ret['original-recipient']) && !empty($ret['original-recipient'])) {
             return new PostfixBounceReport(
                 recipient: new Address($ret['original-recipient']),
-                diagnosticCode: empty($ret['diagnostic-code']) ? null : $ret['diagnostic-code'],
-                notification: empty($ret['notification']) ? null : $ret['notification'],
-                sender: empty($ret['x-postfix-sender']) ? null : new Address($ret['x-postfix-sender']),
-                status: empty($ret['status']) ? null : $ret['status'],
+                diagnosticCode: '' === $ret['diagnostic-code'] ? null : $ret['diagnostic-code'],
+                notification: '' === $ret['notification'] ? null : $ret['notification'],
+                sender: '' === $ret['x-postfix-sender'] ? null : new Address($ret['x-postfix-sender']),
+                status: '' === $ret['status'] ? null : $ret['status'],
             );
         }
 
