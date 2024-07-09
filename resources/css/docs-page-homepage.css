@@ -29,6 +29,10 @@
 
   border-bottom: 1px solid var(--color-border);
   height: 460px;
+
+  .homepage-gallery__item {
+    min-width: 400px;
+  }
 }
 
 .homepage-gallery {
@@ -80,7 +84,6 @@
   border: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  min-width: 400px;
 
   h4 a {
     align-items: center;
