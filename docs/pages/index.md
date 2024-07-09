@@ -43,6 +43,30 @@ description: >
         </hgroup>
     </div>
 </div>
+<div class="homepage__rubixml">
+    <div class="homepage__rubixml__content">
+        <h3>Host <strong>Rubix ML</strong> machine learning models in production</h3>
+        <p>
+            <strong>Rubix ML</strong> is a high-level machine learning and deep
+            learning library for the PHP language.
+        </p>
+        <div class="homepage__rubixml__ctas">
+            <a
+                class="homepage__cta"
+                href="/docs/features/ai/machine-learning/"
+            >
+                Get Started
+            </a>
+            <a
+                class="external-link homepage__cta"
+                href="https://rubixml.com/"
+                target="_blank"
+            >
+                Learn More about Rubix ML
+            </a>
+        </div>
+    </div>
+</div>
 <div class="homepage-gallery homepage-gallery--reasons">
     <h3>Why Resonance?</h3>
     <ul class="homepage-gallery__grid">
@@ -84,7 +108,7 @@ description: >
         </li>
         <li class="homepage-gallery__grid-item">
             <h4>
-                Complete Package
+                All-in-One
             </h4>
             <p>
                 Resonance includes everything you need to build a modern web application, from the HTTP server to the AI capabilities.
@@ -154,14 +178,14 @@ description: >
                     <span class="homepage-gallery__version">v0.30.0</span>
                 </a>
             </h4>
-            <iframe 
-                src="https://www.youtube.com/embed/Jz-p6Bhcm54" 
-                title="YouTube video player" 
-                frameborder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                referrerpolicy="strict-origin-when-cross-origin" 
-                allowfullscreen
-            ></iframe>
+            <p>
+                Extractors either map user's input into a strictly formatted
+                data or extract specific data from user's input.
+            </p>
+            <a
+                class="homepage-gallery__item__learnmore"
+                href="/docs/features/ai/server/llama-cpp/extractors/"
+            >Learn More</a>
         </li>
         <li class="homepage-gallery__item">
             <h4>

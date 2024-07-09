@@ -208,6 +208,64 @@ h2.homepage__example__title {
   }
 }
 
+.homepage__rubixml {
+  align-items: center;
+  background-image: linear-gradient(141deg,#2e00bb,#6200ee 71%,#9709ff);
+  display: flex;
+  flex-direction: column;
+}
+
+.homepage__rubixml__content {
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  max-width: 1480px;
+  padding: 60px 20px;
+  position: relative;
+  row-gap: 20px;
+  width: 100%;
+
+  > h3,
+  > p {
+    color: white;
+    text-shadow: 1px 2px rgba(0,0,0,.4);
+  }
+
+  > h3 {
+    font-size: 2em;
+  }
+
+  @media screen and (max-width: 1799px) {
+    background-image: url(../images/rubixml.png);
+    background-position: 20px 20px;
+    padding-top: 148px;
+  }
+  @media screen and (min-width: 1800px) {
+    &::before {
+      background-image: url(../images/rubixml.png);
+      background-position: calc(-100%) top;
+      content: "";
+      left: -128px;
+      top: 25px;
+      position: absolute;
+      height: 128px;
+      width: 128px;
+    }
+  }
+}
+
+.homepage__rubixml__ctas {
+  column-gap: 20px;
+  display: flex;
+
+  @media screen and (max-width: 1023px) {
+    flex-direction: column;
+  }
+  @media screen and (min-width: 1024px) {
+    flex-direction: row;
+  }
+}
+
 .homepage__title {
   justify-content: center;
   display: flex;

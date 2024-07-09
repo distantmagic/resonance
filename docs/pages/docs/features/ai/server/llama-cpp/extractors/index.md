@@ -10,8 +10,6 @@ description: >
 
 # Extractors
 
-https://www.youtube.com/watch?v=Jz-p6Bhcm54
-
 :::note
 All extractors are tested with [Mistral Instruct 7B](https://mistral.ai/).
 
