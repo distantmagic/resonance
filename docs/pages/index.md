@@ -16,7 +16,7 @@ description: >
 <div class="homepage homepage--title">
     <div class="homepage__content">
         <hgroup class="homepage__title">
-            <h1>PHP Framework for Next-Gen Web Apps</h1>
+            <h1>PHP Resonance Framework</h1>
             <h2>
                 Build Copilots, Conversational Applications, IO Intensive 
                 Services, and more.
@@ -97,13 +97,21 @@ description: >
         </li>
         <li class="homepage-gallery__grid-item">
             <h4>
-                Resolves Input/Output Issues
+                Optimized for Input/Output
             </h4>
             <p>
                 Resonance is designed to handle IO-intensive tasks, such as serving Machine Learning models, handling WebSocket connections, and processing long-running HTTP requests.
             </p>
             <p>
                 It views modern applications as a mix of services that communicate with each other asynchronously, including AI completions and ML inferences, so it provides a set of tools to make this communication as easy as possible.
+            </p>
+        </li>
+        <li class="homepage-gallery__grid-item">
+            <h4>
+                Real-Time Messaging
+            </h4>
+            <p>
+                Resonance provides a set of tools to build real-time messaging services, including WebSocket and gRPC.
             </p>
         </li>
         <li class="homepage-gallery__grid-item">
