@@ -46,47 +46,50 @@ description: >
 <div class="homepage-gallery homepage-gallery--reasons">
     <h3>Why Resonance?</h3>
     <ul class="homepage-gallery__grid">
-        <li class="homepage-gallery__item">
+        <li class="homepage-gallery__grid-item">
             <h4>
-                <a href="/docs/features/">
-                    Predictable Performance
-                </a>
+                Predictable Performance
             </h4>
             <p>
-                Resonance is designed with a few priorities: no memory leaks, blocking operations, and garbage collector surprises.<br><br>
+                Resonance is designed with a few priorities: no memory leaks, blocking operations, and garbage collector surprises.
+            </p>
+            <p>
                 Most of the internals are read-only and stateless. After the application startup, nothing disturbs JIT and opcode (Reflection is only used during the application startup), so there are no surprise slowdowns during runtime.
             </p>
+            <p>
+                Dependency Injection container is designed to prevent any cyclical dependencies between services.
+            </p>
         </li>
-        <li class="homepage-gallery__item">
+        <li class="homepage-gallery__grid-item">
             <h4>
-                <a href="/docs/features/">
-                    Opinionated
-                </a>
+                Opinionated
             </h4>
             <p>
-                All the libraries under the hood have been thoroughly tested to ensure they work together correctly, complement each other, and work perfectly under async environments.<br><br>
+                All the libraries under the hood have been thoroughly tested to ensure they work together correctly, complement each other, and work perfectly under async environments.
+            </p>
+            <p>
                 For example, Resonance implements custom <a href="https://www.doctrine-project.org/">Doctrine</a> drivers, so it uses Swoole's connection pools.
             </p>
         </li>
-        <li class="homepage-gallery__item">
+        <li class="homepage-gallery__grid-item">
             <h4>
-                <a href="/docs/features/">
-                    Resolves Input/Output Issues
-                </a>
+                Resolves Input/Output Issues
             </h4>
             <p>
-                Resonance is designed to handle IO-intensive tasks, such as serving Machine Learning models, handling WebSocket connections, and processing long-running HTTP requests.<br><br>
+                Resonance is designed to handle IO-intensive tasks, such as serving Machine Learning models, handling WebSocket connections, and processing long-running HTTP requests.
+            </p>
+            <p>
                 It views modern applications as a mix of services that communicate with each other asynchronously, including AI completions and ML inferences, so it provides a set of tools to make this communication as easy as possible.
             </p>
         </li>
-        <li class="homepage-gallery__item">
+        <li class="homepage-gallery__grid-item">
             <h4>
-                <a href="/docs/features/">
-                    Complete Package
-                </a>
+                Complete Package
             </h4>
             <p>
-                Resonance includes everything you need to build a modern web application, from the HTTP server to the AI capabilities.<br><br>
+                Resonance includes everything you need to build a modern web application, from the HTTP server to the AI capabilities.
+            </p>
+            <p>
                 It provides security features, HTML templating, integration with open-source LLMs, and provides capability to serve ML models.
             </p>
         </li>

@@ -62,14 +62,30 @@
 }
 
 .homepage-gallery__grid {
+  gap: 40px;
   display: grid;
-  gap: 20px;
+  list-style-type: none;
 
   @media screen and (max-width: 1023px) {
     grid-template-columns: 1fr;
   }
-  @media screen and (min-width: 1024px) {
+  @media screen and (min-width: 1024px) and (max-width: 1479px) {
     grid-template-columns: repeat(2, 1fr);
+  }
+  @media screen and (min-width: 1480px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.homepage-gallery__grid-item {
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  padding: 40px 20px;
+  row-gap: 20px;
+
+  h4 {
+    font-weight: bold;
   }
 }
 
