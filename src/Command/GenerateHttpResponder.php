@@ -14,8 +14,8 @@ use Distantmagic\Resonance\SingletonCollection;
 use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\Printer;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -71,8 +71,8 @@ final class GenerateHttpResponder extends Command
         $namespace->addUse(HttpInterceptableInterface::class);
         $namespace->addUse(HttpResponder::class);
         $namespace->addUse(HttpResponderInterface::class);
-        $namespace->addUse(Request::class);
-        $namespace->addUse(Response::class);
+        $namespace->addUse(ServerRequestInterface::class);
+        $namespace->addUse(ResponseInterface::class);
         $namespace->addUse(Singleton::class);
         $namespace->addUse(SingletonCollection::class);
 
@@ -90,8 +90,8 @@ final class GenerateHttpResponder extends Command
             HttpInterceptableInterface::class,
             HttpResponderInterface::class,
         ]));
-        $method->addParameter('request')->setType(Request::class);
-        $method->addParameter('response')->setType(Response::class);
+        $method->addParameter('request')->setType(ServerRequestInterface::class);
+        $method->addParameter('response')->setType(ResponseInterface::class);
         $method->setBody(<<<'CODE'
         $response->end('Hello, Resonance!');
 
