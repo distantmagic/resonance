@@ -55,7 +55,7 @@ namespace App\HttpResponder;
 use App\HttpRouteSymbol;
 use Distantmagic\Resonance\Attribute\RespondsToHttp;
 use Distantmagic\Resonance\Attribute\Singleton;
-use Distantmagic\Resonance\HttpResponderInterface;
+use Distantmagic\Resonance\HttpResponder;
 use Distantmagic\Resonance\RequestMethod;
 use Distantmagic\Resonance\SingletonCollection;
 use Psr\Http\Message\ResponseInterface;
@@ -67,7 +67,7 @@ use Psr\Http\Message\ServerRequestInterface;
     routeSymbol: HttpRouteSymbol::Homepage,
 )]
 #[Singleton(collection: SingletonCollection::HttpResponder)]
-final readonly class Homepage implements HttpResponderInterface
+final readonly class Homepage extends HttpResponder
 {
     public function respond(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
@@ -113,7 +113,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class MyResponder implements HttpResponderInterface
 {
-    public function respond(Request $request, Response $response): ?HttpResponderInterface
+    public function respond(ServerRequestInterface $request, ResponseInterface $response): ?HttpResponderInterface
     {
         return new class implements HttpResponderInterface {
             public function respond (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface {
