@@ -11,10 +11,4 @@ description: >
 
 # Community
 
-You can find official channels here:
-
-- [Discord](https://discord.gg/kysUzFqSCK)
-- [GitHub](https://github.com/distantmagic/resonance)
-
-If you started your own community and want it to be featured here, feel free to 
-let us know.
+Feel free to use [GitHub discussions](https://github.com/distantmagic/resonance/discussions) and other pages related to the repository.
