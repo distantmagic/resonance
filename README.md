@@ -229,10 +229,7 @@ final readonly class Blog implements GraphQLFieldableInterface
 
 ## Community
 
-You can find official channels here:
-
-- [Discord](https://discord.gg/kysUzFqSCK)
-- [Telegram](https://t.me/+AQiDhKlsNBRjMmU0)
+Feel free to use [GitHub discussions](https://github.com/distantmagic/resonance/discussions) and other pages related to the repository.
   
 ## License
 
